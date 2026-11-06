@@ -3167,6 +3167,53 @@
                       }
                     }
                   ]
+                },
+                "examples": {
+                  "unrated_spot": {
+                    "summary": "Hasil tanpa rating tetap memiliki reference_rating:null.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "SEARCH_RESULTS"
+                      },
+                      "error": null,
+                      "data": {
+                        "q": "sample",
+                        "sort": "relevance",
+                        "kinds": [
+                          "spot"
+                        ],
+                        "location_scope": null,
+                        "category": null,
+                        "groups": [
+                          {
+                            "kind": "spot",
+                            "label": "Spot",
+                            "items": [
+                              {
+                                "id": "22222222-2222-4222-8222-222222222222",
+                                "kind": "spot",
+                                "name": "Sample Spot",
+                                "slug": "sample-spot",
+                                "type": "waterfall",
+                                "count": null,
+                                "geo": {
+                                  "lat": -6.2,
+                                  "lng": 106.8,
+                                  "osm_type": null,
+                                  "osm_id": null
+                                },
+                                "breadcrumb": [],
+                                "reference_rating": null,
+                                "cover_hero_image": null
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -3872,17 +3919,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
-                },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
                 },
                 "examples": {
                   "validation_problem": {
@@ -6571,17 +6607,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
                 },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
-                },
                 "examples": {
                   "validation_problem": {
                     "summary": "Fixture sintetis HTTP dengan PostgreSQL terisolasi",
@@ -7632,7 +7657,7 @@
           "Mobile Quest Execution"
         ],
         "summary": "Create a mobile execution attestation challenge",
-        "description": "Requires normal authenticated Traveler ownership. Creates a single-use 2-minute challenge for Play Integrity or App Attest. Creating a challenge does not authorize Quest execution. Requires native Identity access Bearer per ADR-0065 without cookie/CSRF. Validate signed native channel; OS header is not authorization. Reject simultaneous cookie/Bearer with 422; never fall back after failed authentication. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS ditolak sampai adapter App Attest tersedia. Tidak ada fallback tanpa attestation. Batas 10 request/menit per Account; ganti sesi/IP tidak mereset batas. 429 menyertakan Retry-After.",
+        "description": "Requires normal authenticated Traveler ownership. Creates a single-use 2-minute challenge for Play Integrity or App Attest. Creating a challenge does not authorize Quest execution. Requires native Identity access Bearer per ADR-0065 without cookie/CSRF. Validate signed native channel; OS header is not authorization. Reject simultaneous cookie/Bearer with 422; never fall back after failed authentication. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS memakai adapter App Attest existing bila QUEST_IOS_APP_ID dan QUEST_IOS_VERSIONS terkonfigurasi lengkap. App ID, environment, distribution category dan versi diverifikasi server; production menerima App Store, development menerima development build. Konfigurasi kosong menonaktifkan eksekusi iOS; konfigurasi parsial/invalid menolak startup. Keberadaan adapter bukan bukti konfigurasi/deployment atau perangkat iOS siap. Tidak ada fallback tanpa attestation. Batas 10 request/menit per Account; ganti sesi/IP tidak mereset batas. 429 menyertakan Retry-After.",
         "security": [
           {
             "nativeBearer": []
@@ -7714,7 +7739,7 @@
           "Mobile Quest Execution"
         ],
         "summary": "Exchange verified native attestation for a Mobile Execution Credential",
-        "description": "Requires normal authenticated Traveler ownership. Atomically consumes the single-use challenge, verifies Play Integrity/App Attest through provider adapters, and returns a Floopel 10-minute execution credential. Invalid, expired or replayed challenges/attestation fail closed. If the response is lost after challenge consumption, the client requests a new challenge and repeats attestation; the exchange does not rely on generic Idempotency-Key replay. Requires native Identity access Bearer per ADR-0065 without cookie/CSRF. Validate signed native channel; OS header is not authorization. Reject simultaneous cookie/Bearer with 422; never fall back after failed authentication. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS ditolak sampai adapter App Attest tersedia. Tidak ada fallback tanpa attestation. Batas 10 request/menit per Account; ganti sesi/IP tidak mereset batas. 429 menyertakan Retry-After.",
+        "description": "Requires normal authenticated Traveler ownership. Atomically consumes the single-use challenge, verifies Play Integrity/App Attest through provider adapters, and returns a Floopel 10-minute execution credential. Invalid, expired or replayed challenges/attestation fail closed. If the response is lost after challenge consumption, the client requests a new challenge and repeats attestation; the exchange does not rely on generic Idempotency-Key replay. Requires native Identity access Bearer per ADR-0065 without cookie/CSRF. Validate signed native channel; OS header is not authorization. Reject simultaneous cookie/Bearer with 422; never fall back after failed authentication. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS memakai adapter App Attest existing bila QUEST_IOS_APP_ID dan QUEST_IOS_VERSIONS terkonfigurasi lengkap. App ID, environment, distribution category dan versi diverifikasi server; production menerima App Store, development menerima development build. Konfigurasi kosong menonaktifkan eksekusi iOS; konfigurasi parsial/invalid menolak startup. Keberadaan adapter bukan bukti konfigurasi/deployment atau perangkat iOS siap. Tidak ada fallback tanpa attestation. Batas 10 request/menit per Account; ganti sesi/IP tidak mereset batas. 429 menyertakan Retry-After.",
         "security": [
           {
             "nativeBearer": []
@@ -7795,7 +7820,7 @@
           "Mobile Quest Execution"
         ],
         "summary": "Start a Quest participation",
-        "description": "MOBILE-ONLY EXECUTION. Creates a Participation against the currently eligible immutable published QuestRevision for a Traveler who has not completed the stable Quest. Requires the attested Mobile Execution Credential. The backend first reconciles any existing ACTIVE Participation for this Traveler + stable Quest. If an older ACTIVE Participation is still valid, start fails with QUEST_ALREADY_ACTIVE. If any Participation for the stable Quest is already COMPLETED, start fails permanently with QUEST_ALREADY_COMPLETED; publishing a successor QuestRevision does not reopen earning. An EXPIRED historical Participation does not block a later eligible attempt on the current revision. Start is also rejected outside the current revision schedule or while the stable Quest is suspended. Same Idempotency-Key replay returns the stored original result; a new key never bypasses stable-Quest semantic uniqueness. A revoked RewardGrant does not reopen the stable Quest because QuestCompletion remains immutable in V1. A Traveler may concurrently hold active Participations for other stable Quests; V1 has no global single-active-Quest limit. On creation the Participation snapshots expires_at from the selected QuestRevision.ends_at; this effective deadline may later be extended by emergency suspension resume without changing the revision. R18: under stable Quest lock, reconcile existing participation first; a first-time Traveler admission requires remaining capacity. Atomically persist admission plus Participation. Quota full returns 409 with meta.code=QUEST_QUOTA_EXHAUSTED. Retry or previously admitted Traveler never consumes another slot; existing active/completed rules remain. Expired retry uses existing admission if otherwise eligible. No release after completion/expiry/revoke, no reset on successor revision. New Quest ID has independent quota and completion eligibility. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS ditolak sampai adapter App Attest tersedia. Tidak ada fallback tanpa attestation. Hidden admission baru harus aktif/non-suspended dan berada dalam radius revision current; missing/outside location menghasilkan404 NOT_FOUND. Re-entry expired memerlukan radius lagi; owner dapat membaca Participation di luar radius. Koordinat tidak disimpan. Start pertama participation_mode=group memerlukan membership aktif dalam kelompok yang pengelolanya aktif. Admission yang sudah sah tetap dapat dilanjutkan/retry sendiri setelah leave, disband atau pengelola unavailable; aturan completion, expiry dan reward pribadi existing tetap berlaku. CONFLICT (409) juga mencakup admission pertama tanpa kelompok yang eligible.",
+        "description": "MOBILE-ONLY EXECUTION. Creates a Participation against the currently eligible immutable published QuestRevision for a Traveler who has not completed the stable Quest. Requires the attested Mobile Execution Credential. The backend first reconciles any existing ACTIVE Participation for this Traveler + stable Quest. If an older ACTIVE Participation is still valid, start fails with QUEST_ALREADY_ACTIVE. If any Participation for the stable Quest is already COMPLETED, start fails permanently with QUEST_ALREADY_COMPLETED; publishing a successor QuestRevision does not reopen earning. An EXPIRED historical Participation does not block a later eligible attempt on the current revision. Start is also rejected outside the current revision schedule or while the stable Quest is suspended. Same Idempotency-Key replay returns the stored original result; a new key never bypasses stable-Quest semantic uniqueness. A revoked RewardGrant does not reopen the stable Quest because QuestCompletion remains immutable in V1. A Traveler may concurrently hold active Participations for other stable Quests; V1 has no global single-active-Quest limit. On creation the Participation snapshots expires_at from the selected QuestRevision.ends_at; this effective deadline may later be extended by emergency suspension resume without changing the revision. R18: under stable Quest lock, reconcile existing participation first; a first-time Traveler admission requires remaining capacity. Atomically persist admission plus Participation. Quota full returns 409 with meta.code=QUEST_QUOTA_EXHAUSTED. Retry or previously admitted Traveler never consumes another slot; existing active/completed rules remain. Expired retry uses existing admission if otherwise eligible. No release after completion/expiry/revoke, no reset on successor revision. New Quest ID has independent quota and completion eligibility. Runtime Android memerlukan package, digest sertifikat, dan service account Play Integrity. iOS memakai adapter App Attest existing bila QUEST_IOS_APP_ID dan QUEST_IOS_VERSIONS terkonfigurasi lengkap. App ID, environment, distribution category dan versi diverifikasi server; production menerima App Store, development menerima development build. Konfigurasi kosong menonaktifkan eksekusi iOS; konfigurasi parsial/invalid menolak startup. Keberadaan adapter bukan bukti konfigurasi/deployment atau perangkat iOS siap. Tidak ada fallback tanpa attestation. Hidden admission baru harus aktif/non-suspended dan berada dalam radius revision current; missing/outside location menghasilkan404 NOT_FOUND. Re-entry expired memerlukan radius lagi; owner dapat membaca Participation di luar radius. Koordinat tidak disimpan. Start pertama participation_mode=group memerlukan membership aktif dalam kelompok yang pengelolanya aktif. Admission yang sudah sah tetap dapat dilanjutkan/retry sendiri setelah leave, disband atau pengelola unavailable; aturan completion, expiry dan reward pribadi existing tetap berlaku. CONFLICT (409) juga mencakup admission pertama tanpa kelompok yang eligible.",
         "x-floopel-contract-status": "IMPLEMENTED_NATIVE_CONFIGURATION_REQUIRED",
         "x-floopel-mobile-execution": true,
         "parameters": [
@@ -10859,6 +10884,126 @@
                         }
                       ]
                     }
+                  },
+                  "lifecycle_member_removed": {
+                    "summary": "Tujuan own-only dari daftar inbox.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684536,
+                        "pagination": {
+                          "page": 1,
+                          "per_page": 20,
+                          "total": 1,
+                          "total_pages": 1
+                        }
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "id": "027777fb-29f5-52cb-9d70-8c8951e221f9",
+                          "kind": "trip.member_removed",
+                          "class": "activity",
+                          "title": "Keanggotaan Trip diakhiri",
+                          "body": "Status keanggotaan perjalananmu diperbarui.",
+                          "target_url": "/me/trip-notices/e6069e16-a503-40b3-8946-ea6244c484ef",
+                          "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                          "created_at": "2026-11-04T11:31:24.373447+07:00",
+                          "read_at": null
+                        }
+                      ]
+                    }
+                  },
+                  "lifecycle_schedule_changed_member": {
+                    "summary": "Tujuan own-only dari daftar inbox.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684496,
+                        "pagination": {
+                          "page": 1,
+                          "per_page": 20,
+                          "total": 1,
+                          "total_pages": 1
+                        }
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "id": "7b49d98e-4b05-50c8-8346-e70fed37724b",
+                          "kind": "trip.schedule_changed",
+                          "class": "activity",
+                          "title": "Jadwal Trip diperbarui",
+                          "body": "Periksa informasi perjalanan yang terbaru.",
+                          "target_url": "/me/trip-notices/784d5ce8-fd83-4ba7-9aa8-4d1ceed87efd",
+                          "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                          "created_at": "2026-11-04T11:31:24.373447+07:00",
+                          "read_at": null
+                        }
+                      ]
+                    }
+                  },
+                  "lifecycle_schedule_changed_applicant": {
+                    "summary": "Tujuan own-only dari daftar inbox.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684499,
+                        "pagination": {
+                          "page": 1,
+                          "per_page": 20,
+                          "total": 1,
+                          "total_pages": 1
+                        }
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "id": "2ed33d25-aa39-5cd9-83ed-0b24893ae1e3",
+                          "kind": "trip.schedule_changed",
+                          "class": "activity",
+                          "title": "Jadwal Trip diperbarui",
+                          "body": "Periksa informasi perjalanan yang terbaru.",
+                          "target_url": "/me/trip-notices/23c0063b-80fa-40a7-919e-e752504b4c75",
+                          "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                          "created_at": "2026-11-04T11:31:24.373447+07:00",
+                          "read_at": null
+                        }
+                      ]
+                    }
+                  },
+                  "lifecycle_cancelled_applicant": {
+                    "summary": "Tujuan own-only dari daftar inbox.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684499,
+                        "pagination": {
+                          "page": 1,
+                          "per_page": 20,
+                          "total": 1,
+                          "total_pages": 1
+                        }
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "id": "da42566b-4ae0-5bb4-a802-1d8f6131349b",
+                          "kind": "trip.cancelled",
+                          "class": "activity",
+                          "title": "Trip dibatalkan",
+                          "body": "Ada pembaruan penting pada perjalananmu.",
+                          "target_url": "/me/trip-notices/fc9ace32-fd2d-5502-a153-c08ce08531f0",
+                          "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                          "created_at": "2026-11-04T11:31:24.373447+07:00",
+                          "read_at": null
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -11276,7 +11421,7 @@
     "/notifications/{notification_id}": {
       "get": {
         "operationId": "getNotification",
-        "description": "Load milik akun, read-only termasuk prefetch. Target domain memeriksa akses sendiri.",
+        "description": "Load milik akun, read-only termasuk prefetch. Target domain memeriksa akses sendiri. Untuk push, gunakan notification_id untuk membaca inbox ini terlebih dahulu. Ikuti target_url ke reader berizin; baru kirim PUT /notifications/{notification_id}/read setelah detail tujuan berhasil ditampilkan. Loading, error dan target tidak tersedia tidak membuat acknowledgement. GET tidak menandai read.",
         "security": [
           {
             "nativeBearer": []
@@ -11327,6 +11472,116 @@
                         "title": "Undangan Trip baru",
                         "body": "Anda menerima undangan Trip. Buka untuk melihat detail.",
                         "target_url": "/trips/55555555-5555-4555-8555-555555555555",
+                        "occurred_at": "2026-10-25T00:00:00Z",
+                        "created_at": "2026-10-25T00:00:01Z",
+                        "read_at": null
+                      }
+                    }
+                  },
+                  "lifecycle_member_removed": {
+                    "summary": "Inbox ke contoh OwnedTripNotice trip_notice_member_removed_former; ID inbox dan source berbeda.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684536
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "027777fb-29f5-52cb-9d70-8c8951e221f9",
+                        "kind": "trip.member_removed",
+                        "class": "activity",
+                        "title": "Keanggotaan Trip diakhiri",
+                        "body": "Status keanggotaan perjalananmu diperbarui.",
+                        "target_url": "/me/trip-notices/e6069e16-a503-40b3-8946-ea6244c484ef",
+                        "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                        "created_at": "2026-11-04T11:31:24.373447+07:00",
+                        "read_at": null
+                      }
+                    }
+                  },
+                  "lifecycle_schedule_changed_member": {
+                    "summary": "Inbox ke contoh OwnedTripNotice trip_notice_schedule_changed_member; ID inbox dan source berbeda.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684496
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "7b49d98e-4b05-50c8-8346-e70fed37724b",
+                        "kind": "trip.schedule_changed",
+                        "class": "activity",
+                        "title": "Jadwal Trip diperbarui",
+                        "body": "Periksa informasi perjalanan yang terbaru.",
+                        "target_url": "/me/trip-notices/784d5ce8-fd83-4ba7-9aa8-4d1ceed87efd",
+                        "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                        "created_at": "2026-11-04T11:31:24.373447+07:00",
+                        "read_at": null
+                      }
+                    }
+                  },
+                  "lifecycle_schedule_changed_applicant": {
+                    "summary": "Inbox ke contoh OwnedTripNotice trip_notice_schedule_changed_applicant; ID inbox dan source berbeda.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684499
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "2ed33d25-aa39-5cd9-83ed-0b24893ae1e3",
+                        "kind": "trip.schedule_changed",
+                        "class": "activity",
+                        "title": "Jadwal Trip diperbarui",
+                        "body": "Periksa informasi perjalanan yang terbaru.",
+                        "target_url": "/me/trip-notices/23c0063b-80fa-40a7-919e-e752504b4c75",
+                        "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                        "created_at": "2026-11-04T11:31:24.373447+07:00",
+                        "read_at": null
+                      }
+                    }
+                  },
+                  "lifecycle_cancelled_applicant": {
+                    "summary": "Inbox ke contoh OwnedTripNotice trip_notice_cancelled_applicant; ID inbox dan source berbeda.",
+                    "value": {
+                      "meta": {
+                        "code": "OK",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684499
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "da42566b-4ae0-5bb4-a802-1d8f6131349b",
+                        "kind": "trip.cancelled",
+                        "class": "activity",
+                        "title": "Trip dibatalkan",
+                        "body": "Ada pembaruan penting pada perjalananmu.",
+                        "target_url": "/me/trip-notices/fc9ace32-fd2d-5502-a153-c08ce08531f0",
+                        "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                        "created_at": "2026-11-04T11:31:24.373447+07:00",
+                        "read_at": null
+                      }
+                    }
+                  },
+                  "application_status_target": {
+                    "summary": "Reader status pengajuan berizin; bukan grant ke Trip.",
+                    "value": {
+                      "meta": {
+                        "request_id": "22222222-2222-4222-8222-222222222222",
+                        "timestamp": 1792886401000,
+                        "code": "OK"
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "f4109d01-1abb-5c26-a28e-54d5986ec84e",
+                        "kind": "trip.application_received",
+                        "class": "activity",
+                        "title": "Pengajuan bergabung",
+                        "body": "Ada pengajuan bergabung ke Open Trip yang kamu kelola.",
+                        "target_url": "/trip-applications/4d8b232a-30aa-446b-ae10-3cb39b9e8bcc",
                         "occurred_at": "2026-10-25T00:00:00Z",
                         "created_at": "2026-10-25T00:00:01Z",
                         "read_at": null
@@ -11561,7 +11816,7 @@
     "/notifications/{notification_id}/read": {
       "put": {
         "operationId": "markNotificationRead",
-        "description": "Client memanggil setelah membuka inbox item/push dan berhasil load item milik akun setelah login. Tanpa request body. Set read_at server hanya bila NULL; retry mengembalikan timestamp pertama. Fetch list, GET detail sendiri, penerimaan push, dan CTA sukses bukan pemicu otomatis.",
+        "description": "Client memanggil setelah membuka inbox item/push dan berhasil load item milik akun setelah login. Tanpa request body. Set read_at server hanya bila NULL; retry mengembalikan timestamp pertama. Fetch list, GET detail sendiri, penerimaan push, dan CTA sukses bukan pemicu otomatis. Client mengirim acknowledgement hanya sesudah reader tujuan yang berizin berhasil ditampilkan, bukan saat loading/error/target unavailable. Parameter ini adalah ID inbox asli, bukan notice_id atau application_id dari target_url. Server mempertahankan read_at pertama pada retry.",
         "security": [
           {
             "nativeBearer": []
@@ -19326,17 +19581,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
                 },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
-                },
                 "examples": {
                   "validation_problem": {
                     "summary": "Fixture sintetis HTTP dengan PostgreSQL terisolasi",
@@ -19840,17 +20084,6 @@
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
                 },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
-                },
                 "examples": {
                   "validation_problem": {
                     "summary": "Fixture sintetis HTTP dengan PostgreSQL terisolasi",
@@ -20041,17 +20274,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
-                },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
                 },
                 "examples": {
                   "validation_problem": {
@@ -20249,17 +20471,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Envelope"
-                },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "COMMENT_MAX_DEPTH"
-                  },
-                  "error": {
-                    "details": [],
-                    "message": "A reply cannot be replied to."
-                  }
                 },
                 "examples": {
                   "validation_problem": {
@@ -21589,7 +21800,7 @@
         ],
         "operationId": "getMyTripNotice",
         "summary": "Baca status notifikasi lifecycle Trip milik penerima",
-        "description": "Akun Traveler aktif dan relasi source episode milik profil sesi diperlukan; outsider atau source terhapus404. Historical read terpisah dari delivery eligibility: removed/former dapat membaca status aman, rejoined tidak autojoin. Full Trip hanya lewat reader membership terkini, pemohon lewat own application. Loading/error/unavailable bukan read acknowledgement; inbox ack hanya sesudah authorized visible detail. Cache-Control:no-store.",
+        "description": "Akun Traveler aktif dan relasi source episode milik profil sesi diperlukan; outsider atau source terhapus404. Historical read terpisah dari delivery eligibility: removed/former dapat membaca status aman, rejoined tidak autojoin. Full Trip hanya lewat reader membership terkini, pemohon lewat own application. Loading/error/unavailable bukan read acknowledgement; inbox ack hanya sesudah authorized visible detail. Cache-Control:no-store. notice_id diperoleh dari target_url inbox /me/trip-notices/{notice_id}; bukan Notification.id. Read status ini tidak membuat acknowledgement inbox dan tidak memberi grant ke Trip penuh.",
         "security": [
           {
             "nativeBearer": []
@@ -21756,6 +21967,33 @@
                         "code": "TRIP_NOTICE",
                         "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
                         "timestamp": 1793766684548
+                      }
+                    }
+                  },
+                  "trip_notice_cancelled_applicant": {
+                    "summary": "Status sintetis pembatalan Trip untuk pemohon; tidak memberi akses Trip penuh.",
+                    "value": {
+                      "data": {
+                        "application_id": "4d8b232a-30aa-446b-ae10-3cb39b9e8bcc",
+                        "application_status": "closed",
+                        "current_member": false,
+                        "ends_on": "2026-11-07",
+                        "id": "fc9ace32-fd2d-5502-a153-c08ce08531f0",
+                        "membership_id": null,
+                        "membership_status": null,
+                        "occurred_at": "2026-11-04T11:31:24.373447+07:00",
+                        "outcome": "cancelled",
+                        "starts_on": "2026-11-04",
+                        "timezone": "UTC",
+                        "trip_id": "b8913234-b7f1-41ba-a48b-009ed4fe0920",
+                        "trip_name": "Snapshot at confirmed update",
+                        "trip_status": "cancelled"
+                      },
+                      "error": null,
+                      "meta": {
+                        "code": "TRIP_NOTICE",
+                        "request_id": "b47aa814-0ad1-4ca2-8199-7c253486db29",
+                        "timestamp": 1793766684499
                       }
                     }
                   }
@@ -23137,7 +23375,8 @@
             "type": "string",
             "pattern": "^#[0-9A-Fa-f]{6}$"
           }
-        }
+        },
+        "description": "Metadata placeholder opsional. Field yang tidak tersedia dihilangkan; bila hadir harus string, bukan null. Berlaku pula pada cover hasil pencarian."
       },
       "MediaVariantDescriptor": {
         "type": "object",
@@ -24067,7 +24306,15 @@
             "$ref": "#/components/schemas/Breadcrumb"
           },
           "reference_rating": {
-            "$ref": "#/components/schemas/ReferenceRatingView"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReferenceRatingView"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null untuk Collection atau entitas tanpa rating tersimpan; object tetap memakai proyeksi provisional server."
           }
         }
       },
@@ -28669,8 +28916,8 @@
               "null"
             ],
             "format": "uri-reference",
-            "pattern": "^/(?:(?:trips|quest-groups|quest-group-invitations)/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|me/itinerary-moderation)$",
-            "description": "Path relatif internal dari registry server tertutup, tanpa query/fragment atau URL client; null bila source/akses sudah tidak valid. Undangan Trip pending yang valid atau accepted dengan keanggotaan Trip yang masih aktif mengarah ke ID Trip aktual melalui /trips/{trip_id}, bukan ID undangan. Expiry undangan tidak membatalkan akses anggota accepted; pembukaan tujuan tidak mengirim ulang undangan atau mengubah membership. Undangan Party Quest pending mengarah ke /quest-group-invitations/{id}; accepted mengarah ke /quest-groups/{id} hanya melalui episode membership hasil undangan yang masih aktif, tanpa menghidupkan notifikasi lama setelah leave/rejoin."
+            "pattern": "^/(?:(?:trips|trip-applications|quest-groups|quest-group-invitations)/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|me/trip-notices/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}|me/itinerary-moderation)$",
+            "description": "Path relatif internal dari registry server tertutup, tanpa query/fragment atau URL client; null bila source/akses sudah tidak valid. Undangan Trip pending yang valid atau accepted dengan keanggotaan Trip yang masih aktif mengarah ke ID Trip aktual melalui /trips/{trip_id}, bukan ID undangan. Expiry undangan tidak membatalkan akses anggota accepted; pembukaan tujuan tidak mengirim ulang undangan atau mengubah membership. Undangan Party Quest pending mengarah ke /quest-group-invitations/{id}; accepted mengarah ke /quest-groups/{id} hanya melalui episode membership hasil undangan yang masih aktif, tanpa menghidupkan notifikasi lama setelah leave/rejoin. Lifecycle Trip cancelled/schedule_changed/member_removed mengarah ke /me/trip-notices/{notice_id}, dengan notice_id dari source per penerima. Application received/approved/rejected mengarah ke /trip-applications/{application_id}. ID inbox Notification.id berbeda dari notice_id/application_id; jangan menukar ID. Push hanya membawa notification_id: baca GET /notifications/{notification_id}, lalu ikuti target_url yang diotorisasi ulang server. Target null berarti tujuan tidak tersedia."
           },
           "occurred_at": {
             "type": "string",

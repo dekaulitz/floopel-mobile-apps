@@ -36,6 +36,7 @@ Simpan kedua dokumen berdampingan. Kontrak native mereferensikan komponen bersam
 - Metadata `X-App-Platform` dan `X-App-Version` berasal dari host/build. Metadata bukan bukti attestation atau otorisasi; signed channel token tetap diverifikasi server. Ikuti required/enum pada operasi, termasuk perbedaan native auth dan endpoint Apps bersama.
 - Private Apps memakai `Authorization: Bearer <native_access_token>` sesuai security scheme `nativeBearer`. Onboarding memakai `nativeOnboarding`; context penghapusan akun memakai `nativeDeletionContext` sesuai kombinasi security dan header yang didefinisikan operasi.
 - Credential eksekusi Quest memakai `questExecutionBearer`, terpisah dari identity access token. Dapatkan melalui challenge/attestation/credential flow yang didefinisikan spec. Onboarding dan account-deletion context juga mempunyai purpose/lifetime tersendiri.
+- iOS memakai adapter App Attest existing dengan `QUEST_IOS_APP_ID` dan `QUEST_IOS_VERSIONS` yang lengkap. Server memverifikasi App ID, environment, distribution category dan versi; konfigurasi kosong menonaktifkan eksekusi iOS, konfigurasi parsial/invalid menolak startup. Snapshot tidak membuktikan konfigurasi environment atau perangkat sudah siap.
 - Proyeksi security berlaku untuk consumer native. Deskripsi sumber yang membahas channel Web tetap dibaca sesuai channel; seleksi paket tidak mengubah policy cookie/CSRF pada backend.
 - `Idempotency-Key`, revision/version, expected timestamp dan header multipart mengikuti operasi terkait. Request yang hasilnya belum diketahui direkonsiliasi lewat kontrak recovery pemilik; jangan membuat key baru atau retry mutasi otomatis tanpa aturan operasi.
 - Public/private access, consent, ownership, membership, moderation, state dan capability tetap diperiksa backend. Role UI atau keberadaan object ID bukan izin akses.
@@ -44,17 +45,42 @@ Simpan kedua dokumen berdampingan. Kontrak native mereferensikan komponen bersam
 
 - JSON memakai envelope `meta/error/data`. Sukses membawa `error:null`; error membawa `data:null`. Pertahankan `meta.code` dan structured details; message bukan identifier percabangan. HTTP204 tidak diparse sebagai JSON. Binary/redirect mengikuti response media type operasinya.
 - Bedakan field absent, null dan array kosong. Jangan mengisi field required yang hilang dengan data fiktif. UUID, enum, timestamp, satuan dan nullable/required mengikuti schema.
+- Hasil pencarian tanpa rating tetap mengirim `reference_rating:null`. Metadata media `placeholder.blurhash` dan `dominant_color` yang tidak tersedia dihilangkan; bila hadir nilainya string.
 - `locations[]` adalah projection server pada entitas yang mendefinisikannya; Spot tetap memakai `location_id` tunggal. Query `location_id` memilih wilayah beserta descendant menurut reader. Jangan mengirim field derived sebagai input atau mengubah geography public snapshot menjadi working plan privat.
 - Body HTML Content/Quest yang memang rich text mengikuti kontrak sanitasi; field plain text tidak dianggap HTML. DTO transport dipetakan ke model domain dan state presentasi pada owner fitur.
 - Descriptor media memakai logical ID, capability/variant dan metadata yang disediakan backend. Pilih variant sesuai penggunaan; jangan merakit storage key, menggunakan original/staging, atau menganggap metadata pemrosesan sama dengan delivery siap.
 - Pertahankan pagination, cursor/count, source order, empty state dan error state sesuai operasi. Jangan menghitung total dari ukuran satu page atau memfilter ulang page untuk menggantikan filter server.
 - Hormati `Retry-After`, no-store dan scope credential. HTTP401/403/409/422/429/503 mengikuti kode/meaning operasi; network failure atau timeout tidak membuktikan mutasi dibatalkan.
 
+## Handoff notifikasi ke reader berizin
+
+Push membawa `notification_id`. Baca `GET /notifications/{notification_id}` untuk memperoleh `target_url` terkini dari registry server, lalu buka reader berdasarkan tujuan tersebut:
+
+| Tujuan | Reader Apps | Identitas |
+| --- | --- | --- |
+| `/me/trip-notices/{notice_id}` | `GET /me/trip-notices/{notice_id}` | Lifecycle `member_removed`, `cancelled` atau `schedule_changed`; notice milik penerima. |
+| `/trip-applications/{application_id}` | `GET /trip-applications/{application_id}` | Status pengajuan yang boleh dibaca penerima/organizer. |
+
+`Notification.id` adalah ID inbox, berbeda dari ID source pada tujuan. Contoh `lifecycle_member_removed`, `lifecycle_schedule_changed_applicant` dan `lifecycle_cancelled_applicant` pada reader/list inbox berpasangan dengan named examples `OwnedTripNotice` pada reader status. Reader tetap memeriksa ownership dan tidak memberi akses Trip penuh kepada mantan anggota atau pemohon. `current_member` merupakan fakta terkini; pembukaan Trip penuh tetap memerlukan pemeriksaan akses server.
+
+Kirim `PUT /notifications/{notification_id}/read` dengan **ID inbox asli** hanya setelah detail tujuan yang berizin berhasil ditampilkan. Loading, error, target null atau tujuan tidak tersedia tidak membuat acknowledgement. GET notifikasi/status tidak menandai read.
+
+## Pemeriksaan paket
+
+Jalankan dari root repository:
+
+```sh
+node api-contract/check-examples.mjs
+node --test api-contract/check-examples.test.mjs
+```
+
+Guard semantik ini memakai Node bawaan dan menolak `example` + `examples` bersamaan pada Media Type/Parameter Object. Guard melengkapi validasi OpenAPI 3.1, resolver lintas dokumen dan validasi contoh JSON Schema/format; bukan pengganti pemeriksaan tersebut.
+
 ## Provenance dan pembaruan
 
 Sumber: repository [backend Floopel](https://github.com/dekaulitz/com.github.floopel.prjct), folder `application/api-contract`. Snapshot diambil dari branch lokal `main` dengan HEAD `58a570799e47222fb0529c2e5d869bbb152f0390`. Apps mencakup perubahan lokal yang belum ada pada commit tersebut; gunakan hash setiap file pada [manifest](snapshot.json) untuk mengidentifikasi sumber dan hasil proyeksi secara tepat.
 
-Ekspor memakai UTF-8/LF. Pada Apps, response `GET /me/trips` 200 diperluas dari Reference Object menjadi Response Object agar header `Cache-Control:no-store` tetap ada dan struktur OpenAPI 3.1 valid. Bentuk response/schema tetap dipertahankan; pointer dan alasan normalisasi dicatat pada manifest. Backend sumber tidak diubah oleh ekspor ini.
+Ekspor memakai UTF-8/LF. Kelima koreksi review sudah diterapkan pada sumber lokal; dependensi DTO placeholder dan hash guard juga tercatat pada manifest. Response `GET /me/trips` 200 sudah berbentuk Response Object pada kontrak kanonis, dengan `Cache-Control:no-store`, sehingga ekspor tidak lagi memerlukan normalisasi response khusus. Field request/response yang dipertahankan cocok dengan sumber setelah seleksi channel native.
 
 Saat sinkronisasi berikutnya, cocokkan kontrak pada branch lokal yang dituju dan kebutuhan Traveler, terapkan seleksi operasi/security pada manifest, lalu telusuri ulang komponen lintas dokumen. Perbarui hash/jumlah dan tinjau perubahan field/error/version. Validasi OpenAPI 3.1 serta seluruh relative reference dari base URI file dan periksa contoh JSON terhadap schema/format. Metadata historis `x-*` pada sumber tidak membuktikan runtime environment sudah memakai revision yang sama.
 

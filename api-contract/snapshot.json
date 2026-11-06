@@ -8,8 +8,8 @@
     {
       "file": "openapi-apps.json",
       "source_path": "application/api-contract/openapi-apps.json",
-      "source_sha256": "ce0614cccad5e8a65197c2c90f88f7dd825ffa6782625c57e45d5b2aac0700eb",
-      "snapshot_sha256": "9fa5de5e1359a7dbb4c42b8594e6bc1571d56d6e068a2934e4e365e54f719a38",
+      "source_sha256": "4723ae012528a13ecf7ac1207a09bdaf244e819999c4d71cd31645d5ba63a2a7",
+      "snapshot_sha256": "ec09c6dcff60a8b432ca2263ac83f4e0bc51f2303ef739c2655abb3df02df251",
       "source_working_tree_modified": true,
       "path_count": 138,
       "operation_count": 162
@@ -24,15 +24,7 @@
       "operation_count": 13
     }
   ],
-  "normalizations": [
-    {
-      "file": "openapi-apps.json",
-      "json_pointer": "/paths/~1me~1trips/get/responses/200",
-      "source_ref": "#/components/responses/TripListResponse",
-      "action": "expand_response_reference",
-      "reason": "Header Cache-Control:no-store dipertahankan pada Response Object; headers bukan sibling sah Reference Object OpenAPI3.1."
-    }
-  ],
+  "normalizations": [],
   "source_branch": "main",
   "audience": [
     "android-traveler",
@@ -571,5 +563,50 @@
       "/auth/nationalities": "Dipakai NativeAccountApi pada branch lokal.",
       "/auth/logout-all": "Operasi manajemen sesi Traveler mendukung nativeBearer pada kontrak sumber."
     }
-  }
+  },
+  "source_corrections": [
+    {
+      "scope": "notification_targets",
+      "description": "Registry lifecycle/application, ID inbox/source berbeda dan contoh handoff ke reader own-only."
+    },
+    {
+      "scope": "media_type_examples",
+      "description": "Enam contoh COMMENT_MAX_DEPTH yang tidak relevan dihapus; named validation_problem dipertahankan tanpa konflik example/examples."
+    },
+    {
+      "scope": "search_reference_rating",
+      "description": "SearchHit.reference_rating menerima object provisional atau null sesuai DTO."
+    },
+    {
+      "scope": "search_media_placeholder",
+      "description": "Metadata placeholder tidak tersedia dihilangkan oleh DTO backend; schema bersama tetap string opsional."
+    },
+    {
+      "scope": "quest_ios",
+      "description": "Deskripsi mengikuti adapter App Attest dan konfigurasi iOS existing."
+    },
+    {
+      "scope": "trip_list_response",
+      "description": "Reference Object diperluas pada sumber kanonis agar Cache-Control:no-store berada pada Response Object sah; tidak ada normalisasi response khusus ekspor."
+    }
+  ],
+  "backend_dependencies": [
+    {
+      "source_path": "application/service/internal/modules/catalog/adapter/http/search/dto.go",
+      "source_sha256": "9e14b07f68986711fe3670e2bfd912080295bc8f702fec14823e37902aa22e28",
+      "source_working_tree_modified": true
+    }
+  ],
+  "validation_tools": [
+    {
+      "file": "check-examples.mjs",
+      "source_path": "application/api-contract/check-examples.mjs",
+      "sha256": "a6be6d7c3db2f621ea9098e36411da16b8bc7a146200345fa5d9063f44dbaa51"
+    },
+    {
+      "file": "check-examples.test.mjs",
+      "source_path": "application/api-contract/check-examples.test.mjs",
+      "sha256": "f09503cef45a1911a46546a9f3a7b33b2666e35c3ac158f6871130467c07f617"
+    }
+  ]
 }
