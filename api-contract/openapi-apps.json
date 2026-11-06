@@ -1,13 +1,14 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Floopel Backend â€” apps surface (living contract)",
+    "title": "Floopel Mobile Traveler — Apps API",
     "version": "1.0.0",
     "x-floopel-surface": "apps",
-    "description": "LIVING per-surface OpenAPI 3.1 contract for the Floopel **apps** surface (server `/api/apps/v1`, ADR-0004).\n\nThis is a GENERATED, LIVING document: it is reconciled against the live router (`backend/internal/adapter/http/router.go` â€” the ground truth for which routes exist) and harvests request/response/schema shapes from the per-PRD contracts under `document/prd/**/openapi.json` (the per-feature source of truth). It MUST be updated in the SAME PR as any route, contract, or data-model change (CLAUDE.md Â§3.2 change-triggers; .claude/rules/golang.md). If a route below carries a LIVING-CONTRACT PLACEHOLDER, the router has it but the per-PRD spec did not define its shape yet.\n\nShared platform components (Envelope/Meta/ErrorBody, the standard 4xx responses, and common parameters) are unified to ONE canonical definition per surface â€” Meta matches the Go `pkg/response` type (incl. optional pagination) and the error schema is ErrorBody. Security schemes are unified by cookie name. Path param names follow the router (ground truth).\n\nMetadata request klien: aplikasi yang diperbarui mengirim X-App-Version dari versi build dan X-App-Platform bernilai ANDROID, IOS atau WEB pada seluruh operasi API, termasuk upload dan probe maintenance. Header ini deskriptif, bukan attestation atau otorisasi. Server tetap menerima klien lama tanpa versi; tidak ada gate minimum versi. Endpoint identitas native tetap mensyaratkan platform ANDROID/IOS sesuai parameter dan credential channel existing; WEB tidak diterima pada endpoint tersebut.",
+    "description": "Projection kontrak Apps khusus Mobile Traveler Android/iOS dari branch lokal backend. Memuat operasi bisnis/public dan alternatif credential native; operasi Web/provider dikeluarkan. Lihat README.md dan snapshot.json untuk provenance serta pemilihan operasi.",
     "contact": {
       "name": "Floopel Engineering"
-    }
+    },
+    "x-floopel-client": "mobile-traveler"
   },
   "servers": [
     {
@@ -25,9 +26,6 @@
         "description": "Satu batch berisi 1â€“100 spot_ids UUID. ID duplikat digabungkan; urutan kemunculan pertama dipertahankan. Hanya Spot approved tanpa merged_into yang dikembalikan. Target unavailable dihilangkan, bukan dianggap nol. Counter komentar dan balasan visible dibaca melalui satu query, tanpa scan thread/N+1. Cache-Control: private, no-store.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -172,9 +170,6 @@
         "description": "Uses the same target authorization as POST reports. No report is created. Cache-Control: no-store. Membership is checked again on submission.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -243,774 +238,6 @@
         }
       }
     },
-    "/sitemap.xml": {
-      "servers": [
-        {
-          "url": "/"
-        }
-      ],
-      "get": {
-        "tags": [
-          "sitemap"
-        ],
-        "operationId": "getSitemapIndex",
-        "summary": "Baca artifact sitemap worker",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Artifact XML published; Cache-Control: no-store. HEAD tidak memiliki body.",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "const": "no-store"
-                }
-              }
-            },
-            "content": {
-              "application/xml": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Snapshot belum tersedia atau dependency gagal; Retry-After: 60. Gateway maintenance sistem dibedakan melalui X-Floopel-Maintenance: system; tanpa header ini tetap503 layanan biasa.",
-            "headers": {
-              "Retry-After": {
-                "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
-                "schema": {
-                  "type": "integer",
-                  "minimum": 1
-                },
-                "example": 60
-              },
-              "X-Floopel-Maintenance": {
-                "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "system"
-                  ]
-                }
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "no-store"
-                  ]
-                }
-              }
-            },
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
-              }
-            }
-          }
-        }
-      },
-      "head": {
-        "tags": [
-          "sitemap"
-        ],
-        "operationId": "headSitemapIndex",
-        "summary": "Periksa artifact sitemap worker",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Artifact XML published; Cache-Control: no-store. HEAD tidak memiliki body.",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "const": "no-store"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Snapshot belum tersedia atau dependency gagal; Retry-After: 60. Gateway maintenance sistem dibedakan melalui X-Floopel-Maintenance: system; tanpa header ini tetap503 layanan biasa.",
-            "headers": {
-              "Retry-After": {
-                "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
-                "schema": {
-                  "type": "integer",
-                  "minimum": 1
-                },
-                "example": 60
-              },
-              "X-Floopel-Maintenance": {
-                "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "system"
-                  ]
-                }
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "no-store"
-                  ]
-                }
-              }
-            },
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/sitemaps/{generation}/{part}": {
-      "servers": [
-        {
-          "url": "/"
-        }
-      ],
-      "parameters": [
-        {
-          "name": "generation",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "pattern": "^[a-zA-Z0-9_-]+$"
-          }
-        },
-        {
-          "name": "part",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "pattern": "^part-[0-9]{5}\\.xml$"
-          }
-        }
-      ],
-      "get": {
-        "tags": [
-          "sitemap"
-        ],
-        "operationId": "getSitemapShard",
-        "summary": "Baca artifact sitemap worker",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Artifact XML published; Cache-Control: no-store. HEAD tidak memiliki body.",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "const": "no-store"
-                }
-              }
-            },
-            "content": {
-              "application/xml": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Shard tidak published, tidak ditemukan, atau revision sudah diinvalidasi."
-          },
-          "503": {
-            "description": "Snapshot belum tersedia atau dependency gagal; Retry-After: 60. Gateway maintenance sistem dibedakan melalui X-Floopel-Maintenance: system; tanpa header ini tetap503 layanan biasa.",
-            "headers": {
-              "Retry-After": {
-                "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
-                "schema": {
-                  "type": "integer",
-                  "minimum": 1
-                },
-                "example": 60
-              },
-              "X-Floopel-Maintenance": {
-                "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "system"
-                  ]
-                }
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "no-store"
-                  ]
-                }
-              }
-            },
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
-              }
-            }
-          }
-        }
-      },
-      "head": {
-        "tags": [
-          "sitemap"
-        ],
-        "operationId": "headSitemapShard",
-        "summary": "Periksa artifact sitemap worker",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Artifact XML published; Cache-Control: no-store. HEAD tidak memiliki body.",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "const": "no-store"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Shard tidak published, tidak ditemukan, atau revision sudah diinvalidasi."
-          },
-          "503": {
-            "description": "Snapshot belum tersedia atau dependency gagal; Retry-After: 60. Gateway maintenance sistem dibedakan melalui X-Floopel-Maintenance: system; tanpa header ini tetap503 layanan biasa.",
-            "headers": {
-              "Retry-After": {
-                "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
-                "schema": {
-                  "type": "integer",
-                  "minimum": 1
-                },
-                "example": 60
-              },
-              "X-Floopel-Maintenance": {
-                "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "system"
-                  ]
-                }
-              },
-              "Cache-Control": {
-                "schema": {
-                  "type": "string",
-                  "enum": [
-                    "no-store"
-                  ]
-                }
-              }
-            },
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                },
-                "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/csrf": {
-      "get": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Issue an anti-CSRF token (double-submit, ADR-0011 R8)",
-        "description": "Safe/idempotent. Sets a **readable** (non-HttpOnly) cookie `floopel_csrf` (Secure, SameSite=Lax) and returns the same value in `data.csrf_token`. The client echoes it in the `X-CSRF-Token` header on every mutating request. Call once before the first POST/PUT, and re-fetch after any authentication (register-verify / login / refresh) because the token rotates.",
-        "responses": {
-          "200": {
-            "description": "CSRF token issued (cookie + body)",
-            "headers": {
-              "Set-Cookie": {
-                "schema": {
-                  "type": "string",
-                  "example": "floopel_csrf=â€¦; Secure; SameSite=Lax; Path=/"
-                },
-                "description": "Readable (non-HttpOnly) CSRF cookie."
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "csrf_token": {
-                              "type": "string"
-                            }
-                          },
-                          "required": [
-                            "csrf_token"
-                          ]
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/forgot-password": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Request password reset (privacy-safe, Slice 2)",
-        "description": "ALWAYS returns the same generic result (no enumeration, R5); if an account exists, emails a single-use, short-lived, hashed reset token (link). Rate-limited.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "202": {
-            "description": "Generic accepted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "message": {
-                              "type": "string",
-                              "example": "If an account exists, we've sent a reset link."
-                            },
-                            "retry_in_seconds": {
-                              "type": "integer",
-                              "description": "Cooldown before the client may re-request (drives the 'resend' timer; same idea as /auth/otp/resend).",
-                              "example": 30
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/google": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "OAuth login or adult onboarding proof",
-        "description": "Prefer authorization-code flow with PKCE + state. Existing Accounts with a Traveler Profile retain normal login. A verified Google identity that still needs a Traveler Profile creates only an encrypted, server-side, ten-minute proof addressed by an opaque HttpOnly cookie. No Account, Profile, provider link, consent, or registration event is created before /auth/google/complete passes the 18+ gate.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "title": "AuthorizationCodeFlow",
-                    "required": [
-                      "code",
-                      "code_verifier",
-                      "state"
-                    ],
-                    "properties": {
-                      "code": {
-                        "type": "string"
-                      },
-                      "code_verifier": {
-                        "type": "string"
-                      },
-                      "state": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "title": "TokenFlow",
-                    "required": [
-                      "id_token",
-                      "nonce"
-                    ],
-                    "properties": {
-                      "id_token": {
-                        "type": "string"
-                      },
-                      "nonce": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sesi normal untuk akun aktif; akses pemulihan terbatas untuk deletion_pending setelah verifikasi identitas.",
-            "headers": {
-              "Set-Cookie": {
-                "description": "Akun aktif: sesi normal. Pemulihan: floopel_account_deletion (HttpOnly, Path=/api/apps/v1/me/account-deletion, Max-Age=300); hapus cookie sesi normal.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/SessionEnvelope"
-                    },
-                    {
-                      "$ref": "#/components/schemas/AccountRecoveryEnvelope"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "needs_profile â€” short-lived opaque proof cookie set (HttpOnly, Secure outside local development, SameSite=Lax, Max-Age=600, completion-only Path)",
-            "headers": {
-              "Set-Cookie": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "Opaque onboarding cookie; verified identity claims remain encrypted server-side"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "status": {
-                              "type": "string",
-                              "const": "needs_profile"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/google/complete": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Finish Google sign-up",
-        "description": "Authenticated by the opaque onboarding proof cookie. The server locks the proof, evaluates age 18+ using the UTC calendar date, then resolves provider subject before verified-email blind index. Underage proof deletion commits without identity state. Eligible identity/Profile/consent/outbox writes and proof consumption are atomic; bounded replay loads persisted state and emits nothing again.",
-        "security": [
-          {
-            "onboardingSession": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "first_name",
-                  "last_name",
-                  "username",
-                  "dob",
-                  "nationality_country_code",
-                  "consent"
-                ],
-                "properties": {
-                  "first_name": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "last_name": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "username": {
-                    "type": "string"
-                  },
-                  "dob": {
-                    "type": "string",
-                    "format": "date"
-                  },
-                  "consent": {
-                    "$ref": "#/components/schemas/Consent"
-                  },
-                  "return_to": {
-                    "$ref": "#/components/schemas/ReturnTo"
-                  },
-                  "nationality_country_code": {
-                    "type": "string",
-                    "pattern": "^[A-Z]{2}$",
-                    "description": "ISO 3166-1 alpha-2 code from the nationality catalog; the server derives the canonical name."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Profile created; session cookie set",
-            "headers": {
-              "Set-Cookie": {
-                "$ref": "#/components/headers/SessionCookie"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SessionEnvelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Login â€” email + password (Slice 2)",
-        "description": "Constant-time verify (bcrypt cost 12), per-IP+account backoff (no hard lock); generic invalid_credentials (401) â€” never reveals whether the email exists. On success issues a fresh session (rotated id â€” anti-fixation) and sets the HttpOnly cookie; return_to is allowlisted. reconsent_required is NOT blocking (surfaced as pending_reconsent, gates writes).",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email",
-                  "password"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string",
-                    "format": "password"
-                  },
-                  "return_to": {
-                    "$ref": "#/components/schemas/ReturnTo"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sesi normal untuk akun aktif; akses pemulihan terbatas untuk deletion_pending setelah verifikasi identitas.",
-            "headers": {
-              "Set-Cookie": {
-                "description": "Akun aktif: sesi normal. Pemulihan: floopel_account_deletion (HttpOnly, Path=/api/apps/v1/me/account-deletion, Max-Age=300); hapus cookie sesi normal.",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/SessionEnvelope"
-                    },
-                    {
-                      "$ref": "#/components/schemas/AccountRecoveryEnvelope"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated",
-            "description": "invalid_credentials"
-          },
-          "403": {
-            "$ref": "#/components/responses/Forbidden",
-            "description": "account_suspended"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "End this session (Slice 2)",
-        "description": "Clears the cookie; revokes this session's refresh (traveler: Redis denylist + drop family).",
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "nativeBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Logged out"
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
     "/auth/logout-all": {
       "post": {
         "tags": [
@@ -1020,17 +247,10 @@
         "description": "Revokes all sessions + refresh families for the Account (e.g. after a password change or suspected compromise).",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "204": {
             "description": "All sessions revoked"
@@ -1047,401 +267,6 @@
         }
       }
     },
-    "/auth/otp/resend": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Resend OTP code (cooldown)",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "202": {
-            "description": "Resend accepted (cooldown enforced, R2)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "resend_in_seconds": {
-                              "type": "integer",
-                              "example": 30
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/refresh": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Rotate the session (Slice 2)",
-        "description": "The refresh token is a separate root-scoped HttpOnly cookie so traveler middleware can renew an expired access JWT before SSR; it remains Secure outside local development and SameSite=Lax, and POST /auth/refresh requires the double-submit CSRF token. Rotation issues one new family member plus a fresh short-TTL access cookie. A duplicate inside the 10-second browser-concurrency grace returns 409 without minting a second member or revoking the winner; a delayed replay revokes the whole family (R6, theft detection).",
-        "security": [
-          {
-            "refreshCookie": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Rotated; fresh access cookie set",
-            "headers": {
-              "Set-Cookie": {
-                "$ref": "#/components/headers/SessionCookie"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Envelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated",
-            "description": "refresh_reuse_detected (family revoked) / refresh_expired"
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict",
-            "description": "Another browser/SSR request already rotated this refresh member. Cookies are preserved so the winning response can install the successor."
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/register": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Email + password sign-up",
-        "description": "Validates (bcrypt cost 12 R1; age >= 18 using the server UTC calendar date; username unique; phone normalized to E.164; consent hash matches served doc R13b; `return_to` allowlisted) before identity writes. Creates account(status=pending) + traveler_profile(status=pending) holding the submitted identity (encrypted) + records consent (append-only), then sends an email OTP (R2). The pending step emits no registration event; successful OTP activation atomically emits the contracted five-event set. No-enumeration (strict): if the email already exists, returns the same generic 202 and emails a 'sign in / reset' notice instead of an OTP. `username` is public so `CONFLICT` (409, detail field `username`) may be revealed.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RegisterRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "202": {
-            "description": "Verification required (generic, also returned when email already exists)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "status": {
-                              "type": "string",
-                              "const": "verification_required"
-                            },
-                            "email_masked": {
-                              "type": "string",
-                              "example": "yâ€¢â€¢@email.com"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "409": {
-            "$ref": "#/components/responses/Conflict",
-            "description": "CONFLICT with error.details[].field=username â€” username is public"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/reset-password": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Complete password reset (Slice 2)",
-        "description": "Validates the reset token (single-use, unexpired, hashed at rest); sets the new password (bcrypt cost 12, R1); revokes all existing sessions + refresh families (force re-login). The reset token travels in the emailed link â€” never logged.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "token",
-                  "password"
-                ],
-                "properties": {
-                  "token": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string",
-                    "format": "password",
-                    "minLength": 12,
-                    "maxLength": 128,
-                    "description": "Must contain an ASCII letter and digit. New password input must fit 72 UTF-8 bytes; oversized input returns VALIDATION before hashing. Never truncate.",
-                    "x-max-utf8-bytes": 72
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Password reset",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Envelope"
-                }
-              }
-            }
-          },
-          "410": {
-            "description": "PASSWORD_RESET_UNUSABLE: expired, consumed, unknown or undeliverable proof",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemEnvelope"
-                }
-              }
-            }
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError",
-            "description": "VALIDATION for invalid password or required input; unusable reset proofs return 410 PASSWORD_RESET_UNUSABLE"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/username-available": {
-      "get": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Live username availability (ADR-0011 R5)",
-        "description": "Rate-limited, generic. Never reveals who owns a taken handle. `suggestions` only present when taken.",
-        "parameters": [
-          {
-            "name": "username",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Availability result",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "available": {
-                              "type": "boolean"
-                            },
-                            "suggestions": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              },
-                              "example": [
-                                "sulaimanfahmi1",
-                                "sulaiman_fahmi"
-                              ]
-                            }
-                          },
-                          "required": [
-                            "available"
-                          ]
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
-    "/auth/verify-email": {
-      "post": {
-        "tags": [
-          "auth"
-        ],
-        "summary": "Confirm OTP, activate, sign in",
-        "description": "Constant-time compare of code_hash with expiry and attempt limits. Atomically consumes the still-valid OTP, activates its pending account and establishes the HttpOnly cookie session. The first verification timestamp is preserved. A completed same-key, same-body HTTP idempotency replay returns the stored result without minting another session. A new request with an invalid, expired or consumed proof cannot authenticate an already-active account.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "email",
-                  "code"
-                ],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "code": {
-                    "type": "string",
-                    "example": "123456"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Verified; session cookie set",
-            "headers": {
-              "Set-Cookie": {
-                "$ref": "#/components/headers/SessionCookie"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SessionEnvelope"
-                }
-              }
-            }
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError",
-            "description": "VALIDATION with error.details[].field=code and error.details[].code=otp_invalid or otp_expired"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited",
-            "description": "RATE_LIMITED: verification attempt limit reached"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
     "/comments/{id}/like": {
       "post": {
         "tags": [
@@ -1450,9 +275,6 @@
         "summary": "Like a comment or reply (idempotent)",
         "description": "Records one like per (comment, profile). IDEMPOTENT by construction (PK on comment_like): a repeat like is a no-op and emits no second event. Increments like_count in the same tx. Emits `comment.liked` (opaque profile_id only â€” R11). Likes NEVER reorder comments (no like-ranking; order stays chronological). Returns the updated like state. Malformed reference identifiers are rejected with 422 VALIDATION before persistence access.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -1520,9 +342,6 @@
         "description": "Removes the traveler's like on this comment. IDEMPOTENT: a no-op DELETE if no like existed (no event). Decrements like_count in the same tx. Emits `comment.unliked` when a like was actually removed (opaque profile_id only â€” R11). Malformed reference identifiers are rejected with 422 VALIDATION before persistence access.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -1588,18 +407,12 @@
         "description": "Append-only; records source=reconsent, the served-locale hash (R13b). Used when a MAJOR version is effective. Gated writes return 409 reconsent_required until accepted. Honors `Idempotency-Key` (ADR-0003 / Q5) so a double-submit cannot create duplicate consent rows.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -1821,9 +634,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -1897,9 +707,6 @@
         "summary": "Create a comment, OR a one-level reply (parent_comment_id)",
         "description": "A signed-in Traveler posts a comment on the Content. If `parent_comment_id` is present it is a one-level REPLY (max depth 1): the use case REJECTS the reply with 422 `COMMENT_MAX_DEPTH` if the target parent itself has a parent (a reply cannot be replied to â€” D10). Body is UNTRUSTED plain text, stored as-is and HTML-escaped on render (NOT the WYSIWYG/sanitize path â€” OQ-19). Emits `comment.created` (a reply carries parent_comment_id) via the outbox in the same tx (ADR-0003). NO body text in the event (R11). Malformed reference identifiers are rejected with 422 VALIDATION before persistence access.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -2033,120 +840,6 @@
         }
       }
     },
-    "/healthz": {
-      "get": {
-        "summary": "Liveness probe",
-        "description": "Engine-level health check mounted on the root engine (NOT under the surface server). Returns `{status:\"ok\"}`. Placed in the apps contract for discoverability; the path-level `servers` override pins it to root `/`.",
-        "responses": {
-          "200": {
-            "description": "Success â€” standard response envelope.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Envelope"
-                }
-              }
-            }
-          }
-        },
-        "security": []
-      },
-      "servers": [
-        {
-          "url": "/",
-          "description": "root engine (not surface-scoped)"
-        }
-      ],
-      "x-floopel-engine-level": true
-    },
-    "/api/webhooks/v1/resend": {
-      "post": {
-        "tags": [
-          "email-webhook"
-        ],
-        "summary": "Resend delivery/bounce webhook (signature-verified; untrusted payload)",
-        "description": "Inbound provider callback for delivery/bounce/complaint events (PRD-0015 BE-6.2, ADR-0038 OQ-6). Mounted on the ROOT engine â€” NOT a surface-scoped/console route: UNAUTHENTICATED (no session) but with MANDATORY signature verification on every call (Resend/Svix headers `svix-id`/`svix-timestamp`/`svix-signature` verified against the server-side `RESEND_WEBHOOK_SECRET`). An unverified/malformed signature is rejected 401 and produces no event. The payload is untrusted and stored PII-minimal (email masked, normalized bounce type, no provider diagnostic free-text). Idempotent â€” deduped by the provider event id (svix-id). Emits `email.delivered` / `email.bounced`. The path-level `servers` override pins it to root `/`.",
-        "security": [],
-        "parameters": [
-          {
-            "name": "svix-id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Svix message id â€” also the idempotency/dedupe key."
-          },
-          {
-            "name": "svix-timestamp",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Unix-seconds signing timestamp (checked against a freshness window)."
-          },
-          {
-            "name": "svix-signature",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Space-separated `v1,<base64 HMAC-SHA256>` signatures over `{id}.{timestamp}.{body}`."
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "description": "Opaque provider payload â€” verified by signature FIRST, then parsed as untrusted input.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResendWebhookPayload"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Accepted (verified). Idempotent â€” a duplicate provider event id or a non-delivery event type is a no-op 204."
-          },
-          "401": {
-            "description": "Signature verification failed (missing/stale/forged) â€” uniform, no detail leak."
-          },
-          "422": {
-            "description": "422 VALIDATION: unreadable body, invalid JSON after signature verification, or missing verified event ID.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Envelope"
-                },
-                "example": {
-                  "meta": {
-                    "request_id": "11111111-1111-4111-8111-111111111111",
-                    "timestamp": 0,
-                    "code": "VALIDATION"
-                  },
-                  "error": {
-                    "message": "invalid webhook payload"
-                  }
-                }
-              }
-            }
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      },
-      "servers": [
-        {
-          "url": "/",
-          "description": "root engine (not surface-scoped)"
-        }
-      ],
-      "x-floopel-engine-level": true
-    },
     "/interests": {
       "get": {
         "tags": [
@@ -2210,16 +903,10 @@
         "summary": "Create a private itinerary",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
-          {
-            "$ref": "#/components/parameters/Csrf"
-          },
           {
             "$ref": "#/components/parameters/ItineraryOperationKey"
           }
@@ -2350,120 +1037,6 @@
         }
       }
     },
-    "/itineraries/claim": {
-      "post": {
-        "tags": [
-          "itinerary"
-        ],
-        "summary": "Claim anonymous draft (ADR-0010) (authed)",
-        "description": "Client draft is untrusted (R15): server validates spot IDs exist & are approved, caps counts/sizes, rejects malformed. ALWAYS creates a NEW separate trip (never merge/overwrite â€” ADR-0010 claim-conflict). Boundary: this is an itinerary-domain resource invoked at the auth gate; the canonical itinerary contract lives in PRD-0003 â€” keep in sync.",
-        "security": [
-          {
-            "cookieAuth": []
-          },
-          {
-            "nativeBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "example": "A day in Ubud"
-                  },
-                  "days": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "stops": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "spot_id": {
-                                "type": "string",
-                                "format": "uuid"
-                              },
-                              "note": {
-                                "type": "string"
-                              },
-                              "duration_min": {
-                                "type": "integer"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "New trip created from the claimed draft",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Envelope"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "properties": {
-                            "itinerary_id": {
-                              "type": "string",
-                              "format": "uuid"
-                            },
-                            "owner_profile_id": {
-                              "type": "string",
-                              "format": "uuid"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthenticated"
-          },
-          "422": {
-            "$ref": "#/components/responses/ValidationError",
-            "description": "unknown_spot / too_large"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        }
-      }
-    },
     "/itineraries/{id}": {
       "get": {
         "tags": [
@@ -2473,9 +1046,6 @@
         "description": "PUBLIC for a CURATED itinerary (no account needed â€” the home 'Floopel-recommended' rail links here); an authed OWNER also reads their OWN private one via OptionalAuth (the session cookie is honoured when present, never required). An unreadable/private itinerary returns 404 (no existence leak), never 401.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -2529,18 +1099,12 @@
         "summary": "Update own itinerary",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "requestBody": {
@@ -2600,18 +1164,12 @@
         "summary": "Delete own itinerary",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "responses": {
@@ -2646,9 +1204,6 @@
         "description": "Owner-only publish-readiness recovery path. The image enters the existing restricted asynchronous media pipeline and becomes the itinerary's current explicit cover. JPEG, PNG, or WebP only; SVG is rejected; maximum 5 MiB.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -2658,9 +1213,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "requestBody": {
@@ -2715,9 +1267,6 @@
         "description": "Owner-only parent-scoped polling route. It never resolves an arbitrary media id.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -2756,18 +1305,12 @@
         "summary": "Clone a curated itinerary into a private copy",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           },
           {
             "$ref": "#/components/parameters/ItineraryOperationKey"
@@ -2821,9 +1364,6 @@
         "description": "Owner-only. Sets a present, non-empty title on the day; a null/empty title clears it. Returns the updated itinerary detail (PRD-0011 OQ-23).",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -2838,9 +1378,6 @@
             "schema": {
               "type": "integer"
             }
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "requestBody": {
@@ -2902,9 +1439,6 @@
         "summary": "Duplicate a day (copies its stops)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -2919,9 +1453,6 @@
             "schema": {
               "type": "integer"
             }
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "responses": {
@@ -2970,18 +1501,12 @@
         "summary": "Add a stop (references a Spot)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           },
           {
             "$ref": "#/components/parameters/ItineraryOperationKey"
@@ -3042,18 +1567,12 @@
         "summary": "Reorder / re-group stops across days (bulk)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "requestBody": {
@@ -3112,9 +1631,6 @@
         "summary": "Edit / move a stop (day, position, overrides)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -3124,9 +1640,6 @@
           },
           {
             "$ref": "#/components/parameters/StopId"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "requestBody": {
@@ -3183,9 +1696,6 @@
         "summary": "Remove a stop",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -3195,9 +1705,6 @@
           },
           {
             "$ref": "#/components/parameters/StopId"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "responses": {
@@ -3813,9 +2320,6 @@
         "description": "No raw PII beyond the owner's own display fields. pending_reconsent is empty when none (terms and privacy can both be pending).",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -3895,9 +2399,6 @@
         "summary": "Get own emergency contact (authed)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -3950,17 +2451,10 @@
         "description": "Collected progressively (when joining a real-world trip), not at sign-up. Stored encrypted at rest (ADR-0011), kept out of tokens/events.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4015,17 +2509,10 @@
         "description": "Validated against the live active interest vocabulary; pick >= 3 (skippable). The selectable interest list is **data-driven**, served by `GET /interests` (PRD-0016 G6 â€” the hardcoded `InterestTag` enum was retired; ADR-0039 / PRD-0016 OQ-2). `interest_ids` are plain interest slugs; unknown/inactive slugs are rejected (422). The Interests screen sources options from `GET /interests`.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4101,9 +2588,6 @@
         "operationId": "getMyInterests",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -4158,9 +2642,6 @@
         "summary": "My itineraries (authed, private)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -4211,17 +2692,10 @@
         "description": "Partial update of the traveler's editable personal info from Settings. PII (name, phone) encrypted at rest (ADR-0011); never returned beyond the owner's own fields.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4278,9 +2752,6 @@
         ],
         "summary": "My saved spots (authed)",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -4339,9 +2810,6 @@
         "summary": "Get own settings (notifications + privacy) (authed)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -4386,17 +2854,10 @@
         "summary": "Update own settings (authed)",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -4549,9 +3010,6 @@
         "description": "Public-safe profile fields with optional Web cookie or native bearer authentication. An active authenticated owner may preview their own profile when profile_discoverable is false. Ownership is checked by stable profile_id from the verified principal, never by a claimed username/account_id/query value. Anonymous and other viewers receive identical 404 responses for hidden, inactive and missing profiles. Discoverability is not changed by preview. counts.saved_spots remains null for non-owners and an integer only for the owner. Owner responses are private/no-store and never written to shared profile caches. Display names are owner-approved; bio is untrusted plain text. No email, DOB or phone is exposed. Invalid native credentials return 401; conflicting Web/native transports return 422.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -4943,18 +3401,12 @@
         "summary": "Save (bookmark) a spot",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           },
           {
             "$ref": "#/components/parameters/RecommendationID"
@@ -4985,18 +3437,12 @@
         "summary": "Unsave a spot",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/Id"
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           }
         ],
         "responses": {
@@ -5288,9 +3734,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5305,9 +3748,6 @@
         "summary": "Buat Trip dari itinerary milik sendiri dengan zona Spot pertama",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5317,9 +3757,6 @@
           },
           {
             "$ref": "#/components/parameters/TripOperationKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -5485,9 +3922,6 @@
         "summary": "List Trips where the caller has active membership",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5561,9 +3995,6 @@
         ],
         "summary": "Read a Trip as Organizer or accepted Participant",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -5666,9 +4097,6 @@
         "summary": "Perbarui nama, jadwal dan rentang yang belum dibuka",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5678,9 +4106,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -5754,9 +4179,6 @@
         "summary": "Read the Trip working itinerary through active membership",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5793,9 +4215,6 @@
         "description": "Enumeration-safe accepted response. Email is normalized, encrypted, and blind-indexed server-side.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -5805,9 +4224,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -5964,9 +4380,6 @@
         "summary": "List invitations as Organizer",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6005,9 +4418,6 @@
         "summary": "Resend the pending invitation without extending its expiry",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6020,9 +4430,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6119,9 +4526,6 @@
         "summary": "Revoke a pending invitation as Organizer",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6134,9 +4538,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6171,9 +4572,6 @@
         ],
         "summary": "List Organizer and accepted Participants",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -6210,9 +4608,6 @@
         "summary": "Remove a Participant as Organizer",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6225,9 +4620,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6263,9 +4655,6 @@
         "summary": "Leave a Trip; sole Organizer receives a transfer-or-cancel conflict",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6275,9 +4664,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6334,9 +4720,6 @@
         "summary": "Atomically transfer Organizer to an accepted Participant",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6346,9 +4729,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -6401,9 +4781,6 @@
         "summary": "Cancel a Trip as Organizer",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6413,9 +4790,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6479,9 +4853,6 @@
         "description": "Idempotently transitions an active Trip to completed after its start date is reached in the Trip timezone. Passing the planned end date never completes a Trip automatically.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6491,9 +4862,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6586,9 +4954,6 @@
         "summary": "Publish or republish the owner's current draft as an immutable snapshot",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6598,9 +4963,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -6643,9 +5005,6 @@
         "summary": "Stop public or unlisted distribution without deleting clones",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6655,9 +5014,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6690,9 +5046,6 @@
         "summary": "Change whether the current public publication can be cloned",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6702,9 +5055,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -6756,9 +5106,6 @@
         "summary": "Inspect link status without returning the bearer secret",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6796,9 +5143,6 @@
         "description": "Returns the complete bearer URL exactly once. Repeating the same Idempotency-Key returns the recorded link status without url and does not rotate again. If the initial URL is lost, explicitly rotate using a new Idempotency-Key; rotation invalidates the previous URL.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6808,9 +5152,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -6844,9 +5185,6 @@
         "summary": "Revoke the active link; always available regardless of future package",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -6856,9 +5194,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -7070,9 +5405,6 @@
         "summary": "List invitations addressed to the caller",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7144,9 +5476,6 @@
         "summary": "Accept or decline an invitation as its invitee",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7174,9 +5503,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -7319,9 +5645,6 @@
         "description": "Does not disclose the block to the inviter and does not remove an existing accepted membership.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7331,9 +5654,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -7366,9 +5686,6 @@
         "summary": "Report invitation abuse to the shared moderation queue",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7378,9 +5695,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -7427,9 +5741,6 @@
         "description": "Claim only binds identity after verified-email blind-index equality; it does not accept the invitation or grant Trip membership.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7446,9 +5757,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -7530,9 +5838,6 @@
         "summary": "List discoverable public itinerary publications for a traveler profile",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -7649,9 +5954,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7696,9 +5998,6 @@
         "description": "Server captures immutable evidence from the public publication, published curated source, or working Trip visible to the authenticated active participant. Owner, nonmember, left/removed member, draft curated and moderated targets return 404. No arbitrary evidence or caller-selected private fields. Private Trip snapshots remain behind governed sensitive access and are excluded from the generic report snapshot.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7708,9 +6007,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -7757,9 +6053,6 @@
         "description": "Never returns reporter identity or internal moderation notes.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7795,9 +6088,6 @@
         "summary": "Read the owner's appeal for a moderation action",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7831,9 +6121,6 @@
         "summary": "Submit the single active owner appeal for a moderation action",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -7843,9 +6130,6 @@
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -7880,43 +6164,6 @@
         }
       }
     },
-    "/static-pages/{page_key}": {
-      "parameters": [
-        {
-          "$ref": "#/components/parameters/PageKey"
-        }
-      ],
-      "get": {
-        "operationId": "getPublicStaticPage",
-        "tags": [
-          "Apps Static Page"
-        ],
-        "summary": "Get one localized current published Static Page",
-        "description": "Returns only the requested locale from the current immutable published revision. There is no cross-locale fallback and no draft exposure. Web maps `about` to `/{locale}/about` and owns canonical, hreflang, JSON-LD, footer, and sitemap behavior.",
-        "security": [],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/RequiredLocale"
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/PublicStaticPageResponse"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotPublished"
-          },
-          "503": {
-            "$ref": "#/components/responses/Unavailable"
-          }
-        },
-        "x-error-codes": [
-          "STATIC_PAGE_UNKNOWN_KEY",
-          "STATIC_PAGE_NOT_PUBLISHED",
-          "STATIC_PAGE_TEMPORARILY_UNAVAILABLE"
-        ]
-      }
-    },
     "/me/security": {
       "get": {
         "tags": [
@@ -7924,9 +6171,6 @@
         ],
         "summary": "Read authenticated Traveler credential capabilities",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -7978,17 +6222,10 @@
         "description": "Trusted session profile selects the account. Active verified Traveler only. Google-only accounts must use setup. Revokes all refresh tokens and stateful sessions. Existing Traveler access JWTs can remain usable for up to 15 minutes; caller should clear its session after success. No automatic mutation retries. Limited to 5 attempts per 15 minutes per authenticated account across profiles/IPs, in addition to IP limits. Limiter unavailability fails closed with INTERNAL (500).",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -8069,17 +6306,10 @@
         "description": "No request body or recipient is accepted. Stored verified account email receives the existing single-use reset proof. A generic 202 does not guarantee delivery. Existing password or absent Google identity returns CONFLICT. Completion uses /auth/reset-password and preserves Google identity.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/CsrfToken"
-          }
-        ],
+        "parameters": [],
         "responses": {
           "202": {
             "description": "Generic accepted",
@@ -8236,18 +6466,12 @@
         "description": "Target Trip merupakan Open Trip publik eligible milik organizer lain, bukan itinerary. Snapshot hanya fakta publik server. Pengajuan laporan tidak menyembunyikan Trip otomatis. Pesan pelapor dienkripsi. Trip membutuhkan Idempotency-Key dan menyediakan own receipt/recovery; replay kasus yang sudah dibuat tetap boleh membaca receipt meski target kemudian hidden. Respons no-store. Invalid target/self-organizer404; key/body conflict409; alasan/key/detail invalid422.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/ReportOperationKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "requestBody": {
@@ -8388,68 +6612,11 @@
         "operationId": "createCatalogReport"
       }
     },
-    "/auth/account-deletion-context": {
-      "post": {
-        "operationId": "createAccountDeletionContext",
-        "summary": "Re-authenticate for a deletion-only capability",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/AccountErasureCsrfToken"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeletionAuthenticationRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Five-minute restricted context issued; no normal session is created.",
-            "headers": {
-              "Set-Cookie": {
-                "$ref": "#/components/headers/DeletionContextCookie"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeletionContextEnvelope"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/AccountErasureUnauthenticated"
-          },
-          "429": {
-            "$ref": "#/components/responses/AccountErasureRateLimited"
-          },
-          "503": {
-            "$ref": "#/components/responses/SystemMaintenance"
-          }
-        },
-        "description": "Purpose ditentukan server dari state Account setelah kredensial diverifikasi: active -> request; pending -> cancel. Context request terikat normal session/Account/profil dan tidak dapat meminta penghapusan akun lain. Context cancel tidak menerbitkan normal session. Pada erasing tidak menerbitkan kemampuan cancel. Verifikasi, pengajuan dan pembatalan berbagi kuota 10 request per 15 menit per client IP, terpisah dari pembacaan status.",
-        "x-access-policy": {
-          "kind": "pre_authentication"
-        }
-      }
-    },
     "/me/account-deletion": {
       "get": {
         "operationId": "getMyAccountDeletion",
         "summary": "Read the caller's account-deletion state",
         "security": [
-          {
-            "AccountErasurecookieAuth": []
-          },
-          {
-            "deletionContext": []
-          },
           {
             "nativeBearer": []
           },
@@ -8547,13 +6714,6 @@
         "description": "Requires an active normal session and matching request-purpose context. MVP requires Traveler to be the Account's sole active Profile; otherwise return ACCOUNT_HAS_OTHER_ACTIVE_PROFILES with no state change. FR-15: sebelum penerimaan, backend memeriksa seluruh membership Traveler; membership active sebagai organizer atau participant pada Trip active menghasilkan 409 ACCOUNT_HAS_ACTIVE_TRIPS tanpa lifecycle, event/notifikasi penerimaan, deadline, pencabutan sesi atau perubahan visibilitas profil. Trip completed/cancelled serta membership left/removed tidak menghalangi. Pemeriksaan gagal tidak boleh dianggap eligible. Penerimaan wajib menjaga invariant terhadap create/join/accept invitation bersamaan. Acceptance snapshots the currently configured grace policy (default 30 days) into a server-computed UTC deadline, restricts the Account, revokes sessions, and stages durable lifecycle evidence and notice intent atomically. Observasi event hanya post-commit best-effort. Lock Account yang sama wajib dipakai create/join/accept invitation sebelum pembentukan membership. Guard multi-Profile didahulukan. Replay request yang sudah diterima dengan context request yang masih valid dan terikat idempotency key yang sama membaca lifecycle existing tanpa membuat efek baru; ini pengecualian sempit terhadap kebutuhan normal session yang sudah dicabut. Verifikasi, pengajuan dan pembatalan berbagi kuota 10 request per 15 menit per client IP, terpisah dari pembacaan status. Native memakai Bearer terverifikasi dan/atau X-Account-Deletion-Context sesuai purpose. Credential Web/native yang bercampur ditolak 422; proof native tidak diterima sebagai cookie Web. Tidak menerbitkan normal session saat pemulihan/pembatalan.",
         "security": [
           {
-            "AccountErasurecookieAuth": [],
-            "deletionContext": []
-          },
-          {
-            "deletionContext": []
-          },
-          {
             "nativeBearer": [],
             "nativeDeletionContext": []
           },
@@ -8564,9 +6724,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/AccountErasureIdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/AccountErasureCsrfToken"
           }
         ],
         "responses": {
@@ -8608,18 +6765,12 @@
         "description": "Requires a matching cancel-purpose context. Success restores Account status but no old or new normal session; the Traveler signs in again. Verifikasi, pengajuan dan pembatalan berbagi kuota 10 request per 15 menit per client IP, terpisah dari pembacaan status. Native memakai Bearer terverifikasi dan/atau X-Account-Deletion-Context sesuai purpose. Credential Web/native yang bercampur ditolak 422; proof native tidak diterima sebagai cookie Web. Tidak menerbitkan normal session saat pemulihan/pembatalan.",
         "security": [
           {
-            "deletionContext": []
-          },
-          {
             "nativeDeletionContext": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/AccountErasureIdempotencyKey"
-          },
-          {
-            "$ref": "#/components/parameters/AccountErasureCsrfToken"
           }
         ],
         "responses": {
@@ -8660,9 +6811,6 @@
         "description": "Shared engine for Content, public/published curated Itinerary and approved Location/Spot. Private/unlisted itinerary and inaccessible targets return NOT_FOUND. Same-target one-level replies only. Existing authentication, consent, CSRF and rate limits apply.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -8768,9 +6916,6 @@
         "description": "Shared engine for Content, public/published curated Itinerary and approved Location/Spot. Private/unlisted itinerary and inaccessible targets return NOT_FOUND. Same-target one-level replies only. Existing authentication, consent, CSRF and rate limits apply.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -8854,9 +6999,6 @@
         "description": "Total komentar dan balasan visible untuk target yang dapat diakses. Counter tersimpan diperbarui atomik pada transaksi mutasi; tanpa COUNT atau scan komentar pada request. Anonimisasi author tidak mengurangi total. Cache-Control: private, no-store.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -8961,9 +7103,6 @@
         "description": "Bounded stored visible counters, including replies. Known empty threads return zero; unavailable targets are omitted. Uses the same eligibility as public comment threads. No comment scans or per-card queries. Optional-auth-strict; private, no-store.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -9237,9 +7376,6 @@
         "operationId": "get_apps_v1_gamification_participations_participation_id",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -9359,9 +7495,6 @@
         "description": "Konten aktivitas dari bound revision pemilik; aktivitas terkunci ditolak409. Pilihan ditampilkan tanpa kunci jawaban, explanation hanya setelah selesai. Tidak membutuhkan execution credential. Owner mismatch404; cookie dan Bearer bersamaan422. Expiry direkonsiliasi atomik. Cache-Control: private, no-store.",
         "operationId": "getOwnQuestActivity",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -10544,9 +8677,6 @@
         },
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -11287,9 +9417,6 @@
         },
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -11524,9 +9651,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -11750,9 +9874,6 @@
         "description": "Public-safe distinct Badges backed by granted rewards on eligible completed exploration Quests. Optional Web cookie/native bearer authentication permits the active owner to preview their non-discoverable profile by stable profile_id. Non-owners receive identical 404 for hidden, inactive or missing profiles. Bound/current Hidden revisions, unsupported or revoked-only grants remain excluded. Images use the existing Media resolver. Cache-Control: no-store. Invalid native credentials return 401; conflicting transports 422.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -11978,9 +10099,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -12134,9 +10252,6 @@
         "description": "Organizer Trip aktif mengunggah gambar JPEG/PNG/WebP maksimum5MiB melalui pipeline media privat existing. Role/status diperiksa kembali dengan lock setelah admission. Banner hanya terikat Trip ini; tidak mengubah itinerary. Cookie web membutuhkan CSRF; native Bearer menggunakan exemption existing. Kegagalan/ketiadaan banner menggunakan fallback foto Spot pada consumer.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -12149,9 +10264,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "$ref": "#/components/parameters/Csrf"
           },
           {
             "$ref": "#/components/parameters/IdempotencyKey"
@@ -12289,9 +10401,6 @@
         "summary": "Baca status banner Trip",
         "description": "Member aktif membaca status gambar yang sedang terikat Trip. Tidak menerima media_id bebas. Banner yang ready diproyeksikan pada banner_image GET Trip/daftar Trip. Kegagalan/ketiadaan banner menggunakan fallback foto Spot pada consumer.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -12534,9 +10643,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -12712,9 +10818,6 @@
         "operationId": "listNotifications",
         "description": "Hanya inbox akun sendiri; urutan occurred_at DESC,id DESC. occurred_at adalah waktu outcome domain dari server; id menjadi tie-breaker saat waktunya sama. Replay mempertahankan id dan occurred_at. created_at hanya waktu penyimpanan inbox; waktu arrival/attempt push tidak menentukan urutan. Parameter page/per_page tetap berlaku sebagai pengambilan batch internal; UI Mobile memakai infinite scroll tanpa nomor halaman/Previous/Next/Load more. Metadata pagination atau batch kosong menentukan akhir append. Urutan deterministik pada himpunan item yang sama. GET tidak mark read. Meta.pagination wajib pada respons list.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -12978,9 +11081,6 @@
         "description": "Jumlah item milik akun dengan read_at NULL; tidak mengubah state.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -13178,9 +11278,6 @@
         "operationId": "getNotification",
         "description": "Load milik akun, read-only termasuk prefetch. Target domain memeriksa akses sendiri.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -13467,9 +11564,6 @@
         "description": "Client memanggil setelah membuka inbox item/push dan berhasil load item milik akun setelah login. Tanpa request body. Set read_at server hanya bila NULL; retry mengembalikan timestamp pertama. Fetch list, GET detail sendiri, penerimaan push, dan CTA sukses bukan pemicu otomatis.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -13736,15 +11830,6 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "X-CSRF-Token",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Wajib untuk cookie session; Bearer native tidak memerlukan CSRF. Gunakan middleware CSRF existing."
           }
         ],
         "tags": [
@@ -14603,9 +12688,6 @@
         "summary": "Baca status request foto milik sendiri",
         "description": "Read-only; owner dari profile_id principal. ID milik profil lain dan ID tidak ditemukan memberikan404 yang sama. Tidak menerbitkan signed URL/expiry dan tidak mengubah referensi foto. status failed juga mencakup request yang sudah digantikan.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -20480,9 +18562,6 @@
         "security": [
           {},
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -20995,9 +19074,6 @@
         "operationId": "getMyQuestCatalog",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ]
@@ -21013,9 +19089,6 @@
         "description": "Filter server sebelum pagination. Urutan starts_on,created_at,id. Sembunyikan Trip private/hidden/non-active, organizer nonpublik/inaktif, tanpa Spot+Location approved dan jadwal telah berakhir. Kredensial yang dikirim tetapi invalid tidak menjadi guest. Semua respons handler memakai Cache-Control:no-store. can_apply_only=true adalah katalog personal Explorer: wajib Identity Traveler aktif dan semua item masih eligible untuk pengajuan oleh principal pada saat read. Bukan reservasi kuota; command admission memeriksa ulang. Filter personal diterapkan sebelum pagination; absent/false tidak mengubah katalog umum.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -21316,9 +19389,6 @@
         "description": "Detail active boleh menunjukkan schedule_state=ended, tetapi semua admission ditutup. Eligibility diperiksa ulang pada read; private/hidden/unavailable404. Tidak membuka itinerary privat atau roster. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {},
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -21823,9 +19893,6 @@
         "description": "Actor akun Traveler aktif. Pending tidak memakai slot; hanya dalam registration range, sebelum akhir jadwal dan masih kuota. Kunci/fingerprint durable; replay hasil sama tidak membuat episode baru. Approval organizer tetap diperlukan. CONFLICT untuk duplicate pending/member/full/window tertutup/kunci body berbeda; VALIDATION untuk pesan/kunci invalid. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -21835,9 +19902,6 @@
           },
           {
             "$ref": "#/components/parameters/TripOperationKey"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -22041,9 +20105,6 @@
         "description": "Daftar milik profil sesi saja, termasuk outcome historis; keyset created_at/id. Tidak memberi hak membaca Trip setelah membership hilang. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -22242,9 +20303,6 @@
         "description": "Pemohon atau organizer actual; outsider404. can_approve/can_withdraw dan reason dihitung dari fakta saat read, write tetap memeriksa ulang. Target notifikasi membuka reader ini, bukan otomatis full Trip. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -22423,9 +20481,6 @@
         "summary": "Daftar pengajuan untuk organizer actual",
         "description": "Hanya organizer actual yang masih anggota; outsider404, anggota non-organizer403. Tanpa reservasi kuota pending. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -22638,18 +20693,12 @@
         "description": "Literal action, tidak menerima status/actor dari client. Replay status terminal yang sama tidak mengulang membership/notifikasi. Terminal berbeda409. Approve organizer mengunci akun/Trip lalu memeriksa range, akhir jadwal, eligibility, membership dan5 slot secara atomik. Pending setelah range tutup tidak boleh approve; buat invitation baru. Withdraw hanya pemohon dan tidak implicit leave. Approval vs invitation/withdraw diserialisasi pada Trip. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/TripApplicationId"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -22808,18 +20857,12 @@
         "description": "Literal action, tidak menerima status/actor dari client. Replay status terminal yang sama tidak mengulang membership/notifikasi. Terminal berbeda409. Approve organizer mengunci akun/Trip lalu memeriksa range, akhir jadwal, eligibility, membership dan5 slot secara atomik. Pending setelah range tutup tidak boleh approve; buat invitation baru. Withdraw hanya pemohon dan tidak implicit leave. Approval vs invitation/withdraw diserialisasi pada Trip. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/TripApplicationId"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -22948,18 +20991,12 @@
         "description": "Literal action, tidak menerima status/actor dari client. Replay status terminal yang sama tidak mengulang membership/notifikasi. Terminal berbeda409. Approve organizer mengunci akun/Trip lalu memeriksa range, akhir jadwal, eligibility, membership dan5 slot secara atomik. Pending setelah range tutup tidak boleh approve; buat invitation baru. Withdraw hanya pemohon dan tidak implicit leave. Approval vs invitation/withdraw diserialisasi pada Trip. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
         "parameters": [
           {
             "$ref": "#/components/parameters/TripApplicationId"
-          },
-          {
-            "$ref": "#/components/parameters/CsrfToken"
           }
         ],
         "responses": {
@@ -23111,9 +21148,6 @@
         "summary": "Pulihkan hasil create Trip",
         "description": "Lookup durable per profil+operation key, recheck membership terkini. Tidak mengulangi create, tidak menyajikan snapshot izin lama. Semua respons handler memakai Cache-Control:no-store.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -23267,9 +21301,6 @@
         "summary": "Baca receipt laporan sendiri",
         "description": "Own-only, akun Traveler aktif. Profil lain/hasil tidak ada404. Tidak ada internal note/evidence/audit atau akses target tambahan; status dapat dibaca setelah target hidden. Cache-Control:no-store. Recovery404 bukan bukti request interrupted tidak akan commit; retry key/body yang sama.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -23428,9 +21459,6 @@
         "description": "Own-only, akun Traveler aktif. Profil lain/hasil tidak ada404. Tidak ada internal note/evidence/audit atau akses target tambahan; status dapat dibaca setelah target hidden. Cache-Control:no-store. Recovery404 bukan bukti request interrupted tidak akan commit; retry key/body yang sama.",
         "security": [
           {
-            "cookieAuth": []
-          },
-          {
             "nativeBearer": []
           }
         ],
@@ -23563,9 +21591,6 @@
         "summary": "Baca status notifikasi lifecycle Trip milik penerima",
         "description": "Akun Traveler aktif dan relasi source episode milik profil sesi diperlukan; outsider atau source terhapus404. Historical read terpisah dari delivery eligibility: removed/former dapat membaca status aman, rejoined tidak autojoin. Full Trip hanya lewat reader membership terkini, pemohon lewat own application. Loading/error/unavailable bukan read acknowledgement; inbox ack hanya sesudah authorized visible detail. Cache-Control:no-store.",
         "security": [
-          {
-            "cookieAuth": []
-          },
           {
             "nativeBearer": []
           }
@@ -23810,24 +21835,6 @@
   },
   "components": {
     "schemas": {
-      "ResendWebhookPayload": {
-        "type": "object",
-        "description": "UNTRUSTED Resend/Svix webhook payload (PRD-0015 BE-6.2). Only the fields the handler maps to a PII-minimal record are consumed; unknown fields are ignored. Verified by signature FIRST, then parsed. The recipient is masked on store; no diagnostic free-text is persisted.",
-        "required": [
-          "type"
-        ],
-        "properties": {
-          "type": {
-            "type": "string",
-            "description": "Provider event type (e.g. email.delivered, email.bounced, email.complained) â€” normalized server-side."
-          },
-          "data": {
-            "type": "object",
-            "description": "Provider event data (message id, recipient, timestamps, bounce descriptor). Recipient is masked on store; only a normalized bounce type token is read.",
-            "additionalProperties": true
-          }
-        }
-      },
       "AttachmentTarget": {
         "type": "string",
         "enum": [
@@ -24058,38 +22065,6 @@
           "removed"
         ],
         "description": "hidden = soft/reversible; removed = tombstone (body cleared, row kept)."
-      },
-      "Consent": {
-        "type": "object",
-        "required": [
-          "terms_version",
-          "privacy_version",
-          "locale",
-          "terms_hash",
-          "privacy_hash"
-        ],
-        "properties": {
-          "terms_version": {
-            "type": "string",
-            "example": "1.0"
-          },
-          "privacy_version": {
-            "type": "string",
-            "example": "1.0"
-          },
-          "locale": {
-            "type": "string",
-            "example": "id"
-          },
-          "terms_hash": {
-            "type": "string",
-            "example": "sha256:â€¦"
-          },
-          "privacy_hash": {
-            "type": "string",
-            "example": "sha256:â€¦"
-          }
-        }
       },
       "ContentAttachment": {
         "type": "object",
@@ -25580,59 +23555,6 @@
           }
         }
       },
-      "RegisterRequest": {
-        "type": "object",
-        "required": [
-          "email",
-          "password",
-          "first_name",
-          "last_name",
-          "username",
-          "dob",
-          "nationality_country_code",
-          "consent"
-        ],
-        "properties": {
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "format": "password"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          },
-          "dob": {
-            "type": "string",
-            "format": "date",
-            "description": "Age >= 18 gate evaluated against the server-observed UTC calendar date."
-          },
-          "consent": {
-            "$ref": "#/components/schemas/Consent"
-          },
-          "return_to": {
-            "$ref": "#/components/schemas/ReturnTo"
-          },
-          "nationality_country_code": {
-            "type": "string",
-            "pattern": "^[A-Z]{2}$",
-            "description": "ISO 3166-1 alpha-2 code from the nationality catalog; the server derives the canonical name."
-          }
-        }
-      },
-      "ReturnTo": {
-        "type": "string",
-        "description": "Open-redirect guard: allowlisted to relative in-app paths (e.g. matches ^/[a-z]{2}(/|$)); absolute URLs / non-path schemes are rejected.",
-        "example": "/id/spot/â€¦"
-      },
       "SavedSpot": {
         "type": "object",
         "properties": {
@@ -25644,41 +23566,6 @@
             "format": "date-time"
           }
         }
-      },
-      "SessionData": {
-        "type": "object",
-        "properties": {
-          "profile": {
-            "$ref": "#/components/schemas/Profile"
-          },
-          "pending_reconsent": {
-            "type": [
-              "array",
-              "null"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/ReconsentItem"
-            }
-          },
-          "return_to": {
-            "type": "string"
-          }
-        }
-      },
-      "SessionEnvelope": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Envelope"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "data": {
-                "$ref": "#/components/schemas/SessionData"
-              }
-            }
-          }
-        ]
       },
       "Settings": {
         "type": "object",
@@ -27837,66 +25724,6 @@
         },
         "additionalProperties": false
       },
-      "Locale": {
-        "type": "string",
-        "enum": [
-          "id",
-          "en"
-        ]
-      },
-      "StaticPageKey": {
-        "type": "string",
-        "enum": [
-          "about"
-        ]
-      },
-      "PublicStaticPage": {
-        "type": "object",
-        "required": [
-          "page_key",
-          "locale",
-          "revision_number",
-          "title",
-          "body_html",
-          "seo_title",
-          "seo_description",
-          "published_at"
-        ],
-        "properties": {
-          "page_key": {
-            "$ref": "#/components/schemas/StaticPageKey"
-          },
-          "locale": {
-            "$ref": "#/components/schemas/Locale"
-          },
-          "revision_number": {
-            "type": "integer",
-            "format": "int64",
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "body_html": {
-            "type": "string",
-            "minLength": 1
-          },
-          "seo_title": {
-            "type": "string",
-            "minLength": 1
-          },
-          "seo_description": {
-            "type": "string",
-            "minLength": 1
-          },
-          "published_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
       "AccountSecurity": {
         "type": "object",
         "additionalProperties": false,
@@ -28384,140 +26211,6 @@
         ],
         "description": "Target Trip merupakan Open Trip publik eligible milik organizer lain, bukan itinerary. Snapshot hanya fakta publik server. Pengajuan laporan tidak menyembunyikan Trip otomatis."
       },
-      "PasswordAuthentication": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "method",
-          "email",
-          "password"
-        ],
-        "properties": {
-          "method": {
-            "type": "string",
-            "const": "password"
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "maxLength": 320
-          },
-          "password": {
-            "type": "string",
-            "format": "password",
-            "minLength": 1,
-            "maxLength": 1024
-          }
-        }
-      },
-      "GoogleCodeAuthentication": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "method",
-          "code",
-          "code_verifier",
-          "state"
-        ],
-        "properties": {
-          "method": {
-            "type": "string",
-            "const": "google"
-          },
-          "code": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4096
-          },
-          "code_verifier": {
-            "type": "string",
-            "minLength": 43,
-            "maxLength": 128
-          },
-          "state": {
-            "type": "string",
-            "minLength": 16,
-            "maxLength": 512
-          }
-        }
-      },
-      "GoogleTokenAuthentication": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "method",
-          "id_token",
-          "nonce"
-        ],
-        "properties": {
-          "method": {
-            "type": "string",
-            "const": "google"
-          },
-          "id_token": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 16384
-          },
-          "nonce": {
-            "type": "string",
-            "minLength": 16,
-            "maxLength": 512
-          }
-        }
-      },
-      "DeletionAuthenticationRequest": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/PasswordAuthentication"
-          },
-          {
-            "$ref": "#/components/schemas/GoogleCodeAuthentication"
-          },
-          {
-            "$ref": "#/components/schemas/GoogleTokenAuthentication"
-          }
-        ]
-      },
-      "DeletionContextEnvelope": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "meta",
-          "error",
-          "data"
-        ],
-        "properties": {
-          "meta": {
-            "$ref": "#/components/schemas/Meta"
-          },
-          "error": {
-            "type": "null"
-          },
-          "data": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "purpose",
-              "expires_at"
-            ],
-            "properties": {
-              "purpose": {
-                "type": "string",
-                "enum": [
-                  "request",
-                  "cancel",
-                  "status"
-                ]
-              },
-              "expires_at": {
-                "type": "string",
-                "format": "date-time"
-              }
-            }
-          }
-        }
-      },
       "ActiveDeletionState": {
         "type": "object",
         "additionalProperties": false,
@@ -28758,37 +26451,6 @@
             "$ref": "#/components/schemas/DeletionEligibility"
           }
         }
-      },
-      "AccountRecoveryData": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "account_recovery"
-            ]
-          }
-        },
-        "description": "Identitas terverifikasi; cookie account-erasure 5 menit tanpa sesi aplikasi. Arahkan ke /[locale]/account-recovery; login tidak membatalkan permintaan."
-      },
-      "AccountRecoveryEnvelope": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Envelope"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "data": {
-                "$ref": "#/components/schemas/AccountRecoveryData"
-              }
-            }
-          }
-        ]
       },
       "CommentTargetType": {
         "type": "string",
@@ -32795,30 +30457,6 @@
           }
         }
       },
-      "TripListResponse": {
-        "description": "Trips",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "meta": {
-                  "$ref": "#/components/schemas/Meta"
-                },
-                "error": {
-                  "type": "null"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Trip"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "PRD0005OwnerItineraryResponse": {
         "description": "Itinerary",
         "content": {
@@ -32938,81 +30576,6 @@
                   "$ref": "#/components/schemas/PRD0005ShareLinkCreated"
                 }
               }
-            }
-          }
-        }
-      },
-      "PublicStaticPageResponse": {
-        "description": "One exact-locale current published projection",
-        "content": {
-          "application/json": {
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/Envelope"
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/PublicStaticPage"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        }
-      },
-      "NotPublished": {
-        "description": "`STATIC_PAGE_UNKNOWN_KEY` or `STATIC_PAGE_NOT_PUBLISHED`; response never exposes draft existence",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Envelope"
-            }
-          }
-        }
-      },
-      "Unavailable": {
-        "description": "`STATIC_PAGE_TEMPORARILY_UNAVAILABLE`; state-changing mutations are safe to retry with the same idempotency key, while preview is pure compute and may be requested again Gateway maintenance sistem dibedakan melalui X-Floopel-Maintenance: system; tanpa header ini tetap503 layanan biasa.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Envelope"
-            }
-          },
-          "text/plain": {
-            "schema": {
-              "type": "string"
-            },
-            "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
-          }
-        },
-        "headers": {
-          "X-Floopel-Maintenance": {
-            "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "system"
-              ]
-            }
-          },
-          "Retry-After": {
-            "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "example": 60
-          },
-          "Cache-Control": {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "no-store"
-              ]
             }
           }
         }
@@ -33167,23 +30730,6 @@
           "format": "uuid"
         }
       },
-      "Csrf": {
-        "name": "X-CSRF-Token",
-        "in": "header",
-        "required": true,
-        "schema": {
-          "type": "string"
-        }
-      },
-      "CsrfToken": {
-        "name": "X-CSRF-Token",
-        "in": "header",
-        "required": true,
-        "schema": {
-          "type": "string"
-        },
-        "description": "Anti-CSRF token (ADR-0011 R8)."
-      },
       "DocType": {
         "name": "doc_type",
         "in": "path",
@@ -33317,23 +30863,6 @@
           "format": "uuid"
         }
       },
-      "PageKey": {
-        "name": "page_key",
-        "in": "path",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/StaticPageKey"
-        }
-      },
-      "RequiredLocale": {
-        "name": "locale",
-        "in": "query",
-        "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/Locale"
-        },
-        "description": "Exact requested locale. The server never substitutes another locale."
-      },
       "RecommendationID": {
         "name": "X-Recommendation-ID",
         "in": "header",
@@ -33370,16 +30899,6 @@
       },
       "AccountErasureIdempotencyKey": {
         "name": "Idempotency-Key",
-        "in": "header",
-        "required": true,
-        "schema": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 512
-        }
-      },
-      "AccountErasureCsrfToken": {
-        "name": "X-CSRF-Token",
         "in": "header",
         "required": true,
         "schema": {
@@ -33452,21 +30971,6 @@
         "description": "Kunci create Trip report milik profil sesi; segmen URL-encoded."
       }
     },
-    "headers": {
-      "SessionCookie": {
-        "description": "HttpOnly session cookie; id rotates on every authentication (anti session-fixation).",
-        "schema": {
-          "type": "string",
-          "example": "floopel_session_apps=â€¦; Path=/; HttpOnly; Secure; SameSite=Lax"
-        }
-      },
-      "DeletionContextCookie": {
-        "schema": {
-          "type": "string"
-        },
-        "description": "floopel_account_deletion signed cookie; HttpOnly; Secure; SameSite=Lax; Max-Age=300; Path=/api/apps/v1/me/account-deletion."
-      }
-    },
     "securitySchemes": {
       "nativeDeletionContext": {
         "type": "apiKey",
@@ -33474,39 +30978,11 @@
         "name": "X-Account-Deletion-Context",
         "description": "Bukti native khusus Account Erasure, terikat channel dan purpose, berlaku 5 menit. Hanya di memori; bukan access token dan tidak boleh dipasang sebagai cookie Web."
       },
-      "cookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "floopel_session_apps",
-        "description": "HttpOnly session cookie (ADR-0007). The client never reads it. Scoped to Path=/ (root) â€” NOT the API base â€” so it is sent on both API calls AND page/document requests; server-side rendering forwards it to GET /me to resolve the signed-in header (a narrower path hides it from page requests â†’ SSR renders signed-out). Access JWTs require expiry and signed WEB channel; legacy JWTs with an absent channel remain Web-only until expiry. Signed ANDROID/IOS and unknown channels cannot authenticate this cookie (ADR-0065)."
-      },
-      "onboardingSession": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "floopel_onboarding",
-        "description": "Short-lived (10 min) opaque HttpOnly proof cookie. Verified Google claims remain encrypted in PostgreSQL; the cookie carries no identity data. Web completion accepts only WEB proofs and rejects native channels before consuming or deleting a proof (ADR-0065)."
-      },
-      "refreshCookie": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "floopel_refresh_apps",
-        "description": "Root-scoped HttpOnly refresh cookie used by browser 401 retry and traveler SSR middleware. Secure outside local development, SameSite=Lax; JavaScript cannot read it and the refresh mutation also requires double-submit CSRF. Web refresh/logout accept only WEB families and reject native channels before rotation or revocation (ADR-0065)."
-      },
       "nativeBearer": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
         "description": "Verified ES256 Apps JWT with signed ANDROID/IOS channel. WEB and absent channels cannot authenticate Bearer. Simultaneous auth cookie and Bearer returns 422; invalid native credentials return 401, including optional-auth reads. Web cookies retain CSRF."
-      },
-      "AccountErasurecookieAuth": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "floopel_session_apps"
-      },
-      "deletionContext": {
-        "type": "apiKey",
-        "in": "cookie",
-        "name": "floopel_account_deletion"
       },
       "questExecutionBearer": {
         "type": "http",
@@ -33520,9 +30996,6 @@
     {
       "name": "Traveler Trip",
       "description": "Social Trip and membership lifecycle (PRD-0005)."
-    },
-    {
-      "name": "Apps Static Page"
     },
     {
       "name": "Traveler Notifications",

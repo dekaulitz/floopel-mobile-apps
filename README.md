@@ -4,7 +4,7 @@ Struktur awal aplikasi menggunakan **Kotlin Multiplatform (KMP)** dan **Compose 
 
 ## Kontrak API backend
 
-[Paket OpenAPI](api-contract/README.md) menyediakan kontrak identitas native, surface Apps lengkap untuk Traveler dan kontrak Partner yang tersedia, beserta panduan URL, autentikasi/header dan provenance snapshot. Kontrak menjadi acuan integrasi pada layer data; scaffold belum otomatis memiliki API client atau sesi backend. API bisnis/native Partner masih mengikuti ketersediaan kontrak backend yang dijelaskan pada paket tersebut.
+[Paket OpenAPI Mobile Traveler](api-contract/README.md) menyediakan kontrak identitas native dan API produk untuk Android/iOS Traveler, beserta panduan URL, autentikasi/header dan provenance dari branch backend lokal. Kontrak menjadi acuan integrasi pada layer data; scaffold belum otomatis memiliki API client atau sesi backend.
 
 ## Skill, rules, dan desain arsitektur
 

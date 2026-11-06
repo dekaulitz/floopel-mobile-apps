@@ -9,28 +9,19 @@
       "file": "openapi-apps.json",
       "source_path": "application/api-contract/openapi-apps.json",
       "source_sha256": "ce0614cccad5e8a65197c2c90f88f7dd825ffa6782625c57e45d5b2aac0700eb",
-      "snapshot_sha256": "db85050215cf092c4ffe6d8c715a21a0c14785b4595657662235092d6ac2ea77",
+      "snapshot_sha256": "9fa5de5e1359a7dbb4c42b8594e6bc1571d56d6e068a2934e4e365e54f719a38",
       "source_working_tree_modified": true,
-      "path_count": 157,
-      "operation_count": 183
+      "path_count": 138,
+      "operation_count": 162
     },
     {
       "file": "openapi-mobile.json",
       "source_path": "application/api-contract/openapi-mobile.json",
       "source_sha256": "6996ca798cfcb9dde580ffcbfb86dea3be3dbce20249e7a447bf56411faa5ca5",
-      "snapshot_sha256": "68ad06eaa7bfd1c6714a80ace0cc8e4a4114c0aaa1978ceb2136246647c06ea6",
+      "snapshot_sha256": "46716c8584f92d02cab439e5fa41dab0c0bb41f052a0cd1abe9eb3272a8927df",
       "source_working_tree_modified": false,
       "path_count": 13,
       "operation_count": 13
-    },
-    {
-      "file": "openapi-console-partner.json",
-      "source_path": "application/api-contract/openapi-console-partner.json",
-      "source_sha256": "b8961e7953d079723ccf49582b318b957892cb0b4d5f241bbe88eb9e61c0c69b",
-      "snapshot_sha256": "f00fd110d75c2106d0fcf8ca381bd307800152907d312568ff9cb223704bdb08",
-      "source_working_tree_modified": false,
-      "path_count": 1,
-      "operation_count": 1
     }
   ],
   "normalizations": [
@@ -41,5 +32,544 @@
       "action": "expand_response_reference",
       "reason": "Header Cache-Control:no-store dipertahankan pada Response Object; headers bukan sibling sah Reference Object OpenAPI3.1."
     }
-  ]
+  ],
+  "source_branch": "main",
+  "audience": [
+    "android-traveler",
+    "ios-traveler"
+  ],
+  "selection": {
+    "scope": "mobile_traveler_only",
+    "removed_operations": [
+      {
+        "method": "GET",
+        "path": "/sitemap.xml",
+        "reason": "sitemap_web"
+      },
+      {
+        "method": "HEAD",
+        "path": "/sitemap.xml",
+        "reason": "sitemap_web"
+      },
+      {
+        "method": "GET",
+        "path": "/sitemaps/{generation}/{part}",
+        "reason": "sitemap_web"
+      },
+      {
+        "method": "HEAD",
+        "path": "/sitemaps/{generation}/{part}",
+        "reason": "sitemap_web"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/csrf",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/forgot-password",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/google",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/google/complete",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/login",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/logout",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/otp/resend",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/refresh",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/register",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/reset-password",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/username-available",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/verify-email",
+        "reason": "web_identity_native_equivalent_available"
+      },
+      {
+        "method": "GET",
+        "path": "/healthz",
+        "reason": "operational_liveness"
+      },
+      {
+        "method": "POST",
+        "path": "/api/webhooks/v1/resend",
+        "reason": "provider_webhook"
+      },
+      {
+        "method": "POST",
+        "path": "/itineraries/claim",
+        "reason": "anonymous_web_builder"
+      },
+      {
+        "method": "GET",
+        "path": "/static-pages/{page_key}",
+        "reason": "web_static_page"
+      },
+      {
+        "method": "POST",
+        "path": "/auth/account-deletion-context",
+        "reason": "web_identity_native_equivalent_available"
+      }
+    ],
+    "native_security_only": true,
+    "web_security_alternatives_removed_from": [
+      "GET /comment-totals/spots",
+      "GET /itineraries/{id}/report-preview",
+      "POST /auth/logout-all",
+      "POST /comments/{id}/like",
+      "DELETE /comments/{id}/like",
+      "POST /consent",
+      "GET /content/{slug}/comments",
+      "POST /content/{slug}/comments",
+      "POST /itineraries",
+      "GET /itineraries/{id}",
+      "PUT /itineraries/{id}",
+      "DELETE /itineraries/{id}",
+      "POST /itineraries/{id}/cover",
+      "GET /itineraries/{id}/cover",
+      "POST /itineraries/{id}/clone",
+      "PUT /itineraries/{id}/days/{day}",
+      "POST /itineraries/{id}/days/{day}/duplicate",
+      "POST /itineraries/{id}/stops",
+      "PUT /itineraries/{id}/stops",
+      "PATCH /itineraries/{id}/stops/{stop_id}",
+      "DELETE /itineraries/{id}/stops/{stop_id}",
+      "GET /me",
+      "GET /me/emergency-contact",
+      "PUT /me/emergency-contact",
+      "PUT /me/interests",
+      "GET /me/interests",
+      "GET /me/itineraries",
+      "PATCH /me/profile",
+      "GET /me/saved-spots",
+      "GET /me/settings",
+      "PATCH /me/settings",
+      "GET /profiles/{username}",
+      "PUT /spots/{id}/save",
+      "DELETE /spots/{id}/save",
+      "GET /collections/{slug}",
+      "POST /itineraries/{id}/trips",
+      "GET /me/trips",
+      "GET /trips/{trip_id}",
+      "PATCH /trips/{trip_id}",
+      "GET /trips/{trip_id}/itinerary",
+      "POST /trips/{trip_id}/invitations",
+      "GET /trips/{trip_id}/invitations",
+      "POST /trips/{trip_id}/invitations/{invitation_id}/resend",
+      "DELETE /trips/{trip_id}/invitations/{invitation_id}",
+      "GET /trips/{trip_id}/members",
+      "DELETE /trips/{trip_id}/members/{profile_id}",
+      "POST /trips/{trip_id}/leave",
+      "POST /trips/{trip_id}/organizer-transfer",
+      "POST /trips/{trip_id}/cancel",
+      "POST /trips/{trip_id}/complete",
+      "POST /itineraries/{id}/publish",
+      "POST /itineraries/{id}/unpublish",
+      "PUT /itineraries/{id}/clone-policy",
+      "GET /itineraries/{id}/share-link",
+      "POST /itineraries/{id}/share-link",
+      "DELETE /itineraries/{id}/share-link",
+      "GET /me/trip-invitations",
+      "POST /trip-invitations/{invitation_id}/{decision}",
+      "POST /trip-invitations/{invitation_id}/block-inviter",
+      "POST /trip-invitations/{invitation_id}/reports",
+      "POST /trip-invitation-access/{access_token}/claim",
+      "GET /profiles/{username}/itineraries",
+      "GET /public-itineraries/{slug}",
+      "POST /itineraries/{id}/reports",
+      "GET /me/itinerary-moderation-actions",
+      "GET /me/itinerary-moderation-actions/{moderation_action_id}/appeal",
+      "POST /me/itinerary-moderation-actions/{moderation_action_id}/appeal",
+      "GET /me/security",
+      "PUT /me/password",
+      "POST /me/password/setup",
+      "POST /reports",
+      "GET /me/account-deletion",
+      "POST /me/account-deletion",
+      "POST /me/account-deletion/cancellation",
+      "GET /comment-threads/{target_type}/{target_id}",
+      "POST /comment-threads/{target_type}/{target_id}",
+      "GET /comment-threads/{target_type}/{target_id}/total",
+      "GET /comment-totals/targets/{targetType}",
+      "GET /gamification/participations/{participation_id}",
+      "GET /gamification/participations/{participation_id}/activities/{activity_id}",
+      "GET /gamification/me/progress",
+      "GET /gamification/quests/{slug}/me",
+      "GET /profiles/{username}/completed-quests",
+      "GET /profiles/{username}/badges",
+      "GET /profiles/{username}/progress",
+      "POST /trips/{trip_id}/banner",
+      "GET /trips/{trip_id}/banner",
+      "GET /profile-levels",
+      "GET /notifications",
+      "GET /notifications/unread-count",
+      "GET /notifications/{notification_id}",
+      "PUT /notifications/{notification_id}/read",
+      "GET /me/profile-photo-uploads/{upload_id}",
+      "GET /profile-identities",
+      "GET /gamification/me/quests",
+      "GET /open-trips",
+      "GET /open-trips/{trip_id}",
+      "POST /open-trips/{trip_id}/applications",
+      "GET /me/trip-applications",
+      "GET /trip-applications/{application_id}",
+      "GET /trips/{trip_id}/applications",
+      "POST /trip-applications/{application_id}/approve",
+      "POST /trip-applications/{application_id}/reject",
+      "POST /trip-applications/{application_id}/withdraw",
+      "GET /me/trip-creation-operations/{operation_key}",
+      "GET /me/reports/{report_id}",
+      "GET /me/report-creation-operations/{operation_key}",
+      "GET /me/trip-notices/{notice_id}"
+    ],
+    "removed_cookie_csrf_parameters": [
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/auth/logout-all",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/consent",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/itineraries/{id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/itineraries/{id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/cover",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/clone",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/itineraries/{id}/days/{day}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/days/{day}/duplicate",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/stops",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/itineraries/{id}/stops",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "patch",
+        "path": "/itineraries/{id}/stops/{stop_id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/itineraries/{id}/stops/{stop_id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/me/emergency-contact",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/me/interests",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "patch",
+        "path": "/me/profile",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "patch",
+        "path": "/me/settings",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/spots/{id}/save",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/spots/{id}/save",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/trips",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "patch",
+        "path": "/trips/{trip_id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/invitations",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/invitations/{invitation_id}/resend",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/trips/{trip_id}/invitations/{invitation_id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/trips/{trip_id}/members/{profile_id}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/leave",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/organizer-transfer",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/cancel",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/complete",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/publish",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/unpublish",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/itineraries/{id}/clone-policy",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/share-link",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "delete",
+        "path": "/itineraries/{id}/share-link",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-invitations/{invitation_id}/{decision}",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-invitations/{invitation_id}/block-inviter",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-invitations/{invitation_id}/reports",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-invitation-access/{access_token}/claim",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/itineraries/{id}/reports",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/me/itinerary-moderation-actions/{moderation_action_id}/appeal",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/me/password",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/me/password/setup",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/reports",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/me/account-deletion",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/me/account-deletion/cancellation",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trips/{trip_id}/banner",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "put",
+        "path": "/notifications/{notification_id}/read",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/open-trips/{trip_id}/applications",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-applications/{application_id}/approve",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-applications/{application_id}/reject",
+        "name": "X-CSRF-Token"
+      },
+      {
+        "file": "openapi-apps.json",
+        "method": "post",
+        "path": "/trip-applications/{application_id}/withdraw",
+        "name": "X-CSRF-Token"
+      }
+    ],
+    "components": "joint_reachable_closure_for_apps_and_native_identity",
+    "retained_auth_paths": {
+      "/auth/nationalities": "Dipakai NativeAccountApi pada branch lokal.",
+      "/auth/logout-all": "Operasi manajemen sesi Traveler mendukung nativeBearer pada kontrak sumber."
+    }
+  }
 }
