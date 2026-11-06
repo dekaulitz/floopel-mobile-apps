@@ -2152,10 +2152,17 @@
           "catalog"
         ],
         "summary": "Location detail + children + spots",
-        "description": "Returns the typed LocationDetail (base Location + media[] gallery + available_locales). Retyped from the bare Envelope to a typed detail projection (additive; the envelope shape is unchanged, `data` is now specified). PRD-0011 OQ-21 / OQ-6.",
+        "description": "Reader publik Location menerima UUID atau slug pada segmen yang sama. UUID menghasilkan LocationDetail; slug menghasilkan LocationPublicDetail dengan centroid_lat/centroid_lng, boundary dan timezone. Locale dipakai pada cabang slug. Envelope dan gate approved mengikuti backend existing.",
         "parameters": [
           {
-            "$ref": "#/components/parameters/Id"
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "UUID atau slug Location. Segmen UUID menghasilkan LocationDetail; slug menghasilkan LocationPublicDetail pada route yang sama."
           },
           {
             "$ref": "#/components/parameters/Locale"
@@ -2175,11 +2182,82 @@
                       "type": "object",
                       "properties": {
                         "data": {
-                          "$ref": "#/components/schemas/LocationDetail"
+                          "oneOf": [
+                            {
+                              "$ref": "#/components/schemas/LocationDetail"
+                            },
+                            {
+                              "$ref": "#/components/schemas/LocationPublicDetail"
+                            }
+                          ]
                         }
                       }
                     }
                   ]
+                },
+                "examples": {
+                  "by_uuid": {
+                    "summary": "Proyeksi by_uuid sesuai mapper backend existing.",
+                    "value": {
+                      "meta": {
+                        "request_id": "22222222-2222-4222-8222-222222222222",
+                        "timestamp": 1793926800000,
+                        "code": "LOCATION"
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "11111111-1111-4111-8111-111111111111",
+                        "level": "city",
+                        "parent_id": null,
+                        "name": "Sample Location",
+                        "slug": "sample-location",
+                        "country_code": "ID",
+                        "cover_hero_image": null,
+                        "media": [],
+                        "available_locales": [
+                          "id"
+                        ],
+                        "reference_rating": null,
+                        "counts": {
+                          "spots": 0,
+                          "stories": 0,
+                          "itineraries": 0
+                        },
+                        "geo": null,
+                        "children": [],
+                        "spots": []
+                      }
+                    }
+                  },
+                  "by_slug": {
+                    "summary": "Proyeksi by_slug sesuai mapper backend existing.",
+                    "value": {
+                      "meta": {
+                        "request_id": "22222222-2222-4222-8222-222222222222",
+                        "timestamp": 1793926800000,
+                        "code": "LOCATION"
+                      },
+                      "error": null,
+                      "data": {
+                        "id": "11111111-1111-4111-8111-111111111111",
+                        "level": "city",
+                        "parent_id": null,
+                        "name": "Sample Location",
+                        "slug": "sample-location",
+                        "country_code": "ID",
+                        "cover_hero_image": null,
+                        "media": [],
+                        "available_locales": [
+                          "id"
+                        ],
+                        "reference_rating": null,
+                        "centroid_lat": null,
+                        "centroid_lng": null,
+                        "boundary": null,
+                        "timezone": null
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -3223,7 +3301,29 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorBody"
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "short_query": {
+                    "summary": "Query kurang dari tiga karakter ditolak oleh usecase pencarian.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "VALIDATION"
+                      },
+                      "error": {
+                        "details": [
+                          {
+                            "field": "q",
+                            "message": "must be at least 3 characters"
+                          }
+                        ],
+                        "message": "q must be at least 3 characters"
+                      },
+                      "data": null
+                    }
+                  }
                 }
               }
             }
@@ -3233,7 +3333,33 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorBody"
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "public_read_budget": {
+                    "summary": "Budget pembacaan per-IP habis.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "RATE_LIMITED"
+                      },
+                      "error": {
+                        "message": "Too many requests",
+                        "details": []
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Waktu tunggu bucket publicReadRL dalam detik.",
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[0-9]+$"
                 }
               }
             }
@@ -6450,37 +6576,75 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": [
-                          "code",
-                          "name",
-                          "labels"
-                        ],
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "labels": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "meta",
+                        "error",
+                        "data"
+                      ],
+                      "properties": {
+                        "error": {
+                          "type": "null"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
                             "type": "object",
+                            "required": [
+                              "code",
+                              "name",
+                              "labels"
+                            ],
                             "properties": {
-                              "id": {
+                              "code": {
                                 "type": "string"
                               },
-                              "en": {
+                              "name": {
                                 "type": "string"
+                              },
+                              "labels": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                }
                               }
                             }
                           }
                         }
                       }
+                    }
+                  ]
+                },
+                "examples": {
+                  "country_catalog": {
+                    "summary": "Bentuk envelope sukses; contoh satu entri katalog.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "NATIONALITIES"
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "code": "ID",
+                          "name": "Indonesia",
+                          "labels": {
+                            "id": "Indonesia",
+                            "en": "Indonesia"
+                          }
+                        }
+                      ]
                     }
                   }
                 }
@@ -23205,7 +23369,7 @@
         }
       },
       "LocationDetail": {
-        "description": "Location detail projection: the base Location plus its photo gallery + populated locale keys. Returned by GET /apps/v1/locations/{id}. PRD-0011 OQ-21 / OQ-6.",
+        "description": "Proyeksi detail Location untuk segmen UUID: identitas/counts, centroid geo, media, available_locales, children, spots kosong dan referensi AI best-effort. Segmen slug memakai LocationPublicDetail.",
         "allOf": [
           {
             "$ref": "#/components/schemas/Location"
@@ -23262,8 +23426,25 @@
                   }
                 ],
                 "description": "Labeled 'AI Â· provisional' reference rating embedded on the traveler Location detail read (GET /apps/v1/locations/{id}) â€” served best-effort by the experience module via the catalog-defined ReferenceViewer port (PRD-0013 Arm B, ADR-0035). null when the approved Location carries no stored reference (or the read best-effort skipped it). NEVER a PRD-0008 human-star rating (C6.2)."
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Location"
+                },
+                "description": "Anak Location approved pada reader UUID, sesuai urutan server; [] bila tidak ada."
+              },
+              "spots": {
+                "type": "array",
+                "maxItems": 0,
+                "items": {},
+                "description": "Selalu [] pada mapper reader UUID existing. Daftar Spot dibaca melalui GET /spots dengan location_id; field ini tidak berisi daftar Spot tersembunyi."
               }
-            }
+            },
+            "required": [
+              "children",
+              "spots"
+            ]
           }
         ]
       },
@@ -23376,7 +23557,7 @@
             "pattern": "^#[0-9A-Fa-f]{6}$"
           }
         },
-        "description": "Metadata placeholder opsional. Field yang tidak tersedia dihilangkan; bila hadir harus string, bukan null. Berlaku pula pada cover hasil pencarian."
+        "description": "Metadata placeholder opsional. Field yang tidak tersedia dihilangkan; bila hadir harus string, bukan null. Berlaku pada cover pencarian, daftar/detail Spot, gallery dan nearby."
       },
       "MediaVariantDescriptor": {
         "type": "object",
@@ -23968,7 +24149,7 @@
                 "maxItems": 15,
                 "description": "Approved, unmerged Spots within a spherical radius of 5000 meters from this Spot, including other Locations and excluding self. Missing/invalid center coordinates yield an empty list; missing/invalid candidate coordinates are excluded. Maximum 15, ordered by available AI reference rating descending, then name and ID. Suppressed or absent references follow visible ratings.",
                 "items": {
-                  "$ref": "#/components/schemas/Spot"
+                  "$ref": "#/components/schemas/SpotListItem"
                 }
               },
               "available_locales": {
@@ -24079,7 +24260,7 @@
                     "type": "null"
                   }
                 ],
-                "description": "Labeled 'AI Â· provisional' reference rating embedded on each item of the traveler Spot LIST read (GET /apps/v1/spots) â€” batch-attached in one call by the experience module via the catalog-defined ReferenceViewer port (PRD-0013 Arm B, ADR-0035). null when the approved Spot carries no stored reference (or the read best-effort skipped it). NEVER a PRD-0008 human-star rating (C6.2). A separate schema from the base Spot so the summary reused by SpotDetail.nearby[] stays lean."
+                "description": "Rating referensi AI provisional pada list Spot dan nearby detail, diselesaikan batch oleh backend. null bila tidak tersimpan/tidak eligible/read best-effort gagal; tidak mengirim basis atau sumber internal."
               }
             }
           }
@@ -30371,6 +30552,115 @@
           }
         },
         "description": "Status own-only berbasis source per penerima. Tidak ada working itinerary/notes/roster/pesan/profile orang lain. Tanggal/nama snapshot bukan jaminan jadwal live. Payload push tidak menjadi sumber isi reader. current_member=false tidak boleh membuka Trip penuh; application_id hanya menunjuk pengajuan sendiri."
+      },
+      "LocationPublicDetail": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "level",
+          "parent_id",
+          "name",
+          "slug",
+          "country_code",
+          "centroid_lat",
+          "centroid_lng",
+          "boundary",
+          "timezone",
+          "cover_hero_image",
+          "media",
+          "available_locales",
+          "reference_rating"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "level": {
+            "$ref": "#/components/schemas/LocationLevel"
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Globally unique canonical Location slug; public routes and cache keys do not include a parent segment."
+          },
+          "country_code": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "centroid_lat": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -90,
+            "maximum": 90
+          },
+          "centroid_lng": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": -180,
+            "maximum": 180
+          },
+          "boundary": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "GeoJSON tersimpan atau null; tidak diubah menjadi string."
+          },
+          "timezone": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Zona IANA tersimpan atau null."
+          },
+          "cover_hero_image": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/MediaAsset"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Immersive hero/cover image for the Location detail page (PRD-0004 data-model Â§5 / OQ-17 â€” NEW on Location). Resolved from cover_hero_image_id -> media_asset; null when unset."
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaAsset"
+            },
+            "description": "Ordered photo gallery for the Location detail page (MediaAsset.owner_type=location). PRD-0011 OQ-21."
+          },
+          "available_locales": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Populated locale keys (always includes `id`) â€” drives the apps/web LocaleSwitcher + hreflang alternates. Mirrors ContentDetail.available_locales (PRD-0004). PRD-0011 OQ-6."
+          },
+          "reference_rating": {
+            "type": "null",
+            "description": "Reader slug existing tidak mengambil rating referensi; selalu null."
+          }
+        },
+        "description": "Proyeksi publik Location berdasarkan slug dari LocationPublicDetailView. Tidak mengirim counts, geo, children atau spots pada bentuk ini; centroid dikirim melalui centroid_lat/centroid_lng."
       }
     },
     "responses": {

@@ -1,6 +1,6 @@
 # Kontrak API Mobile Traveler
 
-Paket OpenAPI 3.1 untuk pengembangan Android Traveler dan iOS Traveler. Snapshot berasal dari kontrak backend pada branch lokal aktif `main` tanggal 6 November 2026, termasuk perubahan Apps yang belum di-commit. Paket memuat bentuk request/response, parameter, security, status/error, pagination dan schema untuk integrasi pada layer data fitur pemilik.
+Paket OpenAPI 3.1 untuk pengembangan Android Traveler dan iOS Traveler. Snapshot berasal dari kontrak backend pada branch lokal aktif `main` tanggal 6 November 2026, termasuk perubahan Apps dan identitas native yang belum di-commit. Paket memuat bentuk request/response, parameter, security, status/error, pagination dan schema untuk integrasi pada layer data fitur pemilik.
 
 ## File dan cakupan
 
@@ -45,7 +45,8 @@ Simpan kedua dokumen berdampingan. Kontrak native mereferensikan komponen bersam
 
 - JSON memakai envelope `meta/error/data`. Sukses membawa `error:null`; error membawa `data:null`. Pertahankan `meta.code` dan structured details; message bukan identifier percabangan. HTTP204 tidak diparse sebagai JSON. Binary/redirect mengikuti response media type operasinya.
 - Bedakan field absent, null dan array kosong. Jangan mengisi field required yang hilang dengan data fiktif. UUID, enum, timestamp, satuan dan nullable/required mengikuti schema.
-- Hasil pencarian tanpa rating tetap mengirim `reference_rating:null`. Metadata media `placeholder.blurhash` dan `dominant_color` yang tidak tersedia dihilangkan; bila hadir nilainya string.
+- Hasil pencarian dan nearby Spot tanpa rating tetap mengirim `reference_rating:null`. Metadata media `placeholder.blurhash` dan `dominant_color` yang tidak tersedia dihilangkan pada pencarian, list/detail Spot, gallery dan nearby; bila hadir nilainya string.
+- `GET /locations/{id}` menerima UUID atau slug. UUID menghasilkan `LocationDetail` dengan `geo`, `counts`, `children` dan `spots:[]`; slug menghasilkan `LocationPublicDetail` dengan `centroid_lat`, `centroid_lng`, `boundary` dan `timezone`. Pilih bentuk sesuai identifier yang diminta; jangan menganggap kedua proyeksi identik.
 - `locations[]` adalah projection server pada entitas yang mendefinisikannya; Spot tetap memakai `location_id` tunggal. Query `location_id` memilih wilayah beserta descendant menurut reader. Jangan mengirim field derived sebagai input atau mengubah geography public snapshot menjadi working plan privat.
 - Body HTML Content/Quest yang memang rich text mengikuti kontrak sanitasi; field plain text tidak dianggap HTML. DTO transport dipetakan ke model domain dan state presentasi pada owner fitur.
 - Descriptor media memakai logical ID, capability/variant dan metadata yang disediakan backend. Pilih variant sesuai penggunaan; jangan merakit storage key, menggunakan original/staging, atau menganggap metadata pemrosesan sama dengan delivery siap.
@@ -78,9 +79,9 @@ Guard semantik ini memakai Node bawaan dan menolak `example` + `examples` bersam
 
 ## Provenance dan pembaruan
 
-Sumber: repository [backend Floopel](https://github.com/dekaulitz/com.github.floopel.prjct), folder `application/api-contract`. Snapshot diambil dari branch lokal `main` dengan HEAD `58a570799e47222fb0529c2e5d869bbb152f0390`. Apps mencakup perubahan lokal yang belum ada pada commit tersebut; gunakan hash setiap file pada [manifest](snapshot.json) untuk mengidentifikasi sumber dan hasil proyeksi secara tepat.
+Sumber: repository [backend Floopel](https://github.com/dekaulitz/com.github.floopel.prjct), folder `application/api-contract`. Snapshot diambil dari branch lokal `main` dengan HEAD `58a570799e47222fb0529c2e5d869bbb152f0390`. Apps dan identitas native mencakup perubahan lokal yang belum ada pada commit tersebut; gunakan hash setiap file pada [manifest](snapshot.json) untuk mengidentifikasi sumber dan hasil proyeksi secara tepat.
 
-Ekspor memakai UTF-8/LF. Kelima koreksi review sudah diterapkan pada sumber lokal; dependensi DTO placeholder dan hash guard juga tercatat pada manifest. Response `GET /me/trips` 200 sudah berbentuk Response Object pada kontrak kanonis, dengan `Cache-Control:no-store`, sehingga ekspor tidak lagi memerlukan normalisasi response khusus. Field request/response yang dipertahankan cocok dengan sumber setelah seleksi channel native.
+Ekspor memakai UTF-8/LF. Koreksi kontrak sudah diterapkan pada sumber lokal; dependensi DTO placeholder pencarian/Spot dan hash guard juga tercatat pada manifest. Response `GET /me/trips` 200 sudah berbentuk Response Object pada kontrak kanonis, dengan `Cache-Control:no-store`, sehingga ekspor tidak lagi memerlukan normalisasi response khusus. Field request/response yang dipertahankan cocok dengan sumber setelah seleksi channel native.
 
 Saat sinkronisasi berikutnya, cocokkan kontrak pada branch lokal yang dituju dan kebutuhan Traveler, terapkan seleksi operasi/security pada manifest, lalu telusuri ulang komponen lintas dokumen. Perbarui hash/jumlah dan tinjau perubahan field/error/version. Validasi OpenAPI 3.1 serta seluruh relative reference dari base URI file dan periksa contoh JSON terhadap schema/format. Metadata historis `x-*` pada sumber tidak membuktikan runtime environment sudah memakai revision yang sama.
 

@@ -8,8 +8,8 @@
     {
       "file": "openapi-apps.json",
       "source_path": "application/api-contract/openapi-apps.json",
-      "source_sha256": "4723ae012528a13ecf7ac1207a09bdaf244e819999c4d71cd31645d5ba63a2a7",
-      "snapshot_sha256": "ec09c6dcff60a8b432ca2263ac83f4e0bc51f2303ef739c2655abb3df02df251",
+      "source_sha256": "f57aceb563d79b27055ff8d427d2d32e5dfac1da3ac7bb94964aa1195364537d",
+      "snapshot_sha256": "c2aec1679b976bcfebeb99a871661f9108bff29a4a507591a4cf84ca92f5a0f7",
       "source_working_tree_modified": true,
       "path_count": 138,
       "operation_count": 162
@@ -17,9 +17,9 @@
     {
       "file": "openapi-mobile.json",
       "source_path": "application/api-contract/openapi-mobile.json",
-      "source_sha256": "6996ca798cfcb9dde580ffcbfb86dea3be3dbce20249e7a447bf56411faa5ca5",
-      "snapshot_sha256": "46716c8584f92d02cab439e5fa41dab0c0bb41f052a0cd1abe9eb3272a8927df",
-      "source_working_tree_modified": false,
+      "source_sha256": "258e3aac7d7a8774dc220eca54075722a191e6cb4160e4b81a0520006eeea56c",
+      "snapshot_sha256": "4520876ecd13aa5d18d289ab8795a9b8d7f6f11e8587c6f28ec50ae9060f4734",
+      "source_working_tree_modified": true,
       "path_count": 13,
       "operation_count": 13
     }
@@ -588,12 +588,37 @@
     {
       "scope": "trip_list_response",
       "description": "Reference Object diperluas pada sumber kanonis agar Cache-Control:no-store berada pada Response Object sah; tidak ada normalisasi response khusus ekspor."
+    },
+    {
+      "scope": "spot_media_placeholder",
+      "description": "List/detail/gallery/nearby Spot menghilangkan placeholder kosong seperti descriptor bersama."
+    },
+    {
+      "scope": "location_projection",
+      "description": "Parameter UUID/slug dan kedua proyeksi Location, termasuk children/spots, mengikuti mapper existing."
+    },
+    {
+      "scope": "nearby_reference_rating",
+      "description": "Nearby memakai SpotListItem yang mendokumentasikan reference_rating nullable sesuai serializer."
+    },
+    {
+      "scope": "nationality_envelope",
+      "description": "Katalog nationality Apps/native mendokumentasikan meta/error/data sesuai serializer; contoh sukses pada kedua surface."
+    },
+    {
+      "scope": "search_error_envelope",
+      "description": "Respons422/429 pencarian memakai ProblemEnvelope sesuai response.Error; dokumentasi Retry-After mengikuti limiter."
     }
   ],
   "backend_dependencies": [
     {
       "source_path": "application/service/internal/modules/catalog/adapter/http/search/dto.go",
       "source_sha256": "9e14b07f68986711fe3670e2bfd912080295bc8f702fec14823e37902aa22e28",
+      "source_working_tree_modified": true
+    },
+    {
+      "source_path": "application/service/internal/modules/catalog/adapter/http/spot/dto.go",
+      "source_sha256": "6a132f9ac8dccb8dfc676271f6eb68ce340d723745ca9f169d5c7f979710d087",
       "source_working_tree_modified": true
     }
   ],

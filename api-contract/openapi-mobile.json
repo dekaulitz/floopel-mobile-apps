@@ -1099,37 +1099,75 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "required": [
-                          "code",
-                          "name",
-                          "labels"
-                        ],
-                        "properties": {
-                          "code": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          },
-                          "labels": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "meta",
+                        "error",
+                        "data"
+                      ],
+                      "properties": {
+                        "error": {
+                          "type": "null"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
                             "type": "object",
+                            "required": [
+                              "code",
+                              "name",
+                              "labels"
+                            ],
                             "properties": {
-                              "id": {
+                              "code": {
                                 "type": "string"
                               },
-                              "en": {
+                              "name": {
                                 "type": "string"
+                              },
+                              "labels": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                }
                               }
                             }
                           }
                         }
                       }
+                    }
+                  ]
+                },
+                "examples": {
+                  "country_catalog": {
+                    "summary": "Bentuk envelope sukses; contoh satu entri katalog.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "NATIONALITIES"
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "code": "ID",
+                          "name": "Indonesia",
+                          "labels": {
+                            "id": "Indonesia",
+                            "en": "Indonesia"
+                          }
+                        }
+                      ]
                     }
                   }
                 }
