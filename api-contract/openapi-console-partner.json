@@ -1,0 +1,119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Floopel Backend — console-partner surface (living contract)",
+    "version": "0.1.0",
+    "x-floopel-surface": "console-partner",
+    "description": "LIVING per-surface OpenAPI 3.1 contract for the Floopel **console-partner** surface (server `/api/console-partner/v1`, ADR-0004).\n\nThis is a GENERATED, LIVING document: it is reconciled against the live router (`backend/internal/adapter/http/router.go` — the ground truth for which routes exist) and harvests request/response/schema shapes from the per-PRD contracts under `document/prd/**/openapi.json` (the per-feature source of truth). It MUST be updated in the SAME PR as any route, contract, or data-model change (CLAUDE.md §3.2 change-triggers; .claude/rules/golang.md). If a route below carries a LIVING-CONTRACT PLACEHOLDER, the router has it but the per-PRD spec did not define its shape yet.\n\nShared platform components (Envelope/Meta/ErrorBody, the standard 4xx responses, and common parameters) are unified to ONE canonical definition per surface — Meta matches the Go `pkg/response` type (incl. optional pagination) and the error schema is ErrorBody. Security schemes are unified by cookie name. Path param names follow the router (ground truth). NOTE: the partner console is a SCAFFOLD — only `GET /auth/csrf` is live in router.go today (it mounts CSRF-issue + a stateful-authed subgroup pending its own login/feature slices). This contract will grow as those slices land.\n\nMetadata request klien: aplikasi yang diperbarui mengirim X-App-Version dari versi build dan X-App-Platform bernilai ANDROID, IOS atau WEB pada seluruh operasi API, termasuk upload dan probe maintenance. Header ini deskriptif, bukan attestation atau otorisasi. Server tetap menerima klien lama tanpa versi; tidak ada gate minimum versi. Endpoint identitas native tetap mensyaratkan platform ANDROID/IOS sesuai parameter dan credential channel existing; WEB tidak diterima pada endpoint tersebut.",
+    "contact": {
+      "name": "Floopel Engineering"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/console-partner/v1",
+      "description": "console-partner surface (ADR-0004)"
+    }
+  ],
+  "paths": {
+    "/auth/csrf": {
+      "get": {
+        "summary": "Issue a CSRF token",
+        "description": "Sets the double-submit CSRF cookie and returns the token for the console-partner surface (ADR-0011 R8). Call before any state-changing request.",
+        "responses": {
+          "200": {
+            "description": "Success — standard response envelope.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Envelope": {
+        "type": "object",
+        "required": [
+          "meta"
+        ],
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          },
+          "data": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          }
+        }
+      },
+      "ErrorBody": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "details": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "object"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$"
+          },
+          "pagination": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "per_page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "total_pages": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

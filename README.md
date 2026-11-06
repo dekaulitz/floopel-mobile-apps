@@ -2,6 +2,10 @@
 
 Struktur awal aplikasi menggunakan **Kotlin Multiplatform (KMP)** dan **Compose Multiplatform**. Traveler berbagi UI dan logika antara Android dan iOS. Partner menggunakan Compose untuk Android dan memakai kembali modul core yang sama.
 
+## Kontrak API backend
+
+[Paket OpenAPI](api-contract/README.md) menyediakan kontrak identitas native, surface Apps lengkap untuk Traveler dan kontrak Partner yang tersedia, beserta panduan URL, autentikasi/header dan provenance snapshot. Kontrak menjadi acuan integrasi pada layer data; scaffold belum otomatis memiliki API client atau sesi backend. API bisnis/native Partner masih mengikuti ketersediaan kontrak backend yang dijelaskan pada paket tersebut.
+
 ## Skill, rules, dan desain arsitektur
 
 Standar engineering disimpan bersama source agar dapat ditinjau dan digunakan tim:

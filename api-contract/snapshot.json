@@ -1,0 +1,45 @@
+{
+  "snapshot_date": "2026-11-06",
+  "source_repository": "https://github.com/dekaulitz/com.github.floopel.prjct",
+  "source_head": "58a570799e47222fb0529c2e5d869bbb152f0390",
+  "source_state": "working_tree",
+  "encoding": "UTF-8; LF; JSON indent2",
+  "files": [
+    {
+      "file": "openapi-apps.json",
+      "source_path": "application/api-contract/openapi-apps.json",
+      "source_sha256": "ce0614cccad5e8a65197c2c90f88f7dd825ffa6782625c57e45d5b2aac0700eb",
+      "snapshot_sha256": "db85050215cf092c4ffe6d8c715a21a0c14785b4595657662235092d6ac2ea77",
+      "source_working_tree_modified": true,
+      "path_count": 157,
+      "operation_count": 183
+    },
+    {
+      "file": "openapi-mobile.json",
+      "source_path": "application/api-contract/openapi-mobile.json",
+      "source_sha256": "6996ca798cfcb9dde580ffcbfb86dea3be3dbce20249e7a447bf56411faa5ca5",
+      "snapshot_sha256": "68ad06eaa7bfd1c6714a80ace0cc8e4a4114c0aaa1978ceb2136246647c06ea6",
+      "source_working_tree_modified": false,
+      "path_count": 13,
+      "operation_count": 13
+    },
+    {
+      "file": "openapi-console-partner.json",
+      "source_path": "application/api-contract/openapi-console-partner.json",
+      "source_sha256": "b8961e7953d079723ccf49582b318b957892cb0b4d5f241bbe88eb9e61c0c69b",
+      "snapshot_sha256": "f00fd110d75c2106d0fcf8ca381bd307800152907d312568ff9cb223704bdb08",
+      "source_working_tree_modified": false,
+      "path_count": 1,
+      "operation_count": 1
+    }
+  ],
+  "normalizations": [
+    {
+      "file": "openapi-apps.json",
+      "json_pointer": "/paths/~1me~1trips/get/responses/200",
+      "source_ref": "#/components/responses/TripListResponse",
+      "action": "expand_response_reference",
+      "reason": "Header Cache-Control:no-store dipertahankan pada Response Object; headers bukan sibling sah Reference Object OpenAPI3.1."
+    }
+  ]
+}
