@@ -1,0 +1,24 @@
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+**/build/
+local.properties
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Xcode
+DerivedData/
+**/xcuserdata/
+*.xcuserstate
+
+# Signing / local configuration
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+.env
+.env.*
+!.env.example

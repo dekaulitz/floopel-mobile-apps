@@ -1,0 +1,16 @@
+PRODUCT_BUNDLE_IDENTIFIER = com.floopel.traveler
+PRODUCT_NAME = FloopelTraveler
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1
+SWIFT_VERSION = 5.0
+IPHONEOS_DEPLOYMENT_TARGET = 16.0
+TARGETED_DEVICE_FAMILY = 1,2
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator
+EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64
+CODE_SIGN_STYLE = Automatic
+INFOPLIST_FILE = Traveler/Info.plist
+GENERATE_INFOPLIST_FILE = NO
+ENABLE_USER_SCRIPT_SANDBOXING = NO
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$(SRCROOT)/../../../shared/features/traveler/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"
+OTHER_LDFLAGS = $(inherited) -framework TravelerKit
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks

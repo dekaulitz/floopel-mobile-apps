@@ -1,0 +1,4 @@
+interface:
+  display_name: "Floopel Mobile Engineering"
+  short_description: "Arsitektur KMP dan standar engineering Floopel"
+  default_prompt: "Gunakan $floopel-mobile-engineering untuk mengerjakan fitur Floopel sesuai aturan arsitektur dan verifikasi production yang relevan."
