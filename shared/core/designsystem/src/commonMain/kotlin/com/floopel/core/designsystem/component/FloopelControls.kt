@@ -1,0 +1,64 @@
+package com.floopel.core.designsystem.component
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.floopel.core.designsystem.theme.FloopelShape
+import com.floopel.core.designsystem.icons.FloopelIcons
+
+/** Native 48dp target; a growing label never clips under font scaling. */
+@Composable
+fun FloopelButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier,
+    enabled: Boolean = true, secondary: Boolean = false) {
+    Button(onClick, modifier.heightIn(min = 48.dp), enabled = enabled,
+        shape = FloopelShape.pill, contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        colors = if (secondary) ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = MaterialTheme.colorScheme.primary) else ButtonDefaults.buttonColors()) {
+        Text(label, textAlign = TextAlign.Center)
+    }
+}
+
+/** Adapted from the mapped FloopelAvatar; URL and identity policy belong to the consumer. */
+@Composable
+fun FloopelAvatar(initials: String, size: Dp, modifier: Modifier = Modifier,
+    image: (@Composable () -> Unit)? = null) {
+    Surface(modifier, shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
+        Box(Modifier.size(size), contentAlignment = Alignment.Center) {
+            if (image != null) image()
+            else if (initials.isBlank()) Icon(FloopelIcons.PersonOutline, null)
+            else Text(initials.take(2), style = MaterialTheme.typography.titleSmall)
+        }
+    }
+}
+
+/** Code Connect signature retained, with Material-owned selection and accessibility semantics. */
+@Composable
+fun FloopelFilterChip(selected: Boolean, onClick: () -> Unit, label: @Composable () -> Unit,
+    modifier: Modifier = Modifier, enabled: Boolean = true) {
+    FilterChip(selected, onClick, label, modifier, enabled,
+        shape = FloopelShape.chip,
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary))
+}
+
+/** Compact 36dp face within a growing 48dp native target, as used by Home and catalog actions. */
+@Composable
+fun FloopelCompactButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+    Box(modifier.heightIn(min = 48.dp).clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.CenterStart) {
+        Surface(shape = FloopelShape.pill, color = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+            Text(label, Modifier.padding(horizontal = 16.dp, vertical = 8.dp), style = MaterialTheme.typography.labelLarge)
+        }
+    }
+}

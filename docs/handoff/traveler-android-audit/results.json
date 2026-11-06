@@ -1,0 +1,481 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "contract_baseline": "2fc35ab37091b4ea78a37174bb1058477b9a1900",
+  "host": {
+    "status": "PASS",
+    "counts": {
+      "tests": 357,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reports": [
+      {
+        "file": "TEST-com.floopel.feature.traveler.core.network.AppRequestMetadataTest.xml",
+        "sha256": "07749795299c11153467fdbc4a658e1dd1cd83bf45df4a259e2d77ace0deb9d1"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.core.network.FloopelRestClientTest.xml",
+        "sha256": "00f84c2b658e923c287ff7bb6edb89bb3c95922f39e73948b5fb743893b76630"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.core.network.SystemMaintenanceTest.xml",
+        "sha256": "53a9d6ea1c9e9478b414daa3951bd91001a5ed42f6cdae7587b1c1208c10d10a"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.core.network.TravelerReadCacheTest.xml",
+        "sha256": "3a994b2a6fefb198656053225e36ca55be98d8886168f53aa01f5f5704b65d22"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.dto.PassportSummaryTest.xml",
+        "sha256": "87a2f755e0e576393b0a10fb6a6c0e23443caeac90dacded127ffa0e99f31a86"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest.xml",
+        "sha256": "3c399e14d3fcc04b0285d4f84ad8bff93b6ec3e52f100529abc338050b9e92e6"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest.xml",
+        "sha256": "23b22139b69f396675b4b292bb36fb424a3fd27e224b490000f78d69fd431367"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.NativeApiTest.xml",
+        "sha256": "4c22defa7f0076462cb084f907d7d5f9635241affff830db2ebd578f14f51982"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.QuestBadgeMediaTest.xml",
+        "sha256": "bbb355a2be13533e2cacbee1ae2f9ccac4c345b923aa95a514de428b3d4aaf73"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.QuestCompletionReceiptTest.xml",
+        "sha256": "8b9002a675ffee26a283d4c454545299542cd00b54386f7cae5b387de003e2e2"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.QuestLocationCoverageTest.xml",
+        "sha256": "ccb3e121db6bab867e1cf92bdc72ebb4ca67ad0588085165b1e49a031991e6d9"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.QuestProofApiTest.xml",
+        "sha256": "65753baeb91a28dfd6901e1fe7c3afa1fdc96136c54b13c8b74d493d7ef46f0b"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.QuestTravelerProjectionTest.xml",
+        "sha256": "2d8654d21579ee2b80d01e3598b103da23632b7abfdda2e874f82018d56f25f3"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.remote.VerifiedAccountRecoveryTest.xml",
+        "sha256": "92680438bb713945a044cfdaf60a4702ae188afebb9999dd2cbee8659db1c2f8"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.AppsCommentTotalsTest.xml",
+        "sha256": "b8accf3f74db2d69cffe9b014eb4c35ea4a1f45fda58d44c91fe57639634fc8d"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest.xml",
+        "sha256": "2f4b5f534890202a60d3f04430a0772ea99fc5fe2b788c6aaa57b79c4a8e3104"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.AppsTravelerStoryAvatarsTest.xml",
+        "sha256": "4207c847e12aebce0b1cf60ccc4e91415f5f0ad0ab07c02071ab1d6692ad7873"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.CatalogLocationCoverageTest.xml",
+        "sha256": "02c940ad83ea562088dfd57467565d295ac1d653fe87ab7ee9174e1a34232713"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.CatalogPaginationTest.xml",
+        "sha256": "24613af69253030e20f347773e7cede0cc5a55858278fdf9a1764eb32745d52d"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.DistributionRecoveryTest.xml",
+        "sha256": "0aa3bd99bf2635f977c489d781d72192feb83082d80ff8e0e5227c2f578c8222"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.ExplorerMarkersTest.xml",
+        "sha256": "d7379a607850cc01671558dbac0f637912e77a55b515fd2965dcb2d4a1be8de8"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.IntegratedOwnerApiTest.xml",
+        "sha256": "9d3f930c59abbe7be6555ea96bda660e40f93f58569e313b99c75955996653fd"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.LocationDiscoveryTest.xml",
+        "sha256": "4c14f35db76eebce797e1ec99afd04e4adceb237f9e87eafb2b213febd48e4a2"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.MediaUrlTest.xml",
+        "sha256": "0e146b8c3449448b0cf7cd3f2b5241c92d5cfc2025dbe2e0c6862c1006211734"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeAccountApiTest.xml",
+        "sha256": "561822cb947d3316c0f4f8f898271e5582854027fe5c2dbc3e176f8c1d447e4e"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeCommunityApiTest.xml",
+        "sha256": "ebfe458e5177246c3b7436e603058b02a118466083ad87b425372a96aa4d6ba3"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeErasureApiTest.xml",
+        "sha256": "ecd14a7ef30fd42804d13a2f5b9eca40945ce4955ad907f3e719179f9fd34931"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest.xml",
+        "sha256": "1749961b68620b6f6f0e8eb7303ffd2d8b3179755483820bf65f9b39791f4953"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest.xml",
+        "sha256": "24374f1d4140479e8925445202323efd678052ebab83bffecf042fa2fe02eb94"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeLegalApiTest.xml",
+        "sha256": "124b99dc567219ebbdc7e29dfbbf49ef115c257c45991f4e6ec5490e400b309a"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeNotificationApiTest.xml",
+        "sha256": "1270eabb062349d9595ef94749a650e16ba3e68123ff0468b65d12d514fb1e26"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest.xml",
+        "sha256": "71a5c9ff69373d5a5cd34d46497ea8a384fef7e388ecc19180b4c2e41103e18c"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest.xml",
+        "sha256": "6458c2b3b781b262bfb4ab5d6ccab3bcd78fd4cd0a18f658278afcda5cbb1bea"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest.xml",
+        "sha256": "e55394801df6c78e063313307b1e1effa9d7e5c725b2b431935ca4358e49414a"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeRecommendationApiTest.xml",
+        "sha256": "d63a4409bb3d3e92d0c6da25e4a55c2693c9f2e41939ca7a2a805ce6cbca1de0"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeRegistrationApiTest.xml",
+        "sha256": "06ebab984b363a179c59c605cbc556e9da7635cb7b7456b531a0040adcec9726"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeSettingsApiTest.xml",
+        "sha256": "33a187ed5908a750badba68388e08dfb0de8c59cdab5609d92532b96088691b0"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeTripApiTest.xml",
+        "sha256": "1c9303f9ef18b0f5eaafb6af7b164a02b75d156f16865b92ec90c75e6c12953c"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest.xml",
+        "sha256": "f10ea368284801451866e26cff7f594772c796a440463aaf15be5734eacd3c7b"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest.xml",
+        "sha256": "869d6fe05d2ba1098facbd73650875f170fa1c7e39c5ec889e3f4d16b514645c"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.QuestGroupMapperTest.xml",
+        "sha256": "db796853f2a8c8b072f6ba96f7696824ec1b524ae2e1a0d002bb406cfbd9a979"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.QuestSharingMapperTest.xml",
+        "sha256": "8a0ed455687ccc40f1f08d3bd95eb3f017ecfa24c7ba8d4f0882606b9a2875f5"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.StoryDetailProjectionTest.xml",
+        "sha256": "5bf82c31b25dd3ed08b4d7fcf0ef2fe597c32d9770ccfdb678f330972fc38722"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest.xml",
+        "sha256": "c26324926edbf75e527363c0d04e133a5394e907b703259b149238abf66212c0"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.TripCommandRecoveryRejectionTest.xml",
+        "sha256": "50d13f49b7176831fb51624f730fe0b26dcd317f69b45a4dc71f12d19e349d88"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.TripMemberScheduleTest.xml",
+        "sha256": "e3917985eec372b8262e903ca7a8101c566536735104624e5fb3fbbd461d1e1d"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.data.repository.TripTransferPrivacyTest.xml",
+        "sha256": "4460cd1dc9c6cc536617bfabcec738f067c05ff8dc67198d76fe085fff76411e"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.domain.model.CatalogPhotoTest.xml",
+        "sha256": "827f0f73ae334250431493f8a38cbeb9635280800c9b957256b9c0cfc3414f58"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.domain.model.TravelerAgeTest.xml",
+        "sha256": "d3de18dec36754384ff57c827d3d9b1ad7ac503627db18264b6dc97f63cef52e"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.domain.model.TripCommandRejectionTest.xml",
+        "sha256": "9d25292a7acc6897962aaea8ed4d10a3f5fdf0920793050212c211773ff5163c"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest.xml",
+        "sha256": "d218150f21b4d6d6fa6f73e6dfda9d9aca9f1223cb228f2e5f1608026894533f"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest.xml",
+        "sha256": "50a65607d0c0eb6b2181d8ed603483904e7213ae3e77efdfaed7e372bec6fa59"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest.xml",
+        "sha256": "92ddc68cc790ce30f94b546be70de11ea7ec5e4d4e177b3886f54e3c160ec42f"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.QuestCollectionsReadTest.xml",
+        "sha256": "6af2152ba5b08600e5d1249bbb02d3c762360e20a8889a8b31834e9b01a438b9"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest.xml",
+        "sha256": "e72d6dd352d360a012cb99e1e1b2b5bc2ed11abeff10c9a074bbecb7f9664f83"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.QuestExecutionTest.xml",
+        "sha256": "ed46d44e3398b428114d1e74a1d03cd6bd35cdd40eaf01a700ed4404fda92231"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.QuestGpsTest.xml",
+        "sha256": "b612aa3b479b110727d27042ec04587ca10fbc476c4d638527f4854d43fb83e5"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest.xml",
+        "sha256": "e7c3ef59220c5fd1d1d7d4619b22de8fecad9906d410dbd14e265bcaa698f453"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest.xml",
+        "sha256": "46cdd522d75d99524059749d8698d84fd76ea853d49a9055e5e0b32c3e323045"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.auth.TravelerSessionTest.xml",
+        "sha256": "0d25c6c073b67222fb601961c089078624d5c7bbacaba4ac91525f4cb8bfd197"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest.xml",
+        "sha256": "c53beec0d50117faae1773f56243f5887231bf46facc3e3f2017b3a8e1e7ad05"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.presentation.NotificationRouteTest.xml",
+        "sha256": "7031df7d0e381384d85d3983abaf2a634745b84d4200e254dfb936f512a6554a"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.presentation.RichBodyTest.xml",
+        "sha256": "f81f5e09b86c73b2dcda5a9a04babc4ce48a1e29b6fb42b34744f5d1e07bd11b"
+      },
+      {
+        "file": "TEST-com.floopel.feature.traveler.presentation.TravelerStateOwnerTest.xml",
+        "sha256": "c3f5336d9b39d4ae9c61e80faee94ac2d812e2b7ed00c984303cfb9bdbc86043"
+      }
+    ]
+  },
+  "public_integration": {
+    "status": "PASS",
+    "counts": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reports": [
+      {
+        "file": "TEST-com.floopel.feature.traveler.LiveCatalogSmokeTest.xml",
+        "sha256": "84a0c32643a6064c354482e2a79e03876076a3330879a05fa0989e49dcdafed8"
+      }
+    ]
+  },
+  "device": {
+    "api": 35,
+    "android": "15",
+    "display_px": [
+      1080,
+      2400
+    ],
+    "density_dpi": 420,
+    "application_id": "com.floopel.traveler",
+    "connected": {
+      "status": "PASS",
+      "counts": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "reports": [
+        {
+          "file": "TEST-Floopel_Iteration_20261104(AVD) - 15-_apps_android_traveler-.xml",
+          "sha256": "9f3c3f1613aec903a5445b8b823ba0a7896f8383830ae92b4e8cec15853972f7"
+        }
+      ]
+    },
+    "domain_fixture": true,
+    "font130": {
+      "tests": 2,
+      "status": "PASS",
+      "log_sha256": "59ec94fa19b3efdab9b3a8200f92c714b91c73f0cab5b9d9e8b67042e13320ed"
+    },
+    "dark": {
+      "tests": 2,
+      "status": "PASS",
+      "log_sha256": "76fcdffe4ae3d73c2f8268fa4bdc34e9f343f771aecc2aebcf5bd96adbe31030"
+    },
+    "restored_font_scale": 1.0,
+    "restored_night_mode": "no"
+  },
+  "android": {
+    "traveler": {
+      "assembleDebug": "PASS",
+      "lintDebug": "PASS",
+      "lint_severity_counts": {
+        "Warning": 38
+      },
+      "lint_ids": {
+        "OldTargetApi": 2,
+        "AndroidGradlePluginVersion": 4,
+        "GradleDependency": 6,
+        "NewerVersionAvailable": 21,
+        "MissingApplicationIcon": 1,
+        "UseKtx": 4
+      },
+      "lint_report_sha256": "759fef75661e935b8d3c1f427f28cd68c1baef3cc79d2ebffb8e93728db81dfc"
+    },
+    "partner": {
+      "assembleDebug": "PASS",
+      "lintDebug": "PASS",
+      "lint_severity_counts": {
+        "Warning": 2
+      },
+      "lint_ids": {
+        "OldTargetApi": 1,
+        "MissingApplicationIcon": 1
+      },
+      "lint_report_sha256": "158bc1a02ab06b5951148256d33844a8d8a785ae4c4e454fc1019e3765f2de53"
+    }
+  },
+  "backend": {
+    "origin": "https://unawake-moonlit-reckless.ngrok-free.dev",
+    "local_public_http_status": 200,
+    "tunnel_public_http_status": 200,
+    "background_workers": "disabled for audit",
+    "media_worker": "disabled for audit",
+    "private_write_e2e": "NOT_RUN; awaiting test account choice"
+  },
+  "contract_guard": {
+    "status": "PASS",
+    "tests": 4
+  },
+  "ios": "NOT_RUN; Windows, requires macOS/Xcode",
+  "screenshots": [
+    {
+      "file": "dark/itinerary-builder.png",
+      "bytes": 112171,
+      "sha256": "838024b4da3bc30550b38178e74f4a588cc60904a987c19e95cf698ce514527d"
+    },
+    {
+      "file": "dark/spot-added-footer.png",
+      "bytes": 73078,
+      "sha256": "130c6223d8f0684dcae84243d6eac5aef3c942ba8ab87b66327fe457bf4b36eb"
+    },
+    {
+      "file": "font130/itinerary-builder.png",
+      "bytes": 112982,
+      "sha256": "19169ca18d53e47bed8f3296463321bd43e569ebc5686f5b32a9db888f2ae945"
+    },
+    {
+      "file": "font130/spot-added-footer.png",
+      "bytes": 84384,
+      "sha256": "1f5bf7dd74eb9c7781cf4b5e8693eff74e2458767061adb6a64d2426acb17ea7"
+    },
+    {
+      "file": "screenshots/empty-plan-guard.png",
+      "bytes": 105753,
+      "sha256": "2e4a33a83d1a2467dc8e56bae72244c72f587a41ea5855376e60c10b8041fa80"
+    },
+    {
+      "file": "screenshots/gps-uncertain-retry.png",
+      "bytes": 85212,
+      "sha256": "cd3df0bea8416f1f2fd1c51612a4f664919cff9342d6ea99e7397f56f6651a8e"
+    },
+    {
+      "file": "screenshots/home-real-api.png",
+      "bytes": 1024309,
+      "sha256": "66ec78a09b1f2b3a0c38d80e2131fc78a699b2b149cffbccd6264e24c995c202"
+    },
+    {
+      "file": "screenshots/itinerary-builder.png",
+      "bytes": 110468,
+      "sha256": "1e96f3b8ccde93c8c55ea96cc536fb5dfc09daab762610806a21cf13a259076a"
+    },
+    {
+      "file": "screenshots/location-catalog-real-api.png",
+      "bytes": 556754,
+      "sha256": "76e20baa9b8c2d6290e198818bd7bb258d2baf58ab4f82ae09165deab2c619fd"
+    },
+    {
+      "file": "screenshots/login-native.png",
+      "bytes": 110586,
+      "sha256": "753cb494cef85af8f4414c16b4eadddba80736209501041b6183b7e70cac3ed7"
+    },
+    {
+      "file": "screenshots/notice-forbidden.png",
+      "bytes": 38704,
+      "sha256": "c17f560fd0b7293648fabb0071617f8e2159668cf6027519790651e16a82374a"
+    },
+    {
+      "file": "screenshots/publication-processing-guard.png",
+      "bytes": 143245,
+      "sha256": "e18b7b77b3c936e6ef3fcd7886e11dd8922b2fdd0ff5a23d7ff6eca864d97ce5"
+    },
+    {
+      "file": "screenshots/removed-member-notice.png",
+      "bytes": 62931,
+      "sha256": "d56aadd16e7ea6e4b6a7f70918206843262fd4bde135cc681d3f1429d1e4f770"
+    },
+    {
+      "file": "screenshots/spot-added-footer.png",
+      "bytes": 72924,
+      "sha256": "c2929efe8e9645b9cb36446be1c0cb60b249d682bd58d5490e09d69d6f4d1221"
+    },
+    {
+      "file": "screenshots/spot-real-api.png",
+      "bytes": 1435667,
+      "sha256": "5b0f94260e479e13d9903719bd828f09ad6c2d2efb25d0fec95d69e85d739678"
+    },
+    {
+      "file": "screenshots/stop-validation.png",
+      "bytes": 70143,
+      "sha256": "a4167ba2ce660f9538ebfd0a1b38a210c17f45f900cb12eee3fa04ee5a89f7d7"
+    }
+  ],
+  "static_assets": [
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/floopel_mark.svg",
+      "bytes": 6825,
+      "width": "48",
+      "height": "48",
+      "sha256": "a9e0ee6cf39a7214c9290eed7e2f2c35322de6b9a3c4fc5d97c2c0f72412d364"
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/floopel_wordmark.svg",
+      "bytes": 8767,
+      "width": "112",
+      "height": "47.0588",
+      "sha256": "0b471bb19f6f8c4d525dce0037608a114cc582289be0d3f3f6035db71a706c4a"
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/google_mark.svg",
+      "bytes": 1387,
+      "width": "20",
+      "height": "20",
+      "sha256": "e5d3531479e833e8de5878aaaf4fc75baab137722b29867d15d7d2cf8678d351"
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/home_relief.svg",
+      "bytes": 5508,
+      "width": "420",
+      "height": "210",
+      "sha256": "2960fc1ddbd27e38eaf337b80259a2b97f865248a8a4ec63847cce45b8347c53"
+    }
+  ],
+  "limitations_reference": "../traveler-android.md"
+}

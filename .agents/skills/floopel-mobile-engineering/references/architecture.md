@@ -1,6 +1,6 @@
 # Desain arsitektur Floopel Mobile
 
-Ditinjau: 6 November 2026. Status: standar pengembangan yang diadopsi untuk repo ini. Implementasi saat ini masih scaffold layar sambutan; bagian evolusi adalah arah pengembangan, bukan modul atau integrasi yang sudah tersedia.
+Ditinjau: 7 November 2026. Standar pengembangan yang diadopsi untuk repo ini. Android Traveler kini memakai runtime/session dan UI commonMain; Partner dan host iOS masih scaffold. Status aktual serta bukti platform dicatat pada [handoff Android](../../../../docs/handoff/traveler-android.md). Bagian evolusi tetap merupakan arah pengembangan, bukan bukti modul atau integrasi tersedia.
 
 ## A1. Batas produk dan komposisi
 

@@ -4,10 +4,23 @@ import androidx.compose.runtime.Composable
 import com.floopel.core.designsystem.theme.FloopelTheme
 import com.floopel.core.model.AppProduct
 import com.floopel.feature.traveler.presentation.home.TravelerHomeScreen
+import com.floopel.feature.traveler.presentation.TravelerRoot
+import com.floopel.feature.traveler.domain.model.TravelerImage
 
 @Composable
 fun TravelerApp() {
     FloopelTheme(product = AppProduct.TRAVELER) {
         TravelerHomeScreen()
+    }
+}
+
+/** Native hosts supply their retained runtime and platform effects; UI stays in commonMain. */
+@Composable
+fun TravelerApp(runtime: TravelerRuntime, share: (String) -> Unit,
+    googleSignIn: (suspend () -> String?)? = null,
+    photoPicker: (suspend () -> TravelerImage?)? = null,
+    backHandler: @Composable (Boolean, () -> Unit) -> Unit) {
+    FloopelTheme(product = AppProduct.TRAVELER) {
+        TravelerRoot(runtime, share, googleSignIn, photoPicker, backHandler)
     }
 }
