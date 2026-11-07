@@ -135,11 +135,12 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
                 route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
             FloopelTopBar(s(when {
+                    route.destination == Destination.QUEST_GROUP_RECOVERY -> if (state.questGroupMutationRecovery.review.loading) Res.string.quest_group_recovery_checking else Res.string.trip
                     collectionFailure != null -> if (collectionFailure.status in setOf(403, 404)) Res.string.collection_unavailable_header else Res.string.collection_error_header
                     locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank() -> Res.string.location_search_title
                     else -> route.title()
                 }), Modifier.testTag("traveler-top-bar"),
-                titleStyle = if (locationScreen) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
+                titleStyle = if (locationScreen || route.destination == Destination.QUEST_GROUP_RECOVERY) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
                 minimumHeight = if (locationScreen) 48.dp else 56.dp,
                 contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
                 spacing = if (locationScreen) 8.dp else 12.dp,
@@ -154,17 +155,21 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     }
                 }
             }
-            if (route.destination != Destination.PASSPORT && (state.busy || state.identity.busy)) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (route.destination !in setOf(Destination.PASSPORT, Destination.QUEST_GROUP_RECOVERY) && (state.busy || state.identity.busy)) LinearProgressIndicator(Modifier.fillMaxWidth())
             val coveredFailure = when (state.writeFailureJournal) {
                 MutationJournal.TRIP -> state.tripMutationRecovery.required
                 MutationJournal.ITINERARY -> state.itineraryMutationRecovery.required
+                MutationJournal.QUEST_GROUP -> state.questGroupMutationRecovery.required
                 null -> false
             }
             if (!coveredFailure) state.writeFailure?.let { ErrorPanel(it, model::refresh) }
             state.startupFailure?.let { ErrorPanel(it, model::retryStartup) }
             if (state.tripMutationRecovery.required) TripMutationRecoveryPanel(state, model)
             if (state.itineraryMutationRecovery.required) ItineraryMutationRecoveryPanel(state, model)
-            if (!state.tripMutationRecovery.required && !state.itineraryMutationRecovery.required && state.unknownOutcome)
+            if (state.questGroupMutationRecovery.required && route.destination in setOf(Destination.QUEST_GROUPS, Destination.QUEST_GROUP, Destination.QUEST_GROUP_INVITATIONS, Destination.QUEST_GROUP_INVITATION))
+                FloopelButton(s(Res.string.quest_group_recovery_review), model::showQuestGroupRecovery,
+                    Modifier.fillMaxWidth().padding(horizontal = 20.dp).testTag("quest-group-recovery-open"), secondary = true, enabled = !state.busy)
+            if (!state.tripMutationRecovery.required && !state.itineraryMutationRecovery.required && !state.questGroupMutationRecovery.required && state.unknownOutcome)
                 InfoCard(s(Res.string.unknown_outcome))
             state.identity.failure?.takeIf { route.destination != Destination.PASSPORT }?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
             Box(Modifier.weight(1f).fillMaxWidth().testTag("traveler-viewport")) {
@@ -229,6 +234,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.QUEST_GROUP -> QuestGroupReader(state, model)
                     Destination.QUEST_GROUP_INVITATIONS -> QuestGroupInvitations(state, model)
                     Destination.QUEST_GROUP_INVITATION -> QuestGroupInvitationReader(state, model)
+                    Destination.QUEST_GROUP_RECOVERY -> QuestGroupRecoveryScreen(state, model)
                 }
             }
             state.feedback?.let { feedback ->
@@ -317,4 +323,5 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.SAVED_SPOTS -> Res.string.saved_spots
     Destination.QUEST_GROUPS, Destination.QUEST_GROUP -> Res.string.quest_groups
     Destination.QUEST_GROUP_INVITATIONS, Destination.QUEST_GROUP_INVITATION -> Res.string.quest_group_invitations
+    Destination.QUEST_GROUP_RECOVERY -> Res.string.trip
 }

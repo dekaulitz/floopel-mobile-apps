@@ -25,6 +25,12 @@ internal fun MutationRecoveryPanel(read: ReadState<List<String>>, labels: Mutati
         if (read.failure == null) FloopelButton(labels.review, review,
             Modifier.testTag("$prefix-recovery-review"), secondary = true, enabled = !busy)
     }
+    MutationRecoveryDecision(read, labels, prefix, busy, release, dismiss)
+}
+
+@Composable
+internal fun MutationRecoveryDecision(read: ReadState<List<String>>, labels: MutationRecoveryLabels, prefix: String,
+    busy: Boolean, release: () -> Unit, dismiss: () -> Unit) {
     if (read.value != null && read.failure == null) AlertDialog(
         onDismissRequest = dismiss,
         title = { Text(labels.title) },

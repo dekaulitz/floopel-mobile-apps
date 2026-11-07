@@ -9,12 +9,46 @@ import com.floopel.feature.traveler.domain.repository.TravelerQuestGroupReposito
 import com.floopel.feature.traveler.domain.repository.TripRecoveryStore
 import com.floopel.feature.traveler.feature.auth.TravelerSession
 import kotlinx.serialization.json.*
+import kotlin.time.Clock
 
 /** Private native operations retain session generation, Retry-After and explicit mutation idempotency. */
-internal class NativeQuestGroupApi(rest: FloopelRestClient, session: TravelerSession, recovery: TripRecoveryStore? = null) : TravelerQuestGroupRepository {
+internal class NativeQuestGroupApi(rest: FloopelRestClient, session: TravelerSession, recovery: TripRecoveryStore? = null,
+    now: () -> Long = { Clock.System.now().toEpochMilliseconds() }) : TravelerQuestGroupRepository {
     private val requests = NativeAuthorizedRequests(rest, session)
     private val json = Json { ignoreUnknownKeys = true }
-    private val journal = recovery?.let { NativeCommandJournal(requests, session, it) }
+    private val journal = recovery?.let { NativeCommandJournal(requests, session, it, now) }
+
+    override suspend fun reviewPendingMutation(locale: String): CatalogResult<QuestGroupRecoveryReview> {
+        if (!validLocale(locale)) return invalid()
+        return journal?.review { actor ->
+            val groups = allPages({ it.id }) { groups(it, locale) }
+            if (groups !is CatalogResult.Ready) return@review groups.failure()
+            val recipient = allPages({ it.id }) { invitations(it, locale) }
+            if (recipient !is CatalogResult.Ready) return@review recipient.failure()
+            val reviewedInvitations = recipient.value.toMutableList()
+            for (group in groups.value.filter { it.available && it.managerProfileId == actor }) {
+                val sent = allPages({ it.id }) { invitations(it, locale, group.id) }
+                if (sent !is CatalogResult.Ready) return@review sent.failure()
+                reviewedInvitations += sent.value
+            }
+            CatalogResult.Ready(QuestGroupRecoveryReview(actor, groups.value, reviewedInvitations.distinctBy { it.id }))
+        } ?: CatalogResult.HttpError(409)
+    }
+
+    override suspend fun startNewAction(): CatalogResult<Unit> = journal?.startNewAction() ?: CatalogResult.HttpError(409)
+
+    private suspend fun <T> allPages(id: (T) -> String, read: suspend (Int) -> CatalogResult<QuestGroupBatch<T>>): CatalogResult<List<T>> {
+        val items = mutableListOf<T>()
+        var page = 1
+        do {
+            val result = read(page)
+            if (result !is CatalogResult.Ready) return result.failure()
+            items += result.value.items
+            if (page >= result.value.totalPages) return CatalogResult.Ready(items.distinctBy(id))
+            page++
+        } while (page <= 100000)
+        return CatalogResult.InvalidResponse
+    }
 
     override suspend fun groups(page: Int, locale: String, questId: String?): CatalogResult<QuestGroupBatch<QuestGroup>> =
         if (!validPage(page) || !validLocale(locale) || (questId != null && !questObjectId(questId))) invalid()
@@ -116,4 +150,10 @@ private fun ApiOutcome.failure(): CatalogResult<Nothing> = when (this) {
     is ApiOutcome.Unavailable -> CatalogResult.Maintenance(retryAfterSeconds)
     ApiOutcome.NetworkFailure -> CatalogResult.NetworkError
     is ApiOutcome.Success -> CatalogResult.InvalidResponse
+}
+private fun CatalogResult<*>.failure(): CatalogResult<Nothing> = when (this) {
+    is CatalogResult.HttpError -> this
+    is CatalogResult.Maintenance -> this
+    CatalogResult.NetworkError -> CatalogResult.NetworkError
+    else -> CatalogResult.InvalidResponse
 }

@@ -28,3 +28,6 @@ data class QuestGroupInvitation(
 
 /** Page is internal batch transport; presentation renders an automatically appended list. */
 data class QuestGroupBatch<T>(val items: List<T>, val page: Int, val total: Int, val totalPages: Int)
+
+/** Current authorized roles/counts and invitation outcomes, never a mutation receipt. */
+data class QuestGroupRecoveryReview(val profileId: String, val groups: List<QuestGroup>, val invitations: List<QuestGroupInvitation>)

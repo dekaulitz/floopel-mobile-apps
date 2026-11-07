@@ -19,7 +19,7 @@ internal enum class Destination {
     TRIP_APPLICATIONS, APPLICATIONS, APPLICATION, APPLY, NOTICE, NOTIFICATIONS,
     NOTIFICATION_DEVICE, NOTIFICATION_OPEN, NOTIFICATION_DETAIL,
     CATALOG, COUNTRIES, DETAIL, LOGIN, REGISTER, VERIFY, FORGOT, LEGAL,
-    PUBLIC_PLAN, PUBLIC_PROFILE, SAVED_SPOTS, QUEST_GROUPS, QUEST_GROUP, QUEST_GROUP_INVITATIONS, QUEST_GROUP_INVITATION,
+    PUBLIC_PLAN, PUBLIC_PROFILE, SAVED_SPOTS, QUEST_GROUPS, QUEST_GROUP, QUEST_GROUP_INVITATIONS, QUEST_GROUP_INVITATION, QUEST_GROUP_RECOVERY,
 }
 
 /** Only identifiers and non-sensitive navigation context are persisted. */
@@ -38,7 +38,9 @@ internal data class SpotAdded(val itineraryId: String, val title: String, val da
 internal data class TripCreationRecovery(val draft: TripDraft?, val trip: TravelerTrip?)
 internal data class TripMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<TravelerTrip>> = ReadState())
 internal data class ItineraryMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<OwnedItinerary>> = ReadState())
-internal enum class MutationJournal { TRIP, ITINERARY }
+internal data class QuestGroupMutationRecoveryState(val required: Boolean = false, val title: String? = null,
+    val review: ReadState<QuestGroupRecoveryReview> = ReadState())
+internal enum class MutationJournal { TRIP, ITINERARY, QUEST_GROUP }
 
 internal data class TravelerState(
     val tab: Destination = Destination.HOME,
@@ -96,6 +98,7 @@ internal data class TravelerState(
     val unknownOutcome: Boolean = false,
     val tripMutationRecovery: TripMutationRecoveryState = TripMutationRecoveryState(),
     val itineraryMutationRecovery: ItineraryMutationRecoveryState = ItineraryMutationRecoveryState(),
+    val questGroupMutationRecovery: QuestGroupMutationRecoveryState = QuestGroupMutationRecoveryState(),
     val writeFailureJournal: MutationJournal? = null,
     val feedback: SpotAdded? = null,
     val saved: Boolean = false,
@@ -125,6 +128,10 @@ internal data class TravelerState(
     val group: ReadState<QuestGroup> = ReadState(),
     val groupMembers: ReadState<QuestGroupBatch<QuestGroupMember>> = ReadState(),
     val groupInvitations: ReadState<QuestGroupBatch<QuestGroupInvitation>> = ReadState(),
+    val groupInvitationsAppending: Boolean = false,
+    val groupInvitationsAppendFailure: ReadFailure? = null,
+    val groupInvitationsScrollIndex: Int = 0,
+    val groupInvitationsScrollOffset: Int = 0,
     val groupInvitation: ReadState<QuestGroupInvitation> = ReadState(),
 ) {
     val route get() = stack.last()

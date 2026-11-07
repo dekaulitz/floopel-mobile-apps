@@ -7,6 +7,7 @@ import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
 import com.floopel.feature.traveler.domain.repository.TravelerItineraryRepository
+import com.floopel.feature.traveler.domain.repository.TravelerQuestGroupRepository
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
@@ -37,6 +38,7 @@ internal class TravelerViewModel(
         }
     private val mutable = MutableStateFlow(TravelerState(tab = restored?.firstOrNull()?.destination?.takeIf { it in rootTabs } ?: Destination.HOME,
         stack = restored ?: listOf(TravelerRoute(Destination.HOME)),
+        questGroupMutationRecovery = QuestGroupMutationRecoveryState(required = restored?.lastOrNull()?.destination == Destination.QUEST_GROUP_RECOVERY),
         identityRestored = !autoStart))
     val state = mutable.asStateFlow()
     private val reads = mutableMapOf<String, Job>()
@@ -45,6 +47,7 @@ internal class TravelerViewModel(
     private var registrationKey: String? = null
     private var startupJob: Job? = null
     private val locationQueries = mutableMapOf<TravelerRoute, String>()
+    private var groupInvitationsRoute: TravelerRoute? = null
 
     private var language = "id"
     private val spotReports = mutableMapOf<Pair<Long, String>, SpotReportState>()
@@ -58,6 +61,7 @@ internal class TravelerViewModel(
                         writeJob?.cancel()
                         acknowledgements.clear()
                         locationQueries.clear(); spotReports.clear()
+                        groupInvitationsRoute = null
                     }
                     mutable.update { current ->
                         if (current.identity.generation != identity.generation) {
@@ -80,7 +84,9 @@ internal class TravelerViewModel(
                 val identity = runtime.identity.view.first()
                 mutable.update { current ->
                     val stack = if (identity.signedIn) signedInStack(current.stack) else authenticationStack(current.stack)
-                    current.copy(identity = identity, identityRestored = true, stack = stack, tab = rootTab(stack))
+                    current.copy(identity = identity, identityRestored = true, stack = stack, tab = rootTab(stack),
+                        questGroupMutationRecovery = if (identity.signedIn && stack.last().destination == Destination.QUEST_GROUP_RECOVERY)
+                            QuestGroupMutationRecoveryState(required = true) else current.questGroupMutationRecovery)
                 }
                 loadIntro()
             }
@@ -89,6 +95,7 @@ internal class TravelerViewModel(
 
     suspend fun changeLanguage(value: String) {
         require(value in setOf("id", "en"))
+        groupInvitationsRoute = null
         withContext(worker) { runtime.identity.setLanguage(value) }
         if (language == value) return
         language = value
@@ -221,7 +228,9 @@ internal class TravelerViewModel(
             pendingPublication = ReadState(), isSpotSaved = ReadState(), publicPlan = ReadState(), publicProfile = ReadState(),
             publicProgress = ReadState(), publicPlans = if (route.destination == Destination.PUBLIC_PROFILE) ReadState() else it.publicPlans,
             publicBadges = ReadState(), publicPrivatePlans = ReadState(),
-            group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(), groupInvitations = ReadState(),
+            group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(),
+            groupInvitations = if (route.destination == Destination.QUEST_GROUP_INVITATION) it.groupInvitations else ReadState(),
+            groupInvitationsAppending = false, groupInvitationsAppendFailure = null,
             locationBrowser = ReadState(), locationContent = LocationContentState()) }
         refresh()
     }
@@ -255,7 +264,10 @@ internal class TravelerViewModel(
         if (state.value.route.destination == Destination.COUNTRIES ||
             state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
             mutable.update { it.copy(query = locationQueries[it.route].orEmpty()) }
-        refresh()
+        val returningToInvitations = current.route.destination == Destination.QUEST_GROUP_INVITATION &&
+            state.value.route.destination == Destination.QUEST_GROUP_INVITATIONS &&
+            state.value.route == groupInvitationsRoute && state.value.groupInvitations.value != null
+        if (!returningToInvitations) refresh()
     }
     fun background() { viewModelScope.launch(worker) { runtime.identity.background() } }
     fun clearFeedback() { mutable.update { it.copy(feedback = null, saved = false) } }
@@ -417,8 +429,8 @@ internal class TravelerViewModel(
                 fetch("groupMembers", { it.groupMembers }, { s, r -> s.copy(groupMembers = r) }) { runtime.questGroups.members(route.id, 1) }
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             }
-            Destination.QUEST_GROUP_INVITATIONS -> fetch("groupInvitations", { it.groupInvitations }, { s, r -> s.copy(groupInvitations = r) }) {
-                runtime.questGroups.invitations(1, language, route.id.takeIf(String::isNotBlank)) }
+            Destination.QUEST_GROUP_INVITATIONS -> loadGroupInvitations()
+            Destination.QUEST_GROUP_RECOVERY -> Unit // Review is explicit; entering/refreshing never releases or replays.
             Destination.QUEST_GROUP_INVITATION -> {
                 fetch("groupInvitation", { it.groupInvitation }, { s, r -> s.copy(groupInvitation = r) }) { runtime.questGroups.invitation(route.id, language) }
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
@@ -838,23 +850,45 @@ internal class TravelerViewModel(
     fun createGroup() {
         val questId = state.value.route.id
         if (questId.isBlank()) return
-        write({
-            when (val current = runtime.questGroups.groups(1, language, questId)) {
-                is CatalogResult.Ready -> current.value.items.firstOrNull { it.questId == questId }?.let { CatalogResult.Ready(it) }
-                    ?: runtime.questGroups.createGroup(questId, language, runtime.newOperationKey())
-                else -> current.failure()
-            }
-        }) { replace(TravelerRoute(Destination.QUEST_GROUP, it.id)) }
+        groupWrite({ runtime.questGroups.createGroup(questId, language, runtime.newOperationKey()) }) { replace(TravelerRoute(Destination.QUEST_GROUP, it.id)) }
     }
-    fun inviteToGroup(username: String) = write({ runtime.questGroups.invite(state.value.route.id, username, language, runtime.newOperationKey()) }) {
+    fun inviteToGroup(username: String) = groupWrite({ runtime.questGroups.invite(state.value.route.id, username, language, runtime.newOperationKey()) }) {
         mutable.update { it.copy(saved = true) }
     }
-    fun decideGroupInvitation(accept: Boolean) = write({ runtime.questGroups.decideInvitation(state.value.route.id, accept, language, runtime.newOperationKey()) }) {
+    fun decideGroupInvitation(accept: Boolean) = groupWrite({ runtime.questGroups.decideInvitation(state.value.route.id, accept, language, runtime.newOperationKey()) }) {
         if (accept) replace(TravelerRoute(Destination.QUEST_GROUP, it.groupId)) else back()
     }
-    fun leaveGroup(disband: Boolean) = write({ if (disband) runtime.questGroups.disbandGroup(state.value.route.id, runtime.newOperationKey())
+    fun leaveGroup(disband: Boolean) = groupWrite({ if (disband) runtime.questGroups.disbandGroup(state.value.route.id, runtime.newOperationKey())
         else runtime.questGroups.leaveGroup(state.value.route.id, runtime.newOperationKey()) }) { back() }
-    fun transferGroup(profileId: String) = write({ runtime.questGroups.transferManager(state.value.route.id, profileId, language, runtime.newOperationKey()) }) { refresh() }
+    fun transferGroup(profileId: String) = groupWrite({ runtime.questGroups.transferManager(state.value.route.id, profileId, language, runtime.newOperationKey()) }) { refresh() }
+    private fun <T> groupWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
+        write(call, journal = MutationJournal.QUEST_GROUP, success = success)
+
+    private fun loadGroupInvitations(page: Int = 1) {
+        val route = state.value.route
+        val append = page > 1
+        if (route.destination == Destination.QUEST_GROUP_INVITATIONS && !append && groupInvitationsRoute != route) {
+            reads.remove("groupInvitations")?.cancel()
+            mutable.update { it.copy(groupInvitations = ReadState(), groupInvitationsAppending = false, groupInvitationsAppendFailure = null) }
+        }
+        val current = state.value
+        if (route.destination != Destination.QUEST_GROUP_INVITATIONS || current.groupInvitations.loading || current.groupInvitationsAppending ||
+            append && (current.groupInvitationsAppendFailure?.retryAtMillis ?: 0) > now()) return
+        if (!append) groupInvitationsRoute = route
+        fetch("groupInvitations", { if (append) it.groupInvitations.copy(failure = it.groupInvitationsAppendFailure) else it.groupInvitations }, { s, r ->
+            if (append && r.failure?.status in setOf(401,403,404))
+                s.copy(groupInvitations = r.copy(value = null), groupInvitationsAppending = false, groupInvitationsAppendFailure = null)
+            else if (append) s.copy(groupInvitationsAppending = r.loading, groupInvitationsAppendFailure = r.failure,
+                groupInvitations = if (!r.loading && r.failure == null && r.value != null)
+                    r.copy(value = r.value.copy(items = (s.groupInvitations.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else s.groupInvitations)
+            else s.copy(groupInvitations = r, groupInvitationsAppending = false, groupInvitationsAppendFailure = null,
+                groupInvitationsScrollIndex = 0, groupInvitationsScrollOffset = 0)
+        }) { runtime.questGroups.invitations(page, language, route.id.takeIf(String::isNotBlank)) }
+    }
+    fun openGroupInvitation(id: String, index: Int, offset: Int) {
+        mutable.update { it.copy(groupInvitationsScrollIndex = index, groupInvitationsScrollOffset = offset) }
+        open(TravelerRoute(Destination.QUEST_GROUP_INVITATION, id))
+    }
     private fun loadOpenTrips(cursor: String? = null) {
         val query = state.value.query
         val locationId = state.value.route.takeIf { it.destination == Destination.OPEN_TRIPS }?.id?.takeIf(String::isNotBlank)
@@ -875,6 +909,7 @@ internal class TravelerViewModel(
         val s = state.value
         when (s.route.destination) {
             Destination.QUEST_GROUPS -> s.groups.value?.takeIf { it.page < it.totalPages }?.let { loadGroups(it.page + 1) }
+            Destination.QUEST_GROUP_INVITATIONS -> s.groupInvitations.value?.takeIf { !s.groupInvitations.loading && !s.groupInvitationsAppending && it.page < it.totalPages }?.let { loadGroupInvitations(it.page + 1) }
             Destination.APPLICATIONS, Destination.TRIP_APPLICATIONS -> if (!s.applications.loading) s.applications.value?.nextCursor?.let(::moreApplications)
             Destination.APPLY -> if (!s.openTripStops.loading) s.openTripStops.value?.nextCursor?.let { cursor ->
                 fetch("openTripStops", { it.openTripStops }, { old, r -> old.copy(openTripStops = if (r.value != null)
@@ -1243,7 +1278,8 @@ internal class TravelerViewModel(
         if ((initial.tripMutationRecovery.review.failure?.retryAtMillis ?: 0) > now()) return
         mutable.update { it.copy(busy = true, tripMutationRecovery = it.tripMutationRecovery.copy(
             review = it.tripMutationRecovery.review.copy(loading = true, failure = null)),
-            itineraryMutationRecovery = it.itineraryMutationRecovery.copy(review = ReadState())) }
+            itineraryMutationRecovery = it.itineraryMutationRecovery.copy(review = ReadState()),
+            questGroupMutationRecovery = it.questGroupMutationRecovery.copy(review = ReadState())) }
         writeJob = viewModelScope.launch {
             try {
                 if (startNew) {
@@ -1295,7 +1331,8 @@ internal class TravelerViewModel(
         mutable.update {
             it.copy(busy = true, itineraryMutationRecovery = it.itineraryMutationRecovery.copy(
                 review = review.copy(loading = true, failure = null)),
-                tripMutationRecovery = it.tripMutationRecovery.copy(review = ReadState()))
+                tripMutationRecovery = it.tripMutationRecovery.copy(review = ReadState()),
+                questGroupMutationRecovery = it.questGroupMutationRecovery.copy(review = ReadState()))
         }
         writeJob = viewModelScope.launch {
             try {
@@ -1338,6 +1375,55 @@ internal class TravelerViewModel(
     }
     private fun <T> itineraryWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
         write(call, journal = MutationJournal.ITINERARY, success = success)
+
+    fun showQuestGroupRecovery() {
+        if (state.value.questGroupMutationRecovery.required) open(TravelerRoute(Destination.QUEST_GROUP_RECOVERY))
+    }
+    fun reviewQuestGroupMutation() = recoverQuestGroupMutation(false)
+    fun startNewQuestGroupAction() = recoverQuestGroupMutation(true)
+    fun closeQuestGroupMutationReview() {
+        if (!state.value.busy) mutable.update { it.copy(questGroupMutationRecovery = it.questGroupMutationRecovery.copy(review = ReadState())) }
+    }
+    private fun recoverQuestGroupMutation(startNew: Boolean) {
+        val initial = state.value
+        val review = initial.questGroupMutationRecovery.review
+        if (!initial.questGroupMutationRecovery.required || !initial.identity.signedIn || initial.busy || writeJob?.isActive == true ||
+            initial.identity.generation != runtime.identity.generation ||
+            startNew && (review.value == null || review.failure != null) || (review.failure?.retryAtMillis ?: 0) > now()) return
+        val epoch = runtime.identity.generation
+        mutable.update { it.copy(busy = true, questGroupMutationRecovery = it.questGroupMutationRecovery.copy(
+            review = review.copy(loading = true, failure = null)), tripMutationRecovery = it.tripMutationRecovery.copy(review = ReadState()),
+            itineraryMutationRecovery = it.itineraryMutationRecovery.copy(review = ReadState())) }
+        writeJob = viewModelScope.launch {
+            try {
+                if (startNew) {
+                    val result = withContext(worker) { runtime.questGroups.startNewAction() }
+                    if (runtime.identity.generation != epoch) return@launch
+                    if (result is CatalogResult.Ready) {
+                        mutable.update { it.copy(busy = false,
+                            unknownOutcome = if (it.writeFailureJournal == MutationJournal.QUEST_GROUP) false else it.unknownOutcome,
+                            writeFailure = if (it.writeFailureJournal == MutationJournal.QUEST_GROUP) null else it.writeFailure,
+                            writeFailureJournal = if (it.writeFailureJournal == MutationJournal.QUEST_GROUP) null else it.writeFailureJournal,
+                            questGroupMutationRecovery = QuestGroupMutationRecoveryState()) }
+                        if (state.value.route.destination == Destination.QUEST_GROUP_RECOVERY) back() else refresh()
+                    } else mutable.update { it.copy(questGroupMutationRecovery = it.questGroupMutationRecovery.copy(
+                        review = ReadState<QuestGroupRecoveryReview>().result(result.failure(), now()))) }
+                } else {
+                    val result = withContext(worker) { runtime.questGroups.reviewPendingMutation(language) }
+                    if (runtime.identity.generation != epoch) return@launch
+                    mutable.update { it.copy(questGroupMutationRecovery = it.questGroupMutationRecovery.copy(
+                        review = ReadState<QuestGroupRecoveryReview>().result(result, now()))) }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                if (runtime.identity.generation == epoch) mutable.update { it.copy(questGroupMutationRecovery = it.questGroupMutationRecovery.copy(
+                    review = ReadState(failure = ReadFailure()))) }
+            } finally {
+                if (runtime.identity.generation == epoch) mutable.update { it.copy(busy = false,
+                    questGroupMutationRecovery = it.questGroupMutationRecovery.copy(review = it.questGroupMutationRecovery.review.copy(loading = false))) }
+            }
+        }
+    }
 
     private fun loadNotifications(page: Int = 1) {
         val filter = state.value.notificationClass
@@ -1423,7 +1509,9 @@ internal class TravelerViewModel(
         val epoch = runtime.identity.generation
         mutable.update { it.copy(busy = true, writeFailure = null, writeFailureJournal = journal, saved = false,
             tripMutationRecovery = if (journal == MutationJournal.TRIP) it.tripMutationRecovery.copy(review = ReadState()) else it.tripMutationRecovery,
-            itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) it.itineraryMutationRecovery.copy(review = ReadState()) else it.itineraryMutationRecovery) }
+            itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) it.itineraryMutationRecovery.copy(review = ReadState()) else it.itineraryMutationRecovery,
+            questGroupMutationRecovery = if (journal == MutationJournal.QUEST_GROUP) it.questGroupMutationRecovery.copy(review = ReadState(),
+                title = it.group.value?.questTitle ?: it.quest.value?.card?.title ?: it.questGroupMutationRecovery.title) else it.questGroupMutationRecovery) }
         writeJob = viewModelScope.launch {
             try {
                 if (checkConsent) {
@@ -1441,7 +1529,8 @@ internal class TravelerViewModel(
                 mutable.update { it.copy(busy = false) }
                 if (result is CatalogResult.Ready) { mutable.update { it.copy(unknownOutcome = false, writeFailureJournal = null,
                     tripMutationRecovery = if (journal == MutationJournal.TRIP) TripMutationRecoveryState() else it.tripMutationRecovery,
-                    itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState() else it.itineraryMutationRecovery) }; success(result.value) }
+                    itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState() else it.itineraryMutationRecovery,
+                    questGroupMutationRecovery = if (journal == MutationJournal.QUEST_GROUP) QuestGroupMutationRecoveryState() else it.questGroupMutationRecovery) }; success(result.value) }
                 else {
                     mutable.update { it.copy(writeFailure = ReadState<T>().result(result, now()).failure,
                         unknownOutcome = result.uncertainWriteResult(),
@@ -1449,13 +1538,18 @@ internal class TravelerViewModel(
                             TripMutationRecoveryState(true) else it.tripMutationRecovery,
                         itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY && (result.uncertainWriteResult() || result is CatalogResult.HttpError && result.code in setOf(
                             TravelerItineraryRepository.PENDING_MUTATION_CODE, TravelerItineraryRepository.EXPIRED_MUTATION_CODE)))
-                            ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery) }
-                    if (state.value.unknownOutcome) refresh() // Read recovery only. Never replay a write.
+                            ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery,
+                        questGroupMutationRecovery = if (journal == MutationJournal.QUEST_GROUP && (result.uncertainWriteResult() || result is CatalogResult.HttpError && result.code in setOf(
+                            TravelerQuestGroupRepository.PENDING_MUTATION_CODE, TravelerQuestGroupRepository.EXPIRED_MUTATION_CODE)))
+                            it.questGroupMutationRecovery.copy(required = true) else it.questGroupMutationRecovery) }
+                    if (journal == MutationJournal.QUEST_GROUP && state.value.questGroupMutationRecovery.required) showQuestGroupRecovery()
+                    else if (state.value.unknownOutcome) refresh() // Read recovery only. Never replay a write.
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { if (runtime.identity.generation == epoch) mutable.update { it.copy(writeFailure = ReadFailure(), unknownOutcome = true,
                 tripMutationRecovery = if (journal == MutationJournal.TRIP) TripMutationRecoveryState(true) else it.tripMutationRecovery,
-                itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery) } }
+                itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery,
+                questGroupMutationRecovery = if (journal == MutationJournal.QUEST_GROUP) it.questGroupMutationRecovery.copy(required = true) else it.questGroupMutationRecovery) } }
             finally { if (runtime.identity.generation == epoch) mutable.update { it.copy(busy = false) } }
         }
     }

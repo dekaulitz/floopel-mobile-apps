@@ -4,6 +4,14 @@ import com.floopel.feature.traveler.domain.model.*
 
 /** Native identity operations share the single session owner, without execution credentials or Web cookies. */
 interface TravelerQuestGroupRepository {
+    companion object {
+        const val PENDING_MUTATION_CODE = "PENDING_OPERATION"
+        const val EXPIRED_MUTATION_CODE = "EXPIRED_OPERATION"
+    }
+    /** Authorized GET review only; a successful review does not clear or replay the pending command. */
+    suspend fun reviewPendingMutation(locale: String): CatalogResult<QuestGroupRecoveryReview> = CatalogResult.HttpError(409)
+    /** Explicitly release only the unchanged actor/generation-bound record reviewed above. */
+    suspend fun startNewAction(): CatalogResult<Unit> = CatalogResult.HttpError(409)
     suspend fun groups(page: Int, locale: String, questId: String? = null): CatalogResult<QuestGroupBatch<QuestGroup>>
     suspend fun group(id: String, locale: String): CatalogResult<QuestGroup>
     suspend fun createGroup(questId: String, locale: String, key: String): CatalogResult<QuestGroup>
