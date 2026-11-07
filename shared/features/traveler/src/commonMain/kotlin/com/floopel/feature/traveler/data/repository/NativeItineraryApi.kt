@@ -23,6 +23,7 @@ internal class NativeItineraryApi(
     private val http = NativeAuthorizedRequests(rest, session)
     private val json = Json { ignoreUnknownKeys = true }
     private val mutation = Mutex()
+    private var reviewed: Pair<Long, String?>? = null
 
     override suspend fun mine(): CatalogResult<List<OwnedItinerary>> = read(RestMethod.GET, "/me/itineraries") {
         it.jsonArray.map(::readItinerary)
@@ -97,20 +98,47 @@ internal class NativeItineraryApi(
     override suspend fun duplicateDay(id: String, day: Int): CatalogResult<OwnedItineraryDetail> =
         if (day < 1) CatalogResult.HttpError(422) else read(RestMethod.POST, path(id) + "/days/$day/duplicate", decode = ::readDetail)
 
-    /** Explicit new-action control only, after the UI has loaded current authorized plans/stops. */
+    override suspend fun reviewPendingMutation(): CatalogResult<List<OwnedItinerary>> {
+        if (!mutation.tryLock()) return CatalogResult.HttpError(409)
+        try {
+            reviewed = null
+            val epoch = session.identityGeneration
+            val actor = actor(epoch)
+            if (actor !is CatalogResult.Ready) return actor.failure()
+            val record = try {
+                recovery.read().also { saved ->
+                    if (saved != null && json.parseToJsonElement(saved).jsonObject.text("profile_id") != actor.value)
+                        return CatalogResult.HttpError(401)
+                }
+            } catch (_: Exception) { return CatalogResult.InvalidResponse }
+            val result = read(RestMethod.GET, "/me/itineraries", expectedGeneration = epoch) { it.jsonArray.map(::readItinerary) }
+            if (result is CatalogResult.Ready) {
+                try {
+                    if (recovery.read() != record) return CatalogResult.HttpError(409)
+                } catch (_: Exception) { return CatalogResult.InvalidResponse }
+                reviewed = epoch to record
+            }
+            return result
+        } finally { mutation.unlock() }
+    }
+
+    /** No server write: release only the unchanged, actor-bound record reviewed above. */
     override suspend fun startNewAction(): CatalogResult<Unit> {
         if (!mutation.tryLock()) return CatalogResult.HttpError(409)
         return try {
-            when (val actor = actor()) {
-                is CatalogResult.Ready -> try { recovery.clear(); CatalogResult.Ready(Unit) } catch (_: Exception) { CatalogResult.InvalidResponse }
-                else -> actor.failure()
-            }
+            val snapshot = reviewed ?: return CatalogResult.HttpError(409)
+            if (snapshot.first != session.identityGeneration || recovery.read() != snapshot.second) return CatalogResult.HttpError(409)
+            recovery.clear()
+            reviewed = null
+            CatalogResult.Ready(Unit)
+        } catch (_: Exception) { CatalogResult.InvalidResponse
         } finally { mutation.unlock() }
     }
 
     private suspend fun recovered(path: String, body: String): ItineraryWriteResult<OwnedItineraryDetail> {
         if (!mutation.tryLock()) return ItineraryWriteResult.PendingDifferentAction
         try {
+            reviewed = null
             val epoch = session.identityGeneration
             consent?.let { gate ->
                 val decision = gate.ensure()

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-07T20:04:18.756Z" hostname="DSKTP-ZYAN" time="0.038">
+  <properties/>
+  <testcase name="unexpiredSameActionRetryReusesItsOriginalKeyAndSavedReceipt" classname="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" time="0.012"/>
+  <testcase name="cloneAndAddStopAlsoRemainBlockedUntilTheExplicitReviewedDecision" classname="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" time="0.008"/>
+  <testcase name="failedStaleOrForeignActorReviewCannotReleaseTheRecord" classname="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" time="0.006"/>
+  <testcase name="expiredAcceptedCloneRequiresReviewAndExplicitReleaseBeforeOneFreshCreate" classname="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" time="0.006"/>
+  <testcase name="pendingExpiredRecordDoesNotBlockMetadataDeleteOrReorderAndThoseWritesDoNotClearIt" classname="com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -10,6 +10,10 @@ interface ItineraryRecoveryStore {
 }
 
 interface TravelerItineraryRepository {
+    companion object {
+        const val PENDING_MUTATION_CODE = "PENDING_OPERATION"
+        const val EXPIRED_MUTATION_CODE = "EXPIRED_OPERATION"
+    }
     suspend fun mine(): CatalogResult<List<OwnedItinerary>>
     suspend fun detail(id: String): CatalogResult<OwnedItineraryDetail>
     suspend fun create(draft: ItineraryDraft): ItineraryWriteResult<OwnedItineraryDetail>
@@ -17,6 +21,9 @@ interface TravelerItineraryRepository {
     suspend fun pendingStop(): CatalogResult<PendingItineraryStop?>
     suspend fun clone(id: String): ItineraryWriteResult<OwnedItineraryDetail>
     suspend fun addStop(id: String, spotId: String, day: Int): ItineraryWriteResult<OwnedItineraryDetail>
+    /** Authorized read review; never releases or replays the saved POST. */
+    suspend fun reviewPendingMutation(): CatalogResult<List<OwnedItinerary>> = mine()
+    /** Explicit release requires the same actor generation and exact record reviewed successfully. */
     suspend fun startNewAction(): CatalogResult<Unit>
     suspend fun update(id: String, draft: ItineraryDraft): CatalogResult<OwnedItineraryDetail>
     suspend fun delete(id: String): CatalogResult<Unit>

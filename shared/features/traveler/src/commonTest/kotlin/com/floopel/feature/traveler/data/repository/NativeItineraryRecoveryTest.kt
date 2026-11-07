@@ -15,6 +15,7 @@ import io.ktor.client.engine.mock.*
 import io.ktor.http.*
 import io.ktor.http.content.TextContent
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.*
 import kotlin.test.*
 
 class NativeItineraryRecoveryTest {
@@ -126,13 +127,18 @@ class NativeItineraryRecoveryTest {
             fixture.now += 86_400_001L
             assertEquals(ItineraryWriteResult.Expired, fixture.repository.create(draft))
             assertEquals(1, fixture.writes)
+            assertEquals(CatalogResult.HttpError(409), fixture.repository.startNewAction())
+            fixture.networkFailure = false
+            assertIs<CatalogResult.Ready<*>>(fixture.repository.reviewPendingMutation())
             assertEquals(CatalogResult.Ready(Unit), fixture.repository.startNewAction())
             fixture.record = "corrupt"
             assertEquals(ItineraryWriteResult.StorageFailure, fixture.repository.create(draft))
             assertEquals(CatalogResult.InvalidResponse, fixture.repository.pendingDraft())
             fixture.storageFailure = true
             assertEquals(ItineraryWriteResult.StorageFailure, fixture.repository.create(draft))
-            assertEquals(CatalogResult.InvalidResponse, fixture.repository.startNewAction())
+            assertEquals(CatalogResult.InvalidResponse, fixture.repository.reviewPendingMutation())
+            assertEquals(CatalogResult.HttpError(409), fixture.repository.startNewAction())
+            assertEquals("corrupt", fixture.record)
             fixture.storageFailure = false
             fixture.record = null
             assertEquals(CatalogResult.Ready(null), fixture.repository.pendingDraft())
@@ -185,12 +191,19 @@ class NativeItineraryRecoveryTest {
     }
 }
 
-private class ItineraryFixture {
+internal class ItineraryFixture {
     var record: String? = null
     var storageFailure = false
     var networkFailure = false
     var status = HttpStatusCode.OK
     var now = 1_800_000_000_000L
+    var owner = "owner"
+    var acceptedCloneResponseLost = false
+    var nextKey: String? = null
+    var beforeMine: suspend () -> Unit = {}
+    val postPaths = mutableListOf<String>()
+    private val receipts = mutableMapOf<String, String>()
+    private val ownedCopies = mutableMapOf<String, String>()
     val key = "01a3185c-5000-7000-8000-000000000001"
     var generatedKeys = 0
     var writes = 0
@@ -203,7 +216,7 @@ private class ItineraryFixture {
         val data = when {
             path.endsWith("/login") -> """{"tokens":{"token_type":"Bearer","access_token":"fixture","access_expires_at":"2099-01-01T00:00:00Z","refresh_token":"protected","refresh_expires_at":"2099-02-01T00:00:00Z"}}"""
             path.endsWith("/progress") -> """{"xp_total":0,"level":{"level":1,"code":"explorer","name":"Explorer","xp_floor":0,"xp_to_next_level":1000,"policy_revision":1},"badges":[]}"""
-            path.endsWith("/me") -> """{"profile":{"id":"owner"}}"""
+            path.endsWith("/me") -> """{"profile":{"id":"$owner"}}"""
             else -> {
                 assertEquals("Bearer fixture", request.headers[HttpHeaders.Authorization])
                 method = request.method
@@ -211,8 +224,33 @@ private class ItineraryFixture {
                     writes++; keys.add(request.headers["Idempotency-Key"])
                     bodies.add((request.body as? TextContent)?.text ?: "")
                 }
+                val key = request.headers["Idempotency-Key"]
+                if (request.method == HttpMethod.Post) postPaths += path
+                if (request.method == HttpMethod.Post && path.endsWith("/clone") && acceptedCloneResponseLost) {
+                    val receipt = receipts.getOrPut(requireNotNull(key)) {
+                        response.replace("\"id\":\"plan\"", "\"id\":\"copy-a\"").replace("My plan", "Saved copy A")
+                    }
+                    ownedCopies["copy-a"] = receipt
+                    error("Synthetic accepted clone with lost response")
+                }
+                if (request.method == HttpMethod.Get && path == "/api/apps/v1/me/itineraries") beforeMine()
                 if (networkFailure) error("Fixture response lost")
-                return@MockEngine respond("""{"meta":{"code":"OK"},"error":null,"data":$response}""", status, headersOf(HttpHeaders.ContentType, "application/json"))
+                val result = when {
+                    request.method == HttpMethod.Get && path == "/api/apps/v1/me/itineraries" ->
+                        (listOf(response) + ownedCopies.values).joinToString(prefix = "[", postfix = "]")
+                    key != null && receipts.containsKey(key) -> receipts.getValue(key)
+                    request.method == HttpMethod.Post && ownedCopies.isNotEmpty() -> {
+                        val target = if (path.endsWith("/stops")) path.substringAfter("/itineraries/").substringBefore('/') else "plan-b"
+                        val title = (request.body as? TextContent)?.text?.let { runCatching { Json.parseToJsonElement(it).jsonObject["title"]?.jsonPrimitive?.content }.getOrNull() } ?: "Plan B"
+                        val created = JsonObject(Json.parseToJsonElement(response).jsonObject + mapOf("id" to JsonPrimitive(target), "title" to JsonPrimitive(title))).toString()
+                        ownedCopies[target] = created
+                        if (key != null) receipts[key] = created
+                        created
+                    }
+                    request.method == HttpMethod.Get && ownedCopies.containsKey(path.substringAfterLast('/')) -> ownedCopies.getValue(path.substringAfterLast('/'))
+                    else -> response
+                }
+                return@MockEngine respond("""{"meta":{"code":"OK"},"error":null,"data":$result}""", status, headersOf(HttpHeaders.ContentType, "application/json"))
             }
         }
         respond("""{"meta":{"code":"OK"},"error":null,"data":$data}""", headers = headersOf(HttpHeaders.ContentType, "application/json"))
@@ -229,7 +267,11 @@ private class ItineraryFixture {
         override fun write(record: String) { check(!storageFailure); this@ItineraryFixture.record = record }
         override fun clear() { check(!storageFailure); record = null }
     }
-    fun newRepository(consent: TravelerConsentGate? = null) = NativeItineraryApi(api.catalogTransport(), session, storage, { generatedKeys++; key }, { now }, consent)
+    fun freshKey() {
+        val time = now.toString(16).padStart(12, '0')
+        nextKey = "${time.take(8)}-${time.drop(8)}-7000-8000-000000000002"
+    }
+    fun newRepository(consent: TravelerConsentGate? = null) = NativeItineraryApi(api.catalogTransport(), session, storage, { generatedKeys++; nextKey ?: key }, { now }, consent)
     val repository = newRepository()
     suspend fun login() { session.login("fixture@example.invalid", "fixture-password") }
 }

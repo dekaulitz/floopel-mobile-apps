@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-07T20:04:19.996Z" hostname="DSKTP-ZYAN" time="0.041">
+  <properties/>
+  <testcase name="metadataEditStaysIndependentAndItsValidationFailureKeepsItsOwnUiOwner" classname="com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest" time="0.018"/>
+  <testcase name="expiredAAndBlockedBRecoverThroughReviewAndExplicitDecisionBeforeExactlyOneNewWrite" classname="com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest" time="0.011"/>
+  <testcase name="failedReviewAndChangedRecordCannotClearOrReplay" classname="com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest" time="0.007"/>
+  <testcase name="actorChangeRemovesUiReleasePermissionWithoutClearingTheRecord" classname="com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

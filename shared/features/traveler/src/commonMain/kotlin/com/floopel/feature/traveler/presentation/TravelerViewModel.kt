@@ -6,6 +6,7 @@ import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
+import com.floopel.feature.traveler.domain.repository.TravelerItineraryRepository
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
@@ -829,7 +830,7 @@ internal class TravelerViewModel(
     private fun copyPublishedPlan(id: String, allowed: Boolean) {
         if (!allowed) return
         if (!state.value.identity.signedIn) { open(TravelerRoute(Destination.LOGIN)); return }
-        write({ runtime.itineraries.clone(id).catalog() }) { replace(TravelerRoute(Destination.ITINERARY, it.itinerary.id)) }
+        itineraryWrite({ runtime.itineraries.clone(id).catalog() }) { replace(TravelerRoute(Destination.ITINERARY, it.itinerary.id)) }
     }
     private fun loadGroups(page: Int = 1) = fetch("groups", { it.groups }, { s, r -> s.copy(groups =
         if (page > 1 && r.value != null) r.copy(value = r.value.copy(items = (s.groups.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r) }) {
@@ -1084,11 +1085,11 @@ internal class TravelerViewModel(
 
     fun saveItinerary(draft: ItineraryDraft) {
         val route = state.value.route
-        write({ if (route.id.isBlank()) runtime.itineraries.create(draft).catalog() else runtime.itineraries.update(route.id, draft) }) { result ->
+        write({ if (route.id.isBlank()) runtime.itineraries.create(draft).catalog() else runtime.itineraries.update(route.id, draft) }, journal = if (route.id.isBlank()) MutationJournal.ITINERARY else null) { result ->
             replace(TravelerRoute(Destination.ITINERARY, result.itinerary.id))
         }
     }
-    fun addSpot(itineraryId: String, spotId: String, day: Int) = write({ runtime.itineraries.addStop(itineraryId, spotId, day).catalog() }) { result ->
+    fun addSpot(itineraryId: String, spotId: String, day: Int) = itineraryWrite({ runtime.itineraries.addStop(itineraryId, spotId, day).catalog() }) { result ->
         if (state.value.route.destination == Destination.PICK_PLAN) back() else replace(TravelerRoute(Destination.ITINERARY, itineraryId))
         mutable.update { it.copy(feedback = SpotAdded(itineraryId, result.itinerary.title, day)) }
     }
@@ -1155,7 +1156,7 @@ internal class TravelerViewModel(
                 val banner = image?.let { runtime.trips.uploadBanner(result.value.id, it.bytes(), it.mimeType, runtime.newOperationKey()) }
                 CatalogResult.Ready(result.value to banner)
             }
-        }, tripMutation = true) { (trip, banner) ->
+        }, journal = MutationJournal.TRIP) { (trip, banner) ->
             replace(TravelerRoute(Destination.TRIP, trip.id))
             if (banner != null) {
                 mutable.update { it.copy(media = ReadState<CoverProcessing?>().result(banner.bannerProcessing(), now()), mediaPartial = banner !is CatalogResult.Ready) }
@@ -1241,14 +1242,19 @@ internal class TravelerViewModel(
         val epoch = runtime.identity.generation
         if ((initial.tripMutationRecovery.review.failure?.retryAtMillis ?: 0) > now()) return
         mutable.update { it.copy(busy = true, tripMutationRecovery = it.tripMutationRecovery.copy(
-            review = it.tripMutationRecovery.review.copy(loading = true, failure = null))) }
+            review = it.tripMutationRecovery.review.copy(loading = true, failure = null)),
+            itineraryMutationRecovery = it.itineraryMutationRecovery.copy(review = ReadState())) }
         writeJob = viewModelScope.launch {
             try {
                 if (startNew) {
                     val result = withContext(worker) { runtime.trips.startNewAction() }
                     if (runtime.identity.generation != epoch) return@launch
                     if (result is CatalogResult.Ready) {
-                        mutable.update { it.copy(busy = false, unknownOutcome = false, writeFailure = null, tripMutationRecovery = TripMutationRecoveryState()) }
+                        mutable.update { it.copy(busy = false,
+                            unknownOutcome = if (it.writeFailureJournal == MutationJournal.TRIP) false else it.unknownOutcome,
+                            writeFailure = if (it.writeFailureJournal == MutationJournal.TRIP) null else it.writeFailure,
+                            writeFailureJournal = if (it.writeFailureJournal == MutationJournal.TRIP) null else it.writeFailureJournal,
+                            tripMutationRecovery = TripMutationRecoveryState()) }
                         refresh()
                     } else mutable.update { it.copy(tripMutationRecovery = TripMutationRecoveryState(true,
                         ReadState<List<TravelerTrip>>().result(result.failure(), now()))) }
@@ -1270,7 +1276,68 @@ internal class TravelerViewModel(
     }
 
     private fun <T> tripWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
-        write(call, tripMutation = true, success = success)
+        write(call, journal = MutationJournal.TRIP, success = success)
+
+    fun reviewItineraryMutation() = recoverItineraryMutation(false)
+    fun startNewItineraryAction() = recoverItineraryMutation(true)
+    fun closeItineraryMutationReview() {
+        if (!state.value.busy) mutable.update {
+            it.copy(itineraryMutationRecovery = it.itineraryMutationRecovery.copy(review = ReadState()))
+        }
+    }
+    private fun recoverItineraryMutation(startNew: Boolean) {
+        val initial = state.value
+        val review = initial.itineraryMutationRecovery.review
+        if (!initial.itineraryMutationRecovery.required || !initial.identity.signedIn || initial.busy || writeJob?.isActive == true ||
+            initial.identity.generation != runtime.identity.generation ||
+            startNew && (review.value == null || review.failure != null) || (review.failure?.retryAtMillis ?: 0) > now()) return
+        val epoch = runtime.identity.generation
+        mutable.update {
+            it.copy(busy = true, itineraryMutationRecovery = it.itineraryMutationRecovery.copy(
+                review = review.copy(loading = true, failure = null)),
+                tripMutationRecovery = it.tripMutationRecovery.copy(review = ReadState()))
+        }
+        writeJob = viewModelScope.launch {
+            try {
+                if (startNew) {
+                    val result = withContext(worker) { runtime.itineraries.startNewAction() }
+                    if (runtime.identity.generation != epoch) return@launch
+                    if (result is CatalogResult.Ready) {
+                        mutable.update {
+                            it.copy(busy = false,
+                                unknownOutcome = if (it.writeFailureJournal == MutationJournal.ITINERARY) false else it.unknownOutcome,
+                                writeFailure = if (it.writeFailureJournal == MutationJournal.ITINERARY) null else it.writeFailure,
+                                writeFailureJournal = if (it.writeFailureJournal == MutationJournal.ITINERARY) null else it.writeFailureJournal,
+                                itineraryMutationRecovery = ItineraryMutationRecoveryState())
+                        }
+                        refresh()
+                    } else mutable.update {
+                        it.copy(itineraryMutationRecovery = ItineraryMutationRecoveryState(true,
+                            ReadState<List<OwnedItinerary>>().result(result.failure(), now())))
+                    }
+                } else {
+                    val result = withContext(worker) { runtime.itineraries.reviewPendingMutation() }
+                    if (runtime.identity.generation != epoch) return@launch
+                    mutable.update {
+                        it.copy(itineraryMutationRecovery = ItineraryMutationRecoveryState(true,
+                            ReadState<List<OwnedItinerary>>().result(result, now())))
+                    }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                if (runtime.identity.generation == epoch) mutable.update {
+                    it.copy(itineraryMutationRecovery = ItineraryMutationRecoveryState(true, ReadState(failure = ReadFailure())))
+                }
+            } finally {
+                if (runtime.identity.generation == epoch) mutable.update {
+                    it.copy(busy = false, itineraryMutationRecovery = it.itineraryMutationRecovery.copy(
+                        review = it.itineraryMutationRecovery.review.copy(loading = false)))
+                }
+            }
+        }
+    }
+    private fun <T> itineraryWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
+        write(call, journal = MutationJournal.ITINERARY, success = success)
 
     private fun loadNotifications(page: Int = 1) {
         val filter = state.value.notificationClass
@@ -1350,12 +1417,13 @@ internal class TravelerViewModel(
             }
         }
     }
-    private fun <T> write(call: suspend () -> CatalogResult<T>, checkConsent: Boolean = true, tripMutation: Boolean = false, success: suspend (T) -> Unit) {
+    private fun <T> write(call: suspend () -> CatalogResult<T>, checkConsent: Boolean = true, journal: MutationJournal? = null, success: suspend (T) -> Unit) {
         if (checkConsent && !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy || writeJob?.isActive == true || (state.value.writeFailure?.retryAtMillis ?: 0) > now()) return
         val epoch = runtime.identity.generation
-        mutable.update { it.copy(busy = true, writeFailure = null, saved = false,
-            tripMutationRecovery = if (tripMutation) it.tripMutationRecovery.copy(review = ReadState()) else it.tripMutationRecovery) }
+        mutable.update { it.copy(busy = true, writeFailure = null, writeFailureJournal = journal, saved = false,
+            tripMutationRecovery = if (journal == MutationJournal.TRIP) it.tripMutationRecovery.copy(review = ReadState()) else it.tripMutationRecovery,
+            itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) it.itineraryMutationRecovery.copy(review = ReadState()) else it.itineraryMutationRecovery) }
         writeJob = viewModelScope.launch {
             try {
                 if (checkConsent) {
@@ -1371,24 +1439,29 @@ internal class TravelerViewModel(
                 val result = withContext(worker) { call() }
                 if (runtime.identity.generation != epoch) return@launch
                 mutable.update { it.copy(busy = false) }
-                if (result is CatalogResult.Ready) { mutable.update { it.copy(unknownOutcome = false,
-                    tripMutationRecovery = if (tripMutation) TripMutationRecoveryState() else it.tripMutationRecovery) }; success(result.value) }
+                if (result is CatalogResult.Ready) { mutable.update { it.copy(unknownOutcome = false, writeFailureJournal = null,
+                    tripMutationRecovery = if (journal == MutationJournal.TRIP) TripMutationRecoveryState() else it.tripMutationRecovery,
+                    itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState() else it.itineraryMutationRecovery) }; success(result.value) }
                 else {
                     mutable.update { it.copy(writeFailure = ReadState<T>().result(result, now()).failure,
-                        unknownOutcome = result.uncertainTripResult(),
-                        tripMutationRecovery = if (tripMutation && (result.uncertainTripResult() || result is CatalogResult.HttpError && result.code == TravelerTripRepository.PENDING_MUTATION_CODE))
-                            TripMutationRecoveryState(true) else it.tripMutationRecovery) }
+                        unknownOutcome = result.uncertainWriteResult(),
+                        tripMutationRecovery = if (journal == MutationJournal.TRIP && (result.uncertainWriteResult() || result is CatalogResult.HttpError && result.code == TravelerTripRepository.PENDING_MUTATION_CODE))
+                            TripMutationRecoveryState(true) else it.tripMutationRecovery,
+                        itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY && (result.uncertainWriteResult() || result is CatalogResult.HttpError && result.code in setOf(
+                            TravelerItineraryRepository.PENDING_MUTATION_CODE, TravelerItineraryRepository.EXPIRED_MUTATION_CODE)))
+                            ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery) }
                     if (state.value.unknownOutcome) refresh() // Read recovery only. Never replay a write.
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
             catch (_: Exception) { if (runtime.identity.generation == epoch) mutable.update { it.copy(writeFailure = ReadFailure(), unknownOutcome = true,
-                tripMutationRecovery = if (tripMutation) TripMutationRecoveryState(true) else it.tripMutationRecovery) } }
-            finally { mutable.update { it.copy(busy = false) } }
+                tripMutationRecovery = if (journal == MutationJournal.TRIP) TripMutationRecoveryState(true) else it.tripMutationRecovery,
+                itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) ItineraryMutationRecoveryState(true) else it.itineraryMutationRecovery) } }
+            finally { if (runtime.identity.generation == epoch) mutable.update { it.copy(busy = false) } }
         }
     }
 }
 
-private fun CatalogResult<*>.uncertainTripResult() = this is CatalogResult.NetworkError || this is CatalogResult.InvalidResponse ||
+private fun CatalogResult<*>.uncertainWriteResult() = this is CatalogResult.NetworkError || this is CatalogResult.InvalidResponse ||
     this is CatalogResult.Maintenance || this is CatalogResult.HttpError && status >= 500
 
 private val rootTabs = setOf(Destination.HOME, Destination.COMMUNITY, Destination.EXPLORER, Destination.OPEN_TRIPS, Destination.PROFILE)
@@ -1426,7 +1499,7 @@ private fun <T> RegistrationResult<T>.catalog(): CatalogResult<T> = when (this) 
 private fun <T> ItineraryWriteResult<T>.catalog(): CatalogResult<T> = when (this) {
     is ItineraryWriteResult.Completed -> CatalogResult.Ready(value)
     is ItineraryWriteResult.Failed -> cause
-    ItineraryWriteResult.PendingDifferentAction -> CatalogResult.HttpError(409, code = "PENDING_OPERATION")
-    ItineraryWriteResult.Expired -> CatalogResult.HttpError(409, code = "EXPIRED_OPERATION")
+    ItineraryWriteResult.PendingDifferentAction -> CatalogResult.HttpError(409, code = TravelerItineraryRepository.PENDING_MUTATION_CODE)
+    ItineraryWriteResult.Expired -> CatalogResult.HttpError(409, code = TravelerItineraryRepository.EXPIRED_MUTATION_CODE)
     ItineraryWriteResult.StorageFailure -> CatalogResult.InvalidResponse
 }

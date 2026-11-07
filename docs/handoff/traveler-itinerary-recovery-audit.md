@@ -1,0 +1,25 @@
+# ITINERARY-RECOVERY-01: explicit recovery of an expired itinerary journal
+
+Date: 8 November 2026. Base: `0f80f81909f8b8539454d951d32881c9b9b67bfb`. Finding key: `itinerary-expired-journal-in-session-recovery-20261108-0227`.
+
+## Trigger and change
+
+The actual adapter with mock HTTP reproduces clone A accepted with its response lost. A fake clock advances beyond the existing 24-hour recovery window; the device clock is unchanged. Retrying A returns `Expired`, and a different valid create, clone or add-stop B returns `PendingDifferentAction` before another POST. GET, Refresh and Back deliberately retain A's record. The production UI previously exposed no reviewed, explicit release for this situation. This concerns journaled commands for the same actor; metadata edits, deletion and reordering remain independent. It does not establish permanent blocking or failure of a real account.
+
+The UI now offers “Tinjau itinerary”. The repository performs authorized GET review of the actor's current itineraries and issues a local review ticket only for the same identity generation and exact journal record, checked before and after the GET. A separate “Mulai tindakan baru” confirmation releases only that reviewed record. It sends no server write. The user then chooses a new action normally. Failed review, changed actor/generation, changed record, dismissed review and navigation do not permit automatic clearing or replay. A matching retry within the original window retains its original key and receipt.
+
+Create, clone and add-stop opt into itinerary recovery; ordinary server 409/422 responses do not enable arbitrary release. Metadata errors remain visible when an older itinerary journal is released. Trip and itinerary keep separate state and repository guards while sharing the existing notice/button/error/dialog renderer. Reviewing one closes the other review dialog without clearing its pending intent.
+
+Figma [290:4906](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile?node-id=290-4906) and [276:4661](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile?node-id=276-4661) were inspected as itinerary/clone context. The recovery interaction reuses existing components and localized ID/EN copy. Those nodes do not define a complete expired-journal screen; this protocol fix does not claim full reconciliation of the clone/loading or expiry layout.
+
+## Executed verification
+
+- Traveler development APK, instrumentation APK, host suite and lint: **PASS**. Host: **494 tests, zero failures/errors/skips**. Lint: zero errors and 45 warnings. No core or Partner source changed.
+- Five actual-adapter tests with MockEngine cover accepted-lost clone A, expiry, blocked B create/clone/add-stop, explicit GET review/release followed by exactly one new POST, fresh key only for the next user action, legitimate same-key retry, failed/stale/foreign-actor review, and independent metadata/delete/reorder operations.
+- Four state-owner tests with the actual adapter/MockEngine cover the same recovery sequence, failed/stale review, identity change, and metadata writes including a 422 that remains visible after releasing the old journal. Lifecycle jobs are joined before resetting the host Main dispatcher.
+- Emulator **5580**, package `com.floopel.traveler.dev`, viewport 400×900dp: **20 native tests PASS in 35.716s**, comprising four itinerary recovery interactions, three Trip recovery regressions and 13 existing journey regressions. Explicit confirmation, failed review/retry and native Back were exercised. ID and EN recovery decisions, including 130% EN font scale, were inspected. This is scoped recovery evidence, not whole-app font-scale acceptance. Local source/APK hashes stayed frozen during the run.
+- The final APK was reopened with the existing session and the actual Collection reader restored through read-only navigation, pausing five seconds per manual flow. No live itinerary or Trip was mutated. No app data/database reset, device clock change, backend/API contract, provider, credential, merge or deployment change was made.
+
+iOS compilation/native UI and TalkBack/VoiceOver: **NOT_RUN**. Windows lacks Mac/Xcode and no assistive-technology session was performed. Real response-loss mutations were not run; all recovery writes used fixtures. The unrelated local `styles.xml` was compiled but excluded from this commit; its input hash and the unrelated `.gitignore` hash are recorded in the manifest.
+
+Evidence: [manifest](traveler-android-audit/itinerary-recovery-20261108/manifest.json), [native output](traveler-android-audit/itinerary-recovery-20261108/native.log), [review](traveler-android-audit/itinerary-recovery-20261108/itinerary-review.png), [EN at 130%](traveler-android-audit/itinerary-recovery-20261108/itinerary-review-en-font130.png), and the two JUnit reports in the same directory. Stored JSON/XML use LF; console logs retain raw bytes. SHA-256 hashes bind the stored artifacts, while the source fingerprint describes local execution bytes rather than portable checkout line endings.

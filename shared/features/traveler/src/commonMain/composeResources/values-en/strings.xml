@@ -372,7 +372,11 @@
     <string name="trip_recovery_review">Review Trip status</string>
     <string name="trip_recovery_title">Latest Trip status</string>
     <string name="trip_recovery_confirm_body">Check the previous action against this list. Continue only if you want to start a new action. The previous action will not be sent again.</string>
-    <string name="trip_recovery_continue">Start a new action</string>
+    <string name="mutation_recovery_continue">Start a new action</string>
+    <string name="itinerary_recovery_body">The previous itinerary action needs review. Check the saved itineraries before starting another action.</string>
+    <string name="itinerary_recovery_review">Review itineraries</string>
+    <string name="itinerary_recovery_title">Latest itineraries</string>
+    <string name="itinerary_recovery_confirm_body">Check whether the previous action was saved. Start a new action only after reviewing the outcome. The previous action will not be sent again.</string>
     <string name="collection_error_header">Content has not loaded</string>
     <string name="collection_unavailable_header">Content unavailable</string>
     <string name="collection_empty_title">No Collections available yet</string>

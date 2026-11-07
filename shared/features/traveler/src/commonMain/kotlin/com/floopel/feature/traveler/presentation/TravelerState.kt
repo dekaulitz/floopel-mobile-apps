@@ -37,6 +37,8 @@ internal data class HomeState(val spots: ReadState<List<CatalogEntry>> = ReadSta
 internal data class SpotAdded(val itineraryId: String, val title: String, val day: Int)
 internal data class TripCreationRecovery(val draft: TripDraft?, val trip: TravelerTrip?)
 internal data class TripMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<TravelerTrip>> = ReadState())
+internal data class ItineraryMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<OwnedItinerary>> = ReadState())
+internal enum class MutationJournal { TRIP, ITINERARY }
 
 internal data class TravelerState(
     val tab: Destination = Destination.HOME,
@@ -93,6 +95,8 @@ internal data class TravelerState(
     val writeFailure: ReadFailure? = null,
     val unknownOutcome: Boolean = false,
     val tripMutationRecovery: TripMutationRecoveryState = TripMutationRecoveryState(),
+    val itineraryMutationRecovery: ItineraryMutationRecoveryState = ItineraryMutationRecoveryState(),
+    val writeFailureJournal: MutationJournal? = null,
     val feedback: SpotAdded? = null,
     val saved: Boolean = false,
     val query: String = "",

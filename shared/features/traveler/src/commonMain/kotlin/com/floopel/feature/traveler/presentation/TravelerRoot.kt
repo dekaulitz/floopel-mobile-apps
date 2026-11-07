@@ -155,10 +155,17 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 }
             }
             if (route.destination != Destination.PASSPORT && (state.busy || state.identity.busy)) LinearProgressIndicator(Modifier.fillMaxWidth())
-            if (!state.tripMutationRecovery.required) state.writeFailure?.let { ErrorPanel(it, model::refresh) }
+            val coveredFailure = when (state.writeFailureJournal) {
+                MutationJournal.TRIP -> state.tripMutationRecovery.required
+                MutationJournal.ITINERARY -> state.itineraryMutationRecovery.required
+                null -> false
+            }
+            if (!coveredFailure) state.writeFailure?.let { ErrorPanel(it, model::refresh) }
             state.startupFailure?.let { ErrorPanel(it, model::retryStartup) }
             if (state.tripMutationRecovery.required) TripMutationRecoveryPanel(state, model)
-            else if (state.unknownOutcome) InfoCard(s(Res.string.unknown_outcome))
+            if (state.itineraryMutationRecovery.required) ItineraryMutationRecoveryPanel(state, model)
+            if (!state.tripMutationRecovery.required && !state.itineraryMutationRecovery.required && state.unknownOutcome)
+                InfoCard(s(Res.string.unknown_outcome))
             state.identity.failure?.takeIf { route.destination != Destination.PASSPORT }?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
             Box(Modifier.weight(1f).fillMaxWidth().testTag("traveler-viewport")) {
                 if (!state.identity.signedIn && !route.destination.isAuthenticationScreen()) LoginGate(model)
