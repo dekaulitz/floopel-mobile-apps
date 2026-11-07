@@ -1,6 +1,7 @@
 package com.floopel.feature.traveler.data.repository
 
 import com.floopel.feature.traveler.domain.model.*
+import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -77,7 +78,7 @@ class OpenTripNativeApiTest {
             assertEquals(CatalogResult.NetworkError, f.repository.decideTripApplication(publicApplicationId, TripApplicationDecision.REJECT, publicSpotId))
             val frozen = f.recovery.record
             val writes = f.writes
-            assertEquals(CatalogResult.HttpError(409), f.repository.decideTripApplication(publicApplicationId, TripApplicationDecision.APPROVE, publicTripId))
+            assertEquals(CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE), f.repository.decideTripApplication(publicApplicationId, TripApplicationDecision.APPROVE, publicTripId))
             assertEquals(writes, f.writes)
             assertEquals(frozen, f.recovery.record)
         }
@@ -306,8 +307,8 @@ class OpenTripNativeApiTest {
             f.repository.applyToOpenTrip(publicTripId, "Retained draft", publicApplicationId)
             val retained = f.recovery.record
             f.networkFailure = false
-            assertEquals(CatalogResult.HttpError(409), f.repository.applyToOpenTrip(publicTripId, "Changed draft", publicMembershipId))
-            assertEquals(CatalogResult.HttpError(409), f.repository.applyToOpenTrip(publicSpotId, "Retained draft", publicMembershipId))
+            assertEquals(CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE), f.repository.applyToOpenTrip(publicTripId, "Changed draft", publicMembershipId))
+            assertEquals(CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE), f.repository.applyToOpenTrip(publicSpotId, "Retained draft", publicMembershipId))
             assertEquals(retained, f.recovery.record)
             assertEquals(1, f.writes)
         }

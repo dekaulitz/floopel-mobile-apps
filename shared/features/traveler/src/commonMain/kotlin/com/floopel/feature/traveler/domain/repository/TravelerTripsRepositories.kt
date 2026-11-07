@@ -4,6 +4,10 @@ import com.floopel.feature.traveler.domain.model.*
 
 /** Trips and invitation operations reuse existing Apps contracts and native session. */
 interface TravelerTripRepository {
+    companion object {
+        /** Local journal conflict; distinct from a server business 409. Review does not replay or clear it. */
+        const val PENDING_MUTATION_CODE = "TRIP_MUTATION_PENDING"
+    }
     /** Reads public-safe cards using server filters and opaque continuation. */
     suspend fun openTrips(query: OpenTripQuery): CatalogResult<OpenTripPage> = CatalogResult.InvalidResponse
     /** A public detail read never grants membership or access to private child resources. */
@@ -36,6 +40,7 @@ interface TravelerTripRepository {
     suspend fun bannerStatus(id: String): CatalogResult<TripBannerStatus> = CatalogResult.HttpError(404)
     suspend fun uploadBanner(id: String, bytes: ByteArray, mimeType: String, key: String): CatalogResult<TripBannerStatus> = CatalogResult.InvalidResponse
     suspend fun pendingDraft(sourceId: String, creating: Boolean): CatalogResult<TripDraft?> = CatalogResult.Ready(null)
+    /** Actor-bound read review. Only startNewAction may explicitly release this unchanged reviewed intent. */
     suspend fun reviewPendingMutation(): CatalogResult<List<TravelerTrip>> = mine()
     suspend fun startNewAction(): CatalogResult<Unit> = CatalogResult.Ready(Unit)
     suspend fun mine(): CatalogResult<List<TravelerTrip>>

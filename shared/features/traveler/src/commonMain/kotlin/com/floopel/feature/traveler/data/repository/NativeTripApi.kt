@@ -133,12 +133,15 @@ internal class NativeTripApi(private val rest: FloopelRestClient, private val se
             val epoch = session.identityGeneration
             val actor = actor(epoch)
             if (actor !is CatalogResult.Ready) return actor.tripFailure()
+            val record = try {
+                recovery.read().also { saved ->
+                    if (saved != null && json.parseToJsonElement(saved).jsonObject.text("profile_id") != actor.value) return CatalogResult.HttpError(401)
+                }
+            } catch (_: Exception) { return CatalogResult.InvalidResponse }
             val current = read(RestMethod.GET, "/me/trips", expectedGeneration = epoch) { it.jsonArray.map(::trip) }
             if (current is CatalogResult.Ready) {
-                val record = try {
-                    val saved = recovery.read()
-                    if (saved != null && json.parseToJsonElement(saved).jsonObject.text("profile_id") != actor.value) return CatalogResult.HttpError(401)
-                    saved
+                try {
+                    if (recovery.read() != record) return CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE)
                 } catch (_: Exception) { return CatalogResult.InvalidResponse }
                 reviewed = epoch to record
             }
@@ -405,9 +408,11 @@ internal class NativeTripApi(private val rest: FloopelRestClient, private val se
         return try {
             val saved = recovery.read()?.let { json.parseToJsonElement(it).jsonObject }
             if (saved != null && saved.text("profile_id") == actor) {
-                if (saved.text("method") != method.name || saved.text("path") != path || saved.optional("body") != body.orEmpty()) return CatalogResult.HttpError(409)
+                if (saved.text("method") != method.name || saved.text("path") != path || saved.optional("body") != body.orEmpty())
+                    return CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE)
                 val age = nowMillis() - saved.getValue("created_at").jsonPrimitive.long
-                if (!hasDurableTripReplay(method, path) && age !in 0 until 86_400_000L) return CatalogResult.HttpError(409)
+                if (!hasDurableTripReplay(method, path) && age !in 0 until 86_400_000L)
+                    return CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE)
                 CatalogResult.Ready(saved.text("key"))
             } else {
                 require(!key.isNullOrBlank())

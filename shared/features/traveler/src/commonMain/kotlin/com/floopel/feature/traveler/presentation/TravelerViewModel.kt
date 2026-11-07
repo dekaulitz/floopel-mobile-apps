@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
+import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
@@ -1154,7 +1155,7 @@ internal class TravelerViewModel(
                 val banner = image?.let { runtime.trips.uploadBanner(result.value.id, it.bytes(), it.mimeType, runtime.newOperationKey()) }
                 CatalogResult.Ready(result.value to banner)
             }
-        }) { (trip, banner) ->
+        }, tripMutation = true) { (trip, banner) ->
             replace(TravelerRoute(Destination.TRIP, trip.id))
             if (banner != null) {
                 mutable.update { it.copy(media = ReadState<CoverProcessing?>().result(banner.bannerProcessing(), now()), mediaPartial = banner !is CatalogResult.Ready) }
@@ -1215,16 +1216,61 @@ internal class TravelerViewModel(
                 fetch("distribution", { it.distribution }, { s, r -> s.copy(distribution = r) }) { runtime.distribution.read(id) }
         }
     }
-    fun apply(message: String) = write({ runtime.trips.applyToOpenTrip(state.value.route.id, message, runtime.newOperationKey()) }) { application ->
+    fun apply(message: String) = tripWrite({ runtime.trips.applyToOpenTrip(state.value.route.id, message, runtime.newOperationKey()) }) { application ->
         replace(TravelerRoute(Destination.APPLICATION, application.id))
     }
-    fun decision(decision: TripApplicationDecision) = write({ runtime.trips.decideTripApplication(state.value.route.id, decision, runtime.newOperationKey()) }) { result ->
+    fun decision(decision: TripApplicationDecision) = tripWrite({ runtime.trips.decideTripApplication(state.value.route.id, decision, runtime.newOperationKey()) }) { result ->
         mutable.update { it.copy(application = ReadState(result), saved = true) }
     }
-    fun lifecycle(action: TripLifecycleAction) = write({ runtime.trips.lifecycle(state.value.route.id, action, runtime.newOperationKey()) }) { back() }
-    fun invite(recipient: String) = write({ runtime.trips.invite(state.value.route.id, recipient, runtime.newOperationKey()) }) { refresh() }
-    fun invitationDecision(id: String, decision: InvitationDecision) = write({ runtime.trips.decide(id, decision, runtime.newOperationKey()) }) { refresh() }
-    fun removeMember(id: String) = write({ runtime.trips.removeMember(state.value.route.id, id, runtime.newOperationKey()) }) { refresh() }
+    fun lifecycle(action: TripLifecycleAction) = tripWrite({ runtime.trips.lifecycle(state.value.route.id, action, runtime.newOperationKey()) }) { back() }
+    fun invite(recipient: String) = tripWrite({ runtime.trips.invite(state.value.route.id, recipient, runtime.newOperationKey()) }) { refresh() }
+    fun invitationDecision(id: String, decision: InvitationDecision) = tripWrite({ runtime.trips.decide(id, decision, runtime.newOperationKey()) }) { refresh() }
+    fun removeMember(id: String) = tripWrite({ runtime.trips.removeMember(state.value.route.id, id, runtime.newOperationKey()) }) { refresh() }
+
+    /** Reviewing only reads; neither navigation nor Refresh can release or replay the saved write. */
+    fun reviewTripMutation() = recoverTripMutation(false)
+    fun startNewTripAction() = recoverTripMutation(true)
+    fun closeTripMutationReview() {
+        if (!state.value.busy) mutable.update { it.copy(tripMutationRecovery = it.tripMutationRecovery.copy(review = ReadState())) }
+    }
+    private fun recoverTripMutation(startNew: Boolean) {
+        val initial = state.value
+        if (!initial.tripMutationRecovery.required || !initial.identity.signedIn || initial.busy || writeJob?.isActive == true ||
+            initial.identity.generation != runtime.identity.generation ||
+            startNew && (initial.tripMutationRecovery.review.value == null || initial.tripMutationRecovery.review.failure != null)) return
+        val epoch = runtime.identity.generation
+        if ((initial.tripMutationRecovery.review.failure?.retryAtMillis ?: 0) > now()) return
+        mutable.update { it.copy(busy = true, tripMutationRecovery = it.tripMutationRecovery.copy(
+            review = it.tripMutationRecovery.review.copy(loading = true, failure = null))) }
+        writeJob = viewModelScope.launch {
+            try {
+                if (startNew) {
+                    val result = withContext(worker) { runtime.trips.startNewAction() }
+                    if (runtime.identity.generation != epoch) return@launch
+                    if (result is CatalogResult.Ready) {
+                        mutable.update { it.copy(busy = false, unknownOutcome = false, writeFailure = null, tripMutationRecovery = TripMutationRecoveryState()) }
+                        refresh()
+                    } else mutable.update { it.copy(tripMutationRecovery = TripMutationRecoveryState(true,
+                        ReadState<List<TravelerTrip>>().result(result.failure(), now()))) }
+                } else {
+                    val result = withContext(worker) { runtime.trips.reviewPendingMutation() }
+                    if (runtime.identity.generation != epoch) return@launch
+                    mutable.update { it.copy(tripMutationRecovery = TripMutationRecoveryState(true,
+                        ReadState<List<TravelerTrip>>().result(result, now()))) }
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                if (runtime.identity.generation == epoch) mutable.update { it.copy(tripMutationRecovery = TripMutationRecoveryState(true,
+                    ReadState(failure = ReadFailure()))) }
+            } finally {
+                if (runtime.identity.generation == epoch) mutable.update { it.copy(busy = false,
+                    tripMutationRecovery = it.tripMutationRecovery.copy(review = it.tripMutationRecovery.review.copy(loading = false))) }
+            }
+        }
+    }
+
+    private fun <T> tripWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
+        write(call, tripMutation = true, success = success)
 
     private fun loadNotifications(page: Int = 1) {
         val filter = state.value.notificationClass
@@ -1304,11 +1350,12 @@ internal class TravelerViewModel(
             }
         }
     }
-    private fun <T> write(call: suspend () -> CatalogResult<T>, checkConsent: Boolean = true, success: suspend (T) -> Unit) {
+    private fun <T> write(call: suspend () -> CatalogResult<T>, checkConsent: Boolean = true, tripMutation: Boolean = false, success: suspend (T) -> Unit) {
         if (checkConsent && !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy || writeJob?.isActive == true || (state.value.writeFailure?.retryAtMillis ?: 0) > now()) return
         val epoch = runtime.identity.generation
-        mutable.update { it.copy(busy = true, writeFailure = null, saved = false) }
+        mutable.update { it.copy(busy = true, writeFailure = null, saved = false,
+            tripMutationRecovery = if (tripMutation) it.tripMutationRecovery.copy(review = ReadState()) else it.tripMutationRecovery) }
         writeJob = viewModelScope.launch {
             try {
                 if (checkConsent) {
@@ -1324,18 +1371,25 @@ internal class TravelerViewModel(
                 val result = withContext(worker) { call() }
                 if (runtime.identity.generation != epoch) return@launch
                 mutable.update { it.copy(busy = false) }
-                if (result is CatalogResult.Ready) { mutable.update { it.copy(unknownOutcome = false) }; success(result.value) }
+                if (result is CatalogResult.Ready) { mutable.update { it.copy(unknownOutcome = false,
+                    tripMutationRecovery = if (tripMutation) TripMutationRecoveryState() else it.tripMutationRecovery) }; success(result.value) }
                 else {
                     mutable.update { it.copy(writeFailure = ReadState<T>().result(result, now()).failure,
-                        unknownOutcome = result is CatalogResult.NetworkError || result is CatalogResult.InvalidResponse || result is CatalogResult.Maintenance || result is CatalogResult.HttpError && result.status >= 500) }
+                        unknownOutcome = result.uncertainTripResult(),
+                        tripMutationRecovery = if (tripMutation && (result.uncertainTripResult() || result is CatalogResult.HttpError && result.code == TravelerTripRepository.PENDING_MUTATION_CODE))
+                            TripMutationRecoveryState(true) else it.tripMutationRecovery) }
                     if (state.value.unknownOutcome) refresh() // Read recovery only. Never replay a write.
                 }
             } catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { mutable.update { it.copy(writeFailure = ReadFailure(), unknownOutcome = true) } }
+            catch (_: Exception) { if (runtime.identity.generation == epoch) mutable.update { it.copy(writeFailure = ReadFailure(), unknownOutcome = true,
+                tripMutationRecovery = if (tripMutation) TripMutationRecoveryState(true) else it.tripMutationRecovery) } }
             finally { mutable.update { it.copy(busy = false) } }
         }
     }
 }
+
+private fun CatalogResult<*>.uncertainTripResult() = this is CatalogResult.NetworkError || this is CatalogResult.InvalidResponse ||
+    this is CatalogResult.Maintenance || this is CatalogResult.HttpError && status >= 500
 
 private val rootTabs = setOf(Destination.HOME, Destination.COMMUNITY, Destination.EXPLORER, Destination.OPEN_TRIPS, Destination.PROFILE)
 

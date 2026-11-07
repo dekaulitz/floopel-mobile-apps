@@ -443,7 +443,7 @@ class NativeTripApiTest {
             fixture.repository.create("plan", draft, firstKey)
             assertEquals(CatalogResult.HttpError(409), fixture.repository.startNewAction())
             assertEquals(
-                CatalogResult.HttpError(409),
+                CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE),
                 fixture.repository.create("plan", draft.copy(name = "Changed"), nextKey),
             )
             assertEquals(1, fixture.writes)
@@ -471,7 +471,7 @@ class NativeTripApiTest {
             fixture.networkFailure = false
             fixture.time += 86_400_000L
             assertEquals(
-                CatalogResult.HttpError(409),
+                CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE),
                 fixture.newRepository().update("trip", draft, nextKey),
             )
             assertEquals(1, fixture.writes)
@@ -564,7 +564,7 @@ class NativeTripApiTest {
             assertIs<CatalogResult.Ready<*>>(fixture.repository.create("plan", draft, firstKey))
             assertNotNull(fixture.recovery.record)
             assertEquals(
-                CatalogResult.HttpError(409),
+                CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE),
                 fixture.repository.create("plan", draft.copy(name = "Another intent"), nextKey),
             )
             assertEquals(1, fixture.writes)
@@ -839,7 +839,7 @@ class NativeTripApiTest {
             assertTrue(fixture.session.view.value.signedIn)
             fixture.status = HttpStatusCode.Forbidden
             assertEquals(
-                CatalogResult.HttpError(409),
+                CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE),
                 fixture.repository.transferOrganizer(
                     "trip",
                     "member",
@@ -874,6 +874,9 @@ class NativeTripApiTest {
 }
 
 internal class TripFixture {
+    var cancelAcceptedLost = false
+    var tripStatus = "active"
+    var beforeTripList: suspend () -> Unit = {}
     var identityReads = 0
     var time = 1_000L
     var owner = "trip-fixture-owner"
@@ -891,8 +894,8 @@ internal class TripFixture {
     val paths = mutableListOf<String>()
     val queryValues = mutableListOf<Map<String, String>>()
     val bannerPayloads = mutableListOf<Pair<String, List<Byte>>>()
-    val trip =
-        """{"id":"trip","locations":[],"working_itinerary_id":"plan","name":"Trip","starts_on":"2026-10-20","ends_on":"2026-10-21","timezone":"Asia/Jakarta","status":"active","caller_role":"organizer","participant_count":1,"visibility":"private","registration_opens_at":null,"registration_closes_at":null,"participant_limit":5,"remaining_participants":4,"can_invite":true,"invite_unavailable_reason":null,"can_edit_registration":false}"""
+    val trip get() =
+        """{"id":"trip","locations":[],"working_itinerary_id":"plan","name":"Trip","starts_on":"2026-10-20","ends_on":"2026-10-21","timezone":"Asia/Jakarta","status":"$tripStatus","caller_role":"organizer","participant_count":1,"visibility":"private","registration_opens_at":null,"registration_closes_at":null,"participant_limit":5,"remaining_participants":4,"can_invite":${tripStatus == "active"},"invite_unavailable_reason":null,"can_edit_registration":false}"""
     private val invitation =
         """{"id":"invitation","trip_id":"trip","target_label":"traveler","status":"pending","expires_at":"2099-01-01T00:00:00Z","trip_name":"Trip","inviter_username":"organizer","trip_starts_on":"2026-10-20","trip_ends_on":"2026-10-21","itinerary_summary":{"id":"plan","locations":[],"title":"Plan","day_count":1,"stop_count":2}}"""
     val client =
@@ -944,6 +947,11 @@ internal class TripFixture {
                                     headers = headersOf(HttpHeaders.ContentType, "application/json"),
                                 )
                             if (networkFailure) error("Fixture network failure")
+                            if (cancelAcceptedLost && request.method == HttpMethod.Post && path.endsWith("/cancel")) {
+                                tripStatus = "cancelled"
+                                error("Synthetic accepted cancellation with lost response")
+                            }
+                            if (request.method == HttpMethod.Get && path == "/api/apps/v1/me/trips") beforeTripList()
                             if (path.startsWith("/api/apps/v1/me/trip-creation-operations/")) {
                                 val committed = path.substringAfterLast('/') in committedCreationKeys
                                 return@MockEngine respond(
@@ -955,6 +963,10 @@ internal class TripFixture {
                             }
                             val response =
                                 when {
+                                    path.endsWith("/plan-b/trips") || path.endsWith("/trip-b") -> trip
+                                        .replace("\"id\":\"trip\"", "\"id\":\"trip-b\"")
+                                        .replace("\"working_itinerary_id\":\"plan\"", "\"working_itinerary_id\":\"plan-b\"")
+                                        .replace("\"status\":\"cancelled\"", "\"status\":\"active\"")
                                     path == "/api/apps/v1/me" ->
                                         """{"profile":{"id":"trip-fixture-owner"}}"""
                                     request.method == HttpMethod.Get && path.endsWith("/members") ->

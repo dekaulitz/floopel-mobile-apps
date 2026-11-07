@@ -1,0 +1,69 @@
+{
+  "finding": "TRIP-RECOVERY-01",
+  "dedup": "trip-cancel-terminal-read-cross-target-recovery-20261108-0120",
+  "client_date": "2026-11-08",
+  "base_commit": "fc5966b5c66c86292093243c84e45bff74ac6b30",
+  "scope": "Traveler Trip journal recovery wiring; separate from cached-reader/publication findings",
+  "host": {
+    "tests": 485,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_cases": {
+    "actual_adapter_mock_transport": 4,
+    "actual_adapter_with_viewmodel": 4
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 16,
+    "new_recovery": 3,
+    "existing_journey_regression": 13,
+    "runner_seconds": 28.76,
+    "source_apk_freeze": "PASS",
+    "package": "com.floopel.traveler.dev",
+    "emulator": "5580",
+    "viewport_dp": "400x900",
+    "locale": "id",
+    "font_scale": 1
+  },
+  "lint": {
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: no core/Partner changes",
+  "figma_context": [
+    "315:18795",
+    "315:16416"
+  ],
+  "safety": {
+    "live_trip_mutations": 0,
+    "backend_or_contract_changes": false,
+    "database_reset": false,
+    "providers_credentials_merge_deploy": false,
+    "test_transport": "MockEngine + synthetic repositories only"
+  },
+  "restored_ui": "Collection reader on emulator 5580, real API read-only, 5 seconds per manual flow",
+  "limits": {
+    "ios": "NOT_RUN: requires Mac/Xcode",
+    "talkback_voiceover": "NOT_RUN",
+    "real_cancel_response_loss": "NOT_RUN: no authorization for live Trip cancellation",
+    "figma_trip_layout": "Recovery reuses existing notice/button/dialog components. Cancellation/terminal screen visual redesign is outside this protocol fix."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "final-build.log": "19bc25b264cfef4aa1ac3fdba8ad5c1c7d5aa592689212028488159394a97fe2",
+    "local-source-freeze.json": "b0960dcd0e29ca837e0af2b295f961dd4cb5aee810f2a31b28b49997ca35e402",
+    "native.log": "31770846910d6b15296f08a37b62bcd9c2ec99905e0b23f3c6a73385e40914bd",
+    "restored-collection-api.png": "61be7c2338343371d8c68963e0b667372c8c88f41e4f549fbcc70ed950af222f",
+    "review-confirmation.png": "0ade08322c9f9f37adb3108c4a1b39ea29fa94e73427d63b1ada343e0db58426",
+    "review-failed.png": "6ad95e0d6a38be453b15a978bd6086c5f38c91e8208cccfa6bc332d2fa47a9e8",
+    "terminal-reader-pending.png": "26c3ee4e3454e1eee1ac1d032063f3cee657fb19166445f2f8800f108959f0c1",
+    "TEST-com.floopel.feature.traveler.data.repository.NativeTripMutationRecoveryTest.xml": "7687926ee4ad304bdaaa22848bca5d620c7102f932802dac04a147314eed680c",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest.xml": "84cdce5a89bc5ab10d4f97af8950c407409ba1196682e2f17e47fbd2d0c95334"
+  }
+}

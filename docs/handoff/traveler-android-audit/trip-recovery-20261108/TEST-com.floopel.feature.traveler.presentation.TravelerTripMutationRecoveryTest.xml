@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-07T18:53:00.630Z" hostname="DSKTP-ZYAN" time="0.04">
+  <properties/>
+  <testcase name="terminalCancelCanRecoverInSessionAndCreateTheNextEligibleTripExactlyOnce" classname="com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest" time="0.022"/>
+  <testcase name="failedReviewAndStaleJournalKeepTheRecoveryVisibleWithoutReplay" classname="com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest" time="0.007"/>
+  <testcase name="anOrdinaryServerConflictDoesNotEnableLocalJournalRelease" classname="com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest" time="0.004"/>
+  <testcase name="actorChangeClearsUiPermissionButDoesNotReleaseAnotherActorsJournal" classname="com.floopel.feature.traveler.presentation.TravelerTripMutationRecoveryTest" time="0.007"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

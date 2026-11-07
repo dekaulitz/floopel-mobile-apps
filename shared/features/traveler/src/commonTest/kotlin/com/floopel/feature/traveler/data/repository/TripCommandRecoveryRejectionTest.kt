@@ -1,6 +1,7 @@
 package com.floopel.feature.traveler.data.repository
 
 import com.floopel.feature.traveler.domain.model.*
+import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.test.runTest
 import kotlin.test.*
@@ -33,7 +34,7 @@ class TripCommandRecoveryRejectionTest {
             assertIs<CatalogResult.HttpError>(f.repository.decide("invitation", InvitationDecision.ACCEPT, firstKey))
             assertNotNull(f.recovery.record)
             f.mutationFailure = null
-            assertEquals(CatalogResult.HttpError(409), f.repository.lifecycle("trip", TripLifecycleAction.CANCEL, nextKey))
+            assertEquals(CatalogResult.HttpError(409, code = TravelerTripRepository.PENDING_MUTATION_CODE), f.repository.lifecycle("trip", TripLifecycleAction.CANCEL, nextKey))
             assertEquals(1, f.writes)
         } finally { f.client.close() }
     }

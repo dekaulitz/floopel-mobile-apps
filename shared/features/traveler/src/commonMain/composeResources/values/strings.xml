@@ -368,6 +368,11 @@
     <string name="story_detail">Cerita perjalanan</string>
     <string name="collection_detail">Collection</string>
     <string name="collection_type">COLLECTION</string>
+    <string name="trip_recovery_body">Hasil tindakan Trip sebelumnya perlu diperiksa. Tinjau status terbaru sebelum memulai tindakan lain.</string>
+    <string name="trip_recovery_review">Tinjau status Trip</string>
+    <string name="trip_recovery_title">Status Trip terbaru</string>
+    <string name="trip_recovery_confirm_body">Periksa hasil tindakan sebelumnya pada daftar ini. Lanjutkan hanya jika Anda ingin memulai tindakan baru. Tindakan sebelumnya tidak akan dikirim ulang.</string>
+    <string name="trip_recovery_continue">Mulai tindakan baru</string>
     <string name="collection_error_header">Konten belum termuat</string>
     <string name="collection_unavailable_header">Konten tidak tersedia</string>
     <string name="collection_empty_title">Belum ada Collection tersedia</string>
