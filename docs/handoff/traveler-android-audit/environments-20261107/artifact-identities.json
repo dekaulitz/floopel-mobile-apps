@@ -1,0 +1,38 @@
+[
+  {
+    "Path": "apps/android/traveler/build/outputs/apk/development/debug/traveler-development-debug.apk",
+    "SHA256": "c4b534c6ed04d7318b51168e36c89847cefa53a504958ac185936cb9ccf35d7f",
+    "Badging": [
+      "package: name='com.floopel.traveler.dev' versionCode='1' versionName='0.1.0-dev' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "application-label:'Floopel Traveler Dev'",
+      "launchable-activity: name='com.floopel.traveler.MainActivity'  label='' icon=''"
+    ]
+  },
+  {
+    "Path": "apps/android/partner/build/outputs/apk/development/debug/partner-development-debug.apk",
+    "SHA256": "2f38ee14281bff748e7a23ca7cdadc4370b3a7f11c588b95b9377bbad9fb5205",
+    "Badging": [
+      "package: name='com.floopel.partner.dev' versionCode='1' versionName='0.1.0-dev' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "application-label:'Floopel Partner Dev'",
+      "launchable-activity: name='com.floopel.partner.MainActivity'  label='' icon=''"
+    ]
+  },
+  {
+    "Path": "apps/android/traveler/build/outputs/apk/production/debug/traveler-production-debug.apk",
+    "SHA256": "21238fc09baf4202ed92f60d1b9e8b4e8125966f4a24ffd593ca64be7cf170c1",
+    "Badging": [
+      "package: name='com.floopel.traveler' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "application-label:'Floopel Traveler'",
+      "launchable-activity: name='com.floopel.traveler.MainActivity'  label='' icon=''"
+    ]
+  },
+  {
+    "Path": "apps/android/partner/build/outputs/apk/production/debug/partner-production-debug.apk",
+    "SHA256": "77dc8e5d9cf9cd013ace319e9e268165134919fd088e5438d025a8bb1d65934f",
+    "Badging": [
+      "package: name='com.floopel.partner' versionCode='1' versionName='0.1.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+      "application-label:'Floopel Partner'",
+      "launchable-activity: name='com.floopel.partner.MainActivity'  label='' icon=''"
+    ]
+  }
+]

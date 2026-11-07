@@ -1,0 +1,8 @@
+{
+  "LiteralValues": true,
+  "QuotedValues": true,
+  "CrossEnvironmentRejected": true,
+  "NoPartialMutation": true,
+  "DuplicateRejected": true,
+  "ProductionTemplateImported": true
+}

@@ -25,8 +25,8 @@ Dari root repo menggunakan PowerShell:
 
 ```powershell
 .\gradlew.bat projects
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
-.\gradlew.bat :apps:android:traveler:lintDebug :apps:android:partner:lintDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
+.\gradlew.bat :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug
 ```
 
 Untuk fitur satu produk, batasi perintah ke produk tersebut bila tidak ada dependency bersama yang berubah. Untuk menemukan task test dan compile yang tersedia:

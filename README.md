@@ -156,15 +156,15 @@ AGP 9 menggunakan Kotlin bawaan untuk modul Android biasa. Modul KMP menggunakan
 
 1. Buka root repositori melalui Android Studio yang mendukung AGP 9.1, lalu lakukan Gradle Sync.
 2. Siapkan JDK, Android SDK Platform 36, dan Build Tools 36.0.0. Tentukan `JAVA_HOME` serta `ANDROID_HOME`, atau isi lokasi Android SDK melalui `local.properties` (tidak di-commit).
-3. Pilih modul `apps.android.traveler` atau `apps.android.partner` dan jalankan di emulator/perangkat.
+3. Pilih modul `apps.android.traveler` atau `apps.android.partner`, pilih variant `developmentDebug`, lalu jalankan di emulator/perangkat.
 
 Build kedua APK debug dari PowerShell:
 
 ```powershell
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
 ```
 
-APK dihasilkan di `apps/android/<traveler|partner>/build/outputs/apk/debug/`. Untuk memasang pada perangkat yang terhubung, gunakan task `:apps:android:traveler:installDebug` atau `:apps:android:partner:installDebug`.
+APK dihasilkan di `apps/android/<traveler|partner>/build/outputs/apk/development/debug/`. Gunakan task `:apps:android:traveler:installDevelopmentDebug` atau `:apps:android:partner:installDevelopmentDebug`. Development memakai package `.dev`; production mempertahankan ID utama. Rincian, signing, provider dan template environment ada pada [konfigurasi environment](config/environments/README.md).
 
 ### Konfigurasi Android Traveler
 
@@ -173,12 +173,13 @@ Traveler wajib login sebelum Home dan fitur aplikasi. Aplikasi menunggu pemuliha
 Debug default memakai backend lokal `http://10.0.2.2:8080` untuk emulator. Untuk tunnel ngrok yang aktif, ambil origin HTTPS dari ngrok lalu bangun ulang APK:
 
 ```powershell
-.\gradlew.bat :apps:android:traveler:installDebug -PfloopelApiOrigin=https://your-tunnel.ngrok-free.dev
+$env:FLOOPEL_DEVELOPMENT_API_ORIGIN = 'https://your-tunnel.ngrok-free.dev'
+.\gradlew.bat :apps:android:traveler:installDevelopmentDebug
 ```
 
-Jangan menambahkan path `/api/apps/v1` pada origin. `floopelApiOrigin` wajib HTTPS untuk task assemble/bundle release. Cleartext debug dibatasi ke loopback/emulator; tidak ada trust-all certificate. Environment backend dan tunnel dikelola di repository service, bukan melalui credential pada aplikasi mobile.
+Jangan menambahkan path `/api/apps/v1` pada origin. Production memerlukan `FLOOPEL_PRODUCTION_API_ORIGIN` atau `floopelProductionApiOrigin` berupa HTTPS; tidak mengambil fallback development. Production release juga memerlukan signing environment produknya. Cleartext debug dibatasi ke loopback/emulator; tidak ada trust-all certificate. Backend dan tunnel tetap memiliki environment tersendiri.
 
-Parameter opsional `-PfloopelGoogleServerClientId=<server-client-id>` dan `-PfloopelPlayCloudProjectNumber=<project-number>` adalah identifier publik. Google Sign-In/Quest execution membutuhkan registrasi provider yang cocok dengan package `com.floopel.traveler`, signature/distribusi dan backend. Konfigurasi kosong menampilkan kondisi belum tersedia; tidak memakai bypass atau proof sintetis. Simpan secret/signing di luar repository.
+Identifier publik provider dipisahkan melalui `FLOOPEL_<ENV>_GOOGLE_SERVER_CLIENT_ID` dan `FLOOPEL_<ENV>_PLAY_CLOUD_PROJECT_NUMBER`, dengan `<ENV>` = `DEVELOPMENT`/`PRODUCTION`. Google Sign-In/Quest execution memerlukan registrasi untuk package flavor (`com.floopel.traveler.dev` atau `com.floopel.traveler`), signature/distribusi dan backend yang sesuai. Nilai kosong/0 menampilkan kondisi belum tersedia. Properti lama tetap menjadi fallback development saja; lihat matriks environment untuk nama lengkap dan integrasi yang masih disiapkan.
 
 Refresh credential dan intent recovery disimpan terenkripsi dengan Android Keystore, dipisahkan menurut origin API, dikecualikan dari backup, dan dibersihkan ketika logout. Intent yang hasilnya belum diketahui tidak ditulis ulang otomatis. Untuk memulihkan unggahan setelah proses hilang, pilih kembali foto yang sama; journal mencocokkan SHA-256 dan memakai key lama, tanpa menyimpan foto/URI pada saved state.
 
@@ -219,15 +220,15 @@ xcodebuild -project apps/ios/traveler/FloopelTraveler.xcodeproj \
 
 ```powershell
 .\gradlew.bat projects
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
-.\gradlew.bat :apps:android:traveler:lintDebug :apps:android:partner:lintDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
+.\gradlew.bat :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug
 ```
 
 Suite host memuat test bisnis/kontrak deterministik, sedangkan instrumentation memakai fixture domain dan tidak membuktikan provider/backend privat:
 
 ```powershell
 .\gradlew.bat :shared:features:traveler:testAndroidHostTest
-.\gradlew.bat :apps:android:traveler:connectedDebugAndroidTest
+.\gradlew.bat :apps:android:traveler:connectedDevelopmentDebugAndroidTest
 ```
 
 Probe publik nyata bersifat opt-in dan hanya melakukan public read:

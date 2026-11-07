@@ -1,0 +1,38 @@
+[
+  {
+    "Path": ".agents/skills/floopel-mobile-engineering/references/verification.md",
+    "SHA256": "008395163dd26fd11e57f4404ab2213f4c74ecd8fed7cd520071c8abefb08495"
+  },
+  {
+    "Path": "AGENTS.md",
+    "SHA256": "64e45cf981f8810a9a72963d7356e0036cb7b7f0a7624083d5e507b92008026c"
+  },
+  {
+    "Path": "README.md",
+    "SHA256": "3fd25d0c501b1b322b9c5a4d877fd83877208dbc5da975d5be335fda4ca83083"
+  },
+  {
+    "Path": "apps/android/traveler/build.gradle.kts",
+    "SHA256": "b20294aced9fb79076c77b4756dd1061a0e9dd7d7613fff560888e897a601777"
+  },
+  {
+    "Path": "apps/android/partner/build.gradle.kts",
+    "SHA256": "49a23622de8e51976f1be1e456e36aba7b2708a318ff6a167830f08121286625"
+  },
+  {
+    "Path": "config/environments/README.md",
+    "SHA256": "1baafb02ba2863eefc8406080260c8333e1c28526436450025739b1b39a404b5"
+  },
+  {
+    "Path": "config/environments/development.env.example",
+    "SHA256": "ac1e7aa186c12cb3f8d4bb4e12f99396cdf99f833f83971aaac9f7c10edef852"
+  },
+  {
+    "Path": "config/environments/production.env.example",
+    "SHA256": "2d7cea1b81b200dbe8163fe9b20afe8bc129c269ca4435950f403f93eff66c22"
+  },
+  {
+    "Path": "tools/config/import-mobile-environment.ps1",
+    "SHA256": "7cd6e4b63fc5f917abb9efe114bfcc369d118a55392c13b1b4d77ef29db2e4f8"
+  }
+]

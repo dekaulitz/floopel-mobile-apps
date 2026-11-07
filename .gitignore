@@ -22,3 +22,6 @@ DerivedData/
 .env
 .env.*
 !.env.example
+config/environments/*.env
+**/google-services.json
+**/GoogleService-Info.plist
