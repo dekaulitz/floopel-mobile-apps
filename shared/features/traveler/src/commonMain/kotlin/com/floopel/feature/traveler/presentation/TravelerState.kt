@@ -104,6 +104,11 @@ internal data class TravelerState(
     val route get() = stack.last()
     val showIntro get() = identityRestored && intro?.completed == false && !identity.signedIn
     val canGoBack get() = stack.size > 1 || identity.signedIn && tab != Destination.HOME
+    /** Unknown/loading/failed content is distinct from an authoritative, empty itinerary. */
+    val publicationHasSpots: Boolean? get() = itinerary.value
+        ?.takeIf { !itinerary.loading && itinerary.failure == null && it.stopsLoaded &&
+            it.itinerary.id == route.id && it.itinerary.id == distribution.value?.id }
+        ?.stops?.isNotEmpty()
 }
 
 internal fun <T> ReadState<T>.result(result: CatalogResult<T>, now: Long): ReadState<T> = when (result) {

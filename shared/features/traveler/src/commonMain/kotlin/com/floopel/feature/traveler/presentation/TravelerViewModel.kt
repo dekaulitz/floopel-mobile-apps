@@ -653,23 +653,38 @@ internal class TravelerViewModel(
     }
 
     fun publish(allowClone: Boolean, notes: Boolean, pii: Boolean) {
-        val id = state.value.route.id
+        val route = state.value.route
+        val id = route.id
         val revision = state.value.distribution.value?.updatedAt ?: return
         val review = state.value.pendingPublication.value ?: ItineraryPublicationReview(revision, allowClone, notes, pii)
         val key = runtime.newOperationKey()
         write({
             val fresh = runtime.itineraries.detail(id)
             if (fresh !is CatalogResult.Ready) fresh.failure()
+            else if (fresh.value.itinerary.id != id) CatalogResult.InvalidResponse
             else if (fresh.value.stops.isEmpty() || !fresh.value.stopsLoaded) CatalogResult.HttpError(422, code = "EMPTY_ITINERARY")
             else runtime.distribution.publish(id, review, key)
-        }) { result -> mutable.update { it.copy(distribution = ReadState(result), pendingPublication = ReadState(), saved = true) } }
+        }) { result ->
+            if (state.value.route != route) return@write
+            mutable.update { it.copy(distribution = ReadState(result), pendingPublication = ReadState(), saved = true) }
+            reloadPublication(id)
+        }
     }
     fun shareLink(create: Boolean) = write({
         val id = state.value.route.id
         if (create) runtime.distribution.rotateShareLink(id, runtime.newOperationKey()) else runtime.distribution.shareLink(id)
     }) { link -> mutable.update { it.copy(shareLink = ReadState(link), saved = true) } }
-    fun unpublish() = write({ runtime.distribution.unpublish(state.value.route.id, runtime.newOperationKey()) }) { result ->
-        mutable.update { it.copy(distribution = ReadState(result), saved = true) }
+    fun unpublish() {
+        val route = state.value.route
+        write({ runtime.distribution.unpublish(route.id, runtime.newOperationKey()) }) { result ->
+            if (state.value.route != route) return@write
+            mutable.update { it.copy(distribution = ReadState(result), saved = true) }
+            reloadPublication(route.id)
+        }
+    }
+    private fun reloadPublication(id: String) {
+        loadItinerary(id)
+        fetch("distribution", { it.distribution }, { s, r -> s.copy(distribution = r) }) { runtime.distribution.read(id) }
     }
     fun revokeLink() = write({ runtime.distribution.revokeShareLink(state.value.route.id, runtime.newOperationKey()) }) { refresh() }
     fun createTrip(draft: TripDraft, image: TravelerImage? = null) {

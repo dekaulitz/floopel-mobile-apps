@@ -6,6 +6,8 @@ Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itine
 
 Batch [rating dan lokasi](../traveler-location-rating-audit.md) memiliki [manifest tersendiri](location-rating-20261107/results.json): 410 host/33 native test, build/lint kedua aplikasi Android, serta screenshot hierarki lokasi dan komponen Home/Spot. Peta ditunda sesuai keputusan pemilik. Bukti baseline di bawah tidak dilabel ulang sebagai hasil batch tersebut.
 
+Follow-up [state publikasi](../traveler-publication-state-audit.md) memiliki [manifest baru](publication-state-20261107/results.json): 417 host/15 native test serta build/lint Traveler. Metadata mutation yang tidak memuat jumlah Stop tidak lagi memicu pesan kosong palsu; rekonsiliasi dan Retry hanya melakukan read. Bukti checkpoint lain tetap utuh.
+
 ## Screenshot runtime dengan API nyata
 
 - [Home](screenshots/home-real-api.png): guest, public discovery/media melalui ngrok, hero memakai aset Figma lokal.

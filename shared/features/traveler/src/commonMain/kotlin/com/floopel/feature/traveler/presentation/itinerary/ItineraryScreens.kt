@@ -202,7 +202,8 @@ internal fun ShareHub(state: TravelerState, model: TravelerViewModel) {
             Body(s(Res.string.share_hub_body))
             FloopelButton(s(Res.string.private_link), { model.open(TravelerRoute(Destination.SHARE_LINK, item.id)) }, Modifier.fillMaxWidth())
             FloopelButton(s(Res.string.review_publication), { model.open(TravelerRoute(Destination.PUBLICATION, item.id)) },
-                Modifier.fillMaxWidth(), secondary = true, enabled = item.stopCount > 0)
+                Modifier.fillMaxWidth(), secondary = true,
+                enabled = state.publicationHasSpots ?: (item.stopCount?.let { it > 0 } == true))
             FloopelButton(s(Res.string.back_to_plan), model::back, Modifier.fillMaxWidth(), secondary = true)
         }
     }
@@ -212,25 +213,31 @@ internal fun ShareHub(state: TravelerState, model: TravelerViewModel) {
 internal fun PublicationScreen(state: TravelerState, model: TravelerViewModel, selectPhoto: TravelerImageSelection? = null) {
     val item = state.distribution.value
     if (item == null) { ReadContent(state.distribution, model::refresh) {}; return }
-    val hasSpots = state.itinerary.value?.let { it.stopsLoaded && it.stops.isNotEmpty() } == true && item.stopCount > 0
+    val hasSpots = state.publicationHasSpots == true
     val pending = state.pendingPublication.value
     val readyCover = state.media.value == CoverProcessing.READY && !state.media.loading && state.media.failure == null
     var notes by rememberSaveable(item.updatedAt, pending) { mutableStateOf(pending?.notesReviewed ?: false) }
     var pii by rememberSaveable(item.updatedAt, pending) { mutableStateOf(pending?.piiAcknowledged ?: false) }
     var clone by rememberSaveable(item.updatedAt, pending) { mutableStateOf(pending?.allowClone ?: item.allowClone) }
     var confirm by remember { mutableStateOf(false) }
+    val canPublish = notes && pii && hasSpots && readyCover && !state.busy && item.updatedAt != null &&
+        !state.distribution.loading && state.distribution.failure == null
     FormLayout(footer = {
-        FloopelButton(s(Res.string.publish), { confirm = true }, Modifier.fillMaxWidth(),
-            enabled = notes && pii && hasSpots && readyCover && !state.busy && item.updatedAt != null)
+        FloopelButton(s(Res.string.publish), { confirm = true }, Modifier.fillMaxWidth().testTag("publication-submit"), enabled = canPublish)
     }) {
+        if (state.distribution.loading) LinearProgressIndicator(Modifier.fillMaxWidth())
+        state.distribution.failure?.let { ErrorPanel(it, model::refresh) }
         Text(item.title, style = MaterialTheme.typography.headlineMedium)
         Media(item.coverUrls.firstOrNull(), Modifier.fillMaxWidth().height(128.dp))
         ImageEditor(state, selectPhoto, model::refresh) { model.uploadImage(it) }
         if (!readyCover) InfoCard(s(Res.string.publication_cover_required))
         Body(item.description)
         Body(s(Res.string.publication_body))
-        ReadContent(state.itinerary, model::refresh) { detail -> Body(s(Res.string.itinerary_summary, detail.itinerary.days, detail.stops.size)) }
-        if (!hasSpots) InfoCard(s(Res.string.publication_empty))
+        ReadContent(state.itinerary, model::refresh) { detail ->
+            if (detail.itinerary.id == item.id && detail.stopsLoaded)
+                Body(s(Res.string.itinerary_summary, detail.itinerary.days, detail.stops.size))
+        }
+        if (state.publicationHasSpots == false) InfoCard(s(Res.string.publication_empty))
         CheckRow(s(Res.string.publication_notes), notes, { notes = it }, pending == null && !state.busy)
         CheckRow(s(Res.string.publication_pii), pii, { pii = it }, pending == null && !state.busy)
         CheckRow(s(Res.string.allow_clone), clone, { clone = it }, pending == null && !state.busy)
@@ -244,7 +251,8 @@ internal fun PublicationScreen(state: TravelerState, model: TravelerViewModel, s
         }
     }
     if (confirm) AlertDialog({ confirm = false }, title = { Text(s(Res.string.confirm_publish)) }, text = { Text(item.title) },
-        confirmButton = { TextButton({ if (hasSpots && readyCover) model.publish(clone, notes, pii); confirm = false }, enabled = hasSpots && readyCover) { Text(s(Res.string.publish)) } },
+        confirmButton = { TextButton({ if (canPublish) model.publish(clone, notes, pii); confirm = false },
+            Modifier.testTag("publication-confirm"), enabled = canPublish) { Text(s(Res.string.publish)) } },
         dismissButton = { TextButton({ confirm = false }) { Text(s(Res.string.cancel)) } })
 }
 

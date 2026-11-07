@@ -8,6 +8,8 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test p
 
 ## Acuan
 
+Follow-up [state publikasi](traveler-publication-state-audit.md) mengoreksi pesan kosong palsu setelah publish: metadata tanpa `stop_count` tetap unknown, detail itinerary menjadi sumber fakta Stop, dan revision owner direkonsiliasi melalui GET. Batch ini memiliki 417 host/15 native test; snapshot rating/lokasi dan integrasi sebelumnya tetap terpisah.
+
 - [Figma final](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=0-1), revisi QA 6 November 2026. Revisi terbaru relevan digunakan; konflik bisnis harus dikonfirmasi.
 - Paket handover: 6.148.450 byte, 193 entry, CRC diperiksa. SHA-256 97b2fa02e25564c917751c619e4f6f71d55f13c93b22b76b0030e10770f0fb0a cocok. Inventory 1.767 root adalah screen/state, bukan 1.767 fitur. Prototype tidak membuktikan aplikasi native.
 - [Provenance](traveler-source-provenance.json) mencatat source/hash adapter, domain dan sesi yang diadaptasi dari repo pemilik. UI baru berada di commonMain. Hash mengidentifikasi source sebelum adaptasi, bukan klaim target identik byte.
@@ -53,9 +55,10 @@ Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug defaul
 
 | Pemeriksaan | Hasil aktual |
 | --- | --- |
-| assembleDebug Traveler + Partner | PASS pada batch rating/lokasi, termasuk APK androidTest Traveler; core berubah |
-| lintDebug Traveler + Partner | PASS tanpa error/fatal. Batch rating/lokasi: Traveler 42 warning, Partner 2; [laporan](traveler-android-audit/location-rating-20261107/results.json). Toolchain tidak di-upgrade |
-| testAndroidHostTest | Batch rating/lokasi 410 test PASS; 0 failure/error/skipped. Checkpoint Quest 391, startup 383, sebelumnya 377, baseline awal 357 |
+| assembleDebug Traveler + Partner | Batch publikasi: Traveler + APK androidTest PASS. Partner tidak terdampak; kedua aplikasi PASS pada checkpoint rating/lokasi ketika core berubah |
+| lintDebug Traveler + Partner | Batch publikasi: Traveler PASS, 0 error/fatal dan 42 warning. Partner 2 warning pada checkpoint rating/lokasi; [laporan terbaru](traveler-android-audit/publication-state-20261107/results.json). Toolchain tidak di-upgrade |
+| testAndroidHostTest | Batch publikasi 417 test PASS; 0 failure/error/skipped. Checkpoint rating/lokasi 410, Quest 391, startup 383, sebelumnya 377, baseline awal 357 |
+| Native state publikasi dan regresi | 2 test publikasi + 13 regresi journey PASS, production ViewModel/Compose dengan domain doubles; [bukti batch](traveler-publication-state-audit.md) |
 | Native rating/lokasi dan regresi | 13 test komponen/hierarki + 20 regresi PASS, production ViewModel/Compose dengan domain doubles; [bukti batch](traveler-location-rating-audit.md). Smoke manual MainActivity/API nyata dilaporkan terpisah |
 | Host dengan floopelLiveSmoke=true dan origin tunnel | 4 public-read test PASS; 0 failure/error/skipped. Discovery/detail/search, UUID/slug, Quest/Open Trip guest, referensi registrasi/legal |
 | connectedDebugAndroidTest dan runner adb checkpoint startup | Baseline connected 8 journey; checkpoint startup 24 test PASS pada viewport 400×900 dp: 16 domain-fixture/regresi dan 8 MainActivity nyata (4 startup/progres, 3 privat/login/Back, 1 invalid refresh); [manifest](traveler-android-audit/startup-20261107/results.json). Tidak dilabel ulang sebagai rerun Quest |

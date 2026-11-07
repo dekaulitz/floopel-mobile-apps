@@ -62,7 +62,7 @@ internal class NativeItineraryDistributionApi(private val rest: FloopelRestClien
         val cover = media(value["cover_image"])
         return ItineraryDistribution(value.text("id"), value.text("title"), value.optional("description") ?: "", visibility,
             value.flagOrMissing("allow_clone"), status, value.flagOrMissing("has_unpublished_changes"), value.optional("public_slug"),
-            value.optional("updated_at"), if (cover != null) listOf(cover) else emptyList(), value.number("stop_count") ?: 0,
+            value.optional("updated_at"), if (cover != null) listOf(cover) else emptyList(), value.number("stop_count")?.also { require(it >= 0) },
             coverPhotos = catalogMediaPhoto(value["cover_image"], rest, value.text("title"))?.let(::listOf).orEmpty(), locations = value.readLocations())
     }
     private fun media(element: JsonElement?): String? {

@@ -19,6 +19,22 @@ import kotlinx.serialization.json.*
 import kotlin.test.*
 
 class NativeItineraryDistributionApiTest {
+    @Test fun missingMutationCountsAreUnknownWhileAnExplicitZeroIsPreserved() = runTest {
+        val f = DistributionFixture()
+        try {
+            f.login()
+            for (count in listOf(null, 0, -1)) {
+                val data = Json.parseToJsonElement(f.owner).jsonObject.toMutableMap().apply {
+                    remove("updated_at"); remove("stop_count")
+                    if (count != null) put("stop_count", JsonPrimitive(count))
+                }
+                f.response = JsonObject(data).toString()
+                val result = f.repository.publish("plan", ItineraryPublicationReview("revision", true, true, true), "key")
+                if (count == -1) assertIs<CatalogResult.InvalidResponse>(result)
+                else assertEquals(count, assertIs<CatalogResult.Ready<ItineraryDistribution>>(result).value.stopCount)
+            }
+        } finally { f.client.close() }
+    }
     @Test fun spotPreviewImagesNeverCountAsTheRequiredItineraryCover() = runTest {
         val f = DistributionFixture()
         try {

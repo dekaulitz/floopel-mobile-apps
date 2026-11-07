@@ -3,7 +3,7 @@ package com.floopel.feature.traveler.domain.model
 /** Owner publication controls retain the working itinerary's current coverage. */
 data class ItineraryDistribution(val id: String, val title: String, val description: String, val visibility: String,
     val allowClone: Boolean, val distributionStatus: String, val unpublishedChanges: Boolean, val publicSlug: String?,
-    val updatedAt: String?, val coverUrls: List<String>, val stopCount: Int, val coverPhotos: List<CatalogPhoto> = emptyList(),
+    val updatedAt: String?, val coverUrls: List<String>, val stopCount: Int?, val coverPhotos: List<CatalogPhoto> = emptyList(),
     val locations: List<LocationReference> = emptyList())
 
 data class ItineraryPublicationReview(val expectedUpdatedAt: String, val allowClone: Boolean, val notesReviewed: Boolean, val piiAcknowledged: Boolean)
