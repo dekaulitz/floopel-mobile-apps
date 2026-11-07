@@ -31,6 +31,7 @@ fun FloopelTheme(
     } else {
         lightColorScheme(primary = primary, onPrimary = Color.White,
             primaryContainer = Color(0xFFEEF0FF), onPrimaryContainer = Color(0xFF3730A3),
+            secondaryContainer = Color(0xFFF0F2F7), onSecondaryContainer = Color(0xFF343A4D),
             surface = Color.White, onSurface = Color(0xFF202332),
             surfaceContainerLow = Color(0xFFF7F8FC), onSurfaceVariant = Color(0xFF555B6B),
             outline = Color(0xFF797E95), outlineVariant = Color(0xFFE4E6EF),

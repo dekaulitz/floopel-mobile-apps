@@ -52,6 +52,7 @@ fun FloopelFormTextField(
     singleLine: Boolean = false, maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE, minLines: Int = 1,
     interactionSource: MutableInteractionSource? = null, shape: Shape = FloopelShape.control,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    contentPadding: PaddingValues = PaddingValues(horizontal = FloopelSpace.compact, vertical = FloopelSpace.tiny),
 ) {
     val interaction = interactionSource ?: remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
@@ -98,7 +99,7 @@ fun FloopelFormTextField(
                         else content()
                     } }, leadingIcon = leadingIcon,
                     trailingIcon = trailingIcon, prefix = prefix, suffix = suffix, supportingText = supportingText, colors = colors,
-                    contentPadding = PaddingValues(horizontal = FloopelSpace.compact, vertical = FloopelSpace.tiny),
+                    contentPadding = contentPadding,
                     container = { OutlinedTextFieldDefaults.Container(enabled, isError, interaction, colors = colors, shape = shape) })
             }
         })

@@ -77,7 +77,9 @@ class TravelerFixture {
     val identity: TravelerIdentity = double { name, args -> when (name) {
         "getView" -> identityState
         "getGeneration" -> identityState.value.generation
-        "quest" -> CatalogResult.Ready(quest)
+        "quest" -> CatalogResult.Ready(quest.copy(owner = QuestReaderOwner(quest.card.id, identityState.value.ownerStatus ?: "not_completed", identityState.value.running)))
+        "questCatalog" -> CatalogResult.Ready(QuestCatalogPage(listOf(QuestCatalogItem(quest.card, "active", "available", false)), 1, 1))
+        "takenQuests" -> CatalogResult.Ready(identityState.value.passport?.running.orEmpty())
         "takeQuest", "continueQuest" -> {
             identityState.value = identityState.value.copy(running = QuestRunning("participation", quest.card.title, "active", 0, 1, mapOf("activity" to "available")), ownerStatus = "active"); Unit
         }

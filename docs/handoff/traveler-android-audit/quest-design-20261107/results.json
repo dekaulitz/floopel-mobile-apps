@@ -1,0 +1,239 @@
+{
+  "timestamp": "2026-11-07T19:31:12.865224+07:00",
+  "branch": "feature/mobile-openapi-contracts",
+  "baseline": "eb81fae354803e420139af19fed579368d2d968f",
+  "scope": "Figma Quest catalog, XP/location filters and ready/active detail with public checkpoint Spot previews",
+  "hostTests": {
+    "status": "PASS",
+    "tests": 459,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "nativeTests": {
+    "status": "PASS",
+    "tests": 57,
+    "failures": 0,
+    "classes": {
+      "TravelerQuestDesignTest": 10,
+      "TravelerQuestStateTest": 4,
+      "TravelerFigmaDesignTest": 13,
+      "TravelerJourneyTest": 13,
+      "TravelerLocationDesignTest": 13,
+      "TravelerPublicationStateTest": 2,
+      "TravelerCatalogFontScaleTest": 1,
+      "TravelerAuthenticationJourneyTest": 1
+    },
+    "log": "native-verified.log",
+    "boundary": "Production Compose/ViewModel with synthetic domain repository fixtures, not live backend/provider E2E"
+  },
+  "builds": {
+    "travelerDevelopmentDebug": "PASS",
+    "partnerDevelopmentDebug": "PASS",
+    "travelerAndroidTest": "PASS"
+  },
+  "lint": {
+    "traveler": {
+      "errors": 0,
+      "warnings": 42
+    },
+    "partner": {
+      "errors": 0,
+      "warnings": 2
+    }
+  },
+  "package": "com.floopel.traveler.dev",
+  "device": {
+    "serial": "emulator-5580",
+    "avd": "Floopel_Iteration_20261104",
+    "api": 35,
+    "nativePixels": "1080x2430",
+    "nativeDensity": 432,
+    "viewportDp": "400x900",
+    "fontScales": [
+      1.0,
+      1.3,
+      2.0
+    ],
+    "finalSize": "Physical size: 1080x2400",
+    "finalDensity": "Physical density: 420",
+    "finalFont": "1.0"
+  },
+  "figma": {
+    "fileKey": "ifQcOxbjGTXw9aNH2JGl9g",
+    "sections": [
+      "95:1085",
+      "97:1282"
+    ],
+    "frames": [
+      "95:1089",
+      "95:1253",
+      "95:1395",
+      "95:1519",
+      "95:1674",
+      "97:1483",
+      "97:1796"
+    ]
+  },
+  "assets": {
+    "newStaticBinaryAssets": 0,
+    "mappedGlyphs": "Material Rounded through core FloopelIcons",
+    "dynamic": "API badge artwork, checkpoint photos and traveler images; synthetic captures deliberately use failed local image URLs",
+    "temporaryFigmaRuntimeUrls": 0
+  },
+  "sourceManifest": "source-manifest.json",
+  "apks": [
+    {
+      "path": "apps/android/traveler/build/outputs/apk/development/debug/traveler-development-debug.apk",
+      "bytes": 25902424,
+      "sha256": "a98891010c078af072be882e387bafb8b13d2028d240b791fd0200a9ce1dae0c"
+    },
+    {
+      "path": "apps/android/traveler/build/outputs/apk/androidTest/development/debug/traveler-development-debug-androidTest.apk",
+      "bytes": 1321902,
+      "sha256": "7acd543507f97b9a99a46b0767b80e44ab45871cd5838250d5e8d7cf1839fbcf"
+    },
+    {
+      "path": "apps/android/partner/build/outputs/apk/development/debug/partner-development-debug.apk",
+      "bytes": 18571399,
+      "sha256": "cd6ab2e82f0ba1b3f64724c51237b73bd47233c2b4332c28b0ab49ab97d3c9c4"
+    }
+  ],
+  "artifactContext": {
+    "foreignStylesIncluded": {
+      "path": "apps/android/traveler/src/main/res/values/styles.xml",
+      "bytes": 1038,
+      "sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+    },
+    "note": "Pre-existing styles.xml compiled but excluded from commit, together with pre-existing .gitignore edit"
+  },
+  "captures": [
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-append-error.png",
+      "bytes": 140678,
+      "sha256": "4d1e0bec2ac14569ea6a0668d6f558ec10178a52ba1cbd0885896c74fe163a10"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-available.png",
+      "bytes": 159895,
+      "sha256": "45015ff8bd1b6bba76898e98b8c03884f9a73eaf9333555c571216b3dd5bfa45"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-error.png",
+      "bytes": 70501,
+      "sha256": "225fffcd70dfb103d83dfdc38c36822414d94cd0581df4806575c2b28051b088"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-filtered.png",
+      "bytes": 166718,
+      "sha256": "b0d283df5ec1c4380bc27b38d57fc98e6c6f7863f33db3108e38865062b9c839"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-font-130.png",
+      "bytes": 214856,
+      "sha256": "d7a18fb903e63a63ff09b72c744c4b020cdac2c6068f93bedc946980e6ca6ffc"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-font-200.png",
+      "bytes": 164448,
+      "sha256": "d916e1da3d975f813991e784209da975fbde5e8d0877026f5fe3084615b85cdb"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-group-empty.png",
+      "bytes": 80324,
+      "sha256": "c8e3a54a294259feca7598705d49d8c95dd8eb8eae954e84733d908c4ef5851b"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-group-font-130.png",
+      "bytes": 95800,
+      "sha256": "7fd5ae89d2dbb55e91313e8efff472f358e32dbb55ec21f37c0abd3f92d7af6d"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-group-font-200.png",
+      "bytes": 125998,
+      "sha256": "0075b93db071b3b26d2b7be0d2d710168525d888b30d50ad82fe1b9d1e59d921"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-personal-font-130.png",
+      "bytes": 194793,
+      "sha256": "2722c08ac8630ab0d97f58eef2e37f18081f1144f412551ae0520c6257c2c092"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-personal-font-200.png",
+      "bytes": 164484,
+      "sha256": "6648509d6f8dea2c4f9106c9d4de6353439854dbb665297cba3a7797e24ae0b1"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-personal.png",
+      "bytes": 159566,
+      "sha256": "e42944b09def6cc537dc67b60eb249045cb9ee47d74768ed1cfab1106885ed22"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-refresh-error.png",
+      "bytes": 140678,
+      "sha256": "4d1e0bec2ac14569ea6a0668d6f558ec10178a52ba1cbd0885896c74fe163a10"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/catalog-taken.png",
+      "bytes": 64206,
+      "sha256": "4fe623d40089d673a5dad7b9a9696694508fbeefc570b95c618fbe3914b36ae9"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-active-checkpoints.png",
+      "bytes": 189529,
+      "sha256": "0dcb238288fe1393935ad3448a4ec90d2465b6a94575a0e3e80f58c59e534d91"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-active-progress.png",
+      "bytes": 152860,
+      "sha256": "02dfa2db2828d2e8626e1effd9c7e68cf48a5d70a1beac39c7ef1c30fa282166"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-font-200.png",
+      "bytes": 173452,
+      "sha256": "f515a22b903d216f737d3fa4ebc0c260025b0815fc86a52c383287971ef546b5"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-quota-full.png",
+      "bytes": 151913,
+      "sha256": "34d494cea58e91a9ecdacc15dcfeecd420ffcfbbc6a63da02c07ee85a2756884"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-read-error.png",
+      "bytes": 34663,
+      "sha256": "594913fed0528cf0702046850c119f133836376d9d6e6f2c9e3461de671bcf26"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-ready-checkpoints.png",
+      "bytes": 190558,
+      "sha256": "38ef891081d5a89637cb4e14cfa3c15018842f95c5214be072bf0beb7e2b5ac5"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/detail-ready-summary.png",
+      "bytes": 153113,
+      "sha256": "233be6a1d7e57f1ac2dbd0615baaee378530bfe8b0efd9a66bdf131f5275d5d3"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/filter-font-200.png",
+      "bytes": 136440,
+      "sha256": "98316c81dcc6f7462a4feeff036b76582183104f4c367779e6ee020caed278f4"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/quest-design-20261107/native-fixture/filter-xp-draft.png",
+      "bytes": 124830,
+      "sha256": "36e5b03274fbea0bcd47ee6852b76ab1c13ea513e35d16c3fdf501275c97c40b"
+    }
+  ],
+  "liveSmoke": "live-smoke.json",
+  "limitations": {
+    "liveBackend": "BLOCKED by local Docker/database prerequisite; see live-smoke.json",
+    "ios": "NOT_RUN: requires Mac/Xcode for common UI/core, framework, host and tests",
+    "maps": "DEFERRED by owner",
+    "gpsIntegrityAdmission": "NOT_RUN live in this design batch",
+    "fcm": "NOT_CONFIGURED",
+    "productionRelease": "NOT_RUN",
+    "talkbackVoiceover": "NOT_RUN",
+    "physicalDevice": "NOT_RUN",
+    "fullAppParity": "NOT_CLAIMED"
+  }
+}

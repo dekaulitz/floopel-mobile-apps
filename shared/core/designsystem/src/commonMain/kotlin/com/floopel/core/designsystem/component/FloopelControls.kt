@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -30,13 +31,14 @@ fun FloopelButton(label: String, onClick: () -> Unit, modifier: Modifier = Modif
 /** Adapted from the mapped FloopelAvatar; URL and identity policy belong to the consumer. */
 @Composable
 fun FloopelAvatar(initials: String, size: Dp, modifier: Modifier = Modifier,
-    image: (@Composable () -> Unit)? = null) {
+    image: (@Composable () -> Unit)? = null, contentColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    labelStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.titleSmall) {
     Surface(modifier, shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer) {
+        contentColor = contentColor) {
         Box(Modifier.size(size), contentAlignment = Alignment.Center) {
             if (image != null) image()
             else if (initials.isBlank()) Icon(FloopelIcons.PersonOutline, null)
-            else Text(initials.take(2), style = MaterialTheme.typography.titleSmall)
+            else Text(initials.take(2), style = labelStyle)
         }
     }
 }
@@ -44,12 +46,16 @@ fun FloopelAvatar(initials: String, size: Dp, modifier: Modifier = Modifier,
 /** Code Connect signature retained, with Material-owned selection and accessibility semantics. */
 @Composable
 fun FloopelFilterChip(selected: Boolean, onClick: () -> Unit, label: @Composable () -> Unit,
-    modifier: Modifier = Modifier, enabled: Boolean = true) {
-    FilterChip(selected, onClick, label, modifier, enabled,
+    modifier: Modifier = Modifier, enabled: Boolean = true, showSelectionIcon: Boolean = false) {
+    val labelHeight = with(LocalDensity.current) { MaterialTheme.typography.labelLarge.lineHeight.toDp() }
+    FilterChip(selected, onClick, label, modifier.heightIn(min = maxOf(32.dp, labelHeight + 12.dp)), enabled,
         shape = FloopelShape.chip,
         colors = FilterChipDefaults.filterChipColors(
             selectedContainerColor = MaterialTheme.colorScheme.primary,
-            selectedLabelColor = MaterialTheme.colorScheme.onPrimary))
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary),
+        border = FilterChipDefaults.filterChipBorder(enabled, selected, borderColor = MaterialTheme.colorScheme.outline),
+        leadingIcon = if (selected && showSelectionIcon) { { Icon(FloopelIcons.Check, null, Modifier.size(18.dp)) } } else null)
 }
 
 /** Compact 36dp face within a growing 48dp native target, as used by Home and catalog actions. */

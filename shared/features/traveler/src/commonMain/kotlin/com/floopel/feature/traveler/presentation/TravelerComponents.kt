@@ -46,7 +46,8 @@ internal fun Body(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 internal fun Media(url: String?, modifier: Modifier, description: String? = null,
-    placeholderIcon: androidx.compose.ui.graphics.vector.ImageVector = FloopelIcons.CollectionsBookmark) {
+    placeholderIcon: androidx.compose.ui.graphics.vector.ImageVector = FloopelIcons.CollectionsBookmark,
+    contentScale: ContentScale = ContentScale.Crop) {
     @Composable fun Placeholder() {
         Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLow), Alignment.Center) {
             Icon(placeholderIcon, description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -54,7 +55,7 @@ internal fun Media(url: String?, modifier: Modifier, description: String? = null
     }
     Box(modifier) {
         if (url.isNullOrBlank()) Placeholder() else SubcomposeAsyncImage(url, description,
-            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(), contentScale = contentScale,
             loading = { Placeholder() }, error = { Placeholder() })
     }
 }

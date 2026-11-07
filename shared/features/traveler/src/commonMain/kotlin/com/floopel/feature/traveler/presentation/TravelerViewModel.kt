@@ -8,6 +8,7 @@ import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
+import com.floopel.feature.traveler.presentation.quest.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -148,7 +149,8 @@ internal class TravelerViewModel(
         if (route.destination in rootTabs && route.id.isEmpty() && route.extra.isEmpty()) { tab(route.destination); return }
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(stack = it.stack + route, writeFailure = null, saved = false,
-            query = "", feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest, itinerary = ReadState(),
+            query = "", feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest,
+            questSpots = if (route.destination == Destination.QUEST) emptyMap() else it.questSpots, itinerary = ReadState(),
             distribution = ReadState(), shareLink = ReadState(), trip = ReadState(), plan = ReadState(),
             openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), tripTimezone = null,
             tripRecovery = ReadState(), media = ReadState(), mediaPartial = false,
@@ -169,6 +171,7 @@ internal class TravelerViewModel(
         refresh()
     }
     fun back() {
+        if (state.value.questBrowse.pickerOpen) { closeQuestLocationPicker(); return }
         if (state.value.spotContent.comments.open && !state.value.busy) { closeSpotComments(); return }
         if (state.value.busy) return
         val current = state.value
@@ -226,10 +229,11 @@ internal class TravelerViewModel(
                     fetch("isSaved", { it.isSpotSaved }, { s, r -> s.copy(isSpotSaved = r) }) { runtime.savedSpots.isSaved(route.id) }
                 if (route.extra == CatalogKind.LOCATION.name) loadLocationContent(route.id)
             }
-            Destination.QUESTS -> fetch("quests", { it.quests }, { s, r -> s.copy(quests = r) }) {
-                if (route.id.isBlank()) runtime.catalog.activeQuests("id", 1) else runtime.catalog.untakenLocationQuests(route.id, "id", 1)
-            }
-            Destination.QUEST -> fetch("quest", { it.quest }, { s, r -> s.copy(quest = r) }) { runtime.identity.quest(route.id) }
+            Destination.QUESTS -> { initializeQuestCatalog(); loadQuestCatalog(); loadQuestFilterLocation() }
+            Destination.QUEST_FILTER -> loadQuestFilterLocation()
+            Destination.QUEST -> fetch("quest", { it.quest }, { s, r -> s.copy(quest = r) }, ready = { quest ->
+                quest.steps.mapNotNull { it.spotId }.distinct().forEach(::loadQuestSpot)
+            }) { runtime.identity.quest(route.id) }
             Destination.PASSPORT -> viewModelScope.launch(worker) { runtime.identity.passport() }
             Destination.QUEST_PROGRESS -> identityAction { runtime.identity.continueQuest(route.id) }
             Destination.QUEST_ACTIVITY -> if (route.extra.isNotBlank()) identityAction {
@@ -797,12 +801,7 @@ internal class TravelerViewModel(
             Destination.OPEN_TRIPS -> s.openTrips.value?.nextCursor?.let(::loadOpenTrips)
             Destination.CATALOG, Destination.EXPLORER, Destination.ADD_SPOT ->
                 s.catalog.value?.takeIf { it.page < it.totalPages }?.let { catalog(it.page + 1) }
-            Destination.QUESTS -> s.quests.value?.takeIf { !s.quests.loading && it.page < it.totalPages }?.let { previous ->
-                fetch("quests", { it.quests }, { old, r -> old.copy(quests = if (r.value != null)
-                    r.copy(value = r.value.copy(items = (previous.items + r.value.items).distinctBy { it.id })) else r) }) {
-                    if (s.route.id.isBlank()) runtime.catalog.activeQuests("id", previous.page + 1)
-                    else runtime.catalog.untakenLocationQuests(s.route.id, "id", previous.page + 1)
-                } }
+            Destination.QUESTS -> if (!s.questBrowse.taken) s.quests.value?.takeIf { !s.quests.loading && s.quests.failure == null && it.page < it.totalPages }?.let { loadQuestCatalog(it.page + 1) }
             Destination.NOTIFICATIONS -> s.notifications.value?.takeIf { !s.notifications.loading && it.page < it.totalPages }?.let { loadNotifications(it.page + 1) }
             Destination.PUBLIC_PROFILE -> when {
                 s.route.extra == "badges" -> s.publicBadges.value?.takeIf { !s.publicBadges.loading && it.page < it.totalPages }?.let { loadPublicProfileContent(it.page + 1) }
@@ -837,17 +836,154 @@ internal class TravelerViewModel(
             } finally { mutable.update { it.copy(busy = false) } }
         }
     }
+    private fun initializeQuestCatalog() {
+        val route = state.value.route
+        if (state.value.questBrowse.scope == route.id) return
+        mutable.update { it.copy(questBrowse = QuestBrowseState(scope = route.id,
+            filter = QuestDiscoveryFilter(locationId = route.id.takeIf(String::isNotBlank), excludeTaken = route.id.isNotBlank(),
+                availability = "active".takeIf { route.id.isNotBlank() })), quests = ReadState()) }
+    }
+    private fun loadQuestCatalog(page: Int = 1) {
+        val browse = state.value.questBrowse
+        if (browse.taken) {
+            fetch("taken-quests", { it.questBrowse.takenRows }, { old, read ->
+                if (old.questBrowse.revision == browse.revision) old.copy(questBrowse = old.questBrowse.copy(takenRows = read)) else old
+            }) { runtime.identity.takenQuests(browse.filter.participationMode) }
+        } else fetch("quests", { it.quests }, { old, read ->
+            if (old.questBrowse.revision != browse.revision) old else old.copy(questBrowse = old.questBrowse.copy(requestedPage = page), quests = if (page > 1 && read.value != null)
+                read.copy(value = read.value.copy(items = (old.quests.value?.items.orEmpty() + read.value.items).distinctBy { it.id })) else read)
+        }) { runtime.identity.questCatalog(browse.filter, page) }
+    }
+    fun retryQuestCatalog() {
+        val current = state.value
+        if (current.route.destination == Destination.QUESTS && !current.questBrowse.taken &&
+            !current.quests.loading && current.quests.failure != null) loadQuestCatalog(current.questBrowse.requestedPage)
+    }
+    fun questCollection(taken: Boolean) {
+        val current = state.value
+        if (current.busy || current.route.destination != Destination.QUESTS || current.questBrowse.taken == taken) return
+        reads.remove("quests")?.cancel(); reads.remove("taken-quests")?.cancel()
+        mutable.update { it.copy(quests = ReadState(), questBrowse = it.questBrowse.copy(taken = taken,
+            revision = it.questBrowse.revision + 1, takenRows = ReadState())) }
+        loadQuestCatalog()
+    }
+    fun questMode(mode: String?) {
+        val current = state.value
+        if (current.busy || current.route.destination != Destination.QUESTS || mode != null && mode !in setOf("personal", "group") ||
+            current.questBrowse.filter.participationMode == mode) return
+        reads.remove("quests")?.cancel(); reads.remove("taken-quests")?.cancel()
+        mutable.update { it.copy(quests = ReadState(), questBrowse = it.questBrowse.copy(
+            filter = it.questBrowse.filter.copy(participationMode = mode), revision = it.questBrowse.revision + 1, takenRows = ReadState())) }
+        loadQuestCatalog()
+    }
+    fun openQuestFilter() {
+        if (state.value.route.destination != Destination.QUESTS || state.value.questBrowse.taken) return
+        mutable.update { old -> old.copy(questBrowse = old.questBrowse.copy(draft = old.questBrowse.draft ?: old.questBrowse.filter.let { filter ->
+            QuestFilterDraft(filter.minXP?.toString().orEmpty(), filter.maxXP?.toString().orEmpty(), filter.locationId?.let { LocationReference(it, filter.locationName.orEmpty(), "", "") })
+        })) }
+        open(TravelerRoute(Destination.QUEST_FILTER))
+    }
+    fun questXpDraft(minimum: String? = null, maximum: String? = null) {
+        if (state.value.route.destination != Destination.QUEST_FILTER) return
+        mutable.update { old -> val draft = old.questBrowse.draft ?: QuestFilterDraft()
+            old.copy(questBrowse = old.questBrowse.copy(draft = draft.copy(minimum = minimum ?: draft.minimum, maximum = maximum ?: draft.maximum))) }
+    }
+    fun resetQuestFilterDraft() {
+        if (state.value.route.destination == Destination.QUEST_FILTER) mutable.update { it.copy(questBrowse = it.questBrowse.copy(draft = QuestFilterDraft())) }
+    }
+    fun applyQuestFilter() {
+        val current = state.value; val draft = current.questBrowse.draft ?: return
+        if (current.busy || current.route.destination != Destination.QUEST_FILTER || !draft.valid) return
+        mutable.update { it.copy(quests = ReadState(), questBrowse = it.questBrowse.copy(revision = it.questBrowse.revision + 1,
+            filter = it.questBrowse.filter.copy(minXP = draft.minimum.toIntOrNull(), maxXP = draft.maximum.toIntOrNull(),
+                locationId = draft.location?.id, locationName = draft.location?.name), pickerOpen = false)) }
+        back()
+    }
+    fun clearQuestFilters() {
+        if (state.value.route.destination != Destination.QUESTS) return
+        reads.remove("quests")?.cancel()
+        mutable.update { it.copy(quests = ReadState(), questBrowse = it.questBrowse.copy(revision = it.questBrowse.revision + 1,
+            filter = it.questBrowse.filter.copy(minXP = null, maxXP = null, locationId = null, locationName = null), draft = null)) }
+        loadQuestCatalog()
+    }
+    private fun loadQuestFilterLocation() {
+        val filter = state.value.questBrowse.filter
+        val id = filter.locationId?.takeIf { filter.locationName.isNullOrBlank() } ?: return
+        fetch("quest-filter-location", { ReadState<CatalogEntry>() }, { old, _ -> old }, ready = { entry ->
+            if (entry.id == id) mutable.update { old ->
+                if (old.questBrowse.filter.locationId != id) old else old.copy(questBrowse = old.questBrowse.copy(
+                    filter = old.questBrowse.filter.copy(locationName = entry.title), draft = old.questBrowse.draft?.let { draft ->
+                        if (draft.location?.id == id) draft.copy(location = draft.location.copy(name = entry.title)) else draft }))
+            }
+        }) { runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), "id") }
+    }
+    fun openQuestLocationPicker() {
+        if (state.value.route.destination != Destination.QUEST_FILTER) return
+        mutable.update { it.copy(questBrowse = it.questBrowse.copy(pickerOpen = true, pickerQuery = "")) }
+        loadQuestPickerLocations()
+    }
+    fun closeQuestLocationPicker() {
+        reads.remove("quest-picker")?.cancel()
+        mutable.update { it.copy(questBrowse = it.questBrowse.copy(pickerOpen = false)) }
+    }
+    fun questLocationQuery(query: String) {
+        if (!state.value.questBrowse.pickerOpen) return
+        mutable.update { it.copy(questBrowse = it.questBrowse.copy(pickerQuery = query, pickerRows = ReadState())) }
+        loadQuestPickerLocations()
+    }
+    fun loadQuestPickerLocations() {
+        val query = state.value.questBrowse.pickerQuery
+        if (!state.value.questBrowse.pickerOpen) return
+        fetch("quest-picker", { it.questBrowse.pickerRows }, { old, r ->
+            if (old.questBrowse.pickerOpen && old.questBrowse.pickerQuery == query) old.copy(questBrowse = old.questBrowse.copy(pickerRows = r)) else old
+        }) {
+            if (query.isBlank()) runtime.catalog.topLocations("id", 20)
+            else if (query.trim().length < 3) CatalogResult.Ready(emptyList())
+            else { delay(300); runtime.catalog.searchLocations(query.trim(), "id") }
+        }
+    }
+    fun selectQuestFilterLocation(entry: CatalogEntry?) {
+        if (!state.value.questBrowse.pickerOpen || entry != null && entry.kind != CatalogKind.LOCATION) return
+        mutable.update { old -> old.copy(questBrowse = old.questBrowse.copy(draft = (old.questBrowse.draft ?: QuestFilterDraft()).copy(
+            location = entry?.let { LocationReference(it.id, it.title, it.slug, it.locationLevel.orEmpty()) }), pickerOpen = false)) }
+        reads.remove("quest-picker")?.cancel()
+    }
+    fun loadQuestSpot(id: String) {
+        if (state.value.route.destination != Destination.QUEST || state.value.quest.value?.steps?.none { it.spotId == id } != false) return
+        fetch("quest-spot-$id", { it.questSpots[id] ?: ReadState() }, { old, r -> old.copy(questSpots = old.questSpots + (id to r)) }) {
+            when (val result = runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.SPOT, null), "id")) {
+                is CatalogResult.Ready -> if (result.value.id == id && result.value.kind == CatalogKind.SPOT) result else CatalogResult.InvalidResponse
+                else -> result
+            }
+        }
+    }
     fun logout() = auth { runtime.identity.logout() }
-    fun takeQuest() = progressAction { runtime.identity.takeQuest() }
-    fun continueQuest() = progressAction { runtime.identity.continueQuest() }
+    fun takeQuest() {
+        val current = state.value; val quest = current.quest.value ?: return
+        if (current.route.destination != Destination.QUEST || current.quest.loading || current.quest.failure != null || !quest.canTake(current.identity)) return
+        progressAction { runtime.identity.takeQuest() }
+    }
+    fun continueQuest() {
+        val current = state.value; val owner = current.quest.value?.boundOwner() ?: return
+        if (current.route.destination != Destination.QUEST || current.quest.loading || current.quest.failure != null || owner.status != "active" || owner.participation == null) return
+        progressAction { runtime.identity.continueQuest() }
+    }
     fun continueQuest(id: String) = progressAction { runtime.identity.continueQuest(id) }
     private fun progressAction(action: suspend () -> Unit) {
-        if (state.value.identity.busy) return
+        val initial = state.value
+        if (initial.busy || initial.identity.busy || !initial.identity.signedIn || initial.identity.generation != runtime.identity.generation) return
+        mutable.update { it.copy(busy = true) }
         viewModelScope.launch {
-            withContext(worker) { action() }
-            val current = runtime.identity.view.first()
-            mutable.update { it.copy(identity = current) }
-            if (current.failure == null && current.running != null) open(TravelerRoute(Destination.QUEST_PROGRESS, current.running.id))
+            try {
+                withContext(worker) { if (runtime.identity.generation == initial.identity.generation) action() }
+                val current = runtime.identity.view.first()
+                if (state.value.route == initial.route && runtime.identity.generation == initial.identity.generation) {
+                    mutable.update { it.copy(identity = current, busy = false) }
+                    if (current.failure == null && current.running != null) open(TravelerRoute(Destination.QUEST_PROGRESS, current.running.id))
+                }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { if (runtime.identity.generation == initial.identity.generation) mutable.update { it.copy(writeFailure = ReadFailure()) } }
+            finally { if (state.value.route == initial.route && runtime.identity.generation == initial.identity.generation) mutable.update { it.copy(busy = false) } }
         }
     }
     fun activity(id: String) {

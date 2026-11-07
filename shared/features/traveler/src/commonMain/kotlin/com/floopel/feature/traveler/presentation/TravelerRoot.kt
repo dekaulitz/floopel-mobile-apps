@@ -99,6 +99,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
             if (!spotArchive && !spotDetail && (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN,
                 Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL,
+                Destination.QUESTS, Destination.QUEST_FILTER, Destination.QUEST,
                 Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
                 Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
                 route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
@@ -154,7 +155,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.FORGOT -> ForgotScreen(state, model)
                     Destination.LEGAL -> LegalScreen(state, model)
                     Destination.QUESTS -> QuestList(state, model)
-                    Destination.QUEST -> QuestDetail(state, model)
+                    Destination.QUEST_FILTER -> QuestFilterScreen(state, model)
+                    Destination.QUEST -> QuestDetail(state, model, share)
                     Destination.QUEST_PROGRESS -> QuestProgress(state, model)
                     Destination.QUEST_ACTIVITY -> QuestActivity(state, model)
                     Destination.PASSPORT -> PassportScreen(state, model)
@@ -229,6 +231,7 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.PROFILE_EMERGENCY -> Res.string.profile_emergency
     Destination.PROFILE_PREFERENCES -> Res.string.profile_preferences
     Destination.QUESTS -> Res.string.quests
+    Destination.QUEST_FILTER -> Res.string.quest_filter_title
     Destination.QUEST -> Res.string.quest_detail
     Destination.QUEST_PROGRESS -> Res.string.quest_progress
     Destination.QUEST_ACTIVITY -> Res.string.quest_activity

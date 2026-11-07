@@ -6,12 +6,13 @@ import kotlinx.serialization.Serializable
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
+import com.floopel.feature.traveler.presentation.quest.QuestBrowseState
 
 @Serializable
 internal enum class Destination {
     HOME, COMMUNITY, EXPLORER, OPEN_TRIPS, PROFILE,
     PROFILE_SETTINGS, PROFILE_EDIT, PROFILE_INTERESTS, PROFILE_SECURITY, PROFILE_EMERGENCY, PROFILE_PREFERENCES,
-    QUESTS, QUEST, QUEST_PROGRESS, QUEST_ACTIVITY, PASSPORT,
+    QUESTS, QUEST_FILTER, QUEST, QUEST_PROGRESS, QUEST_ACTIVITY, PASSPORT,
     ITINERARIES, ITINERARY, ITINERARY_FORM, ADD_SPOT, PICK_PLAN, STOP_FORM,
     SHARE, PUBLICATION, SHARE_LINK, TRIP_FORM, TRIPS, TRIP, MEMBERS, INVITATIONS,
     TRIP_APPLICATIONS, APPLICATIONS, APPLICATION, APPLY, NOTICE, NOTIFICATIONS,
@@ -58,7 +59,9 @@ internal data class TravelerState(
     val locationCountries: ReadState<List<CatalogEntry>> = ReadState(),
     val locationContent: LocationContentState = LocationContentState(),
     val spotContent: SpotContentState = SpotContentState(),
-    val quests: ReadState<LocationQuestPage> = ReadState(),
+    val quests: ReadState<QuestCatalogPage> = ReadState(),
+    val questBrowse: QuestBrowseState = QuestBrowseState(),
+    val questSpots: Map<String, ReadState<CatalogEntry>> = emptyMap(),
     val quest: ReadState<QuestReader> = ReadState(),
     val itineraries: ReadState<List<OwnedItinerary>> = ReadState(),
     val itinerary: ReadState<OwnedItineraryDetail> = ReadState(),

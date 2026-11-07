@@ -2,17 +2,25 @@ package com.floopel.feature.traveler.domain.model
 
 /** Presentation-independent projections; no transport DTO or credential reaches a screen. */
 data class QuestCard(val id: String, val slug: String, val title: String, val xp: Long?,
-    val badgeUrl: String?, val activityCount: Int, val locations: List<LocationReference>, val mode: String)
+    val badgeUrl: String?, val activityCount: Int, val locations: List<LocationReference>, val mode: String,
+    val badgeName: String? = null)
+
+data class QuestCatalogItem(val card: QuestCard, val availability: String, val executionStatus: String, val isTaken: Boolean?) {
+    val id get() = card.id
+}
+data class QuestCatalogPage(val items: List<QuestCatalogItem>, val page: Int, val totalPages: Int)
+/** Owner facts are bound to the reader's stable Quest ID, never inferred from a title. */
+data class QuestReaderOwner(val questId: String, val status: String, val participation: QuestRunning?)
 data class QuestStep(val id: String, val title: String, val kind: String, val ordinal: Int,
     val spotId: String? = null, val status: String? = null)
 data class QuestReader(val card: QuestCard, val description: String, val instructions: String,
     val badgeName: String?, val remaining: Int?, val limit: Int?, val availability: String,
     val executionStatus: String, val steps: List<QuestStep>, val travelers: List<String>,
-    val travelerPreviews: List<QuestTravelerPreview> = emptyList())
+    val travelerPreviews: List<QuestTravelerPreview> = emptyList(), val owner: QuestReaderOwner? = null)
 
 data class QuestTravelerPreview(val username: String, val displayName: String, val avatarUrl: String?)
 data class QuestRunning(val id: String, val title: String, val status: String, val completed: Int,
-    val total: Int, val steps: Map<String, String>)
+    val total: Int, val steps: Map<String, String>, val mode: String? = null)
 enum class QuestActivityKind { GPS, QUESTION, UNSUPPORTED }
 data class QuestQuestion(val id: String, val title: String, val kind: QuestActivityKind, val instructions: String,
     val options: List<Pair<String, String>>, val answerType: String?)

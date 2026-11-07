@@ -45,7 +45,8 @@ class TravelerQuestStateTest {
                 gpsSubmissionPending = false, gpsCollectionBlocked = pendingActivity != null, failure = null)
         }
         val identity = object : TravelerIdentity by base.identity {
-            override suspend fun quest(slug: String): CatalogResult<QuestReader> = CatalogResult.Ready(reader)
+            override suspend fun quest(slug: String): CatalogResult<QuestReader> = CatalogResult.Ready(reader.copy(owner = QuestReaderOwner(
+                reader.card.id, base.identityState.value.ownerStatus ?: "not_completed", base.identityState.value.running)))
             override suspend fun takeQuest() = progress()
             override suspend fun continueQuest() = progress()
             override suspend fun continueQuest(id: String) = progress()

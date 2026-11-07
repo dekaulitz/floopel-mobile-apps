@@ -20,6 +20,7 @@ import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.ChatBubbleOutline
 import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.automirrored.rounded.RotateLeft
@@ -98,6 +99,7 @@ object FloopelIcons {
     val Cancel = Icons.Rounded.Cancel
     val ChatBubbleOutline = Icons.Rounded.ChatBubbleOutline
     val CheckCircle = Icons.Rounded.CheckCircle
+    val Check = Icons.Rounded.Check
     val ChevronRight = Icons.Rounded.ChevronRight
     val Close = Icons.Rounded.Close
     val CollectionsBookmark = Icons.Rounded.CollectionsBookmark

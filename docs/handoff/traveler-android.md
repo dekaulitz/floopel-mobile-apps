@@ -8,6 +8,8 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test p
 
 ## Acuan
 
+Follow-up [katalog dan detail Quest](traveler-quest-design-audit.md) mencatat tab/filter, kartu hadiah, owner progress, kuota/aksi dan checkpoint Spot berdasarkan frame 95/97. Verifikasi Android, source/APK dan batas integrasi batch ini dilaporkan terpisah; gameplay/provider dan iOS tidak dianggap terverifikasi oleh pemeriksaan visual.
+
 Follow-up [notifikasi, profil, Spot dan navbar](traveler-notifications-profile-spots-audit.md) mencatat frame terbaru yang diminta pemilik, koreksi relasi/komentar Spot dan state inbox, serta navbar bersama kelima tab. Bukti batch dan keterbatasannya terpisah dari checkpoint publikasi/rating sebelumnya; peta tetap ditunda dan FCM belum terhubung.
 
 Follow-up [state publikasi](traveler-publication-state-audit.md) mengoreksi pesan kosong palsu setelah publish: metadata tanpa `stop_count` tetap unknown, detail itinerary menjadi sumber fakta Stop, dan revision owner direkonsiliasi melalui GET. Batch ini memiliki 417 host/15 native test; snapshot rating/lokasi dan integrasi sebelumnya tetap terpisah.
@@ -22,7 +24,7 @@ Follow-up [state publikasi](traveler-publication-state-audit.md) mengoreksi pesa
 | Journey / node Android | Source dalam presentation | Perilaku terhubung | Bukti dan batas |
 | --- | --- | --- | --- |
 | Home 5:200 | home/TravelerHomeContent.kt | Rail Spot/Location/Collection/Story, sesi/Passport, Trip aktif, inbox | Screenshot data publik nyata; gambar bukan fallback fixture |
-| Quest 97:1286, progress 218:2911 | quest + domain/session | Discovery/owner snapshot, start/continue, question, GPS, hasil/progres, Passport; outcome/proof terikat target, Retry reader tidak menambah stack | [State/retry](traveler-quest-state-audit.md) memakai provider/domain double; provider nyata dan parity layout lengkap NOT_RUN |
+| Quest 95:1089/97:1286, progress 218:2911 | quest + domain/session | Katalog/filter, owner snapshot, reward/checkpoint preview, start/continue, question, GPS, hasil/progres, Passport; outcome/proof terikat target, Retry reader tidak menambah stack | [Katalog/detail](traveler-quest-design-audit.md) dan [state/retry](traveler-quest-state-audit.md) memiliki bukti domain/native terpisah; provider nyata dan seluruh layout gameplay NOT_RUN |
 | Builder 113:1618, form 290:4697, Stop 113:1882 | itinerary | Create/edit, hari/judul, tambah/hapus/edit Stop, HH:mm, null versus durasi 0, recovery draft/Stop | Emulator: cover 154 dp full viewport, gutter 20 dp, validasi, Back/day/feedback |
 | Publikasi 113:2058, share 431:8111 | itinerary + distribution/media journal | Revision + dua acknowledgement, cover READY, empty guard, publish/unpublish, tautan rotate/revoke | Intent/key/body tetap setelah respons hilang; emulator menolak PROCESSING; API media/publikasi PASS pada audit privat; Photo Picker native NOT_RUN |
 | Trip 315:15847, form 114:1739 | trip | Working itinerary yang sama, create/recover, banner sebagai hasil parsial, roster/lifecycle, undangan | Invitee tidak mengambil working plan; banner gagal tidak membuat Trip kedua; [API privat/recovery](traveler-private-audit.md) |

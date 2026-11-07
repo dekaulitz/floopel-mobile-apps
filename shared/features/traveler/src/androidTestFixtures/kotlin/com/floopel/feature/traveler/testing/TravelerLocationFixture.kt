@@ -78,6 +78,21 @@ class TravelerLocationFixture(score: Double? = 4.8, suppressed: Boolean = false,
             return if (failTrips) CatalogResult.NetworkError else CatalogResult.Ready(OpenTripPage(listOf(base.openTrip), if (query.cursor == null) tripNextCursor else null))
         }
     }
-    val runtime = base.runtime.let { r -> TravelerRuntime(r.identity, catalog, r.itineraries, r.distribution, trips,
+    val identity = object : TravelerIdentity by base.identity {
+        override suspend fun questCatalog(filter: QuestDiscoveryFilter, page: Int): CatalogResult<QuestCatalogPage> {
+            val location = filter.locationId ?: return CatalogResult.InvalidResponse
+            check(filter.excludeTaken && filter.availability == "active")
+            return when (val result = catalog.untakenLocationQuests(location, "id", page)) {
+                is CatalogResult.Ready -> CatalogResult.Ready(QuestCatalogPage(result.value.items.map { item -> QuestCatalogItem(
+                    QuestCard(item.id, item.slug, item.title, item.xp, item.badgeImage?.url, item.activityCount ?: 0, item.locations,
+                        filter.participationMode ?: "personal"), "active", "available", false) }, result.value.page, result.value.totalPages))
+                is CatalogResult.HttpError -> result
+                is CatalogResult.Maintenance -> result
+                CatalogResult.NetworkError -> CatalogResult.NetworkError
+                CatalogResult.InvalidResponse -> CatalogResult.InvalidResponse
+            }
+        }
+    }
+    val runtime = base.runtime.let { r -> TravelerRuntime(identity, catalog, r.itineraries, r.distribution, trips,
         r.notifications, r.account, r.legal, r.registration, r.publicContent, r.savedSpots, r.questGroups, r.newOperationKey, r.startup) }
 }
