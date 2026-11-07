@@ -63,7 +63,7 @@ internal fun CatalogDetail(state: TravelerState, model: TravelerViewModel) {
                 entry.locationId?.let { id -> ActionRow(entry.locationName ?: s(Res.string.location_detail), onClick = {
                     model.open(TravelerRoute(Destination.DETAIL, id, CatalogKind.LOCATION.name))
                 }) }
-                Rating(entry)
+                Rating(entry, detail = true)
                 if (entry.kind == CatalogKind.SPOT) {
                     FloopelButton(s(Res.string.add_to_plan), {
                         model.open(TravelerRoute(if (state.identity.signedIn) Destination.PICK_PLAN else Destination.LOGIN, extra = entry.id))

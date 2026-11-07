@@ -11,13 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.*
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.floopel.core.designsystem.component.FloopelButton
+import com.floopel.core.designsystem.component.FloopelRatingRow
 import com.floopel.core.designsystem.icons.FloopelIcons
 import com.floopel.core.designsystem.theme.*
 import com.floopel.feature.traveler.domain.model.*
+import com.floopel.feature.traveler.presentation.catalog.catalogCount
+import com.floopel.feature.traveler.presentation.catalog.catalogScore
 import com.floopel.feature.traveler.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.StringResource
@@ -125,20 +129,22 @@ internal fun EmptyContent(title: String = s(Res.string.empty_title), body: Strin
 }
 
 @Composable
-internal fun CatalogCard(entry: CatalogEntry, onClick: () -> Unit, modifier: Modifier = Modifier, compact: Boolean = true) {
+internal fun CatalogCard(entry: CatalogEntry, onClick: () -> Unit, modifier: Modifier = Modifier, compact: Boolean = true, home: Boolean = false) {
     val clickLabel = entry.title
-    Surface(onClick = onClick, modifier = modifier, shape = FloopelShape.card,
+    Surface(onClick = onClick, modifier = modifier, shape = if (home) FloopelShape.locationCard else FloopelShape.card,
         color = if (compact) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface) {
-        if (compact) Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (compact) Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = if (home) Alignment.CenterVertically else Alignment.Top) {
             Media(entry.coverUrl, Modifier.size(72.dp, 80.dp).clip(FloopelShape.media))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(clickLabel, maxLines = 2, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleSmall)
+                Text(clickLabel, maxLines = 2, overflow = TextOverflow.Ellipsis,
+                    style = if (home) FloopelCatalogTypography.compactTitle else MaterialTheme.typography.titleSmall)
                 val subtitle = when (entry.kind) {
                     CatalogKind.SPOT -> entry.locationName ?: entry.locations.joinToString { it.name }.takeIf(String::isNotBlank)
                     CatalogKind.LOCATION -> entry.locationName
                     else -> entry.subtitle
                 }
-                subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall,
+                subtitle?.let { Text(it, style = if (home) FloopelCatalogTypography.metadata else MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis) }
                 if (entry.kind != CatalogKind.LOCATION) Rating(entry)
             }
@@ -151,12 +157,13 @@ internal fun CatalogCard(entry: CatalogEntry, onClick: () -> Unit, modifier: Mod
 }
 
 @Composable
-internal fun Rating(entry: CatalogEntry) {
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-        entry.aiReference?.takeUnless { it.suppressed }?.score?.let { score ->
-            Icon(FloopelIcons.Star, null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.primary)
-            Body(s(Res.string.reference_rating, score.toString()))
-        }
-        entry.commentCount?.let { Body(s(Res.string.comments_count, it)) }
-    }
+internal fun Rating(entry: CatalogEntry, detail: Boolean = false) {
+    val decimal = s(Res.string.catalog_decimal_separator)
+    val score = entry.aiReference?.takeUnless { it.suppressed }?.score
+        ?.takeIf { it.isFinite() && it in 0.0..5.0 }?.let { catalogScore(it, decimal) }
+    val count = entry.commentCount?.takeIf { it >= 0 }
+    val comments = count?.let { s(Res.string.catalog_comments_label, catalogCount(it, decimal)) }
+    val description = listOfNotNull(score?.let { s(Res.string.reference_rating, it) },
+        count?.let { s(Res.string.comments_count, it) }).joinToString(", ")
+    FloopelRatingRow(score, comments, description, modifier = Modifier.fillMaxWidth().testTag("catalog-rating-${entry.id}"), detail = detail)
 }

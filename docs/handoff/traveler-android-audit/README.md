@@ -4,6 +4,8 @@ Audit lokal 7 November 2026 memakai emulator Android 15/API 35, 1080×2400, dens
 
 Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itinerary/admission lokal nyata, recovery dan sesi native. [Manifest follow-up](private/results.json) memisahkan 377 host, 3 host admission + 1 host media live, 15 native fixture dan fase native live. [Audit UI terbaru](../traveler-ui-audit.md) memuat screenshot pada viewport Figma 400×900 dp dan gap yang masih terbuka. Tabel di bawah adalah bukti baseline sebelumnya; Home guest lama tidak lagi menjadi entry aplikasi setelah keputusan mandatory login.
 
+Batch [rating dan lokasi](../traveler-location-rating-audit.md) memiliki [manifest tersendiri](location-rating-20261107/results.json): 410 host/33 native test, build/lint kedua aplikasi Android, serta screenshot hierarki lokasi dan komponen Home/Spot. Peta ditunda sesuai keputusan pemilik. Bukti baseline di bawah tidak dilabel ulang sebagai hasil batch tersebut.
+
 ## Screenshot runtime dengan API nyata
 
 - [Home](screenshots/home-real-api.png): guest, public discovery/media melalui ngrok, hero memakai aset Figma lokal.

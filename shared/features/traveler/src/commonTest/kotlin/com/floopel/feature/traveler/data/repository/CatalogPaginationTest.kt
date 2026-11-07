@@ -53,7 +53,8 @@ class CatalogPaginationTest {
             paths += request.url.toString()
             val kind = request.url.encodedPath.substringAfterLast('/')
             val titleField = if (kind in setOf("locations", "spots")) "name" else "title"
-            val data = """[{"id":"entry","slug":"entry","locations":[],"$titleField":"Entry"}]"""
+            val type = if (kind == "content") "\"type\":\"article\"," else ""
+            val data = """[{"id":"entry","slug":"entry","locations":[],$type"$titleField":"Entry"}]"""
             respond("""{"meta":{"code":"OK","pagination":{"page":2,"total_pages":3}},"error":null,"data":$data}""", headers = headersOf(HttpHeaders.ContentType, "application/json"))
         })
         try {
@@ -66,7 +67,7 @@ class CatalogPaginationTest {
             assertTrue(paths.any { it.contains("/locations?") && it.contains("parent_id=parent") && !it.contains("location_id") })
             assertTrue(paths.any { it.contains("/spots?") && it.contains("location_id=city") && !it.contains("type=") })
             assertTrue(paths.any { it.contains("/collections?") && it.contains("location_id=city") })
-            assertTrue(paths.any { it.contains("/locations/city/content?") && !it.contains("type=") })
+            assertTrue(paths.any { it.contains("/locations/city/content?") && it.contains("type=article") })
             assertTrue(paths.any { it.contains("/itineraries?") && it.contains("source=curated") && it.contains("location_id=city") })
             val pageRequests = paths.filterNot { it.contains("/comment-totals/") }
             assertEquals(CatalogKind.entries.size, pageRequests.size)

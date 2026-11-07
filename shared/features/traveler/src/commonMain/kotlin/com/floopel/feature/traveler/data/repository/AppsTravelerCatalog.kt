@@ -111,11 +111,13 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
             CatalogKind.LOCATION -> parentId?.let { "&parent_id=" + it.encodeURLParameter() } ?: "&level=region"
             CatalogKind.SPOT -> locationId?.let { "&location_id=" + it.encodeURLParameter() }.orEmpty()
             CatalogKind.COLLECTION -> locationId?.let { "&location_id=" + it.encodeURLParameter() }.orEmpty()
-            CatalogKind.STORY -> if (locationId == null) storyType?.let { "&type=" + it.wireValue }.orEmpty() else ""
+            CatalogKind.STORY -> storyType?.let { "&type=" + it.wireValue }.orEmpty()
             CatalogKind.ITINERARY -> "&source=curated" + locationId?.let { "&location_id=" + it.encodeURLParameter() }.orEmpty()
         }
         val perPage = if (kind == CatalogKind.SPOT) TravelerDiscoveryLimits.SPOTS else 20
-        return catalogPage(base + "?locale=" + localeParam(locale) + "&page=$page&per_page=$perPage" + filters, kind, locale, page)
+        val result = catalogPage(base + "?locale=" + localeParam(locale) + "&page=$page&per_page=$perPage" + filters, kind, locale, page)
+        return if (kind == CatalogKind.STORY && storyType != null && result is CatalogResult.Ready &&
+            result.value.items.any { it.category != storyType.wireValue }) CatalogResult.InvalidResponse else result
     }
 
     private suspend fun catalogPage(path: String, kind: CatalogKind, locale: String, page: Int): CatalogResult<CatalogPage> {
@@ -393,12 +395,35 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
                 }
                 trail.takeIf { it.isNotEmpty() }?.joinToString(" · ")
             }
-        return withCommentTotals(entries.map { entry -> entry.copy(
+        val hydrated = entries.map { entry ->
+            val ancestors = mutableListOf<LocationAncestor>()
+            if (entry.kind == CatalogKind.LOCATION) {
+                val visited = mutableSetOf(entry.id)
+                var parent = entry.parentLocationId
+                while (parent != null && ancestors.size < 8 && visited.add(parent)) {
+                    val key = parent
+                    if (!resolved.containsKey(key)) resolved[key] = when (val result = decode(
+                        "/locations/" + key.encodeURLParameter() + "?locale=" + localeParam(locale)) { it.obj() }) {
+                        is CatalogResult.Ready -> result.value
+                        else -> null
+                    }
+                    val value = resolved[key] ?: break
+                    if (value.string("id") != key) break
+                    val name = value.string("name")?.takeUnless { it.isBlank() || it == "null" } ?: break
+                    val level = value.string("level")?.takeUnless { it.isBlank() || it == "null" } ?: break
+                    ancestors += LocationAncestor(key, name, level)
+                    if (level == "country") break
+                    parent = value.string("parent_id")?.takeUnless { it.isBlank() || it == "null" }
+                }
+            }
+            entry.copy(
             locationName = entry.locationName ?: names[entry.locationId],
             // Trip creation asserts the first Spot's own Location, never an ancestor or device zone.
             timezone = entry.timezone ?: if (entry.kind == CatalogKind.SPOT) resolved[entry.locationId]?.string("timezone")
                 ?.takeUnless { it.isBlank() || it == "null" } else null,
-        ) })
+            ancestors = if (entry.kind == CatalogKind.LOCATION) ancestors else entry.ancestors,
+        ) }
+        return withCommentTotals(hydrated)
     }
 
     /** Only distinct public stops are hydrated, with four requests at most in flight. */

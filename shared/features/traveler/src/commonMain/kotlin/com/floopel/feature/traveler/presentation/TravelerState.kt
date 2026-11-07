@@ -3,6 +3,8 @@ package com.floopel.feature.traveler.presentation
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import kotlinx.serialization.Serializable
+import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
+import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 
 @Serializable
 internal enum class Destination {
@@ -11,14 +13,15 @@ internal enum class Destination {
     ITINERARIES, ITINERARY, ITINERARY_FORM, ADD_SPOT, PICK_PLAN, STOP_FORM,
     SHARE, PUBLICATION, SHARE_LINK, TRIP_FORM, TRIPS, TRIP, MEMBERS, INVITATIONS,
     TRIP_APPLICATIONS, APPLICATIONS, APPLICATION, APPLY, NOTICE, NOTIFICATIONS,
-    CATALOG, DETAIL, LOGIN, REGISTER, VERIFY, FORGOT, LEGAL,
+    CATALOG, COUNTRIES, DETAIL, LOGIN, REGISTER, VERIFY, FORGOT, LEGAL,
     PUBLIC_PLAN, PUBLIC_PROFILE, SAVED_SPOTS, QUEST_GROUPS, QUEST_GROUP, QUEST_GROUP_INVITATIONS, QUEST_GROUP_INVITATION,
 }
 
 /** Only identifiers and non-sensitive navigation context are persisted. */
 @Serializable
 internal data class TravelerRoute(val destination: Destination, val id: String = "", val extra: String = "",
-    val day: Int = 1, val inboxId: String? = null, val slug: String = "", val operationKey: String = "")
+    val day: Int = 1, val inboxId: String? = null, val slug: String = "", val operationKey: String = "",
+    val countryId: String = "")
 
 internal data class ReadState<T>(val value: T? = null, val loading: Boolean = false, val failure: ReadFailure? = null)
 internal data class ReadFailure(val status: Int = 0, val code: String? = null, val retryAtMillis: Long = 0,
@@ -41,6 +44,9 @@ internal data class TravelerState(
     val profile: ReadState<PersonalProfile> = ReadState(),
     val catalog: ReadState<CatalogPage> = ReadState(),
     val detail: ReadState<CatalogEntry> = ReadState(),
+    val locationBrowser: ReadState<LocationBrowserPage> = ReadState(),
+    val locationCountries: ReadState<List<CatalogEntry>> = ReadState(),
+    val locationContent: LocationContentState = LocationContentState(),
     val quests: ReadState<LocationQuestPage> = ReadState(),
     val quest: ReadState<QuestReader> = ReadState(),
     val itineraries: ReadState<List<OwnedItinerary>> = ReadState(),

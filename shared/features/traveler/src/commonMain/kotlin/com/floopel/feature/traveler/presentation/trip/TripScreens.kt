@@ -28,7 +28,7 @@ internal fun OpenTripCatalog(state: TravelerState, model: TravelerViewModel) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
         .padding(start = FloopelSpace.large, end = FloopelSpace.large, top = FloopelSpace.medium, bottom = FloopelSpace.section),
         verticalArrangement = Arrangement.spacedBy(FloopelSpace.large)) {
-        SectionTitle(s(Res.string.open_trip))
+        if (state.route.id.isBlank()) SectionTitle(s(Res.string.open_trip))
         Text(s(Res.string.trip_explore_body),
             style = MaterialTheme.typography.labelLarge.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Normal),
             color = MaterialTheme.colorScheme.onSurfaceVariant)

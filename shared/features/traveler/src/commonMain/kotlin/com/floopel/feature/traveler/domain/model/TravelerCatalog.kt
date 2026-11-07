@@ -28,6 +28,9 @@ data class AiReferenceRating(val score: Double?, val suppressed: Boolean)
 /** Public-only projection; wire transport and serialization stay in the data adapter. */
 data class GeoPoint(val latitude: Double, val longitude: Double)
 
+/** Geographic ancestry, distinct from multi-location content coverage. Closest parent first. */
+data class LocationAncestor(val id: String, val name: String, val level: String)
+
 data class CatalogPhotoVariant(val url: String, val width: Int, val height: Int)
 data class CatalogPhoto(val url: String, val alt: String, val variants: List<CatalogPhotoVariant> = emptyList())
 
@@ -78,6 +81,7 @@ data class CatalogEntry(
     val parentLocationId: String? = null,
     val locations: List<LocationReference> = emptyList(),
     val allowClone: Boolean? = null,
+    val ancestors: List<LocationAncestor> = emptyList(),
 ) {
     val coverPhoto: CatalogPhoto? get() = coverUrl?.let { url -> photos.firstOrNull { it.url == url } ?: CatalogPhoto(url, title) }
 }

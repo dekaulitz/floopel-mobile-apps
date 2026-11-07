@@ -4,7 +4,7 @@
 
 Android Traveler kini memakai runtime API native dan UI Compose di commonMain. Fokus implementasi adalah Quest, itinerary/publikasi dan Trip/admission, dilanjutkan reader publik, Saved Spot, kelompok dan inbox. Ini baseline yang dapat dibangun serta ditinjau, bukan sign-off seluruh desain atau kandidat rilis. Partner dan host iOS masih scaffold; merge/rilis tidak dilakukan.
 
-Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta checkpoint 383 host/24 native test. [Koreksi state Quest](traveler-quest-state-audit.md) mengikat hasil/proof GPS ke target dan memperbaiki Retry reader, dengan 391 host/20 native test pada batch tersendiri. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
+Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta checkpoint 383 host/24 native test. [Koreksi state Quest](traveler-quest-state-audit.md) mengikat hasil/proof GPS ke target dan memperbaiki Retry reader, dengan 391 host/20 native test pada batch tersendiri. [Rating dan lokasi](traveler-location-rating-audit.md) memperbaiki komponen Home/Spot serta alur negara–provinsi–kota dan detail lokasi, dengan 410 host/33 native test; peta ditunda sesuai keputusan pemilik. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
 
 ## Acuan
 
@@ -24,6 +24,7 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test p
 | Trip 315:15847, form 114:1739 | trip | Working itinerary yang sama, create/recover, banner sebagai hasil parsial, roster/lifecycle, undangan | Invitee tidak mengambil working plan; banner gagal tidak membuat Trip kedua; [API privat/recovery](traveler-private-audit.md) |
 | Open Trip 5:326, detail 316:5228 | trip | Katalog/cursor publik, route publik, apply/pending, approve/reject/withdraw, reader pemilik | Guest API nyata PASS; follow-up write privat/kapasitas 5+1 PASS pada [audit privat](traveler-private-audit.md) |
 | Spot 36:696 | catalog | Detail/gallery, lokasi, rich body, tambah ke rencana/hari, Saved | Detail native data nyata + emulator penambahan hari 3/footer |
+| Lokasi 81:993, 53:1149 | catalog/LocationScreens.kt | Pilihan negara, hierarki provinsi/kota, pencarian dan breadcrumb; rail Spot, Quest belum diambil, Trip dan artikel tersaring | [Rating/lokasi](traveler-location-rating-audit.md): fixture UI/state dan smoke MainActivity data nyata; peta ditunda pemilik |
 | Community 5:242, public plan 290:6459, profil 22:522 | catalog/PublicScreens.kt | Publikasi/kurasi/Open Trip, snapshot publik terpisah, clone, profil publik | Guest feed kontrak PASS; bukan akses working plan privat |
 | Kelompok 397:7924 dan reader | quest/QuestGroupScreens.kt | Create/read, undangan, anggota/progres, manager transfer, leave/disband | Journal terikat actor; join tidak otomatis start Quest pribadi; E2E belum diuji |
 | Inbox 386:7783 | root/ViewModel + NotificationRoute.kt | Inbox → allowlist target → reader berizin → ack ID inbox asli setelah render | Emulator removed/403; test revoked/logout/stale; GET/list tidak otomatis ack |
@@ -52,9 +53,10 @@ Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug defaul
 
 | Pemeriksaan | Hasil aktual |
 | --- | --- |
-| assembleDebug Traveler + Partner | PASS pada checkpoint startup ketika core berubah. Batch state Quest membangun Traveler + APK androidTest; Core/Partner tidak berubah |
-| lintDebug Traveler + Partner | PASS tanpa error/fatal. Batch Quest: Traveler 42 warning; Partner 2 pada checkpoint startup, terutama saran upgrade, OldTargetApi, MissingApplicationIcon dan UseKtx; [laporan Quest](traveler-android-audit/quest-state-20261107/results.json), [startup](traveler-android-audit/startup-20261107/results.json). Toolchain tidak di-upgrade |
-| testAndroidHostTest | Batch Quest 391 test PASS; 0 failure/error/skipped. Checkpoint startup 383, sebelumnya 377, baseline awal 357 |
+| assembleDebug Traveler + Partner | PASS pada batch rating/lokasi, termasuk APK androidTest Traveler; core berubah |
+| lintDebug Traveler + Partner | PASS tanpa error/fatal. Batch rating/lokasi: Traveler 42 warning, Partner 2; [laporan](traveler-android-audit/location-rating-20261107/results.json). Toolchain tidak di-upgrade |
+| testAndroidHostTest | Batch rating/lokasi 410 test PASS; 0 failure/error/skipped. Checkpoint Quest 391, startup 383, sebelumnya 377, baseline awal 357 |
+| Native rating/lokasi dan regresi | 13 test komponen/hierarki + 20 regresi PASS, production ViewModel/Compose dengan domain doubles; [bukti batch](traveler-location-rating-audit.md). Smoke manual MainActivity/API nyata dilaporkan terpisah |
 | Host dengan floopelLiveSmoke=true dan origin tunnel | 4 public-read test PASS; 0 failure/error/skipped. Discovery/detail/search, UUID/slug, Quest/Open Trip guest, referensi registrasi/legal |
 | connectedDebugAndroidTest dan runner adb checkpoint startup | Baseline connected 8 journey; checkpoint startup 24 test PASS pada viewport 400×900 dp: 16 domain-fixture/regresi dan 8 MainActivity nyata (4 startup/progres, 3 privat/login/Back, 1 invalid refresh); [manifest](traveler-android-audit/startup-20261107/results.json). Tidak dilabel ulang sebagai rerun Quest |
 | Runner adb batch state Quest | 20 test PASS pada 400×900 dp: 4 interaksi Quest dan 16 regresi domain-fixture. Production Session/mapper dibuktikan terpisah di host; [manifest](traveler-android-audit/quest-state-20261107/results.json). Angka test bukan jumlah state Figma yang ditandatangani |

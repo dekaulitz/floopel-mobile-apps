@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
+import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
+import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -21,7 +23,7 @@ internal class TravelerViewModel(
 ) : ViewModel() {
     private val restored = runCatching { Json.decodeFromString<List<TravelerRoute>>(restoredStack) }
         .getOrNull()?.takeIf { routes -> routes.isNotEmpty() && routes.size <= 40 && routes.all {
-            it.id.length <= 200 && it.extra.length <= 200 && it.operationKey.length <= 128
+            it.id.length <= 200 && it.extra.length <= 200 && it.operationKey.length <= 128 && it.countryId.length <= 200
         } }?.map { route ->
             // A pre-key saved route must recover to the same identity on every restoration.
             if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank())
@@ -36,6 +38,7 @@ internal class TravelerViewModel(
     private var writeJob: Job? = null
     private var registrationKey: String? = null
     private var startupJob: Job? = null
+    private val locationQueries = mutableMapOf<TravelerRoute, String>()
 
     init {
         if (autoStart) {
@@ -45,6 +48,7 @@ internal class TravelerViewModel(
                         reads.values.forEach(Job::cancel); reads.clear()
                         writeJob?.cancel()
                         acknowledgements.clear()
+                        locationQueries.clear()
                     }
                     mutable.update { current ->
                         if (current.identity.generation != identity.generation) {
@@ -149,7 +153,8 @@ internal class TravelerViewModel(
             itineraryDraft = ReadState(), pendingStop = ReadState(), applicationDraft = ReadState(),
             pendingPublication = ReadState(), isSpotSaved = ReadState(), publicPlan = ReadState(), publicProfile = ReadState(),
             publicProgress = ReadState(), publicPlans = if (route.destination == Destination.PUBLIC_PROFILE) ReadState() else it.publicPlans,
-            group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(), groupInvitations = ReadState()) }
+            group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(), groupInvitations = ReadState(),
+            locationBrowser = ReadState(), locationContent = LocationContentState()) }
         refresh()
     }
     fun tab(destination: Destination) {
@@ -172,6 +177,9 @@ internal class TravelerViewModel(
                 writeFailure = null, saved = false, feedback = null) }
         } else if (current.stack.size > 1) mutable.update { it.copy(stack = it.stack.dropLast(1), writeFailure = null, saved = false, feedback = null) }
         else if (current.tab != Destination.HOME) tab(Destination.HOME)
+        if (state.value.route.destination == Destination.COUNTRIES ||
+            state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
+            mutable.update { it.copy(query = locationQueries[it.route].orEmpty()) }
         refresh()
     }
     fun background() { viewModelScope.launch(worker) { runtime.identity.background() } }
@@ -185,15 +193,20 @@ internal class TravelerViewModel(
             Destination.HOME -> home()
             Destination.PROFILE -> fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             Destination.COMMUNITY -> when (state.value.communityTab) { 0 -> publicPlans(); 1 -> loadOpenTrips(); else -> catalog() }
-            Destination.EXPLORER, Destination.CATALOG, Destination.ADD_SPOT -> catalog()
+            Destination.EXPLORER, Destination.ADD_SPOT -> catalog()
+            Destination.CATALOG -> if (route.extra == CatalogKind.LOCATION.name) loadLocationBrowser() else catalog()
+            Destination.COUNTRIES -> fetch("locationCountries", { it.locationCountries }, { s, r -> s.copy(locationCountries = r) }) { locationCountries() }
             Destination.DETAIL -> {
                 fetch("detail", { it.detail }, { s, r -> s.copy(detail = r) }) {
                 runtime.catalog.detail(CatalogEntry(route.id, route.slug.ifBlank { route.id }, "", null,
                     CatalogKind.entries.firstOrNull { it.name == route.extra } ?: CatalogKind.SPOT, null), "id") }
                 if (route.extra == CatalogKind.SPOT.name && state.value.identity.signedIn)
                     fetch("isSaved", { it.isSpotSaved }, { s, r -> s.copy(isSpotSaved = r) }) { runtime.savedSpots.isSaved(route.id) }
+                if (route.extra == CatalogKind.LOCATION.name) loadLocationContent(route.id)
             }
-            Destination.QUESTS -> fetch("quests", { it.quests }, { s, r -> s.copy(quests = r) }) { runtime.catalog.activeQuests("id", 1) }
+            Destination.QUESTS -> fetch("quests", { it.quests }, { s, r -> s.copy(quests = r) }) {
+                if (route.id.isBlank()) runtime.catalog.activeQuests("id", 1) else runtime.catalog.untakenLocationQuests(route.id, "id", 1)
+            }
             Destination.QUEST -> fetch("quest", { it.quest }, { s, r -> s.copy(quest = r) }) { runtime.identity.quest(route.id) }
             Destination.PASSPORT -> viewModelScope.launch(worker) { runtime.identity.passport() }
             Destination.QUEST_PROGRESS -> identityAction { runtime.identity.continueQuest(route.id) }
@@ -332,17 +345,25 @@ internal class TravelerViewModel(
     }
     fun query(value: String) {
         mutable.update { it.copy(query = value) }
+        if (state.value.route.destination == Destination.COUNTRIES ||
+            state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
+            locationQueries[state.value.route] = value
+        if (state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
+            reads.remove("locationBrowser")?.cancel()
         reads.remove("searchDelay")?.cancel()
+        if (state.value.route.destination == Destination.COUNTRIES) return
         reads["searchDelay"] = viewModelScope.launch { delay(350)
             when {
                 state.value.route.destination == Destination.OPEN_TRIPS || state.value.route.destination == Destination.COMMUNITY && state.value.communityTab == 1 -> loadOpenTrips()
                 state.value.route.destination == Destination.COMMUNITY && state.value.communityTab == 0 -> publicPlans()
+                state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name -> loadLocationBrowser()
                 else -> catalog()
             }
         }
     }
     private fun catalog(page: Int = 1) {
         val route = state.value.route; val query = state.value.query
+        val locationId = route.id.takeIf { route.destination == Destination.CATALOG && it.isNotBlank() }
         val kind = if (route.destination == Destination.COMMUNITY) CatalogKind.ITINERARY
             else CatalogKind.entries.firstOrNull { it.name == route.extra } ?: CatalogKind.SPOT
         fetch("catalog", { if (page == 1) ReadState() else it.catalog }, { s, r ->
@@ -350,11 +371,117 @@ internal class TravelerViewModel(
                 r.copy(value = r.value.copy(items = (s.catalog.value.items + r.value.items).distinctBy { it.id })) else r) }) {
             if (kind == CatalogKind.ITINERARY) runtime.catalog.curatedItineraries(query, null, "id", page)
             else if (query.isNotBlank() && kind == CatalogKind.SPOT && route.destination != Destination.EXPLORER)
-                runtime.catalog.searchSpotPage(query, null, "id", page)
+                runtime.catalog.searchSpotPage(query, locationId, "id", page)
             else if (query.isNotBlank()) when (val r = runtime.catalog.search(query, "id")) {
                 is CatalogResult.Ready -> CatalogResult.Ready(CatalogPage(r.value, 1, 1))
                 else -> r.failure()
-            } else runtime.catalog.browse(kind, "id", page)
+            } else runtime.catalog.browse(kind, "id", page, storyType = if (kind == CatalogKind.STORY && locationId != null) StoryType.ARTICLE else null, locationId = locationId)
+        }
+    }
+
+    private suspend fun locationCountries(): CatalogResult<List<CatalogEntry>> {
+        val countries = mutableListOf<CatalogEntry>()
+        var page = 1
+        while (true) {
+            val result = runtime.catalog.countryPage("id", page)
+            if (result !is CatalogResult.Ready) return result.failure()
+            if (result.value.items.any { it.kind != CatalogKind.LOCATION || it.locationLevel != "country" }) return CatalogResult.InvalidResponse
+            countries += result.value.items
+            if (page >= result.value.totalPages) return CatalogResult.Ready(countries.distinctBy { it.id })
+            // Defensive bound on a malformed server page sequence; never manufacture countries.
+            if (page >= 128 || result.value.items.isEmpty()) return CatalogResult.InvalidResponse
+            page++
+        }
+    }
+
+    private fun loadLocationBrowser(page: Int = 1) {
+        val route = state.value.route; val query = state.value.query.trim()
+        fetch("locationBrowser", { it.locationBrowser }, { s, r ->
+            s.copy(locationBrowser = if (page > 1 && r.value != null && s.locationBrowser.value?.query == query)
+                r.copy(value = r.value.copy(entries = (s.locationBrowser.value.entries + r.value.entries).distinctBy { it.id })) else r)
+        }) {
+            val choices = locationCountries()
+            if (choices !is CatalogResult.Ready) return@fetch choices.failure()
+            val region = if (route.id.isNotBlank()) {
+                val result = runtime.catalog.detail(CatalogEntry(route.id, route.id, "", null, CatalogKind.LOCATION, null), "id")
+                if (result !is CatalogResult.Ready) return@fetch result.failure()
+                if (result.value.locationLevel != "region") return@fetch CatalogResult.InvalidResponse
+                result.value
+            } else null
+            val selectedId = route.countryId.takeIf(String::isNotBlank) ?: region?.ancestors?.lastOrNull { it.level == "country" }?.id
+            val country = if (selectedId != null) choices.value.firstOrNull { it.id == selectedId }
+                ?: return@fetch CatalogResult.HttpError(404)
+            else choices.value.firstOrNull { it.slug == "indonesia" } ?: choices.value.firstOrNull()
+            if (region != null && region.parentLocationId != country?.id) return@fetch CatalogResult.InvalidResponse
+            val result = when {
+                query.isNotBlank() -> when (val search = runtime.catalog.searchLocations(query, "id")) {
+                    is CatalogResult.Ready -> CatalogResult.Ready(CatalogPage(search.value, 1, 1))
+                    else -> search.failure()
+                }
+                country == null -> CatalogResult.Ready(CatalogPage(emptyList(), 1, 0))
+                else -> runtime.catalog.browse(CatalogKind.LOCATION, "id", page, parentId = region?.id ?: country.id)
+            }
+            if (result !is CatalogResult.Ready) result.failure()
+            else if (result.value.items.any { it.kind != CatalogKind.LOCATION }) CatalogResult.InvalidResponse
+            else CatalogResult.Ready(LocationBrowserPage(choices.value, country, region, result.value.items, query,
+                result.value.page, result.value.totalPages))
+        }
+    }
+
+    fun moreLocations() { state.value.locationBrowser.value?.takeIf { it.page < it.totalPages && !state.value.locationBrowser.loading }
+        ?.let { loadLocationBrowser(it.page + 1) } }
+    fun chooseLocationCountry() = open(TravelerRoute(Destination.COUNTRIES,
+        countryId = state.value.locationBrowser.value?.country?.id.orEmpty()))
+    fun selectLocationCountry(country: CatalogEntry) {
+        if (country.kind != CatalogKind.LOCATION || country.locationLevel != "country") return
+        if (state.value.route.destination != Destination.COUNTRIES) {
+            open(TravelerRoute(Destination.CATALOG, extra = CatalogKind.LOCATION.name, countryId = country.id)); return
+        }
+        reads.values.forEach(Job::cancel); reads.clear()
+        val parent = state.value.stack.dropLast(1)
+        val index = parent.indexOfLast { it.destination == Destination.CATALOG && it.extra == CatalogKind.LOCATION.name }
+        val route = TravelerRoute(Destination.CATALOG, extra = CatalogKind.LOCATION.name, countryId = country.id)
+        locationQueries[route] = ""
+        mutable.update { it.copy(stack = if (index >= 0) parent.take(index) + route else listOf(TravelerRoute(it.tab), route),
+            query = "", locationBrowser = ReadState()) }
+        refresh()
+    }
+    fun browseLocation(entry: CatalogEntry) {
+        when (entry.locationLevel) {
+            "country" -> selectLocationCountry(entry)
+            "region" -> open(TravelerRoute(Destination.CATALOG, entry.id, CatalogKind.LOCATION.name,
+                countryId = if (state.value.query.isBlank()) state.value.locationBrowser.value?.country?.id.orEmpty()
+                    else entry.ancestors.lastOrNull { it.level == "country" }?.id.orEmpty()))
+            else -> openEntry(entry)
+        }
+    }
+    fun locationCountriesRoot() {
+        val country = state.value.locationBrowser.value?.country ?: return
+        val index = state.value.stack.indexOfLast { it.destination == Destination.CATALOG && it.extra == CatalogKind.LOCATION.name &&
+            it.id.isBlank() }
+        if (index < 0) { open(TravelerRoute(Destination.CATALOG, extra = CatalogKind.LOCATION.name, countryId = country.id)); return }
+        reads.values.forEach(Job::cancel); reads.clear()
+        // A blank root may have resolved a different default country before a global search.
+        // Bind the breadcrumb target explicitly instead of resolving that default again.
+        val root = state.value.stack[index].copy(countryId = country.id)
+        val stack = state.value.stack.take(index) + root
+        locationQueries[stack.last()] = ""
+        mutable.update { it.copy(stack = stack, query = "", locationBrowser = ReadState()) }
+        refresh()
+    }
+    private fun loadLocationContent(id: String) {
+        if (state.value.locationContent.id != id) mutable.update { it.copy(locationContent = LocationContentState(id)) }
+        fetch("locationSpots", { it.locationContent.spots }, { s, r -> s.copy(locationContent = s.locationContent.copy(spots = r)) }) {
+            runtime.catalog.browse(CatalogKind.SPOT, "id", 1, locationId = id)
+        }
+        fetch("locationQuests", { it.locationContent.quests }, { s, r -> s.copy(locationContent = s.locationContent.copy(quests = r)) }) {
+            runtime.catalog.untakenLocationQuests(id, "id", 1)
+        }
+        fetch("locationTrips", { it.locationContent.trips }, { s, r -> s.copy(locationContent = s.locationContent.copy(trips = r)) }) {
+            runtime.trips.openTrips(OpenTripQuery(locationId = id, limit = 8))
+        }
+        fetch("locationArticles", { it.locationContent.articles }, { s, r -> s.copy(locationContent = s.locationContent.copy(articles = r)) }) {
+            runtime.catalog.browse(CatalogKind.STORY, "id", 1, storyType = StoryType.ARTICLE, locationId = id)
         }
     }
     fun communityTab(index: Int) {
@@ -415,10 +542,11 @@ internal class TravelerViewModel(
     fun transferGroup(profileId: String) = write({ runtime.questGroups.transferManager(state.value.route.id, profileId, "id", runtime.newOperationKey()) }) { refresh() }
     private fun loadOpenTrips(cursor: String? = null) {
         val query = state.value.query
+        val locationId = state.value.route.takeIf { it.destination == Destination.OPEN_TRIPS }?.id?.takeIf(String::isNotBlank)
         fetch("openTrips", { if (cursor == null) ReadState() else it.openTrips }, { s, r ->
             s.copy(openTrips = if (cursor != null && r.value != null && s.openTrips.value != null)
                 r.copy(value = r.value.copy(items = (s.openTrips.value.items + r.value.items).distinctBy { it.id })) else r) }) {
-            runtime.trips.openTrips(OpenTripQuery(query = query, cursor = cursor)) }
+            runtime.trips.openTrips(OpenTripQuery(query = query, locationId = locationId, cursor = cursor)) }
     }
     private fun moreApplications(cursor: String) {
         val route = state.value.route
@@ -447,7 +575,10 @@ internal class TravelerViewModel(
                 s.catalog.value?.takeIf { it.page < it.totalPages }?.let { catalog(it.page + 1) }
             Destination.QUESTS -> s.quests.value?.takeIf { !s.quests.loading && it.page < it.totalPages }?.let { previous ->
                 fetch("quests", { it.quests }, { old, r -> old.copy(quests = if (r.value != null)
-                    r.copy(value = r.value.copy(items = (previous.items + r.value.items).distinctBy { it.id })) else r) }) { runtime.catalog.activeQuests("id", previous.page + 1) } }
+                    r.copy(value = r.value.copy(items = (previous.items + r.value.items).distinctBy { it.id })) else r) }) {
+                    if (s.route.id.isBlank()) runtime.catalog.activeQuests("id", previous.page + 1)
+                    else runtime.catalog.untakenLocationQuests(s.route.id, "id", previous.page + 1)
+                } }
             Destination.NOTIFICATIONS -> s.notifications.value?.takeIf { !s.notifications.loading && it.page < it.totalPages }?.let { previous ->
                 fetch("notifications", { it.notifications }, { old, r -> old.copy(notifications = if (r.value != null)
                     r.copy(value = r.value.copy(items = (previous.items + r.value.items).distinctBy { it.id })) else r) }) { runtime.notifications.notifications(previous.page + 1, state.value.notificationClass, "id") } }

@@ -18,6 +18,7 @@ import coil3.SingletonImageLoader
 import coil3.svg.SvgDecoder
 import com.floopel.core.designsystem.component.FloopelButton
 import com.floopel.core.designsystem.icons.FloopelIcons
+import com.floopel.core.designsystem.theme.FloopelCatalogTypography
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.TravelerImage
 import com.floopel.feature.traveler.presentation.account.*
@@ -78,6 +79,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     }
     backHandler(state.canGoBack || state.busy, model::back)
     val route = state.route
+    val locationScreen = route.destination == Destination.COUNTRIES ||
+        route.destination in setOf(Destination.CATALOG, Destination.DETAIL) && route.extra == "LOCATION"
     val targetReady = when (route.destination) {
         Destination.TRIP -> state.trip.value?.id == route.id && !state.trip.loading && state.trip.failure == null
         Destination.APPLICATION -> state.application.value?.id == route.id && !state.application.loading && state.application.failure == null
@@ -89,10 +92,15 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     LaunchedEffect(route, targetReady) { if (targetReady) { withFrameNanos { }; model.targetVisible(route) } }
     Surface(color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
-            if (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN))
-            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 8.dp)) {
+            if (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN) ||
+                route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank())
+            Row(Modifier.fillMaxWidth().heightIn(min = if (locationScreen) 48.dp else 56.dp).padding(horizontal = 8.dp),
+                verticalAlignment = if (locationScreen) Alignment.CenterVertically else Alignment.Top) {
                 if (state.stack.size > 1) IconButton(model::back, enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
-                Text(s(route.title()), Modifier.weight(1f).padding(vertical = 14.dp, horizontal = 8.dp), style = MaterialTheme.typography.titleLarge)
+                Text(s(if (locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank())
+                    Res.string.location_search_title else route.title()),
+                    Modifier.weight(1f).padding(vertical = if (locationScreen) 0.dp else 14.dp, horizontal = 8.dp),
+                    style = if (locationScreen) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge)
                 if (route.destination == Destination.DETAIL && route.extra == "SPOT" && state.identity.signedIn) {
                     val saved = state.isSpotSaved.value
                     IconToggleButton(saved == true, { model.setSaved() }, enabled = saved != null && !state.isSpotSaved.loading && !state.busy) {
@@ -111,8 +119,10 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 else when (route.destination) {
                     Destination.HOME -> TravelerHomeContent(state, model)
                     Destination.COMMUNITY -> CommunityScreen(state, model, share)
-                    Destination.EXPLORER, Destination.CATALOG, Destination.ADD_SPOT -> CatalogScreen(state, model)
-                    Destination.DETAIL -> CatalogDetail(state, model)
+                    Destination.EXPLORER, Destination.ADD_SPOT -> CatalogScreen(state, model)
+                    Destination.CATALOG -> if (route.extra == "LOCATION") LocationBrowser(state, model) else CatalogScreen(state, model)
+                    Destination.COUNTRIES -> CountryPicker(state, model)
+                    Destination.DETAIL -> if (route.extra == "LOCATION") LocationDetail(state, model) else CatalogDetail(state, model)
                     Destination.OPEN_TRIPS -> OpenTripCatalog(state, model)
                     Destination.APPLY -> OpenTripDetail(state, model)
                     Destination.PROFILE -> ProfileScreen(state, model)
@@ -193,11 +203,12 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.COMMUNITY -> Res.string.community
     Destination.EXPLORER -> Res.string.explorer
     Destination.CATALOG -> when (extra) {
-        "LOCATION" -> Res.string.explore_locations
+        "LOCATION" -> Res.string.location_all
         "COLLECTION" -> Res.string.collections
         "STORY" -> Res.string.stories
         else -> Res.string.explorer
     }
+    Destination.COUNTRIES -> Res.string.location_choose_country
     Destination.OPEN_TRIPS -> Res.string.open_trip
     Destination.PROFILE -> Res.string.profile
     Destination.QUESTS -> Res.string.quests

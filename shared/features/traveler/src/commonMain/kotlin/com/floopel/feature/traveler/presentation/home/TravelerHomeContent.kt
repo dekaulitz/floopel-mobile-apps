@@ -11,10 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.floopel.core.designsystem.component.*
@@ -142,7 +141,9 @@ internal fun TravelerHomeContent(state: TravelerState, model: TravelerViewModel)
 @Composable
 private fun HomeRail(title: String, read: ReadState<List<CatalogEntry>>, model: TravelerViewModel, kind: CatalogKind) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        SectionTitle(title, s(Res.string.see_all)) { model.open(TravelerRoute(Destination.CATALOG, extra = kind.name)) }
+        if (kind == CatalogKind.LOCATION) FloopelCatalogSectionTitle(title, s(Res.string.see_all)) {
+            model.open(TravelerRoute(Destination.CATALOG, extra = kind.name))
+        } else SectionTitle(title, s(Res.string.see_all)) { model.open(TravelerRoute(Destination.CATALOG, extra = kind.name)) }
         ReadContent(read, model::refresh) { entries ->
             if (entries.isEmpty()) EmptyContent()
             if (kind == CatalogKind.STORY) Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
@@ -150,19 +151,12 @@ private fun HomeRail(title: String, read: ReadState<List<CatalogEntry>>, model: 
             } else LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(entries, key = { it.id }) { entry ->
                     when (kind) {
-                        CatalogKind.LOCATION -> Surface(onClick = { model.openEntry(entry) },
-                            Modifier.size(160.dp, 208.dp), shape = FloopelShape.card) {
-                            Box {
-                                Media(entry.coverUrl, Modifier.fillMaxSize())
-                                Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .78f)))))
-                                Text(entry.title, Modifier.align(Alignment.BottomStart).padding(12.dp), color = Color.White,
-                                    style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                            }
-                        }
+                        CatalogKind.LOCATION -> FloopelLocationMediaCard(entry.title, entry.ancestors.firstOrNull()?.name,
+                            image = { Media(entry.coverUrl, it) }, onClick = { model.openEntry(entry) }, modifier = Modifier.testTag("home-location-${entry.id}"))
                         CatalogKind.COLLECTION -> FloopelDiscoveryCard(entry.title,
                             image = { Media(entry.coverUrl, it) }, list = false,
                             onClick = { model.openEntry(entry) }, modifier = Modifier.width(260.dp))
-                        else -> CatalogCard(entry, { model.openEntry(entry) }, Modifier.width(304.dp))
+                        else -> CatalogCard(entry, { model.openEntry(entry) }, Modifier.width(304.dp).testTag("home-spot-${entry.id}"), home = true)
                     }
                 }
             }
