@@ -45,6 +45,7 @@ Simpan kedua dokumen berdampingan. Kontrak native mereferensikan komponen bersam
 
 - JSON memakai envelope `meta/error/data`. Sukses membawa `error:null`; error membawa `data:null`. Pertahankan `meta.code` dan structured details; message bukan identifier percabangan. HTTP204 tidak diparse sebagai JSON. Binary/redirect mengikuti response media type operasinya.
 - Bedakan field absent, null dan array kosong. Jangan mengisi field required yang hilang dengan data fiktif. UUID, enum, timestamp, satuan dan nullable/required mengikuti schema.
+- Visibilitas read itinerary mengikuti state distribusi `private`, `unlisted`, atau `public`; enum ini tidak memberi akses ke working plan pengguna lain. Guard owner atau publikasi eligible tetap berlaku.
 - Durasi Stop 0 menit valid pada working plan dan publikasi. `duration_minutes:0` tetap nol pada snapshot publik; `null` berarti durasi tidak ditentukan, bukan nol.
 - Hasil pencarian dan nearby Spot tanpa rating tetap mengirim `reference_rating:null`. Metadata media `placeholder.blurhash` dan `dominant_color` yang tidak tersedia dihilangkan pada pencarian, list/detail Spot, gallery dan nearby; bila hadir nilainya string.
 - `GET /locations/{id}` menerima UUID atau slug. UUID menghasilkan `LocationDetail` dengan `geo`, `counts`, `children` dan `spots:[]`; slug menghasilkan `LocationPublicDetail` dengan `centroid_lat`, `centroid_lng`, `boundary` dan `timezone`. Pilih bentuk sesuai identifier yang diminta; jangan menganggap kedua proyeksi identik.
@@ -80,7 +81,7 @@ Guard semantik ini memakai Node bawaan dan menolak `example` + `examples` bersam
 
 ## Provenance dan pembaruan
 
-Sumber: repository [backend Floopel](https://github.com/dekaulitz/com.github.floopel.prjct), folder `application/api-contract`. Snapshot diambil dari branch lokal `main` dengan HEAD `58a570799e47222fb0529c2e5d869bbb152f0390`. Apps dan identitas native mencakup perubahan lokal yang belum ada pada commit tersebut; gunakan hash setiap file pada [manifest](snapshot.json) untuk mengidentifikasi sumber dan hasil proyeksi secara tepat.
+Sumber: repository [backend Floopel](https://github.com/dekaulitz/com.github.floopel.prjct), folder `application/api-contract`. Snapshot diambil dari branch `feature/local-session-delivery-20261107` pada commit `1658157a5c076714bfe1ca55919d74ae7bb0027c`. Kontrak dan dependensi yang dicatat sudah berada pada commit sumber tersebut; gunakan hash setiap file pada [manifest](snapshot.json) untuk mengidentifikasi sumber dan hasil proyeksi secara tepat.
 
 Ekspor memakai UTF-8/LF. Koreksi kontrak sudah diterapkan pada sumber lokal; dependensi DTO placeholder pencarian/Spot dan hash guard juga tercatat pada manifest. Response `GET /me/trips` 200 sudah berbentuk Response Object pada kontrak kanonis, dengan `Cache-Control:no-store`, sehingga ekspor tidak lagi memerlukan normalisasi response khusus. Field request/response yang dipertahankan cocok dengan sumber setelah seleksi channel native.
 

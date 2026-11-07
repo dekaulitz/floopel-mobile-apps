@@ -1,16 +1,16 @@
 {
   "snapshot_date": "2026-11-07",
   "source_repository": "https://github.com/dekaulitz/com.github.floopel.prjct",
-  "source_head": "58a570799e47222fb0529c2e5d869bbb152f0390",
-  "source_state": "working_tree",
+  "source_head": "1658157a5c076714bfe1ca55919d74ae7bb0027c",
+  "source_state": "committed",
   "encoding": "UTF-8; LF; JSON indent2",
   "files": [
     {
       "file": "openapi-apps.json",
       "source_path": "application/api-contract/openapi-apps.json",
-      "source_sha256": "2645bd014067aac16c9c8f6645ee61af8dd3463cf5ab1fb46efc3be3ae92a622",
-      "snapshot_sha256": "6f8d1a4742d99d23817c1a6cbe3b831aa41685bb246e6d88b8fbd83975a26638",
-      "source_working_tree_modified": true,
+      "source_sha256": "8ba6072af514049b045d090eeb446522e017590d50b10a88b1ec19ab944310ab",
+      "snapshot_sha256": "3da180df2f37e925c9444dd3648251bc71af16e549a69d69708b963036fdcce5",
+      "source_working_tree_modified": false,
       "path_count": 138,
       "operation_count": 162
     },
@@ -19,13 +19,13 @@
       "source_path": "application/api-contract/openapi-mobile.json",
       "source_sha256": "258e3aac7d7a8774dc220eca54075722a191e6cb4160e4b81a0520006eeea56c",
       "snapshot_sha256": "4520876ecd13aa5d18d289ab8795a9b8d7f6f11e8587c6f28ec50ae9060f4734",
-      "source_working_tree_modified": true,
+      "source_working_tree_modified": false,
       "path_count": 13,
       "operation_count": 13
     }
   ],
   "normalizations": [],
-  "source_branch": "main",
+  "source_branch": "feature/local-session-delivery-20261107",
   "audience": [
     "android-traveler",
     "ios-traveler"
@@ -612,18 +612,22 @@
     {
       "scope": "public_itinerary_zero_duration",
       "description": "Durasi Stop0 menit valid di privat/publik sesuai keputusan pemilik dan snapshot backend; null tetap tidak ditentukan."
+    },
+    {
+      "scope": "itinerary_visibility",
+      "description": "Visibilitas read itinerary memakai enum existing private/unlisted/public sesuai publication runtime; owner/publication access guard tetap berlaku."
     }
   ],
   "backend_dependencies": [
     {
       "source_path": "application/service/internal/modules/catalog/adapter/http/search/dto.go",
       "source_sha256": "9e14b07f68986711fe3670e2bfd912080295bc8f702fec14823e37902aa22e28",
-      "source_working_tree_modified": true
+      "source_working_tree_modified": false
     },
     {
       "source_path": "application/service/internal/modules/catalog/adapter/http/spot/dto.go",
       "source_sha256": "6a132f9ac8dccb8dfc676271f6eb68ce340d723745ca9f169d5c7f979710d087",
-      "source_working_tree_modified": true
+      "source_working_tree_modified": false
     }
   ],
   "validation_tools": [

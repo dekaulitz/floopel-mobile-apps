@@ -22914,10 +22914,8 @@
             "$ref": "#/components/schemas/ItinerarySource"
           },
           "visibility": {
-            "type": "string",
-            "enum": [
-              "private"
-            ]
+            "$ref": "#/components/schemas/Visibility",
+            "description": "Visibilitas distribusi yang tersimpan: private untuk draf, unlisted/public menurut publikasi yang telah dikonfirmasi. Reader tetap memverifikasi owner atau publikasi kurasi yang eligible; nilai ini tidak memberi akses ke working plan pengguna lain."
           },
           "is_owner": {
             "type": "boolean",
@@ -22981,6 +22979,48 @@
             "source": "curated",
             "visibility": "private",
             "is_owner": false,
+            "locations": [
+              {
+                "id": "11111111-1111-4111-8111-111111111111",
+                "name": "Bandung",
+                "slug": "bandung",
+                "level": "city"
+              },
+              {
+                "id": "22222222-2222-4222-8222-222222222222",
+                "name": "Bogor",
+                "slug": "bogor",
+                "level": "city"
+              }
+            ]
+          },
+          {
+            "id": "11111111-1111-4111-8111-111111111111",
+            "title": "example",
+            "source": "curated",
+            "visibility": "public",
+            "is_owner": false,
+            "locations": [
+              {
+                "id": "11111111-1111-4111-8111-111111111111",
+                "name": "Bandung",
+                "slug": "bandung",
+                "level": "city"
+              },
+              {
+                "id": "22222222-2222-4222-8222-222222222222",
+                "name": "Bogor",
+                "slug": "bogor",
+                "level": "city"
+              }
+            ]
+          },
+          {
+            "id": "11111111-1111-4111-8111-111111111111",
+            "title": "example",
+            "source": "user_created",
+            "visibility": "unlisted",
+            "is_owner": true,
             "locations": [
               {
                 "id": "11111111-1111-4111-8111-111111111111",
