@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-07T21:48:21.060Z" hostname="DSKTP-ZYAN" time="0.035">
+  <properties/>
+  <testcase name="ordinaryReadOnlyBackKeepsThePendingItemAndDoesNotWrite" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" time="0.009"/>
+  <testcase name="acknowledgedDeclineUpdatesOnlyItem21BeforeBackWithoutReloadingPageOne" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" time="0.005"/>
+  <testcase name="lateDecisionAfterActorGenerationChangeCannotRepopulateTheOldListOrNavigateBack" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" time="0.008"/>
+  <testcase name="lostDecisionResponseKeepsPendingUntilAnAuthoritativeReadReconcilesIt" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" time="0.007"/>
+  <testcase name="definiteFailureDoesNotInventAnAcknowledgementOrLeaveTheReader" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

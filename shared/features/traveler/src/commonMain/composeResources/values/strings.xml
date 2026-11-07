@@ -456,6 +456,9 @@
     <string name="quest_group_invitation_accepted">Diterima</string>
     <string name="quest_group_invitation_declined">Ditolak</string>
     <string name="quest_group_invitation_cancelled">Dibatalkan</string>
+    <string name="quest_group_inviter_heading">%1$s mengundangmu</string>
+    <string name="quest_group_invitation_heading">Undangan kelompok</string>
+    <string name="quest_group_invitation_note">Menerima hanya bergabung ke kelompok, belum mengambil Quest.</string>
     <string name="quest_gps_unavailable">Lokasi presisi belum tersedia. Aktifkan lokasi, izinkan akses presisi, lalu coba lagi di tempat aktivitas.</string>
     <string name="quest_gps_pending">Hasil pengiriman belum diketahui. Periksa status aktivitas sebelum mengirim ulang.</string>
     <string name="quest_gps_verified">Lokasi berhasil diverifikasi.</string>

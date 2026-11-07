@@ -108,19 +108,3 @@ internal fun QuestGroupInvitations(state: TravelerState, model: TravelerViewMode
         }
     }
 }
-
-@Composable
-internal fun QuestGroupInvitationReader(state: TravelerState, model: TravelerViewModel) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ReadContent(state.groupInvitation, model::refresh) { invitation ->
-            Text(invitation.questTitle ?: s(Res.string.quest_groups), style = MaterialTheme.typography.headlineMedium)
-            Body(groupInvitationStatus(invitation.status))
-            InfoCard(s(Res.string.quest_group_note))
-            if (invitation.status == "pending" && state.profile.value?.profileId == invitation.profileId) {
-                FloopelButton(s(Res.string.quest_group_join), { model.decideGroupInvitation(true) }, Modifier.fillMaxWidth(), enabled = !state.busy)
-                FloopelButton(s(Res.string.invitation_decline), { model.decideGroupInvitation(false) }, Modifier.fillMaxWidth(), secondary = true, enabled = !state.busy)
-            }
-            if (invitation.status == "accepted") FloopelButton(s(Res.string.quest_groups), { model.open(TravelerRoute(Destination.QUEST_GROUP, invitation.groupId)) }, Modifier.fillMaxWidth())
-        }
-    }
-}

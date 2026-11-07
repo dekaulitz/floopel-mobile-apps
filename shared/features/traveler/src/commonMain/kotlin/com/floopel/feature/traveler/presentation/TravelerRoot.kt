@@ -140,7 +140,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank() -> Res.string.location_search_title
                     else -> route.title()
                 }), Modifier.testTag("traveler-top-bar"),
-                titleStyle = if (locationScreen || route.destination == Destination.QUEST_GROUP_RECOVERY) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
+                titleStyle = if (locationScreen || route.destination in setOf(Destination.QUEST_GROUP_RECOVERY, Destination.QUEST_GROUP_INVITATION)) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
                 minimumHeight = if (locationScreen) 48.dp else 56.dp,
                 contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
                 spacing = if (locationScreen) 8.dp else 12.dp,

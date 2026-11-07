@@ -9,7 +9,9 @@ import com.floopel.feature.traveler.feature.auth.TravelerSession
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import io.ktor.http.content.TextContent
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.*
 import kotlin.test.*
 
 class NativeQuestGroupRecoveryTest {
@@ -106,13 +108,25 @@ internal class QuestGroupRecoveryFixture {
     var conflictWrite = false
     var overlapPageTwo = false
     var invitationTotal = 0
+    var recipient = "guest-profile"
+    var inviterProfileId: String? = null
+    var decisionStatus = HttpStatusCode.OK
+    var loseDecisionReply = false
+    var beforeDecision: suspend () -> Unit = {}
+    var groupReads = 0
+    val decisionBodies = mutableListOf<String>()
+    private val invitationStatuses = mutableMapOf<Int,String>()
     var beforeGroups: suspend () -> Unit = {}
     var beforeInvitations: suspend (String?, Int) -> Unit = { _, _ -> }
     val writeKeys = mutableListOf<String?>()
     val invitationReads = mutableListOf<Triple<String?, Int, String>>()
     fun invitationId(n: Int) = "33333333-3333-4333-8333-${n.toString().padStart(12, '0')}"
     private fun group() = """{"id":"$groupId","quest_id":"$questId","quest_title":"Quest fixture","quest_slug":"quest-fixture","manager_profile_id":"$actor","status":"active","member_count":1,"group_size_limit":4,"created_at":"2026-11-08T00:00:00Z"}"""
-    private fun invitation(n: Int) = """{"id":"${invitationId(n)}","group_id":"$groupId","quest_id":"$questId","quest_title":"Invitation $n","profile_id":"guest-profile","inviter_profile_id":"$actor","status":"pending","created_at":"2026-11-08T00:00:00Z","decided_at":null,"username":"guest_b","inviter_username":"fixture_owner"}"""
+    private fun invitation(n: Int): String {
+        val status = invitationStatuses[n] ?: "pending"
+        val decided = if (status=="pending") "null" else "\"2026-11-08T00:10:00Z\""
+        return """{"id":"${invitationId(n)}","group_id":"$groupId","quest_id":"$questId","quest_title":"Invitation $n","profile_id":"$recipient","inviter_profile_id":"${inviterProfileId ?: actor}","status":"$status","created_at":"2026-11-08T00:00:00Z","decided_at":$decided,"username":"guest_b","inviter_username":"fixture_owner"}"""
+    }
     val client = HttpClient(MockEngine { request ->
         val path = request.url.encodedPath
         var status = HttpStatusCode.OK
@@ -124,12 +138,20 @@ internal class QuestGroupRecoveryFixture {
             request.method != HttpMethod.Get -> {
                 writeKeys += request.headers["Idempotency-Key"]
                 if (conflictWrite) return@MockEngine respond("""{"meta":{"code":"CONFLICT"},"error":{"code":"CONFLICT"},"data":null}""", HttpStatusCode.Conflict, headersOf(HttpHeaders.ContentType,"application/json"))
-                status = HttpStatusCode.Created
-                if (path.endsWith("/quest-groups")) {
+                if (request.method==HttpMethod.Put && path.contains("/quest-group-invitations/")) {
+                    val body = (request.body as TextContent).text
+                    decisionBodies += body; beforeDecision()
+                    if (decisionStatus!=HttpStatusCode.OK) return@MockEngine respond("""{"meta":{"code":"INVALID_REQUEST"},"error":{"code":"INVALID_REQUEST"},"data":null}""",decisionStatus,headersOf(HttpHeaders.ContentType,"application/json"))
+                    val n = path.substringAfterLast('-').toInt()
+                    invitationStatuses[n] = Json.parseToJsonElement(body).jsonObject.getValue("status").jsonPrimitive.content
+                    if (loseDecisionReply) error("fixture decision accepted response lost")
+                    invitation(n)
+                } else if (path.endsWith("/quest-groups")) {
+                    status = HttpStatusCode.Created
                     if (!created) { created = true; createdCount++ }
                     if (loseCreateReply) { loseCreateReply = false; error("fixture accepted response lost") }
                     group()
-                } else invitation(1)
+                } else { status = HttpStatusCode.Created; invitation(1) }
             }
             else -> {
                 if (failReads) error("fixture offline")
@@ -157,7 +179,7 @@ internal class QuestGroupRecoveryFixture {
                         (from..minOf(page*20,invitationTotal)).joinToString(prefix="[",postfix="]") { invitation(it) }
                     }
                     path.contains("/quest-group-invitations/") -> invitation(path.substringAfterLast('-').toInt())
-                    else -> group()
+                    else -> { groupReads++; group() }
                 }
             }
         }

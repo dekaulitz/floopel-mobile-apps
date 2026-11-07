@@ -229,7 +229,7 @@ internal class TravelerViewModel(
             publicProgress = ReadState(), publicPlans = if (route.destination == Destination.PUBLIC_PROFILE) ReadState() else it.publicPlans,
             publicBadges = ReadState(), publicPrivatePlans = ReadState(),
             group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(),
-            groupInvitations = if (route.destination == Destination.QUEST_GROUP_INVITATION) it.groupInvitations else ReadState(),
+            groupInvitations = if (route.destination in setOf(Destination.QUEST_GROUP_INVITATION, Destination.QUEST_GROUP_RECOVERY)) it.groupInvitations else ReadState(),
             groupInvitationsAppending = false, groupInvitationsAppendFailure = null,
             locationBrowser = ReadState(), locationContent = LocationContentState()) }
         refresh()
@@ -432,7 +432,7 @@ internal class TravelerViewModel(
             Destination.QUEST_GROUP_INVITATIONS -> loadGroupInvitations()
             Destination.QUEST_GROUP_RECOVERY -> Unit // Review is explicit; entering/refreshing never releases or replays.
             Destination.QUEST_GROUP_INVITATION -> {
-                fetch("groupInvitation", { it.groupInvitation }, { s, r -> s.copy(groupInvitation = r) }) { runtime.questGroups.invitation(route.id, language) }
+                fetch("groupInvitation", { it.groupInvitation }, { s, r -> s.copy(groupInvitation = r) }, ready = ::reconcileGroupInvitation) { runtime.questGroups.invitation(route.id, language) }
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             }
             Destination.REGISTER -> fetch("references", { it.references }, { s, r -> s.copy(references = r) }) {
@@ -856,7 +856,14 @@ internal class TravelerViewModel(
         mutable.update { it.copy(saved = true) }
     }
     fun decideGroupInvitation(accept: Boolean) = groupWrite({ runtime.questGroups.decideInvitation(state.value.route.id, accept, language, runtime.newOperationKey()) }) {
+        reconcileGroupInvitation(it)
         if (accept) replace(TravelerRoute(Destination.QUEST_GROUP, it.groupId)) else back()
+    }
+    /** Only validated server acknowledgements/authorized reads reach here; preserve paging and order. */
+    private fun reconcileGroupInvitation(invitation: QuestGroupInvitation) {
+        mutable.update { s -> s.copy(groupInvitations = s.groupInvitations.copy(value = s.groupInvitations.value?.let { batch ->
+            batch.copy(items = batch.items.map { if (it.id == invitation.id) invitation else it })
+        })) }
     }
     fun leaveGroup(disband: Boolean) = groupWrite({ if (disband) runtime.questGroups.disbandGroup(state.value.route.id, runtime.newOperationKey())
         else runtime.questGroups.leaveGroup(state.value.route.id, runtime.newOperationKey()) }) { back() }
@@ -1511,7 +1518,7 @@ internal class TravelerViewModel(
             tripMutationRecovery = if (journal == MutationJournal.TRIP) it.tripMutationRecovery.copy(review = ReadState()) else it.tripMutationRecovery,
             itineraryMutationRecovery = if (journal == MutationJournal.ITINERARY) it.itineraryMutationRecovery.copy(review = ReadState()) else it.itineraryMutationRecovery,
             questGroupMutationRecovery = if (journal == MutationJournal.QUEST_GROUP) it.questGroupMutationRecovery.copy(review = ReadState(),
-                title = it.group.value?.questTitle ?: it.quest.value?.card?.title ?: it.questGroupMutationRecovery.title) else it.questGroupMutationRecovery) }
+                title = it.group.value?.questTitle ?: it.groupInvitation.value?.questTitle ?: it.quest.value?.card?.title ?: it.questGroupMutationRecovery.title) else it.questGroupMutationRecovery) }
         writeJob = viewModelScope.launch {
             try {
                 if (checkConsent) {

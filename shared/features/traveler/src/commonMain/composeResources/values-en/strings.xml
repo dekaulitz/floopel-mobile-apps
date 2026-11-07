@@ -466,6 +466,9 @@
     <string name="quest_group_invitation_accepted">Accepted</string>
     <string name="quest_group_invitation_declined">Declined</string>
     <string name="quest_group_invitation_cancelled">Cancelled</string>
+    <string name="quest_group_inviter_heading">%1$s invited you</string>
+    <string name="quest_group_invitation_heading">Group invitation</string>
+    <string name="quest_group_invitation_note">Accepting only joins the group; it does not start the Quest.</string>
     <string name="quest_gps_unavailable">Precise location is unavailable. Enable location, allow precise access, and try again at the activity location.</string>
     <string name="quest_gps_pending">The submission result is unknown. Check the activity status before submitting again.</string>
     <string name="quest_gps_verified">Location verified.</string>
