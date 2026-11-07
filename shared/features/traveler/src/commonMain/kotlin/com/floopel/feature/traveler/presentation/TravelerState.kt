@@ -7,6 +7,7 @@ import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
 import com.floopel.feature.traveler.presentation.quest.QuestBrowseState
+import com.floopel.feature.traveler.presentation.passport.PassportContentState
 
 @Serializable
 internal enum class Destination {
@@ -46,6 +47,7 @@ internal data class TravelerState(
     val startupFailure: ReadFailure? = null,
     val home: HomeState = HomeState(),
     val profile: ReadState<PersonalProfile> = ReadState(),
+    val passportContent: PassportContentState = PassportContentState(),
     val nationalities: ReadState<List<NationalityOption>> = ReadState(),
     val interests: ReadState<TravelerInterests> = ReadState(),
     val security: ReadState<CredentialCapabilities> = ReadState(),

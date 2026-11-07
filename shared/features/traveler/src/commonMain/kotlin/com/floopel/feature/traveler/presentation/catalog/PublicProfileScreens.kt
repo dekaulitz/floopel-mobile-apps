@@ -40,7 +40,10 @@ internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel
             val sharedIdentity = publicProfile?.let { s(Res.string.profile_share_identity, it.displayName ?: it.username, it.username) }
             IconButton({ sharedIdentity?.let(share) }, Modifier.size(48.dp), enabled = sharedIdentity != null) { Icon(FloopelIcons.Share, s(Res.string.profile_share)) }
         }
-        Column(Modifier.weight(1f).fillMaxWidth().testTag("public-profile-content").verticalScroll(rememberScrollState())
+        BoxWithConstraints(Modifier.weight(1f).fillMaxWidth()) {
+        // Keep the visible tab anchor when a long list becomes a short/loading/empty panel.
+        val tabViewport = (maxHeight - 48.dp).coerceAtLeast(0.dp)
+        Column(Modifier.fillMaxWidth().testTag("public-profile-content").verticalScroll(rememberScrollState())
             .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ReadContent(state.publicProfile, model::refresh) { profile ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -67,10 +70,11 @@ internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel
             if (owner) ProfilePill(s(Res.string.profile_saved_tab), selection == "saved", { model.publicProfileTab("saved") }, "profile-tab-saved")
             ProfilePill(s(Res.string.badges), selection == "badges", { model.publicProfileTab("badges") }, "profile-tab-badges")
         }
+        Column(Modifier.fillMaxWidth().heightIn(min = tabViewport).testTag("public-profile-tab-content"), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         when (selection) {
             "badges" -> {
                 Text(s(Res.string.profile_badges_title), style = MaterialTheme.typography.titleLarge)
-                ReadContent(state.publicBadges, model::refresh) { page ->
+                ReadContent(state.publicBadges, model::refreshPublicProfileTab) { page ->
                     if (page.items.isEmpty()) EmptyContent()
                     page.items.chunked(2).forEach { row -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         row.forEach { badge -> Surface(Modifier.weight(1f), shape = FloopelShape.card, color = MaterialTheme.colorScheme.surfaceContainerLow) {
@@ -87,7 +91,7 @@ internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel
             }
             "saved" -> if (owner) {
                 PrivateProfileNote(s(Res.string.profile_saved_private))
-                ReadContent(state.savedSpots, model::refresh) { page ->
+                ReadContent(state.savedSpots, model::refreshPublicProfileTab) { page ->
                     if (page.spots.isEmpty()) EmptyContent()
                     page.spots.forEach { spot -> ProfileSavedSpot(spot, state.busy, { model.openEntry(spot) }, { model.removeProfileSavedSpot(spot.id) }) }
                     if (page.page < page.totalPages) FloopelButton(s(Res.string.more), model::more, Modifier.fillMaxWidth(), secondary = true, enabled = !state.savedSpots.loading)
@@ -100,15 +104,17 @@ internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel
                 }
                 if (selection == "private" && owner) {
                     PrivateProfileNote(s(Res.string.profile_plans_private))
-                    ReadContent(state.publicPrivatePlans, model::refresh) { plans ->
+                    ReadContent(state.publicPrivatePlans, model::refreshPublicProfileTab) { plans ->
                         if (plans.isEmpty()) EmptyContent()
                         plans.forEach { plan -> PrivateProfileItinerary(plan) { model.open(TravelerRoute(Destination.ITINERARY, plan.id)) } }
                     }
-                } else ReadContent(state.publicPlans, model::refresh) { plans ->
+                } else ReadContent(state.publicPlans, model::refreshPublicProfileTab) { plans ->
                     if (plans.isEmpty()) EmptyContent()
                     plans.forEach { ProfileItineraryCard(it, model, visitor = !owner) }
                 }
             }
+        }
+        }
         }
         }
     }
@@ -157,4 +163,4 @@ private fun ProfileSavedSpot(spot: CatalogEntry, busy: Boolean, open: () -> Unit
 
 internal fun profileInitials(name: String): String = name.trim().split(Regex("\\s+")).filter(String::isNotEmpty).take(2).joinToString("") { it.take(1) }
 
-internal fun groupedProfileNumber(value: Long): String = value.toString().reversed().chunked(3).joinToString(".").reversed()
+internal fun groupedProfileNumber(value: Long, separator: String = "."): String = value.toString().reversed().chunked(3).joinToString(separator).reversed()

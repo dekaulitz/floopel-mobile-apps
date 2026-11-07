@@ -24,9 +24,13 @@ data class QuestRunning(val id: String, val title: String, val status: String, v
 enum class QuestActivityKind { GPS, QUESTION, UNSUPPORTED }
 data class QuestQuestion(val id: String, val title: String, val kind: QuestActivityKind, val instructions: String,
     val options: List<Pair<String, String>>, val answerType: String?)
+data class TravelerPassportBadge(val id: String, val name: String, val imageUrl: String?)
+data class TravelerPassportCompletion(val id: String, val title: String, val slug: String?,
+    val shareAvailable: Boolean?, val rewardStatus: String?)
 data class TravelerPassport(val xp: Long, val level: Int, val levelName: String,
-    val badges: List<Pair<String, String?>>, val running: List<QuestRunning>,
-    val xpFloor: Long? = null, val xpToNextLevel: Long? = null)
+    val badges: List<TravelerPassportBadge>, val running: List<QuestRunning>,
+    val xpFloor: Long? = null, val xpToNextLevel: Long? = null,
+    val completions: List<TravelerPassportCompletion> = emptyList())
 data class IdentityFailure(val status: Int, val code: String?, val retryAfterSeconds: Long?)
 data class TravelerIdentityView(val signedIn: Boolean = false, val generation: Long = 0,
     val busy: Boolean = false, val passport: TravelerPassport? = null, val running: QuestRunning? = null,

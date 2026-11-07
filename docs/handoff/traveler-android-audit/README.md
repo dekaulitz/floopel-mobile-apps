@@ -1,5 +1,7 @@
 # Bukti audit Android Traveler
 
+Batch terbaru [Passport, Semua Spot, Detail Spot dan tab Profil publik](../traveler-passport-spots-audit.md) mempunyai [manifest tersendiri](passport-spots-20261107/results.json), termasuk decode QR dari piksel render dengan ZXing, pergantian tab tanpa refresh header, dan geometri frame utama Spot. [Checkpoint Settings](../traveler-settings-spot-audit.md) beserta aset/screenshot sebelumnya tetap historis dan tidak ditulis ulang.
+
 Audit lokal 7 November 2026 memakai emulator Android 15/API 35, 1080×2400, density 420. [Catatan implementasi dan gap](../traveler-android.md) membedakan kode yang tersedia, fixture, integrasi nyata dan gate rilis. [Manifest hasil](results.json) mencatat jumlah test dan hash bukti.
 
 Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itinerary/admission lokal nyata, recovery dan sesi native. [Manifest follow-up](private/results.json) memisahkan 377 host, 3 host admission + 1 host media live, 15 native fixture dan fase native live. [Audit UI terbaru](../traveler-ui-audit.md) memuat screenshot pada viewport Figma 400×900 dp dan gap yang masih terbuka. Tabel di bawah adalah bukti baseline sebelumnya; Home guest lama tidak lagi menjadi entry aplikasi setelah keputusan mandatory login.

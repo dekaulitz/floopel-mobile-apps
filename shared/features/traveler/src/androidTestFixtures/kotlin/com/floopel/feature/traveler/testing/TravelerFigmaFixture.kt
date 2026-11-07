@@ -29,7 +29,7 @@ class TravelerFigmaFixture(photoUrls: List<String>? = null) {
     val reply = comment.copy(id = "reply", username = profile.username, body = "Balasan simulasi.", parentId = comment.id, replyCount = 0)
     init {
         base.identityState.value = base.identityState.value.copy(passport = TravelerPassport(1250, 8, "Penjelajah",
-            listOf("Badge simulasi" to null), emptyList(), 1000, 750))
+            listOf(TravelerPassportBadge("badge-simulasi", "Badge simulasi", null)), emptyList(), 1000, 750))
     }
 
     @Volatile var notificationResult: CatalogResult<NotificationPage> = CatalogResult.Ready(NotificationPage(listOf(unread, read), 1, 20, 2, 1))

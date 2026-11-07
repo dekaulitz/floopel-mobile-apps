@@ -30,6 +30,7 @@ import com.floopel.feature.traveler.presentation.catalog.*
 import com.floopel.feature.traveler.presentation.home.TravelerHomeContent
 import com.floopel.feature.traveler.presentation.itinerary.*
 import com.floopel.feature.traveler.presentation.quest.*
+import com.floopel.feature.traveler.presentation.passport.*
 import com.floopel.feature.traveler.presentation.trip.*
 import com.floopel.feature.traveler.resources.*
 import kotlinx.coroutines.CancellationException
@@ -127,7 +128,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
             if (!spotArchive && !spotDetail && (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN,
                 Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL,
                 Destination.QUESTS, Destination.QUEST_FILTER, Destination.QUEST,
-                Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.LEGAL, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
+                Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.LEGAL, Destination.PASSPORT, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
                 Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
                 route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
             FloopelTopBar(s(if (locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank())
@@ -147,11 +148,11 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     }
                 }
             }
-            if (state.busy || state.identity.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+            if (route.destination != Destination.PASSPORT && (state.busy || state.identity.busy)) LinearProgressIndicator(Modifier.fillMaxWidth())
             state.writeFailure?.let { ErrorPanel(it, model::refresh) }
             state.startupFailure?.let { ErrorPanel(it, model::retryStartup) }
             if (state.unknownOutcome) InfoCard(s(Res.string.unknown_outcome))
-            state.identity.failure?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
+            state.identity.failure?.takeIf { route.destination != Destination.PASSPORT }?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
             Box(Modifier.weight(1f).fillMaxWidth().testTag("traveler-viewport")) {
                 if (!state.identity.signedIn && !route.destination.isAuthenticationScreen()) LoginGate(model)
                 else when (route.destination) {
@@ -189,7 +190,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.QUEST -> QuestDetail(state, model, share)
                     Destination.QUEST_PROGRESS -> QuestProgress(state, model)
                     Destination.QUEST_ACTIVITY -> QuestActivity(state, model)
-                    Destination.PASSPORT -> PassportScreen(state, model)
+                    Destination.PASSPORT -> PassportScreen(state, model, share)
                     Destination.ITINERARIES, Destination.PICK_PLAN -> ItineraryList(state, model)
                     Destination.ITINERARY -> ItineraryScreen(state, model)
                     Destination.ITINERARY_FORM -> ItineraryForm(state, model, selectPhoto)

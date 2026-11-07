@@ -1,4 +1,5 @@
 package com.floopel.feature.traveler.data.dto
+import com.floopel.feature.traveler.domain.model.passportSummaryJson
 import kotlin.test.*
 import kotlinx.serialization.json.*
 class PassportSummaryTest {

@@ -1,0 +1,112 @@
+[
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_watermark.svg",
+    "bytes": 6806,
+    "sha256": "b72d78382c60dfabc63521697f7709fa189dc182243b7d02592a6e2651093b41",
+    "figma_asset": "fcd77.svg",
+    "figma_frames": [
+      "274:4284",
+      "274:4414",
+      "274:4546",
+      "274:4711",
+      "274:5175"
+    ],
+    "root_width": "210",
+    "root_height": "210",
+    "view_box": "0 0 210 210",
+    "callsite": "PassportScreen.kt",
+    "effective_geometry": "210 x 210 dp, rotation 12 degrees, offset top-end (28.376,29.536) dp, clipped by card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_watermark_large.svg",
+    "bytes": 6807,
+    "sha256": "bf56b15ad74e0361448d57e300a025206aa866189beb0547cb565c0ee20661c4",
+    "figma_asset": "5ec24.svg",
+    "figma_frames": [
+      "274:5304",
+      "275:4314"
+    ],
+    "root_width": "250",
+    "root_height": "250",
+    "view_box": "0 0 250 250",
+    "callsite": "PassportScreen.kt",
+    "effective_geometry": "250 x 250 dp, rotation 12 degrees, offset top-end (33.777,33.257) dp, clipped by card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_empty.svg",
+    "bytes": 2464,
+    "sha256": "dde3c13ba75ade5b27d7f35d11f45ee3b6b0444a9cc74c488ee8ef8835811e26",
+    "figma_asset": "87f20.svg",
+    "figma_frames": [
+      "274:4840"
+    ],
+    "root_width": "160",
+    "root_height": "106.667",
+    "view_box": "0 0 160 106.667",
+    "callsite": "PassportScreen.kt",
+    "effective_geometry": "160 x 106.667 dp, centered",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_loading.svg",
+    "bytes": 1690,
+    "sha256": "641f6907f9ebd2d6326af33bcfd70cb867cfbf295438fc170d1ea529f991a5a8",
+    "figma_asset": "3c400.svg",
+    "figma_frames": [
+      "274:4973"
+    ],
+    "root_width": "192",
+    "root_height": "128",
+    "view_box": "0 0 192 128",
+    "callsite": "PassportScreen.kt",
+    "effective_geometry": "192 x 128 dp, centered",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_failed.svg",
+    "bytes": 1476,
+    "sha256": "66c0c6bafea499b5184df9441f6075ae713edfc805930343b9ef7e6093a11d97",
+    "figma_asset": "4cb4e.svg",
+    "figma_frames": [
+      "274:5072"
+    ],
+    "root_width": "192",
+    "root_height": "128",
+    "view_box": "0 0 192 128",
+    "callsite": "PassportScreen.kt",
+    "effective_geometry": "192 x 128 dp, centered",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_save_toolbar.svg",
+    "bytes": 377,
+    "sha256": "2e54eb2fe78efd52f3a200464800d174d8805c04d6799fceda4364cf675db898",
+    "figma_asset": "860ff.svg",
+    "figma_frames": [
+      "36:696"
+    ],
+    "root_width": "24",
+    "root_height": "24",
+    "view_box": "0 0 24 24",
+    "callsite": "SpotDetailScreen.kt",
+    "effective_geometry": "24 x 24 dp in 48 dp toolbar target",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_saved_toolbar.svg",
+    "bytes": 304,
+    "sha256": "08eded91536c8bb6827b6b053af4fb9701b22e2b342ecb97a6c0e3ae8eebf51c",
+    "figma_asset": "f1bee.svg",
+    "figma_frames": [
+      "36:696"
+    ],
+    "root_width": "24",
+    "root_height": "24",
+    "view_box": "0 0 24 24",
+    "callsite": "SpotDetailScreen.kt",
+    "effective_geometry": "24 x 24 dp in 48 dp toolbar target",
+    "modified": false
+  }
+]

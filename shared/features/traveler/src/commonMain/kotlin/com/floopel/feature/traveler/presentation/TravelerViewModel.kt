@@ -10,6 +10,7 @@ import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotReportState
 import com.floopel.feature.traveler.presentation.quest.*
+import com.floopel.feature.traveler.presentation.passport.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -231,6 +232,10 @@ internal class TravelerViewModel(
         refresh()
     }
     fun back() {
+        if (state.value.route.destination == Destination.PASSPORT &&
+            (state.value.passportContent.expandedQr || state.value.passportContent.badgeId != null)) {
+            closePassportDetail(); return
+        }
         if (state.value.spotContent.report.open) { closeSpotReport(); return }
         if (state.value.questBrowse.pickerOpen) { closeQuestLocationPicker(); return }
         if (state.value.spotContent.comments.open && !state.value.busy) { closeSpotComments(); return }
@@ -252,6 +257,21 @@ internal class TravelerViewModel(
     }
     fun background() { viewModelScope.launch(worker) { runtime.identity.background() } }
     fun clearFeedback() { mutable.update { it.copy(feedback = null, saved = false) } }
+
+    fun passportTab(tab: PassportTab) { mutable.update { it.copy(passportContent = it.passportContent.copy(tab = tab, expandedQr = false, badgeId = null)) } }
+    fun passportCompleted(value: Boolean) { mutable.update { it.copy(passportContent = it.passportContent.copy(completed = value)) } }
+    fun expandPassportQr() {
+        val current = state.value
+        if (current.profile.failure == null && !current.profile.loading && !current.identity.busy &&
+            current.profile.value?.username?.isNotBlank() == true && current.identity.passport != null)
+            mutable.update { it.copy(passportContent = it.passportContent.copy(expandedQr = true, badgeId = null)) }
+    }
+    fun focusPassportBadge(id: String) {
+        if (state.value.identity.passport?.badges?.any { it.id == id } == true)
+            mutable.update { it.copy(passportContent = it.passportContent.copy(badgeId = id, expandedQr = false)) }
+    }
+    fun closePassportDetail() { mutable.update { it.copy(passportContent = it.passportContent.copy(expandedQr = false, badgeId = null)) } }
+    fun refreshPassportIdentity() = fetch("passport-profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
 
     fun refresh() {
         if (!state.value.identityRestored || state.value.intro == null || state.value.showIntro) return
@@ -295,7 +315,10 @@ internal class TravelerViewModel(
             Destination.QUEST -> fetch("quest", { it.quest }, { s, r -> s.copy(quest = r) }, ready = { quest ->
                 quest.steps.mapNotNull { it.spotId }.distinct().forEach(::loadQuestSpot)
             }) { runtime.identity.quest(route.id) }
-            Destination.PASSPORT -> viewModelScope.launch(worker) { runtime.identity.passport() }
+            Destination.PASSPORT -> {
+                refreshPassportIdentity()
+                viewModelScope.launch(worker) { runtime.identity.passport() }
+            }
             Destination.QUEST_PROGRESS -> identityAction { runtime.identity.continueQuest(route.id) }
             Destination.QUEST_ACTIVITY -> if (route.extra.isNotBlank()) identityAction {
                 if (state.value.identity.running?.id != route.extra) runtime.identity.continueQuest(route.extra)
@@ -381,9 +404,9 @@ internal class TravelerViewModel(
             }
             Destination.PUBLIC_PLAN -> fetch("publicPlan", { it.publicPlan }, { s, r -> s.copy(publicPlan = r) }) { runtime.publicContent.itinerary(route.id) }
             Destination.PUBLIC_PROFILE -> {
-                fetch("publicProfile", { it.publicProfile }, { s, r -> s.copy(publicProfile = r) }, settled = { loadPublicProfileContent() }) { runtime.publicContent.profile(route.id) }
-                fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }, settled = { loadPublicProfileContent() }) { runtime.account.profile() }
-                fetch("publicProgress", { it.publicProgress }, { s, r -> s.copy(publicProgress = r) }) { runtime.publicContent.progress(route.id) }
+                fetch("publicProfile", { it.publicProfile }, { s, r -> s.copy(publicProfile = r) }, settled = { loadPublicProfileContent() }, routeKey = { it.copy(extra = "") }) { runtime.publicContent.profile(route.id) }
+                fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }, settled = { loadPublicProfileContent() }, routeKey = { it.copy(extra = "") }) { runtime.account.profile() }
+                fetch("publicProgress", { it.publicProgress }, { s, r -> s.copy(publicProgress = r) }, routeKey = { it.copy(extra = "") }) { runtime.publicContent.progress(route.id) }
             }
             Destination.SAVED_SPOTS -> loadSaved()
             Destination.QUEST_GROUPS -> loadGroups()
@@ -495,11 +518,12 @@ internal class TravelerViewModel(
         val s = state.value
         if (s.busy || s.route.destination != Destination.PUBLIC_PROFILE || selection !in setOf("", "private", "saved", "badges") ||
             selection in setOf("private", "saved") && !s.ownsPublicProfile || s.route.extra == selection) return
-        reads.values.forEach(Job::cancel); reads.clear()
-        mutable.update { it.copy(stack = it.stack.dropLast(1) + it.route.copy(extra = selection),
-            publicPlans = ReadState(), publicPrivatePlans = ReadState(), publicBadges = ReadState(), savedSpots = ReadState()) }
-        refresh()
+        reads.remove("public-profile-content")?.cancel()
+        mutable.update { it.copy(stack = it.stack.dropLast(1) + it.route.copy(extra = selection)) }
+        loadPublicProfileContent()
     }
+
+    fun refreshPublicProfileTab() = loadPublicProfileContent()
 
     fun removeProfileSavedSpot(id: String) {
         if (!state.value.ownsPublicProfile || state.value.route.extra != "saved") return
@@ -1261,21 +1285,22 @@ internal class TravelerViewModel(
         refresh()
     }
     private fun <T> fetch(key: String, current: (TravelerState) -> ReadState<T>,
-        update: (TravelerState, ReadState<T>) -> TravelerState, ready: (T) -> Unit = {}, settled: () -> Unit = {}, call: suspend () -> CatalogResult<T>) {
+        update: (TravelerState, ReadState<T>) -> TravelerState, ready: (T) -> Unit = {}, settled: () -> Unit = {},
+        routeKey: (TravelerRoute) -> TravelerRoute = { it }, call: suspend () -> CatalogResult<T>) {
         val initial = current(state.value)
         if ((initial.failure?.retryAtMillis ?: 0) > now()) return
         reads.remove(key)?.cancel()
-        val route = state.value.route; val generation = runtime.identity.generation
+        val route = routeKey(state.value.route); val generation = runtime.identity.generation
         mutable.update { update(it, initial.copy(loading = true, failure = null)) }
         reads[key] = viewModelScope.launch {
             val result = try { withContext(worker) { call() } }
                 catch (cancelled: CancellationException) { throw cancelled }
                 catch (_: Exception) { CatalogResult.NetworkError }
             ensureActive()
-            if (state.value.route == route && runtime.identity.generation == generation) {
+            if (routeKey(state.value.route) == route && runtime.identity.generation == generation) {
                 mutable.update { update(it, current(it).result(result, now())) }
                 if (result is CatalogResult.Ready) ready(result.value)
-                if (state.value.route == route && runtime.identity.generation == generation) settled()
+                if (routeKey(state.value.route) == route && runtime.identity.generation == generation) settled()
             }
         }
     }

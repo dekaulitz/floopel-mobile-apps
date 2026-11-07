@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.*
@@ -118,17 +119,46 @@ class TravelerFigmaDesignTest {
         ui.onNodeWithTag("profile-tab-badges").performClick(); ui.onNodeWithText("Badge simulasi 1").assertExists(); capture("public-profile-owner-badges")
     }
     @Test fun allSpotArchiveGroupsResultsAndShowsTheExactThousandCommentBoundary() {
-        launch(); ui.onAllNodesWithText("Lihat semua").onFirst().performScrollTo().performClick()
+        val f = launch(); ui.onAllNodesWithText("Lihat semua").onFirst().performScrollTo().performClick()
         ui.onNodeWithText("Semua Spot").assertExists(); ui.onNodeWithText("Spot dari semua lokasi").assertExists()
         ui.onNodeWithText("Warisan · 1").assertExists(); ui.onNodeWithText("Alam · 1").assertExists()
+        ui.onNodeWithText("Semua lokasi").assertIsSelected(); ui.onNodeWithTag("traveler-navigation").assertDoesNotExist()
+        val density = ui.activity.resources.displayMetrics.density
+        val photo = ui.onNodeWithTag("all-spot-image-${f.spot.id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        val row = ui.onNodeWithTag("all-spot-row-${f.spot.id}").fetchSemanticsNode().boundsInRoot
+        assertEquals(88 * density, photo.width, 1f); assertEquals(16 * density, photo.left, 1f)
+        assertEquals(8 * density, photo.top - row.top, 1f); assertEquals(104 * density, row.height, 2f)
         ui.onNodeWithText("1.000 komentar", useUnmergedTree = true).assertExists(); capture("all-spots-global")
+    }
+    @Test fun allSpotsKeepsTheLocationScopeChipAndBackContextWhenChangingScope() {
+        val f = launch(); openSpot()
+        ui.onNodeWithTag("spot-location-link").performScrollTo().performClick()
+        ui.onNodeWithTag("location-detail").assertExists()
+        ui.onAllNodesWithText("Lihat semua").onFirst().performScrollTo().performClick()
+        val locationChip = hasText("Magelang") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)
+        ui.onNodeWithText("Spot di Magelang").assertExists(); ui.onNode(locationChip).assertIsSelected()
+        assertTrue(f.reads.any { it == "browse:SPOT:${f.location.id}:1" }); capture("all-spots-scoped")
+        ui.onNodeWithText("Semua lokasi").performClick()
+        ui.onNodeWithText("Spot dari semua lokasi").assertExists(); ui.onNodeWithText("Semua lokasi").assertIsSelected()
+        ui.onNode(locationChip).assertIsNotSelected(); capture("all-spots-global-from-location")
+        ui.onNode(locationChip).performClick(); ui.onNodeWithText("Spot di Magelang").assertExists()
+        back(); ui.onNodeWithTag("location-detail").assertExists()
     }
     @Test fun spotDetailUsesTheGalleryAndHorizontalRelationsWithAVerticalOpenTripList() {
         val f = launch(); openSpot(); ui.onNodeWithTag("spot-comments-open").performScrollTo(); capture("spot-detail-summary")
-        ui.onNode(hasText("Magelang · Jawa Tengah") and hasAnyAncestor(hasTestTag("spot-location-link")), useUnmergedTree = true).assertExists()
+        ui.onNode(hasText("Magelang") and hasAnyAncestor(hasTestTag("spot-location-link")), useUnmergedTree = true).assertExists()
+        val density = ui.activity.resources.displayMetrics.density
+        ui.onNodeWithTag("spot-detail-content").performScrollToKey("nearby")
+        ui.onNodeWithTag("nearby-spot-image-${f.secondSpot.id}", useUnmergedTree = true).assertIsDisplayed()
+        val nearby = ui.onNodeWithTag("nearby-spot-image-${f.secondSpot.id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        assertEquals(72 * density, nearby.width, 1f); assertEquals(80 * density, nearby.height, 1f)
         scrollSpotTo("Quest dengan Spot ini")
         scrollSpotTo("Ada di Open Trip")
         assertEquals(f.spot.id, f.tripQueries.last().spotId); capture("spot-detail-quest-trips")
+        ui.onNodeWithTag("spot-trip-image-${f.base.openTrip.id}", useUnmergedTree = true).performScrollTo()
+        val trip = ui.onNodeWithTag("spot-trip-image-${f.base.openTrip.id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        assertEquals(72 * density, trip.width, 1f); assertEquals(96 * density, trip.height, 1f)
+        ui.onNodeWithText("Lihat katalog Open Trip").performScrollTo().assertHasClickAction()
         scrollSpotTo("Dalam Collection"); capture("spot-detail-collections")
         scrollSpotTo("Artikel terkait"); capture("spot-detail-articles")
     }

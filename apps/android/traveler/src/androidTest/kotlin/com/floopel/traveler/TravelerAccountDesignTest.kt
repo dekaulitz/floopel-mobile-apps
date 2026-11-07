@@ -178,7 +178,7 @@ class TravelerAccountDesignTest {
         ui.onNodeWithTag("erasure-request").performScrollTo().assertIsDisplayed(); capture("erasure-font-200")
         assertEquals(0, writes.get())
     }
-    @Test fun aLoadedPhotoUsesTwoHundredDpAndFailedOrAbsentPhotosUseTheUnavailableVariant() {
+    @Test fun theMainSpotFrameKeepsItsFullBleedGalleryWhenAPhotoLoadsOrFails() {
         val photo = ui.activity.cacheDir.resolve("spot-layout-fixture.png")
         val bitmap = android.graphics.Bitmap.createBitmap(600, 360, android.graphics.Bitmap.Config.ARGB_8888)
         bitmap.eraseColor(android.graphics.Color.rgb(80, 140, 90))
@@ -186,10 +186,12 @@ class TravelerAccountDesignTest {
         launch(f = TravelerFigmaFixture(listOf(photo.toURI().toString(), "file:///missing-spot-layout-fixture.png")))
         ui.onAllNodesWithText("Spot simulasi").onFirst().performClick()
         val density = ui.activity.resources.displayMetrics.density
-        ui.waitUntil(8_000) { ui.onAllNodesWithTag("spot-gallery-hero").fetchSemanticsNodes().singleOrNull()?.boundsInRoot?.height == 200 * density }
+        ui.waitUntil(8_000) { ui.onAllNodesWithTag("spot-gallery-ready").fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(240 * density, ui.onNodeWithTag("spot-gallery-hero").fetchSemanticsNode().boundsInRoot.height, 1f)
         capture("spot-gallery-loaded")
         ui.onAllNodesWithTag("spot-gallery-thumbnail").onLast().performClick()
-        ui.waitUntil(8_000) { ui.onNodeWithTag("spot-gallery-hero").fetchSemanticsNode().boundsInRoot.height == 140 * density }
+        ui.waitUntil(8_000) { ui.onAllNodesWithTag("spot-gallery-ready").fetchSemanticsNodes().isEmpty() }
+        assertEquals(240 * density, ui.onNodeWithTag("spot-gallery-hero").fetchSemanticsNode().boundsInRoot.height, 1f)
         ui.onNodeWithText("Foto belum tersedia").assertExists(); capture("spot-gallery-error")
     }
     @Test fun anAbsentPhotoKeepsFourDecorativeSlotsAndNoInteractiveFakePhotos() {
@@ -198,19 +200,20 @@ class TravelerAccountDesignTest {
         ui.onAllNodesWithTag("spot-gallery-placeholder").assertCountEquals(4)
         ui.onNodeWithText("Foto belum tersedia").assertExists(); capture("spot-gallery-absent")
     }
-    @Test fun spotUsesTheNewGalleryAndInlineActionsAndOpeningReportDoesNotSubmit() {
+    @Test fun theMainSpotFrameUsesToolbarActionsAndOpeningReportDoesNotSubmit() {
         val f = TravelerFigmaFixture(); launch(f = f); ui.onAllNodesWithText("Spot simulasi").onFirst().performClick()
         val density = ui.activity.resources.displayMetrics.density
         val hero = ui.onNodeWithTag("spot-gallery-hero").fetchSemanticsNode().boundsInRoot
         val viewport = ui.onNodeWithTag("traveler-viewport").fetchSemanticsNode().boundsInRoot
-        assertEquals(140 * density, hero.height, 1f); assertEquals(20 * density, hero.left - viewport.left, 1f)
-        assertEquals(20 * density, viewport.right - hero.right, 1f)
-        assertEquals(64 * density, ui.onAllNodesWithTag("spot-gallery-thumbnail").onFirst().fetchSemanticsNode().boundsInRoot.width, 1f)
-        ui.onNodeWithTag("spot-save").performScrollTo().assertIsDisplayed(); ui.onNodeWithTag("spot-share").assertIsDisplayed()
-        ui.onNodeWithTag("spot-save").assert(hasText("Tersimpan")); capture("spot-saved-actions")
+        assertEquals(240 * density, hero.height, 1f); assertEquals(viewport.left, hero.left, 1f)
+        assertEquals(viewport.right, hero.right, 1f)
+        assertEquals(96 * density, ui.onAllNodesWithTag("spot-gallery-thumbnail").onFirst().fetchSemanticsNode().boundsInRoot.width, 1f)
+        ui.onNodeWithTag("spot-save").assertIsDisplayed().assertIsOn(); ui.onNodeWithTag("spot-share").assertIsDisplayed()
+        assertEquals(48 * density, ui.onNodeWithTag("spot-save").fetchSemanticsNode().boundsInRoot.width, 1f)
+        capture("spot-saved-actions")
         ui.onNodeWithTag("spot-save").performClick()
         ui.waitUntil(5_000) { f.savedWrites.get() == 1 }
-        ui.onNodeWithTag("spot-save").assert(hasText("Simpan"))
+        ui.onNodeWithTag("spot-save").assertIsOff()
         capture("spot-new-gallery-actions")
         ui.onNodeWithContentDescription("Opsi konten").performClick(); ui.onNodeWithText("Laporkan Spot").performClick()
         ui.onNodeWithTag("spot-report").assertExists(); ui.onNodeWithText("Informasi tidak tepat").performClick()

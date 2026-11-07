@@ -28,6 +28,8 @@ kotlin {
             api(libs.compose.material3)
             implementation(libs.compose.icons)
             implementation(libs.compose.resources)
+            implementation(libs.qrcode.encoder)
+            implementation(libs.coroutines.core)
         }
     }
 }

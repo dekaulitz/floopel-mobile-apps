@@ -118,6 +118,9 @@ dependencies {
     androidTestImplementation(libs.compose.foundation)
     androidTestImplementation(libs.ktor.mock)
     androidTestImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.zxing.core)
+    androidTestImplementation(project(":shared:core:designsystem"))
+    androidTestImplementation(project(":shared:core:model"))
     debugImplementation(libs.compose.ui.test.manifest)
 }
 

@@ -20,6 +20,8 @@ test-runner = "1.6.2"
 play-integrity = "1.6.0"
 credentials = "1.6.0"
 google-id = "1.2.0"
+qrcode = "4.5.0"
+zxing = "3.5.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -52,6 +54,8 @@ play-integrity = { module = "com.google.android.play:integrity", version.ref = "
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 google-id = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-id" }
+qrcode-encoder = { module = "io.github.g0dkar:qrcode-kotlin", version.ref = "qrcode" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

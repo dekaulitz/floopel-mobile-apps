@@ -23,7 +23,8 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
         TravelerIdentityView(
         v.signedIn, generation, v.busy,
         v.progress?.let { p -> TravelerPassport(p.xpTotal, p.level.level, p.level.name,
-            p.badges.map { it.name to it.image?.url }, p.activeParticipations.map { it.reader() }, p.level.xpFloor, p.level.xpToNextLevel) },
+            p.badges.map { TravelerPassportBadge(it.id, it.name, it.image?.url) }, p.activeParticipations.map { it.reader() }, p.level.xpFloor, p.level.xpToNextLevel,
+            p.recentCompletions.map { TravelerPassportCompletion(it.id, it.title, it.slug, it.shareAvailable, it.rewardStatus) }) },
         v.participation?.reader() ?: v.questOwner?.activeParticipation?.reader(),
         v.activity?.let { QuestQuestion(it.activity.id, it.activity.title, when (it.activity.type) {
             "gps" -> QuestActivityKind.GPS; "question" -> QuestActivityKind.QUESTION; else -> QuestActivityKind.UNSUPPORTED },

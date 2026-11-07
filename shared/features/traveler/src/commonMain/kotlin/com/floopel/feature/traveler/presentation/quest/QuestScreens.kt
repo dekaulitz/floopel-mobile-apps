@@ -96,22 +96,3 @@ internal fun QuestActivity(state: TravelerState, model: TravelerViewModel) {
         if (state.identity.completed) InfoCard(s(Res.string.quest_complete_body))
     }
 }
-
-@Composable
-internal fun PassportScreen(state: TravelerState, model: TravelerViewModel) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        val passport = state.identity.passport
-        if (passport == null) { if (state.identity.busy) Text(s(Res.string.loading)); return@Column }
-        Text(s(Res.string.level, passport.level, passport.levelName), style = MaterialTheme.typography.headlineMedium)
-        Text(s(Res.string.xp, passport.xp), style = MaterialTheme.typography.headlineLarge)
-        SectionTitle(s(Res.string.badges))
-        passport.badges.forEach { (name, image) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Media(image, Modifier.size(64.dp, 75.dp))
-                Text(name, style = MaterialTheme.typography.titleMedium)
-            }
-        }
-        SectionTitle(s(Res.string.unfinished_quest))
-        passport.running.forEach { quest -> ActionRow(quest.title, s(Res.string.quest_progress_count, quest.completed, quest.total), { model.continueQuest(quest.id) }) }
-    }
-}

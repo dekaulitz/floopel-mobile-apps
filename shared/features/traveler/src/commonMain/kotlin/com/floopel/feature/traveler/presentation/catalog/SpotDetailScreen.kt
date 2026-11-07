@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
@@ -35,7 +35,7 @@ import kotlin.time.Instant
 import kotlin.time.Clock
 import org.jetbrains.compose.resources.stringArrayResource
 
-/** Figma 308:4706 / 308:7391; map is deferred by the product owner. Images and relationships are API-owned. */
+/** Main Spot Detail frame 36:696 from section 39:916, explicitly selected by the owner. Map stays deferred. */
 @Composable
 internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, share: (String) -> Unit, commentsSupported: Boolean) {
     if (state.spotContent.report.open) { SpotReportScreen(state, model); return }
@@ -46,9 +46,18 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
         val saved = state.isSpotSaved.value
         val saveDescription = s(if (saved == true) Res.string.unsave_spot else Res.string.save_spot)
         val sharedText = entry?.let { s(Res.string.spot_share_text, it.title, it.locationName.orEmpty()) }
-        FloopelTopBar(entry?.title ?: s(Res.string.spot_detail), Modifier.testTag("traveler-top-bar"), navigationIcon = {
+        FloopelTopBar(s(Res.string.spot_detail), Modifier.testTag("traveler-top-bar"),
+            minimumHeight = 48.dp, contentPadding = PaddingValues(start = 8.dp, end = 12.dp), spacing = 8.dp,
+            titleStyle = FloopelCatalogTypography.toolbar, navigationIcon = {
             IconButton(model::back, Modifier.size(48.dp), enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
         }) {
+            IconToggleButton(saved == true, { model.setSaved() }, Modifier.size(48.dp).testTag("spot-save").semantics { contentDescription = saveDescription },
+                enabled = entry != null && saved != null && !state.isSpotSaved.loading && !state.busy) {
+                AsyncImage(Res.getUri(if (saved == true) "files/spot_saved_toolbar.svg" else "files/spot_save_toolbar.svg"), null, Modifier.size(24.dp))
+            }
+            IconButton({ sharedText?.let(share) }, Modifier.size(48.dp).testTag("spot-share"), enabled = entry != null && !state.busy) {
+                Icon(FloopelIcons.Share, s(Res.string.share_trip), Modifier.size(24.dp))
+            }
             Box {
                 IconButton({ menu = true }, Modifier.size(48.dp), enabled = entry != null && !state.busy) {
                     Icon(FloopelIcons.MoreVert, s(Res.string.spot_content_options))
@@ -68,71 +77,62 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
             if (entry != null) {
                 item(key = "gallery") {
                     var selected by remember(entry.id) { mutableStateOf<String?>(null) }
-                    val photos = (listOfNotNull(entry.coverPhoto) + entry.photos).distinctBy { it.url }
+                    val photos = (listOfNotNull(entry.coverPhoto ?: entry.coverUrl?.let { CatalogPhoto(it, "") }) + entry.photos).distinctBy { it.url }
                     val selectedUrl = selected ?: entry.coverUrl ?: photos.firstOrNull()?.url
                     var imageReady by remember(selectedUrl) { mutableStateOf(false) }
-                    Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Column(Modifier.fillMaxWidth()) {
+                        Box(Modifier.fillMaxWidth().height(240.dp).testTag("spot-gallery-hero")) {
                         Media(selectedUrl,
-                            Modifier.fillMaxWidth().height(if (imageReady) 200.dp else 140.dp)
-                                .clip(androidx.compose.foundation.shape.RoundedCornerShape(if (imageReady) 12.dp else 16.dp)).testTag("spot-gallery-hero"),
-                            placeholderIcon = FloopelIcons.CollectionsBookmark, placeholderLabel = s(Res.string.photo_unavailable), placeholderIconSize = 36.dp,
+                            Modifier.fillMaxSize(),
+                            placeholderIcon = FloopelIcons.Image, placeholderLabel = s(Res.string.photo_unavailable), placeholderIconSize = 28.dp,
                             onImageReady = { imageReady = it })
-                        LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            if (imageReady) Spacer(Modifier.size(1.dp).testTag("spot-gallery-ready"))
+                        }
+                        LazyRow(Modifier.fillMaxWidth().padding(vertical = 12.dp), contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(photos, key = { it.url }) { photo ->
                                 val active = photo.url == (selected ?: entry.coverUrl ?: photos.firstOrNull()?.url)
-                                Surface(onClick = { selected = photo.url }, Modifier.size(64.dp).testTag("spot-gallery-thumbnail"), shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
+                                Surface(onClick = { selected = photo.url }, Modifier.size(96.dp).testTag("spot-gallery-thumbnail"), shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
                                     border = if (active) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null) {
-                                    Media(photo.url, Modifier.fillMaxSize(), photo.alt.takeIf(String::isNotBlank), FloopelIcons.CollectionsBookmark)
+                                    Media(photo.url, Modifier.fillMaxSize(), photo.alt.takeIf(String::isNotBlank), FloopelIcons.Image, placeholderIconSize = 28.dp)
                                 }
                             }
                             items((4 - photos.size).coerceAtLeast(0)) {
-                                Surface(Modifier.size(64.dp).testTag("spot-gallery-placeholder"), shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp), color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                                    Box(contentAlignment = Alignment.Center) { Icon(FloopelIcons.CollectionsBookmark, null, Modifier.size(22.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) }
+                                Surface(Modifier.size(96.dp).testTag("spot-gallery-placeholder"), shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                                    Box(contentAlignment = Alignment.Center) { Icon(FloopelIcons.Image, null, Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant) }
                                 }
                             }
                         }
                     }
                 }
                 item(key = "summary") {
-                    Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        Text(entry.title, style = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp, lineHeight = 35.1.sp, fontWeight = FontWeight.Bold))
+                    Column(Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        entry.category?.takeIf(String::isNotBlank)?.let { Text(it.uppercase(), style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp, lineHeight = 16.2.sp), color = MaterialTheme.colorScheme.primary) }
+                        Text(entry.title, style = MaterialTheme.typography.headlineMedium.copy(fontSize = 28.sp, lineHeight = 37.8.sp, fontWeight = FontWeight.Bold))
                         entry.locationId?.let { locationId ->
                             Surface(onClick = { model.open(TravelerRoute(Destination.DETAIL, locationId, CatalogKind.LOCATION.name)) },
-                                modifier = Modifier.testTag("spot-location-link"), color = MaterialTheme.colorScheme.surface) {
-                                Row(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                modifier = Modifier.testTag("spot-location-link"), shape = androidx.compose.foundation.shape.RoundedCornerShape(14.dp), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                                Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(FloopelIcons.NearMe, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+                                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                                         val location = content.location.value
-                                        val parent = location?.ancestors?.firstOrNull { it.id == location.parentLocationId }?.name
-                                            ?: location?.ancestors?.firstOrNull { it.level == "region" }?.name
-                                            ?: location?.ancestors?.firstOrNull()?.name
-                                        Text(listOfNotNull(location?.title ?: entry.locationName, parent).distinct().joinToString(" · "), style = MaterialTheme.typography.titleSmall)
-                                        Body(s(Res.string.spot_location_detail_link))
+                                        val name = location?.title ?: entry.locationName ?: s(Res.string.location_detail)
+                                        Text(name, style = MaterialTheme.typography.titleSmall.copy(lineHeight = 21.6.sp))
+                                        val hierarchy = listOfNotNull(location?.ancestors?.firstOrNull { it.level == "region" }?.name,
+                                            location?.ancestors?.firstOrNull { it.level == "country" }?.name).distinct().joinToString(", ")
+                                        if (hierarchy.isNotBlank()) Text(hierarchy, style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.9.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Text(s(Res.string.spot_location_named, name), style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp, lineHeight = 16.2.sp), color = MaterialTheme.colorScheme.primary)
                                     }
-                                    Icon(FloopelIcons.ChevronRight, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Icon(FloopelIcons.ChevronRight, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }
-                        Rating(entry, inline = true)
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            FloopelButton(s(if (saved == true) Res.string.spot_saved else Res.string.save), { model.setSaved() },
-                                Modifier.weight(1f).testTag("spot-save").semantics { contentDescription = saveDescription },
-                                secondary = true, enabled = saved != null && !state.isSpotSaved.loading && !state.busy,
-                                leadingIcon = {
-                                    if (saved == true) Box(Modifier.size(20.dp).clipToBounds()) {
-                                        AsyncImage(Res.getUri("files/spot_saved.svg"), null,
-                                            Modifier.wrapContentSize(Alignment.TopStart, unbounded = true).requiredSize(24.dp))
-                                    }
-                                    else AsyncImage(Res.getUri("files/spot_save.svg"), null, Modifier.size(20.dp))
-                                })
-                            FloopelButton(s(Res.string.share_trip), { sharedText?.let(share) }, Modifier.weight(1f).testTag("spot-share"),
-                                secondary = true, trailingIcon = { Icon(FloopelIcons.Share, null, Modifier.size(20.dp)) })
-                        }
+                        Rating(entry, detail = true)
+                        FloopelButton(s(Res.string.spot_add_to_plan), { model.open(TravelerRoute(Destination.PICK_PLAN, extra = entry.id)) }, Modifier.fillMaxWidth(), enabled = !state.busy)
+                        Text(s(Res.string.about_spot), style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp, lineHeight = 24.3.sp))
+                        entry.bodyHtml?.let { RichBody(it, MaterialTheme.typography.bodySmall.copy(fontSize = 15.sp, lineHeight = 20.25.sp)) }
+                        entry.visitNotes?.let { Body(it) }
                         FloopelButton(entry.commentCount?.takeIf { it >= 0 }?.let { s(Res.string.spot_view_comment_count, catalogCount(it, s(Res.string.catalog_decimal_separator))) }
                             ?: s(Res.string.spot_view_comments), model::openSpotComments, Modifier.fillMaxWidth().testTag("spot-comments-open"), secondary = true, enabled = commentsSupported)
-                        FloopelButton(s(Res.string.add_to_plan), { model.open(TravelerRoute(Destination.PICK_PLAN, extra = entry.id)) }, Modifier.fillMaxWidth(), enabled = !state.busy)
-                        Text(s(Res.string.about_spot), style = MaterialTheme.typography.titleLarge)
-                        entry.bodyHtml?.let { RichBody(it, MaterialTheme.typography.bodySmall) }
-                        entry.visitNotes?.let { Body(it) }
                     }
                 }
                 if (entry.related.isNotEmpty()) item(key = "nearby") {
@@ -141,7 +141,7 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
                             Text(s(Res.string.nearby), style = MaterialTheme.typography.titleLarge.copy(fontSize = 21.sp))
                             Text(s(Res.string.spot_nearby_hint), style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        LazyRow(contentPadding = PaddingValues(horizontal = 20.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             items(entry.related, key = { it.id }) { related -> NearbySpotCard(related) { model.openEntry(related) } }
                         }
                     }
@@ -166,20 +166,23 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
                                     }
                                 } }
                             }
-                            Body(s(Res.string.spot_quests_scroll))
+                            SpotRailHint(s(Res.string.spot_quests_scroll))
                         }
                         SpotSection(s(Res.string.spot_trips_title), s(Res.string.spot_trips_body, entry.title)) {
                             ReadContent(content.trips, model::refresh) { page ->
                                 if (page.items.isEmpty()) EmptyContent()
-                                page.items.forEach { trip -> SpotOpenTrip(trip, entry.title, model) }
+                                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    page.items.forEach { trip -> SpotOpenTrip(trip, entry.title, model) }
+                                }
                                 if (page.nextCursor != null) FloopelButton(s(Res.string.more), model::moreSpotTrips, Modifier.fillMaxWidth(), secondary = true, enabled = !content.trips.loading)
                             }
+                            FloopelButton(s(Res.string.spot_trip_catalog), { model.open(TravelerRoute(Destination.OPEN_TRIPS)) }, Modifier.fillMaxWidth(), secondary = true)
                         }
                         if (entry.collections.isNotEmpty()) SpotSection(s(Res.string.spot_collections_title), s(Res.string.spot_collections_body)) {
                             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) { items(entry.collections, key = { it.id }) { collection ->
                                 RelatedSpotContentCard(collection, s(Res.string.collection_detail), s(Res.string.spot_collection_contains, entry.title)) { model.openEntry(collection) }
                             } }
-                            Body(s(Res.string.spot_collections_scroll))
+                            SpotRailHint(s(Res.string.spot_collections_scroll))
                         }
                         SpotSection(s(Res.string.spot_articles_title)) {
                             ReadContent(content.articles, model::refresh) { page ->
@@ -188,7 +191,7 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
                                     RelatedSpotContentCard(article, s(Res.string.location_article_label), article.story?.readingMinutes?.let { s(Res.string.location_reading_minutes, it) }) { model.openEntry(article) }
                                 } }
                             }
-                            Body(s(Res.string.spot_articles_scroll))
+                            SpotRailHint(s(Res.string.spot_articles_scroll))
                         }
                     }
                 }
@@ -201,7 +204,7 @@ internal fun SpotDetailScreen(state: TravelerState, model: TravelerViewModel, sh
 @Composable
 private fun SpotSection(title: String, body: String? = null, content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(title, style = MaterialTheme.typography.titleLarge)
+        Text(title, style = MaterialTheme.typography.titleLarge.copy(fontSize = 20.sp, lineHeight = 27.sp))
         if (body != null) Text(body, style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.9.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
         content()
     }
@@ -209,9 +212,9 @@ private fun SpotSection(title: String, body: String? = null, content: @Composabl
 
 @Composable
 private fun NearbySpotCard(spot: CatalogEntry, open: () -> Unit) {
-    Surface(onClick = open, modifier = Modifier.width(280.dp), shape = FloopelShape.card, color = MaterialTheme.colorScheme.surfaceContainerLow) {
-        Row(Modifier.padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            Media(spot.coverUrl, Modifier.size(80.dp).clip(FloopelShape.thumbnail), placeholderIcon = FloopelIcons.Image)
+    Surface(onClick = open, modifier = Modifier.width(280.dp), shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+            Media(spot.coverUrl, Modifier.size(72.dp, 80.dp).testTag("nearby-spot-image-${spot.id}"), placeholderIcon = FloopelIcons.CollectionsBookmark)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(spot.title, style = FloopelCatalogTypography.compactTitle, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 spot.locationName?.let { Text(it, style = FloopelCatalogTypography.metadata, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -239,9 +242,9 @@ private fun SpotOpenTrip(trip: OpenTrip, spotTitle: String, model: TravelerViewM
     val months = stringArrayResource(Res.array.calendar_months_short)
     Surface(onClick = { model.open(TravelerRoute(Destination.APPLY, trip.id)) }, shape = FloopelShape.card, color = MaterialTheme.colorScheme.surfaceContainerLow) {
         Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Media(trip.banner?.url ?: trip.previewSpot?.spot?.coverUrl, Modifier.size(72.dp, 80.dp).clip(FloopelShape.media), placeholderIcon = FloopelIcons.Image)
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                Text(trip.name, style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp))
+            Media(trip.banner?.url ?: trip.previewSpot?.spot?.coverUrl, Modifier.size(72.dp, 96.dp).clip(FloopelShape.media).testTag("spot-trip-image-${trip.id}"), placeholderIcon = FloopelIcons.Image)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(trip.name, style = MaterialTheme.typography.titleSmall.copy(fontSize = 15.sp, lineHeight = 20.25.sp))
                 Text(tripCatalogDate(trip.startsOn, trip.endsOn, months), style = MaterialTheme.typography.bodySmall)
                 Text(trip.organizer.displayName, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(s(Res.string.location_seats, trip.remainingParticipants), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.primary)
@@ -249,6 +252,11 @@ private fun SpotOpenTrip(trip: OpenTrip, spotTitle: String, model: TravelerViewM
             }
         }
     }
+}
+
+@Composable
+private fun SpotRailHint(text: String) {
+    Text(text, style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp, lineHeight = 16.2.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
