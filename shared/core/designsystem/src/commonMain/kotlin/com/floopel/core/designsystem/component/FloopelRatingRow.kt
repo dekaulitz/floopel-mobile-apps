@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import com.floopel.core.designsystem.icons.FloopelIcons
 import com.floopel.core.designsystem.theme.FloopelCatalogTypography
 
@@ -17,10 +19,19 @@ import com.floopel.core.designsystem.theme.FloopelCatalogTypography
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FloopelRatingRow(score: String?, comments: String?, description: String,
-    modifier: Modifier = Modifier, detail: Boolean = false) {
+    modifier: Modifier = Modifier, detail: Boolean = false, list: Boolean = false) {
     if (score == null && comments == null) return
     val semantics = modifier.clearAndSetSemantics { contentDescription = description }
-    if (!detail) Row(semantics, verticalAlignment = Alignment.Top,
+    if (list) FlowRow(semantics, horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        if (score != null) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Icon(FloopelIcons.Star, null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.primary)
+            Text(score, style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.onSurface)
+        }
+        if (comments != null) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Icon(FloopelIcons.ChatBubbleOutline, null, Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(comments, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    } else if (!detail) Row(semantics, verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         if (score != null) Icon(FloopelIcons.Star, null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
         Text(listOfNotNull(score, comments).joinToString(" · "), Modifier.weight(1f, fill = false),

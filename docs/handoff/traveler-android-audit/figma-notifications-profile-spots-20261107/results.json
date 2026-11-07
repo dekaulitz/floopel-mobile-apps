@@ -1,0 +1,287 @@
+{
+  "timestamp": "2026-11-07T18:39:44.626883+07:00",
+  "branch": "feature/mobile-openapi-contracts",
+  "baseline": "5a79bffc4ba798d20529e5912a3fcb1307c0b92a",
+  "scope": "Figma notifications, personal/public profiles, Spot archive/detail and shared primary navigation",
+  "host_tests": {
+    "status": "PASS",
+    "tests": 441,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native_tests": {
+    "status": "PASS",
+    "tests": 43,
+    "failures": 0,
+    "classes": {
+      "TravelerFigmaDesignTest": 13,
+      "TravelerJourneyTest": 13,
+      "TravelerLocationDesignTest": 13,
+      "TravelerPublicationStateTest": 2,
+      "TravelerCatalogFontScaleTest": 1,
+      "TravelerAuthenticationJourneyTest": 1
+    },
+    "log": "native-verified.log",
+    "boundary": "Production Compose/ViewModel with synthetic domain repositories, not live backend/provider E2E"
+  },
+  "builds": {
+    "travelerDevelopmentDebug": "PASS",
+    "partnerDevelopmentDebug": "PASS",
+    "travelerAndroidTest": "PASS"
+  },
+  "lint": {
+    "traveler": {
+      "errors": 0,
+      "warnings": 42
+    },
+    "partner": {
+      "errors": 0,
+      "warnings": 2
+    }
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "avd": "Floopel_Iteration_20261104",
+    "api": "35",
+    "sizeDuringNative": "1080x2430",
+    "densityDuringNative": 432,
+    "viewportDp": "400x900",
+    "fontScales": [
+      1.0,
+      1.3,
+      2.0
+    ],
+    "finalSize": "Physical size: 1080x2400",
+    "finalDensity": "Physical density: 420",
+    "finalFont": "1.0"
+  },
+  "package": "com.floopel.traveler.dev",
+  "flavor": "developmentDebug",
+  "api": {
+    "origin": "https://unawake-moonlit-reckless.ngrok-free.dev",
+    "publicReadHttp": 200,
+    "featureMutationsInThisSmoke": 0,
+    "authentication": "Normal password login with an existing local fixture account; no account/database reset"
+  },
+  "live_smoke": {
+    "status": "PASS",
+    "summary": "live-smoke.json",
+    "boundary": "Real runtime/API read and navigation; normal fixture login; no feature writes"
+  },
+  "source_manifest": "source-manifest.json",
+  "artifact_context": {
+    "foreignStylesIncluded": {
+      "path": "apps/android/traveler/src/main/res/values/styles.xml",
+      "bytes": 1038,
+      "sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+    },
+    "note": "Pre-existing styles.xml was compiled but excluded from the source commit; .gitignore .env/ also remains outside this commit"
+  },
+  "apks": [
+    {
+      "path": "apps/android/traveler/build/outputs/apk/development/debug/traveler-development-debug.apk",
+      "bytes": 25557716,
+      "sha256": "25e98344481659f66b84c11880ef8de0682797c4dd352c50f7bd88b020c5ec9a"
+    },
+    {
+      "path": "apps/android/traveler/build/outputs/apk/androidTest/development/debug/traveler-development-debug-androidTest.apk",
+      "bytes": 1312297,
+      "sha256": "07c399eefa780faf32595dc7cc0210f2849189cac6c717b2b7d49b78ac60afa5"
+    },
+    {
+      "path": "apps/android/partner/build/outputs/apk/development/debug/partner-development-debug.apk",
+      "bytes": 18554718,
+      "sha256": "2b9792dc573b0676622b32d3b67b483a23b14872f58433b26276657fe8a7ee58"
+    }
+  ],
+  "limitations": {
+    "ios": "NOT_RUN: Windows, needs Mac/Xcode and native formatter/host verification",
+    "maps": "DEFERRED by product owner",
+    "fcm": "NOT_CONFIGURED: Figma provider-unavailable screen used",
+    "productionRelease": "NOT_RUN",
+    "talkbackVoiceover": "NOT_RUN",
+    "physicalDevice": "NOT_RUN",
+    "fullAppParity": "NOT_CLAIMED; see audit for specific remaining controls/states"
+  },
+  "captures": [
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/all-spots-global.png",
+      "bytes": 107609,
+      "sha256": "c18f4a280db776fc3052ccbf8c4bab4b575e2e45841c41d388fa70a441d7a4bd"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-community.png",
+      "bytes": 142428,
+      "sha256": "47c51aa28c914e5a40e896b9f91c0a954ba40f074c88f08b99e74bb1803b16e2"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-explorer.png",
+      "bytes": 108914,
+      "sha256": "f02cfd807dc70deecb80fd7189e5ca348bd5fc7405c0bce13b01d0ff93791ab7"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-font-200.png",
+      "bytes": 238757,
+      "sha256": "6df9261815fc64e7a6e015f538d577b359ab2fdcaa54309d8b26efed5980fa07"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-home.png",
+      "bytes": 199699,
+      "sha256": "ab36cdeb263b3f10b20a9a760ed6f74df7b97184ddec0548803016e34c490ff4"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-open_trips.png",
+      "bytes": 117368,
+      "sha256": "6853903deaba5dfa61e48e7ecdcf2e7427d35c00c6966cd5f801672853a8d0e2"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/navigation-profile.png",
+      "bytes": 143071,
+      "sha256": "ad1ed334a6f912ad49065a2deafdf9f6d3c0065a8d6eba6317135f290d1aeea6"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-all.png",
+      "bytes": 123361,
+      "sha256": "6f19de3196593242f1e82f5575a296e0aa8294cba130e6672bd6a471d87b79e2"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-device-font-130.png",
+      "bytes": 95677,
+      "sha256": "220de0cc9587240a280e57b7095a95d62b12b7a0ad3ee550e88a9220d2702f5d"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-device-unavailable.png",
+      "bytes": 85832,
+      "sha256": "de18608186e2b278534a5b53da435ab7e04900c3e6d73ebd2944fd610ffde414"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-empty.png",
+      "bytes": 79144,
+      "sha256": "f9fd0fe357e2b417dee65785efa65249a39d253229a4a9273fede7005d0a597e"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-error.png",
+      "bytes": 83164,
+      "sha256": "0e09697cedd0df93ad00e335f25a229946ef5c9ade04a2365d2771b0fbcbd885"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-null-target-preview.png",
+      "bytes": 63456,
+      "sha256": "50370598b659c53d32633d8e8a5afa28de78d6e6edf99501e7754aa969e86249"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-opening.png",
+      "bytes": 59907,
+      "sha256": "3e4bc648f715215e71c08d2004aec2d6ae0e51d0db76bc5e62bd37a7cad2bf2f"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-system.png",
+      "bytes": 84151,
+      "sha256": "de048d302be65f1fce0316afe39e9cb73369126ac69bc237398ec4a2902df5b9"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/notifications-unavailable.png",
+      "bytes": 62561,
+      "sha256": "a72b7514eed832639462fd2e37054544d458a7f162e9abaa2d77879fe2d31ead"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/profile-editor.png",
+      "bytes": 144000,
+      "sha256": "d96b0a4ba916c884404374a856334516f5614d935b3374abbe8dac4f0f797f21"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/profile-font-130.png",
+      "bytes": 159811,
+      "sha256": "ec8dfad2eebe1e103a6837b653170717e0acc23824b21cd198b85c750e277bd7"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/profile-personal.png",
+      "bytes": 143071,
+      "sha256": "ad1ed334a6f912ad49065a2deafdf9f6d3c0065a8d6eba6317135f290d1aeea6"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/public-profile-owner-badges.png",
+      "bytes": 107540,
+      "sha256": "4ce5b164e6770e95a4ce79b84e6326d1ae81df1f460b949c59b46b5f7ed9d540"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/public-profile-owner-private.png",
+      "bytes": 114582,
+      "sha256": "617275b8d4f12175e0a60596f1db991073856d8327c05c08e60d6a0eef7b8879"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/public-profile-owner-published.png",
+      "bytes": 94942,
+      "sha256": "3a9c0a321a5d60975c479b9187af3fb800ca7f583f586a2eaec84746b23f5010"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/public-profile-owner-saved.png",
+      "bytes": 103592,
+      "sha256": "bf502d2bed37b1346d1d170d68a5e0f9e0a05d759776aa891e562df5c72f1b7b"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-comments-draft-restored.png",
+      "bytes": 84681,
+      "sha256": "9e9548f3b60d2c42c9e5a20398aaa60d842cc9592785f969c03c4362902c5b43"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-comments-reply-like.png",
+      "bytes": 103117,
+      "sha256": "ff32e6e1440d96be07c2265db8e568e5f550e03d51ca6ed0d77d50d16508f7cc"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-comments-unknown.png",
+      "bytes": 172388,
+      "sha256": "a26fec99ba4ccced38551da7c9040c4a5f9d74701dbc618db8421badf2b4ed1c"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-comments.png",
+      "bytes": 83099,
+      "sha256": "e8f55ec345bbfe6d317dac055509bf6e50251a1991c956f841d404e415e72ca9"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-detail-articles.png",
+      "bytes": 175740,
+      "sha256": "45c18c40cd597c4a751d99400bc40af4acadcaafaf2363d0e6a599dfa0596311"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-detail-collections.png",
+      "bytes": 183663,
+      "sha256": "b65c30f184d8a91e7e5750f84a9eb02d56475b59eef7c255f7acef811c06dcc6"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-detail-quest-trips.png",
+      "bytes": 183663,
+      "sha256": "b65c30f184d8a91e7e5750f84a9eb02d56475b59eef7c255f7acef811c06dcc6"
+    },
+    {
+      "path": "docs/handoff/traveler-android-audit/figma-notifications-profile-spots-20261107/native-fixture/spot-detail-summary.png",
+      "bytes": 111525,
+      "sha256": "8628a6f4539db6f4ac833d9c08eff66c825db3a6c24166192590290464b8c95c"
+    }
+  ],
+  "staticAssets": [
+    {
+      "path": "shared/features/traveler/src/commonMain/composeResources/files/notification_status.svg",
+      "bytes": 1949,
+      "sha256": "b19583d6170a9df6d7492abe1f26ff4f590d22fb29232bc651768300f892bcba",
+      "rootWidth": "176",
+      "rootHeight": "117.333",
+      "slot": "176x117.333dp status illustration"
+    },
+    {
+      "path": "shared/features/traveler/src/commonMain/composeResources/files/notification_unread.svg",
+      "bytes": 244,
+      "sha256": "ac4dc91809bf4b85d78d145d53838291adeb3ad7958451984fa5724a6a1e235a",
+      "rootWidth": "6",
+      "rootHeight": "6",
+      "slot": "6x6dp unread indicator"
+    }
+  ],
+  "livePublicCapture": {
+    "path": "live-spot-detail.png",
+    "bytes": 1592544,
+    "sha256": "e3c01323b3041f4f13b5ae2e72d19b2ab91613a22601404307affb44f9055cfa"
+  }
+}

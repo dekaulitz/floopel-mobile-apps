@@ -86,7 +86,7 @@ data class CatalogEntry(
     val coverPhoto: CatalogPhoto? get() = coverUrl?.let { url -> photos.firstOrNull { it.url == url } ?: CatalogPhoto(url, title) }
 }
 
-data class CatalogPage(val items: List<CatalogEntry>, val page: Int, val totalPages: Int)
+data class CatalogPage(val items: List<CatalogEntry>, val page: Int, val totalPages: Int, val total: Int? = null)
 
 /** Public discovery only; Hidden Quest eligibility is never inferred from a Location. */
 data class LocationQuest(val id: String, val slug: String, val title: String, val xp: Long, val badgeImage: CatalogPhoto? = null,

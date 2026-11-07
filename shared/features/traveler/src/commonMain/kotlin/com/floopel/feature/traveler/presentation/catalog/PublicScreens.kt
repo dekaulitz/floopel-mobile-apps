@@ -132,11 +132,14 @@ private fun CuratedTripList(state: TravelerState, model: TravelerViewModel) {
                         }
                         Media(plan.coverUrl ?: plan.previewUrls.firstOrNull(),
                             Modifier.fillMaxWidth().height(FloopelMediaSize.curatedCover).clip(FloopelShape.publicationCover))
-                        Text(plan.title, style = MaterialTheme.typography.titleLarge)
+                        Text(plan.title, style = MaterialTheme.typography.titleLarge, maxLines = 2,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                         if (plan.locations.isNotEmpty()) Text(plan.locations.joinToString(" · ") { it.name },
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        plan.subtitle?.takeIf(String::isNotBlank)?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                        plan.subtitle?.takeIf(String::isNotBlank)?.let { Text(it, style = FloopelCatalogTypography.detailMetadata,
+                            maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                            modifier = Modifier.testTag("curated-plan-preview")) }
                         if (plan.itineraryDays != null && plan.spotCount != null) Text(s(Res.string.catalog_itinerary_summary, plan.itineraryDays, plan.spotCount),
                             style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                         FloopelButton(s(Res.string.view_public_itinerary), { model.openEntry(plan) },
@@ -246,13 +249,13 @@ internal fun PublicProfileScreen(state: TravelerState, model: TravelerViewModel)
 
 /** Profile publications have a different anatomy and action role from the Community feed. */
 @Composable
-private fun ProfileItineraryCard(plan: PublicItinerarySummary, model: TravelerViewModel) {
+internal fun ProfileItineraryCard(plan: PublicItinerarySummary, model: TravelerViewModel, visitor: Boolean = false) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(FloopelSpace.small)) {
         Media(plan.coverUrl ?: plan.previewUrls.firstOrNull(),
             Modifier.fillMaxWidth().height(FloopelMediaSize.profileItineraryCover).clip(FloopelShape.publicationCover))
         Text(plan.title, style = MaterialTheme.typography.titleLarge.copy(fontSize = 19.sp, lineHeight = 26.sp))
         if (plan.locations.isNotEmpty()) Body(plan.locations.joinToString(" · ") { it.name })
-        plan.dayCount?.let { Text(s(Res.string.catalog_itinerary_summary, it, plan.stopCount),
+        plan.dayCount?.let { Text((if (visitor) s(Res.string.profile_published) + " · " else "") + s(Res.string.catalog_itinerary_summary, it, plan.stopCount),
             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium), color = MaterialTheme.colorScheme.primary) }
         FloopelButton(s(Res.string.view_public_itinerary), { model.open(TravelerRoute(Destination.PUBLIC_PLAN, plan.slug)) },
             Modifier.fillMaxWidth().testTag("profile-itinerary-action"), secondary = true)

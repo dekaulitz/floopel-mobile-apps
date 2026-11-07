@@ -19,6 +19,10 @@ import com.floopel.feature.traveler.resources.*
 
 @Composable
 internal fun CatalogScreen(state: TravelerState, model: TravelerViewModel) {
+    if (state.route.destination == Destination.CATALOG && state.route.extra == CatalogKind.SPOT.name) {
+        AllSpotScreen(state, model)
+        return
+    }
     val gutter = if (state.route.destination == Destination.COMMUNITY) FloopelSpace.large else FloopelSpace.gutter
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(gutter), verticalArrangement = Arrangement.spacedBy(FloopelSpace.large)) {
         item {

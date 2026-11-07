@@ -23,7 +23,7 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
         TravelerIdentityView(
         v.signedIn, generation, v.busy,
         v.progress?.let { p -> TravelerPassport(p.xpTotal, p.level.level, p.level.name,
-            p.badges.map { it.name to it.image?.url }, p.activeParticipations.map { it.reader() }) },
+            p.badges.map { it.name to it.image?.url }, p.activeParticipations.map { it.reader() }, p.level.xpFloor, p.level.xpToNextLevel) },
         v.participation?.reader() ?: v.questOwner?.activeParticipation?.reader(),
         v.activity?.let { QuestQuestion(it.activity.id, it.activity.title, when (it.activity.type) {
             "gps" -> QuestActivityKind.GPS; "question" -> QuestActivityKind.QUESTION; else -> QuestActivityKind.UNSUPPORTED },
@@ -81,4 +81,4 @@ private fun QuestDetail.reader() = QuestReader(QuestCard(id, slug, title, reward
     activities.size, locations.map { LocationReference(it.id, it.name, it.slug, it.level) }, participationMode),
     description, proofSummary, reward.badge?.name, quota?.remainingCount, quota?.limit, availability,
     executionStatus, activities.map { QuestStep(it.id, it.title, it.type, it.ordinal, it.spotId) },
-    travelers.map { it.displayName })
+    travelers.map { it.displayName }, travelers.map { QuestTravelerPreview(it.username, it.displayName, it.avatarUrl) })

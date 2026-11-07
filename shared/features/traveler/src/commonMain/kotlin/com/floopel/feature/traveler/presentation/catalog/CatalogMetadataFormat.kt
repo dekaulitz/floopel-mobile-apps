@@ -10,6 +10,7 @@ internal fun catalogScore(value: Double, decimal: String): String {
 
 internal fun catalogCount(value: Long, decimal: String): String {
     if (value < 1_000) return value.toString()
+    if (value == 1_000L) return if (decimal == ",") "1.000" else "1,000"
     val (unit, suffix) = when {
         value >= 1_000_000_000 -> 1_000_000_000L to "B"
         value >= 1_000_000 -> 1_000_000L to "M"

@@ -17,10 +17,13 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.svg.SvgDecoder
 import com.floopel.core.designsystem.component.FloopelButton
+import com.floopel.core.designsystem.component.FloopelBottomNavigation
+import com.floopel.core.designsystem.component.FloopelBottomNavigationItem
 import com.floopel.core.designsystem.icons.FloopelIcons
 import com.floopel.core.designsystem.theme.FloopelCatalogTypography
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.TravelerImage
+import com.floopel.feature.traveler.domain.model.CatalogKind
 import com.floopel.feature.traveler.presentation.account.*
 import com.floopel.feature.traveler.presentation.catalog.*
 import com.floopel.feature.traveler.presentation.home.TravelerHomeContent
@@ -81,6 +84,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     val route = state.route
     val locationScreen = route.destination == Destination.COUNTRIES ||
         route.destination in setOf(Destination.CATALOG, Destination.DETAIL) && route.extra == "LOCATION"
+    val spotArchive = route.destination == Destination.CATALOG && route.extra == CatalogKind.SPOT.name
+    val spotDetail = route.destination == Destination.DETAIL && route.extra == CatalogKind.SPOT.name
     val targetReady = when (route.destination) {
         Destination.TRIP -> state.trip.value?.id == route.id && !state.trip.loading && state.trip.failure == null
         Destination.APPLICATION -> state.application.value?.id == route.id && !state.application.loading && state.application.failure == null
@@ -92,8 +97,11 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     LaunchedEffect(route, targetReady) { if (targetReady) { withFrameNanos { }; model.targetVisible(route) } }
     Surface(color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
-            if (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN) ||
-                route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank())
+            if (!spotArchive && !spotDetail && (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN,
+                Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL,
+                Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
+                Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
+                route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
             Row(Modifier.fillMaxWidth().heightIn(min = if (locationScreen) 48.dp else 56.dp).padding(horizontal = 8.dp),
                 verticalAlignment = if (locationScreen) Alignment.CenterVertically else Alignment.Top) {
                 if (state.stack.size > 1) IconButton(model::back, enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
@@ -122,10 +130,16 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.EXPLORER, Destination.ADD_SPOT -> CatalogScreen(state, model)
                     Destination.CATALOG -> if (route.extra == "LOCATION") LocationBrowser(state, model) else CatalogScreen(state, model)
                     Destination.COUNTRIES -> CountryPicker(state, model)
-                    Destination.DETAIL -> if (route.extra == "LOCATION") LocationDetail(state, model) else CatalogDetail(state, model)
+                    Destination.DETAIL -> when (route.extra) {
+                        "LOCATION" -> LocationDetail(state, model)
+                        "SPOT" -> SpotDetailScreen(state, model, share, runtime.comments != null)
+                        else -> CatalogDetail(state, model)
+                    }
                     Destination.OPEN_TRIPS -> OpenTripCatalog(state, model)
                     Destination.APPLY -> OpenTripDetail(state, model)
-                    Destination.PROFILE -> ProfileScreen(state, model)
+                    Destination.PROFILE -> ProfileOverview(state, model)
+                    Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT, Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY,
+                    Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES -> ProfileAccountScreen(state, model)
                     Destination.LOGIN -> LoginScreen(state, model, googleSignIn?.let { provider -> {
                         if (!googleBusy) platformScope.launch {
                             googleBusy = true
@@ -159,9 +173,9 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.APPLICATIONS, Destination.TRIP_APPLICATIONS -> Applications(state, model)
                     Destination.APPLICATION -> ApplicationReader(state, model)
                     Destination.NOTICE -> TripNoticeReader(state, model)
-                    Destination.NOTIFICATIONS -> NotificationsScreen(state, model)
+                    Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL -> NotificationScreen(state, model)
                     Destination.PUBLIC_PLAN -> PublicPlanScreen(state, model)
-                    Destination.PUBLIC_PROFILE -> PublicProfileScreen(state, model)
+                    Destination.PUBLIC_PROFILE -> PublicProfileContent(state, model, share)
                     Destination.SAVED_SPOTS -> SavedSpotScreen(state, model)
                     Destination.QUEST_GROUPS -> QuestGroupList(state, model)
                     Destination.QUEST_GROUP -> QuestGroupReader(state, model)
@@ -180,18 +194,15 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     }
                 }
             }
-            if (state.identity.signedIn && state.stack.size == 1 && !route.destination.isAuthenticationScreen()) NavigationBar(
-                modifier = Modifier.testTag("traveler-navigation"), containerColor = MaterialTheme.colorScheme.surface, windowInsets = WindowInsets(0)) {
+            if (state.identity.signedIn && state.stack.size == 1 && !route.destination.isAuthenticationScreen()) FloopelBottomNavigation(
+                modifier = Modifier.testTag("traveler-navigation")) {
                 listOf(Triple(Destination.HOME, Res.string.home, FloopelIcons.Home),
                     Triple(Destination.COMMUNITY, Res.string.community, FloopelIcons.Groups),
                     Triple(Destination.EXPLORER, Res.string.explorer, FloopelIcons.Explore),
                     Triple(Destination.OPEN_TRIPS, Res.string.open_trip, FloopelIcons.Route),
                     Triple(Destination.PROFILE, Res.string.profile, FloopelIcons.PersonOutline)).forEach { (destination, title, icon) ->
-                    NavigationBarItem(selected = state.tab == destination, onClick = { model.tab(destination) },
-                        icon = { Icon(icon, null) }, label = { Text(s(title), style = MaterialTheme.typography.labelSmall, maxLines = 1) }, enabled = !state.busy,
-                        colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                            selectedIconColor = MaterialTheme.colorScheme.primary, selectedTextColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant, unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant))
+                    FloopelBottomNavigationItem(s(title), icon, state.tab == destination, { model.tab(destination) },
+                        Modifier.testTag("navigation-${destination.name.lowercase()}"), enabled = !state.busy)
                 }
             }
         }
@@ -211,6 +222,12 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.COUNTRIES -> Res.string.location_choose_country
     Destination.OPEN_TRIPS -> Res.string.open_trip
     Destination.PROFILE -> Res.string.profile
+    Destination.PROFILE_SETTINGS -> Res.string.profile_settings
+    Destination.PROFILE_EDIT -> Res.string.profile_edit
+    Destination.PROFILE_INTERESTS -> Res.string.profile_interests
+    Destination.PROFILE_SECURITY -> Res.string.profile_security
+    Destination.PROFILE_EMERGENCY -> Res.string.profile_emergency
+    Destination.PROFILE_PREFERENCES -> Res.string.profile_preferences
     Destination.QUESTS -> Res.string.quests
     Destination.QUEST -> Res.string.quest_detail
     Destination.QUEST_PROGRESS -> Res.string.quest_progress
@@ -236,6 +253,9 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.APPLY -> if (extra == "form") Res.string.trip_apply else Res.string.open_trip
     Destination.NOTICE -> Res.string.trip_notice
     Destination.NOTIFICATIONS -> Res.string.notifications
+    Destination.NOTIFICATION_DEVICE -> Res.string.notification_device
+    Destination.NOTIFICATION_OPEN -> Res.string.notification_opening
+    Destination.NOTIFICATION_DETAIL -> Res.string.notification_detail
     Destination.DETAIL -> when (extra) { "SPOT" -> Res.string.spot_detail; "LOCATION" -> Res.string.location_detail;
         "COLLECTION" -> Res.string.collection_detail; else -> Res.string.story_detail }
     Destination.LOGIN -> Res.string.sign_in

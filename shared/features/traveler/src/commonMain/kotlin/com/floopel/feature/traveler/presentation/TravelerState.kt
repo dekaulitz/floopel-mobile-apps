@@ -5,14 +5,17 @@ import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import kotlinx.serialization.Serializable
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
+import com.floopel.feature.traveler.presentation.catalog.SpotContentState
 
 @Serializable
 internal enum class Destination {
     HOME, COMMUNITY, EXPLORER, OPEN_TRIPS, PROFILE,
+    PROFILE_SETTINGS, PROFILE_EDIT, PROFILE_INTERESTS, PROFILE_SECURITY, PROFILE_EMERGENCY, PROFILE_PREFERENCES,
     QUESTS, QUEST, QUEST_PROGRESS, QUEST_ACTIVITY, PASSPORT,
     ITINERARIES, ITINERARY, ITINERARY_FORM, ADD_SPOT, PICK_PLAN, STOP_FORM,
     SHARE, PUBLICATION, SHARE_LINK, TRIP_FORM, TRIPS, TRIP, MEMBERS, INVITATIONS,
     TRIP_APPLICATIONS, APPLICATIONS, APPLICATION, APPLY, NOTICE, NOTIFICATIONS,
+    NOTIFICATION_DEVICE, NOTIFICATION_OPEN, NOTIFICATION_DETAIL,
     CATALOG, COUNTRIES, DETAIL, LOGIN, REGISTER, VERIFY, FORGOT, LEGAL,
     PUBLIC_PLAN, PUBLIC_PROFILE, SAVED_SPOTS, QUEST_GROUPS, QUEST_GROUP, QUEST_GROUP_INVITATIONS, QUEST_GROUP_INVITATION,
 }
@@ -21,7 +24,7 @@ internal enum class Destination {
 @Serializable
 internal data class TravelerRoute(val destination: Destination, val id: String = "", val extra: String = "",
     val day: Int = 1, val inboxId: String? = null, val slug: String = "", val operationKey: String = "",
-    val countryId: String = "")
+    val countryId: String = "", val locationContextId: String = "")
 
 internal data class ReadState<T>(val value: T? = null, val loading: Boolean = false, val failure: ReadFailure? = null)
 internal data class ReadFailure(val status: Int = 0, val code: String? = null, val retryAtMillis: Long = 0,
@@ -42,11 +45,19 @@ internal data class TravelerState(
     val startupFailure: ReadFailure? = null,
     val home: HomeState = HomeState(),
     val profile: ReadState<PersonalProfile> = ReadState(),
+    val nationalities: ReadState<List<NationalityOption>> = ReadState(),
+    val interests: ReadState<TravelerInterests> = ReadState(),
+    val security: ReadState<CredentialCapabilities> = ReadState(),
+    val emergency: ReadState<EmergencyContact?> = ReadState(),
+    val preferences: ReadState<TravelerSettings> = ReadState(),
+    val passwordSetupRetryAt: Long = 0,
     val catalog: ReadState<CatalogPage> = ReadState(),
+    val spotScopeLocation: ReadState<CatalogEntry> = ReadState(),
     val detail: ReadState<CatalogEntry> = ReadState(),
     val locationBrowser: ReadState<LocationBrowserPage> = ReadState(),
     val locationCountries: ReadState<List<CatalogEntry>> = ReadState(),
     val locationContent: LocationContentState = LocationContentState(),
+    val spotContent: SpotContentState = SpotContentState(),
     val quests: ReadState<LocationQuestPage> = ReadState(),
     val quest: ReadState<QuestReader> = ReadState(),
     val itineraries: ReadState<List<OwnedItinerary>> = ReadState(),
@@ -68,6 +79,8 @@ internal data class TravelerState(
     val applicationDraft: ReadState<String?> = ReadState(),
     val notice: ReadState<TripOutcomeNotice> = ReadState(),
     val notifications: ReadState<NotificationPage> = ReadState(),
+    val notification: ReadState<TravelerNotification> = ReadState(),
+    val notificationAppending: Boolean = false,
     val legal: ReadState<List<LegalDocument>> = ReadState(),
     val references: ReadState<RegistrationReferences> = ReadState(),
     val busy: Boolean = false,
@@ -91,6 +104,8 @@ internal data class TravelerState(
     val publicPlan: ReadState<PublicItinerarySnapshot> = ReadState(),
     val publicProfile: ReadState<TravelerPublicProfile> = ReadState(),
     val publicProgress: ReadState<PublicProfileProgress> = ReadState(),
+    val publicBadges: ReadState<PublicAchievementPage<PublicProfileBadge>> = ReadState(),
+    val publicPrivatePlans: ReadState<List<OwnedItinerary>> = ReadState(),
     val savedSpots: ReadState<SavedSpotPage> = ReadState(),
     val isSpotSaved: ReadState<Boolean> = ReadState(),
     val publicPage: Int = 1,
@@ -104,6 +119,9 @@ internal data class TravelerState(
     val route get() = stack.last()
     val showIntro get() = identityRestored && intro?.completed == false && !identity.signedIn
     val canGoBack get() = stack.size > 1 || identity.signedIn && tab != Destination.HOME
+    val ownsPublicProfile get() = route.destination == Destination.PUBLIC_PROFILE && identity.signedIn &&
+        profile.failure == null && !profile.loading && profile.value?.username == route.id &&
+        publicProfile.failure == null && !publicProfile.loading && publicProfile.value?.username == route.id
     /** Unknown/loading/failed content is distinct from an authoritative, empty itinerary. */
     val publicationHasSpots: Boolean? get() = itinerary.value
         ?.takeIf { !itinerary.loading && itinerary.failure == null && it.stopsLoaded &&

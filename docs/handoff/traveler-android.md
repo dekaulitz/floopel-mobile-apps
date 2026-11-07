@@ -8,6 +8,8 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test p
 
 ## Acuan
 
+Follow-up [notifikasi, profil, Spot dan navbar](traveler-notifications-profile-spots-audit.md) mencatat frame terbaru yang diminta pemilik, koreksi relasi/komentar Spot dan state inbox, serta navbar bersama kelima tab. Bukti batch dan keterbatasannya terpisah dari checkpoint publikasi/rating sebelumnya; peta tetap ditunda dan FCM belum terhubung.
+
 Follow-up [state publikasi](traveler-publication-state-audit.md) mengoreksi pesan kosong palsu setelah publish: metadata tanpa `stop_count` tetap unknown, detail itinerary menjadi sumber fakta Stop, dan revision owner direkonsiliasi melalui GET. Batch ini memiliki 417 host/15 native test; snapshot rating/lokasi dan integrasi sebelumnya tetap terpisah.
 
 - [Figma final](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=0-1), revisi QA 6 November 2026. Revisi terbaru relevan digunakan; konflik bisnis harus dikonfirmasi.

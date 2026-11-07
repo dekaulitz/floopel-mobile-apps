@@ -1,0 +1,91 @@
+{
+  "status": "PASS",
+  "device": "emulator-5580",
+  "package": "com.floopel.traveler.dev",
+  "window": "1080x2400, density 420, font 1.0",
+  "minimumTransitionPauseSeconds": 5,
+  "authentication": "Existing local fixture account, normal password login; no credentials recorded here",
+  "featureWritesIssued": 0,
+  "fiveRootTabs": {
+    "status": "PASS",
+    "identicalLabelBounds": true,
+    "steps": [
+      {
+        "tab": "Home",
+        "time": "183305",
+        "labelBounds": {
+          "Home": "[11,2265][205,2305]",
+          "Community": "[227,2265][421,2305]",
+          "Explorer": "[443,2265][637,2305]",
+          "Open Trip": "[659,2265][853,2305]",
+          "Profile": "[875,2265][1069,2305]"
+        }
+      },
+      {
+        "tab": "Community",
+        "time": "183327",
+        "labelBounds": {
+          "Home": "[11,2265][205,2305]",
+          "Community": "[227,2265][421,2305]",
+          "Explorer": "[443,2265][637,2305]",
+          "Open Trip": "[659,2265][853,2305]",
+          "Profile": "[875,2265][1069,2305]"
+        }
+      },
+      {
+        "tab": "Explorer",
+        "time": "183336",
+        "labelBounds": {
+          "Home": "[11,2265][205,2305]",
+          "Community": "[227,2265][421,2305]",
+          "Explorer": "[443,2265][637,2305]",
+          "Open Trip": "[659,2265][853,2305]",
+          "Profile": "[875,2265][1069,2305]"
+        }
+      },
+      {
+        "tab": "Open Trip",
+        "time": "183347",
+        "labelBounds": {
+          "Home": "[11,2265][205,2305]",
+          "Community": "[227,2265][421,2305]",
+          "Explorer": "[443,2265][637,2305]",
+          "Open Trip": "[659,2265][853,2305]",
+          "Profile": "[875,2265][1069,2305]"
+        }
+      },
+      {
+        "tab": "Profile",
+        "time": "183358",
+        "labelBounds": {
+          "Home": "[11,2265][205,2305]",
+          "Community": "[227,2265][421,2305]",
+          "Explorer": "[443,2265][637,2305]",
+          "Open Trip": "[659,2265][853,2305]",
+          "Profile": "[875,2265][1069,2305]"
+        }
+      }
+    ],
+    "apkSha256": "0f0bc7b58e5a9c65d486002ca642d0e38b4817c9329e0f050af95229728317a0",
+    "note": "These five real-runtime transitions preceded the final Spot location-label-only correction; final native suite tests all five tabs on the final APK"
+  },
+  "finalApkSha256": "25e98344481659f66b84c11880ef8de0682797c4dd352c50f7bd88b020c5ec9a",
+  "finalRuntimeChecks": [
+    "Session restored after APK replacement without data reset",
+    "Home navigation visible",
+    "Spot image loaded from API",
+    "Spot location title is the location name; ancestors are separate",
+    "No navbar on Spot Detail",
+    "Real comment thread loaded; no POST/like issued",
+    "No navbar inside comment sheet"
+  ],
+  "earlierRuntimeChecks": [
+    "Personal profile read",
+    "Owner public profile read, no navbar",
+    "Empty inbox and no navbar",
+    "Device notification provider unavailable state",
+    "All Spot archive with server total"
+  ],
+  "capture": "live-spot-detail.png",
+  "privacy": "Only a public Spot capture is copied; login fields, private profile and user comments remain in ignored local artifacts"
+}

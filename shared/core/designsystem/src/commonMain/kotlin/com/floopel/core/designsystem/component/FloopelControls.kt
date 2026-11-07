@@ -54,10 +54,13 @@ fun FloopelFilterChip(selected: Boolean, onClick: () -> Unit, label: @Composable
 
 /** Compact 36dp face within a growing 48dp native target, as used by Home and catalog actions. */
 @Composable
-fun FloopelCompactButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
+fun FloopelCompactButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true,
+    secondary: Boolean = false) {
     Box(modifier.heightIn(min = 48.dp).clickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.CenterStart) {
-        Surface(shape = FloopelShape.pill, color = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
+        Surface(shape = FloopelShape.pill,
+            color = if (secondary) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.primary,
+            contentColor = if (secondary) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary) {
             Box(Modifier.heightIn(min = 36.dp).padding(horizontal = 16.dp, vertical = 8.dp), contentAlignment = Alignment.Center) {
                 Text(label, style = MaterialTheme.typography.labelLarge)
             }

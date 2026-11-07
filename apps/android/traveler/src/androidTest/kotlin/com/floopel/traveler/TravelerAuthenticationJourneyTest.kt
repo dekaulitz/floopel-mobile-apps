@@ -41,6 +41,7 @@ class TravelerAuthenticationJourneyTest {
         ui.onNode(hasText("Masuk", substring = false) and hasClickAction()).performScrollTo().performClick()
         ui.waitUntil(5_000) { ui.onAllNodesWithTag("traveler-navigation").fetchSemanticsNodes().isNotEmpty() }
         ui.onAllNodesWithText("Profile").onLast().performClick()
+        ui.onNodeWithContentDescription("Pengaturan").performClick()
         ui.onNodeWithText("Keluar", substring = false).performScrollTo().performClick()
         ui.waitUntil(5_000) { ui.onAllNodesWithText("Selamat datang").fetchSemanticsNodes().isNotEmpty() }
         ui.onNodeWithTag("traveler-navigation").assertDoesNotExist()

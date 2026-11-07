@@ -128,8 +128,9 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
                 fun integer(key: String) = (pagination.getValue(key) as JsonPrimitive).also { require(!it.isString) }.content.toInt()
                 val served = integer("page"); val total = integer("total_pages")
                 require(served == page && total >= 0 && (served <= total || total == 0 && served == 1))
-                val items = envelope.getValue("data").let { it as JsonArray }.map { requireNotNull(readEntry(it, kind)) }
-                CatalogResult.Ready(CatalogPage(items, served, total))
+                val items = envelope.getValue("data").let { it as JsonArray }.map { requireNotNull(readEntry(it, kind, locale = locale)) }
+                val count = pagination["total"]?.let { raw -> (raw as JsonPrimitive).also { require(!it.isString) }.content.toInt().also { require(it >= 0) } }
+                CatalogResult.Ready(CatalogPage(items, served, total, count))
             }.getOrElse { CatalogResult.InvalidResponse }
             is CatalogResult.HttpError -> result
             CatalogResult.InvalidResponse -> CatalogResult.InvalidResponse
@@ -284,7 +285,7 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
         val query = if (item.kind == CatalogKind.ITINERARY) "" else "?locale=" + localeParam(locale)
         val result = decode(prefix + segment.encodeURLParameter() + query) { data ->
             val obj = data.obj() ?: return@decode null
-            val main = readEntry(data, item.kind) ?: return@decode null
+            val main = readEntry(data, item.kind, locale = locale) ?: return@decode null
             val related = when (item.kind) {
                 CatalogKind.SPOT -> (obj["nearby"] as? JsonArray)?.mapNotNull { readEntry(it, CatalogKind.SPOT) }.orEmpty()
                 CatalogKind.COLLECTION -> (obj["members"] as? JsonArray)?.mapNotNull { member ->
@@ -295,7 +296,7 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
                         else -> return@mapNotNull null
                     }
                     val target = nested["target"] ?: return@mapNotNull null
-                    readEntry(target, nestedKind, titleOverride = target.obj()?.string("name"), requiresLocations = false)
+                    readEntry(target, nestedKind, titleOverride = target.obj()?.string("name"), requiresLocations = false, locale = locale)
                 }.orEmpty()
                 CatalogKind.STORY -> (obj["attachments"] as? JsonArray)?.mapNotNull { attachment ->
                     val value = attachment.obj() ?: return@mapNotNull null
@@ -355,7 +356,7 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
 
     private suspend fun list(path: String, kind: CatalogKind, locale: String = "id"): CatalogResult<List<CatalogEntry>> {
         val result = decode(path) { data -> (data as? JsonArray)?.let { values ->
-            val entries = values.map { readEntry(it, kind) }
+            val entries = values.map { readEntry(it, kind, locale = locale) }
             if (entries.any { it == null }) null else entries.filterNotNull()
         } }
         return if (result is CatalogResult.Ready) CatalogResult.Ready(withStoryLevels(withSpotLocations(result.value, locale))) else result
@@ -491,7 +492,8 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
     internal fun readSavedSpot(element: JsonElement): CatalogEntry? = readEntry(element, CatalogKind.SPOT)
 
     /** Retains canonical entity coverage while Spot and Location keep their own scalar identities. */
-    private fun readEntry(element: JsonElement, kind: CatalogKind, titleOverride: String? = null, requiresLocations: Boolean = true): CatalogEntry? {
+    private fun readEntry(element: JsonElement, kind: CatalogKind, titleOverride: String? = null, requiresLocations: Boolean = true,
+        locale: String = "id"): CatalogEntry? {
         val obj = element.obj() ?: return null
         val id = obj.string("id")?.takeIf { it.isNotBlank() } ?: return null
         val title = (titleOverride ?: obj.string(if (kind == CatalogKind.COLLECTION || kind == CatalogKind.STORY || kind == CatalogKind.ITINERARY) "title" else "name"))
@@ -506,7 +508,9 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
             CatalogKind.LOCATION -> obj.string("level")
             CatalogKind.ITINERARY -> obj.string("description")
         }
-        val entry = CatalogEntry(id, slug, title, subtitle, kind,
+        val copy = if (kind == CatalogKind.ITINERARY && obj.string("source") == "curated" && subtitle != null)
+            localizedCuratedCopy(title, subtitle, locale) else title to subtitle
+        val entry = CatalogEntry(id, slug, copy.first, copy.second, kind,
             mediaUrl(obj["cover_hero_image"] ?: obj["cover_image"]), locations = locations)
         return readEntryMetadata(entry, obj)
     }

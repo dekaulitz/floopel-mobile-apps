@@ -45,10 +45,11 @@ internal fun Body(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-internal fun Media(url: String?, modifier: Modifier, description: String? = null) {
+internal fun Media(url: String?, modifier: Modifier, description: String? = null,
+    placeholderIcon: androidx.compose.ui.graphics.vector.ImageVector = FloopelIcons.CollectionsBookmark) {
     @Composable fun Placeholder() {
         Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLow), Alignment.Center) {
-            Icon(FloopelIcons.CollectionsBookmark, description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(placeholderIcon, description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
     Box(modifier) {
@@ -157,13 +158,13 @@ internal fun CatalogCard(entry: CatalogEntry, onClick: () -> Unit, modifier: Mod
 }
 
 @Composable
-internal fun Rating(entry: CatalogEntry, detail: Boolean = false) {
+internal fun Rating(entry: CatalogEntry, detail: Boolean = false, list: Boolean = false, compactComments: Boolean = false) {
     val decimal = s(Res.string.catalog_decimal_separator)
     val score = entry.aiReference?.takeUnless { it.suppressed }?.score
         ?.takeIf { it.isFinite() && it in 0.0..5.0 }?.let { catalogScore(it, decimal) }
     val count = entry.commentCount?.takeIf { it >= 0 }
-    val comments = count?.let { s(Res.string.catalog_comments_label, catalogCount(it, decimal)) }
+    val comments = count?.let { if (compactComments) catalogCount(it, decimal) else s(Res.string.catalog_comments_label, catalogCount(it, decimal)) }
     val description = listOfNotNull(score?.let { s(Res.string.reference_rating, it) },
         count?.let { s(Res.string.comments_count, it) }).joinToString(", ")
-    FloopelRatingRow(score, comments, description, modifier = Modifier.fillMaxWidth().testTag("catalog-rating-${entry.id}"), detail = detail)
+    FloopelRatingRow(score, comments, description, modifier = Modifier.fillMaxWidth().testTag("catalog-rating-${entry.id}"), detail = detail, list = list)
 }

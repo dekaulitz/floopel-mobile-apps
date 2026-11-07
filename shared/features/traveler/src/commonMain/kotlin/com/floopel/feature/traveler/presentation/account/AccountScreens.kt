@@ -38,9 +38,9 @@ internal fun LoginGate(model: TravelerViewModel) {
 }
 
 @Composable
-internal fun PasswordInput(value: String, change: (String) -> Unit, enabled: Boolean = true) {
+internal fun PasswordInput(value: String, change: (String) -> Unit, enabled: Boolean = true, label: String = s(Res.string.password)) {
     var visible by remember { mutableStateOf(false) }
-    FloopelFormTextField(value, change, Modifier.fillMaxWidth(), label = { Text(s(Res.string.password)) },
+    FloopelFormTextField(value, change, Modifier.fillMaxWidth(), label = { Text(label) },
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), singleLine = true, enabled = enabled,
         trailingIcon = { IconButton({ visible = !visible }) {

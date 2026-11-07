@@ -14,6 +14,8 @@ class CatalogMetadataFormatTest {
         assertEquals("0", catalogCount(0, ","))
         assertEquals("1", catalogCount(1, ","))
         assertEquals("245", catalogCount(245, ","))
+        assertEquals("1.000", catalogCount(1_000, ","))
+        assertEquals("1K", catalogCount(1_001, ","))
         assertEquals("1,2K", catalogCount(1_200, ","))
         assertEquals("1.2K", catalogCount(1_200, "."))
     }

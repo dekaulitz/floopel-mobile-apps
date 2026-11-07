@@ -1,0 +1,222 @@
+[
+  {
+    "path": "apps/android/traveler/src/androidTest/kotlin/com/floopel/traveler/TravelerAuthenticationJourneyTest.kt",
+    "bytes": 3778,
+    "sha256": "b7e5a1c45c4477b4fc152fb1ddfbdc5c7a391f520d68a894fd4be07b73710b12"
+  },
+  {
+    "path": "apps/android/traveler/src/androidTest/kotlin/com/floopel/traveler/TravelerFigmaDesignTest.kt",
+    "bytes": 16590,
+    "sha256": "740e056f0b807256bd72c077f2f6cfb0b05203901e47507f18ed20bb92fcdad0"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelBottomNavigation.kt",
+    "bytes": 3092,
+    "sha256": "6c5011d9c648d42d517a3666f0cf36531010730994b0b4514a03f3120111f0f4"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelControls.kt",
+    "bytes": 3554,
+    "sha256": "a96aeb111b123b6cc25b531237c8207d24d04685689be41035c40d6698a5584a"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelNavigationRow.kt",
+    "bytes": 1490,
+    "sha256": "adf5f26611b8f03d37ffb1994f65078a277df12c4bbbb7f15f188db231ead6a4"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelPillTab.kt",
+    "bytes": 2096,
+    "sha256": "3500dc9923f133c6326c629ea2fe38f4d5437ff80b13518a6e05e39f061ce2ce"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelRatingRow.kt",
+    "bytes": 3592,
+    "sha256": "4f4d580d5c1ce74992f1929ff5ccec0184279d0cefd542451ef30911fc392349"
+  },
+  {
+    "path": "shared/core/designsystem/src/commonMain/kotlin/com/floopel/core/designsystem/component/FloopelSwitchRow.kt",
+    "bytes": 1110,
+    "sha256": "2edebf106ae1ad27ab5eaf015e5e84b47a27389aa1abd8189a595603254c0934"
+  },
+  {
+    "path": "shared/features/traveler/src/androidHostTest/kotlin/com/floopel/feature/traveler/presentation/TravelerFigmaStateTest.kt",
+    "bytes": 16033,
+    "sha256": "b74a77bf62dcda3a7beda9942d6bdac899672a5c45c1daab64b60ede12e3adf4"
+  },
+  {
+    "path": "shared/features/traveler/src/androidMain/kotlin/com/floopel/feature/traveler/presentation/account/NotificationTimestamp.android.kt",
+    "bytes": 374,
+    "sha256": "9723f180d3c89dca8723e1f57db88677cbfb5abb1441b464b4ffa70e675fab16"
+  },
+  {
+    "path": "shared/features/traveler/src/androidTestFixtures/kotlin/com/floopel/feature/traveler/testing/TravelerFigmaFixture.kt",
+    "bytes": 12478,
+    "sha256": "60d9d6f9d6d96d885a3034a3699d790b73a6669313a9f5cbc52a49e770fc171e"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/files/notification_status.svg",
+    "bytes": 1949,
+    "sha256": "b19583d6170a9df6d7492abe1f26ff4f590d22fb29232bc651768300f892bcba"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/files/notification_unread.svg",
+    "bytes": 244,
+    "sha256": "ac4dc91809bf4b85d78d145d53838291adeb3ad7958451984fa5724a6a1e235a"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/values/strings.xml",
+    "bytes": 39586,
+    "sha256": "3dc3b17c57bae99afe97684d4381fb47d56392b83d450a42b716d853015d0ab3"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/TravelerRuntime.kt",
+    "bytes": 3992,
+    "sha256": "a0d55f157e127a6a046ebfa687daac72af37373ec7efeef0d6fbf28997377fb3"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/AppsTravelerCatalog.kt",
+    "bytes": 40560,
+    "sha256": "65f5a50a58c935e5a246263bb8fe0b789b09b503ac81c55f3714f9d279f7f698"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/CuratedCopy.kt",
+    "bytes": 1026,
+    "sha256": "ef0d9fedce16ef5297c022c5a3e466b858511edd8e531a13af6d69533ad15cb0"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeTravelerIdentity.kt",
+    "bytes": 6009,
+    "sha256": "62a94f258e0ca7e6572f4d0c1fb4b2a8a8f93a23c9b293f64ad1580fcdb03222"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/QuestReader.kt",
+    "bytes": 2588,
+    "sha256": "012fdc681cd51fdc4f4ffb231ab9465504720efbca31b92375fa236154c8e99c"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerCatalog.kt",
+    "bytes": 5945,
+    "sha256": "3e73a918299a63dc93b1f99c719204867d796c21dc9bb429710049acc915da79"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerComponents.kt",
+    "bytes": 9689,
+    "sha256": "7f03414347f6f3231cbb49ec6d021ab57acb56e1dee93c2b88c335df189f078c"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerRoot.kt",
+    "bytes": 18007,
+    "sha256": "f67a9fa2270643315c371e283ea67907ce88cb4ef1c37a4a0dd26ec2a0bc7b93"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerState.kt",
+    "bytes": 8789,
+    "sha256": "8e18e3da775b8808152fd160e331e97e94e01101611391a815f65a9f6e317ebe"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerViewModel.kt",
+    "bytes": 83369,
+    "sha256": "3f77b21c0b9e750bc75a43466da84e2f6c4215883bc604455bc2ebeb2e3ecbde"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/AccountScreens.kt",
+    "bytes": 17487,
+    "sha256": "fd2a8b9383fbd0556b5189271d30f56dbd9e50a0487e05100dd7af74588967fd"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/NotificationScreens.kt",
+    "bytes": 14168,
+    "sha256": "c36e394d7fd9d2bcec05656a5c106ba08483a86313c25766106750d301a182f7"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/NotificationTimestamp.kt",
+    "bytes": 272,
+    "sha256": "436e621866adf2b1d6af22c91d3fc40b09f6050d6df88b349eb28e3e67d330e5"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/ProfileScreens.kt",
+    "bytes": 21987,
+    "sha256": "eb50f518a890f928215826a73bcdfef08f34debba699e569ab336fb0b2237c74"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/AllSpotScreen.kt",
+    "bytes": 5045,
+    "sha256": "661051bee879886e7aa5fd9c08da2f3fb25370412a56a6c56c2c7a7ab36f9d09"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/CatalogMetadataFormat.kt",
+    "bytes": 810,
+    "sha256": "6b6871aad12e66529da1e38d3e7a3e819871db23630441ded1d19f94df957959"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/CatalogScreens.kt",
+    "bytes": 5296,
+    "sha256": "1ab9a3cae32fd3955042c9e0aef0fde7f32b3c1f909a058d2ca402c07dd50cc3"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/PublicProfileScreens.kt",
+    "bytes": 11006,
+    "sha256": "5cc7884e5a579105fa9a0015b915f1d217eec0961eda5b69e92aeb4b68d09cc9"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/PublicScreens.kt",
+    "bytes": 19091,
+    "sha256": "edbb57dcff15efba73848037fa15079d11ae13dc2c0d9f28289189919b5b08ca"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/SpotContentState.kt",
+    "bytes": 1000,
+    "sha256": "023dacd5e5a88ec3f2440b41e3b2e957accc98ef17037549e94e11da8022d42e"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/catalog/SpotDetailScreen.kt",
+    "bytes": 26061,
+    "sha256": "4a56ab516f63d2b5f99d6ed5b59ad7303e24e244d1c9eaf419bf44331cc0de8a"
+  },
+  {
+    "path": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/CuratedCopyTest.kt",
+    "bytes": 2601,
+    "sha256": "c586bab3ab975b76aeb37075d1ec6192a3df1aa23d1c99465f5784b38410cd01"
+  },
+  {
+    "path": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/presentation/CatalogMetadataFormatTest.kt",
+    "bytes": 1157,
+    "sha256": "e27a56549b384e323db2570c620bb7f4f057bdd654d72e8095be3a307962a00c"
+  },
+  {
+    "path": "shared/features/traveler/src/iosMain/kotlin/com/floopel/feature/traveler/presentation/account/NotificationTimestamp.ios.kt",
+    "bytes": 680,
+    "sha256": "b18e93a8fa0bef992649ab2184b71d356becb85444be5d7e51377e9310406232"
+  },
+  {
+    "path": "settings.gradle.kts",
+    "bytes": 531,
+    "sha256": "109339392c8741e866d2d9185ee1c5b30636b7ec2b7bd39656f845919b93ddd8"
+  },
+  {
+    "path": "gradle/libs.versions.toml",
+    "bytes": 4049,
+    "sha256": "8ef51a7581d3704161d76c35441c7468a86e409ea3e6def5ea22994239c590b3"
+  },
+  {
+    "path": "shared/features/traveler/build.gradle.kts",
+    "bytes": 4221,
+    "sha256": "7ab0eaf2efcb2985841b0f0059e3090509063a6d947bcd6b183871b06e758112"
+  },
+  {
+    "path": "shared/core/designsystem/build.gradle.kts",
+    "bytes": 1055,
+    "sha256": "8a05a199d96e34d49131815ed3338c85d16ff4c3413ace9161da40690361854b"
+  },
+  {
+    "path": "apps/android/traveler/build.gradle.kts",
+    "bytes": 7032,
+    "sha256": "b20294aced9fb79076c77b4756dd1061a0e9dd7d7613fff560888e897a601777"
+  },
+  {
+    "path": "apps/android/partner/build.gradle.kts",
+    "bytes": 2814,
+    "sha256": "49a23622de8e51976f1be1e456e36aba7b2708a318ff6a167830f08121286625"
+  }
+]

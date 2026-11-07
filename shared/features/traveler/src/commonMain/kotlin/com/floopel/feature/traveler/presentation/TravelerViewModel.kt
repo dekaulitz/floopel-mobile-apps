@@ -7,6 +7,7 @@ import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
+import com.floopel.feature.traveler.presentation.catalog.SpotContentState
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -23,7 +24,7 @@ internal class TravelerViewModel(
 ) : ViewModel() {
     private val restored = runCatching { Json.decodeFromString<List<TravelerRoute>>(restoredStack) }
         .getOrNull()?.takeIf { routes -> routes.isNotEmpty() && routes.size <= 40 && routes.all {
-            it.id.length <= 200 && it.extra.length <= 200 && it.operationKey.length <= 128 && it.countryId.length <= 200
+            it.id.length <= 200 && it.extra.length <= 200 && it.operationKey.length <= 128 && it.countryId.length <= 200 && it.locationContextId.length <= 200
         } }?.map { route ->
             // A pre-key saved route must recover to the same identity on every restoration.
             if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank())
@@ -142,17 +143,19 @@ internal class TravelerViewModel(
         if (!state.value.identity.signedIn && !requested.destination.isAuthenticationScreen()) { requireLogin(); return }
         if (state.value.busy || state.value.route == requested ||
             requested.destination == Destination.TRIP_FORM && state.value.route.destination == Destination.TRIP_FORM && state.value.route.id == requested.id) return
-        val route = creationRoute(requested)
+        val route = creationRoute(if (requested.destination == Destination.CATALOG && requested.extra == CatalogKind.SPOT.name &&
+            requested.id.isNotBlank() && requested.locationContextId.isBlank()) requested.copy(locationContextId = requested.id) else requested)
         if (route.destination in rootTabs && route.id.isEmpty() && route.extra.isEmpty()) { tab(route.destination); return }
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(stack = it.stack + route, writeFailure = null, saved = false,
-            query = "", feedback = null, detail = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest, itinerary = ReadState(),
+            query = "", feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest, itinerary = ReadState(),
             distribution = ReadState(), shareLink = ReadState(), trip = ReadState(), plan = ReadState(),
-            openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), tripTimezone = null,
+            openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), tripTimezone = null,
             tripRecovery = ReadState(), media = ReadState(), mediaPartial = false,
             itineraryDraft = ReadState(), pendingStop = ReadState(), applicationDraft = ReadState(),
             pendingPublication = ReadState(), isSpotSaved = ReadState(), publicPlan = ReadState(), publicProfile = ReadState(),
             publicProgress = ReadState(), publicPlans = if (route.destination == Destination.PUBLIC_PROFILE) ReadState() else it.publicPlans,
+            publicBadges = ReadState(), publicPrivatePlans = ReadState(),
             group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(), groupInvitations = ReadState(),
             locationBrowser = ReadState(), locationContent = LocationContentState()) }
         refresh()
@@ -166,6 +169,7 @@ internal class TravelerViewModel(
         refresh()
     }
     fun back() {
+        if (state.value.spotContent.comments.open && !state.value.busy) { closeSpotComments(); return }
         if (state.value.busy) return
         val current = state.value
         if (current.route.destination == Destination.REGISTER && current.registrationStep > 1) {
@@ -192,12 +196,30 @@ internal class TravelerViewModel(
         when (route.destination) {
             Destination.HOME -> home()
             Destination.PROFILE -> fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
+            Destination.PROFILE_SETTINGS -> fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
+            Destination.PROFILE_EDIT -> {
+                fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
+                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities("id") }
+            }
+            Destination.PROFILE_INTERESTS -> fetch("interests", { it.interests }, { s, r -> s.copy(interests = r) }) { runtime.account.interests("id") }
+            Destination.PROFILE_SECURITY -> fetch("security", { it.security }, { s, r -> s.copy(security = r) }) { runtime.account.security() }
+            Destination.PROFILE_EMERGENCY -> {
+                fetch("emergency", { it.emergency }, { s, r -> s.copy(emergency = r) }) { runtime.account.emergencyContact() }
+                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities("id") }
+            }
+            Destination.PROFILE_PREFERENCES -> fetch("preferences", { it.preferences }, { s, r -> s.copy(preferences = r) }) { runtime.settings?.load() ?: CatalogResult.HttpError(503) }
             Destination.COMMUNITY -> when (state.value.communityTab) { 0 -> publicPlans(); 1 -> loadOpenTrips(); else -> catalog() }
             Destination.EXPLORER, Destination.ADD_SPOT -> catalog()
-            Destination.CATALOG -> if (route.extra == CatalogKind.LOCATION.name) loadLocationBrowser() else catalog()
+            Destination.CATALOG -> if (route.extra == CatalogKind.LOCATION.name) loadLocationBrowser() else {
+                catalog()
+                if (route.extra == CatalogKind.SPOT.name && route.locationContextId.isNotBlank())
+                    fetch("spot-scope", { it.spotScopeLocation }, { s, r -> s.copy(spotScopeLocation = r) }) {
+                        runtime.catalog.detail(CatalogEntry(route.locationContextId, route.locationContextId, "", null, CatalogKind.LOCATION, null), "id")
+                    }
+            }
             Destination.COUNTRIES -> fetch("locationCountries", { it.locationCountries }, { s, r -> s.copy(locationCountries = r) }) { locationCountries() }
             Destination.DETAIL -> {
-                fetch("detail", { it.detail }, { s, r -> s.copy(detail = r) }) {
+                fetch("detail", { it.detail }, { s, r -> s.copy(detail = r) }, ready = { if (it.kind == CatalogKind.SPOT) loadSpotContent(it) }) {
                 runtime.catalog.detail(CatalogEntry(route.id, route.slug.ifBlank { route.id }, "", null,
                     CatalogKind.entries.firstOrNull { it.name == route.extra } ?: CatalogKind.SPOT, null), "id") }
                 if (route.extra == CatalogKind.SPOT.name && state.value.identity.signedIn)
@@ -275,14 +297,28 @@ internal class TravelerViewModel(
             Destination.APPLICATION -> fetch("application", { it.application }, { s, r -> s.copy(application = r) }) { runtime.trips.tripApplication(route.id) }
             Destination.NOTICE -> fetch("notice", { it.notice }, { s, r -> s.copy(notice = r) }) { runtime.trips.ownedTripNotice(route.id) }
             Destination.NOTIFICATIONS -> {
-                fetch("notifications", { it.notifications }, { s, r -> s.copy(notifications = r) }) { runtime.notifications.notifications(1, state.value.notificationClass, "id") }
+                loadNotifications()
                 fetch("unread", { it.unread }, { s, r -> s.copy(unread = r) }) { runtime.notifications.unreadNotifications() }
+            }
+            Destination.NOTIFICATION_OPEN -> fetch("notification-open", { it.notification }, { s, r -> s.copy(notification = r) }, ready = ready@ { notice ->
+                if (notice.id != route.id) {
+                    mutable.update { it.copy(notification = ReadState(failure = ReadFailure(502))) }
+                    return@ready
+                }
+                val target = notificationRoute(notice.targetUrl)
+                if (target != null) replace(target.copy(inboxId = route.id))
+                // A generic inbox preview is not proof that an authorized destination rendered.
+                else if (notice.targetUrl == null) replace(TravelerRoute(Destination.NOTIFICATION_DETAIL, route.id))
+                else mutable.update { it.copy(notification = ReadState(failure = ReadFailure(404, "TARGET_UNAVAILABLE"))) }
+            }) { runtime.notifications.notification(route.id, "id") }
+            Destination.NOTIFICATION_DETAIL -> fetch("notification-detail", { it.notification }, { s, r -> s.copy(notification = r) }) {
+                runtime.notifications.notification(route.id, "id")
             }
             Destination.PUBLIC_PLAN -> fetch("publicPlan", { it.publicPlan }, { s, r -> s.copy(publicPlan = r) }) { runtime.publicContent.itinerary(route.id) }
             Destination.PUBLIC_PROFILE -> {
-                fetch("publicProfile", { it.publicProfile }, { s, r -> s.copy(publicProfile = r) }) { runtime.publicContent.profile(route.id) }
+                fetch("publicProfile", { it.publicProfile }, { s, r -> s.copy(publicProfile = r) }, settled = { loadPublicProfileContent() }) { runtime.publicContent.profile(route.id) }
+                fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }, settled = { loadPublicProfileContent() }) { runtime.account.profile() }
                 fetch("publicProgress", { it.publicProgress }, { s, r -> s.copy(publicProgress = r) }) { runtime.publicContent.progress(route.id) }
-                fetch("publicPlans", { it.publicPlans }, { s, r -> s.copy(publicPlans = r) }) { runtime.publicContent.profileItineraries(route.id) }
             }
             Destination.SAVED_SPOTS -> loadSaved()
             Destination.QUEST_GROUPS -> loadGroups()
@@ -376,6 +412,95 @@ internal class TravelerViewModel(
                 is CatalogResult.Ready -> CatalogResult.Ready(CatalogPage(r.value, 1, 1))
                 else -> r.failure()
             } else runtime.catalog.browse(kind, "id", page, storyType = if (kind == CatalogKind.STORY && locationId != null) StoryType.ARTICLE else null, locationId = locationId)
+        }
+    }
+
+    fun spotScope(scoped: Boolean) {
+        val current = state.value
+        if (current.busy || current.route.destination != Destination.CATALOG || current.route.extra != CatalogKind.SPOT.name ||
+            scoped && current.route.locationContextId.isBlank()) return
+        val id = if (scoped) current.route.locationContextId else ""
+        if (current.route.id == id) return
+        reads.values.forEach(Job::cancel); reads.clear()
+        mutable.update { it.copy(stack = it.stack.dropLast(1) + it.route.copy(id = id), catalog = ReadState()) }
+        refresh()
+    }
+
+    fun publicProfileTab(selection: String) {
+        val s = state.value
+        if (s.busy || s.route.destination != Destination.PUBLIC_PROFILE || selection !in setOf("", "private", "saved", "badges") ||
+            selection in setOf("private", "saved") && !s.ownsPublicProfile || s.route.extra == selection) return
+        reads.values.forEach(Job::cancel); reads.clear()
+        mutable.update { it.copy(stack = it.stack.dropLast(1) + it.route.copy(extra = selection),
+            publicPlans = ReadState(), publicPrivatePlans = ReadState(), publicBadges = ReadState(), savedSpots = ReadState()) }
+        refresh()
+    }
+
+    fun removeProfileSavedSpot(id: String) {
+        if (!state.value.ownsPublicProfile || state.value.route.extra != "saved") return
+        write({ runtime.savedSpots.setSaved(id, false) }) { removed ->
+            if (!removed) mutable.update { s -> s.copy(savedSpots = s.savedSpots.value?.let { page ->
+                ReadState(page.copy(spots = page.spots.filterNot { it.id == id })) } ?: ReadState()) }
+        }
+    }
+
+    fun saveProfile(changed: PersonalProfile) {
+        val previous = state.value.profile.value ?: return
+        if (state.value.route.destination != Destination.PROFILE_EDIT) return
+        write({ runtime.account.updateProfile(previous, changed) }) { confirmed ->
+            mutable.update { s -> s.copy(profile = ReadState(confirmed), stack = s.stack.map { route ->
+                if (route.destination == Destination.PUBLIC_PROFILE && route.id == previous.username) route.copy(id = confirmed.username) else route
+            }) }
+            back()
+        }
+    }
+    fun saveProfileInterests(selected: Set<String>) {
+        val known = state.value.interests.value ?: return
+        if (state.value.route.destination != Destination.PROFILE_INTERESTS || selected.size < 3 || selected.any { id -> known.options.none { it.id == id } }) return
+        write({ runtime.account.saveInterests(selected) }) { confirmed -> mutable.update { it.copy(interests = ReadState(known.copy(selected = confirmed)), saved = true) } }
+    }
+    fun saveEmergency(contact: EmergencyContact) {
+        if (state.value.route.destination != Destination.PROFILE_EMERGENCY) return
+        write({ runtime.account.saveEmergencyContact(contact) }) { confirmed -> mutable.update { it.copy(emergency = ReadState(confirmed), saved = true) } }
+    }
+    fun saveProfilePreferences(changed: TravelerSettings) {
+        val repository = runtime.settings ?: return
+        if (state.value.route.destination != Destination.PROFILE_PREFERENCES) return
+        val previous = state.value.preferences.value ?: return
+        val known = changed.copy(tripUpdates = changed.tripUpdates.takeIf { previous.tripUpdates != null }, marketing = changed.marketing.takeIf { previous.marketing != null },
+            product = changed.product.takeIf { previous.product != null }, profileDiscoverable = changed.profileDiscoverable.takeIf { previous.profileDiscoverable != null })
+        write({ repository.save(known) }) { confirmed -> mutable.update { it.copy(preferences = ReadState(confirmed), saved = true) } }
+    }
+    fun changeProfilePassword(current: String, replacement: String) {
+        if (state.value.route.destination != Destination.PROFILE_SECURITY || state.value.security.value?.hasPassword != true || !validTravelerPassword(replacement)) return
+        write({ runtime.account.changePassword(current, replacement) }) { }
+    }
+    fun setupProfilePassword() {
+        if (state.value.route.destination != Destination.PROFILE_SECURITY || state.value.security.value?.hasPassword != false || state.value.passwordSetupRetryAt > now()) return
+        write({ runtime.account.requestPasswordSetup() }) { seconds -> mutable.update { it.copy(saved = true, passwordSetupRetryAt = now() + seconds * 1000L) } }
+    }
+
+    private fun loadPublicProfileContent(page: Int = 1) {
+        val s = state.value
+        if (s.route.destination != Destination.PUBLIC_PROFILE || s.publicProfile.value?.username != s.route.id ||
+            s.publicProfile.loading || s.profile.loading) return
+        val username = s.route.id
+        when {
+            s.route.extra == "badges" -> fetch("public-profile-content", { it.publicBadges }, { old, r ->
+                old.copy(publicBadges = if (page > 1 && r.value != null) r.copy(value = r.value.copy(
+                    items = (old.publicBadges.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r)
+            }) { runtime.publicContent.badges(username, "id", page) }
+            s.route.extra == "saved" && s.ownsPublicProfile -> fetch("public-profile-content", { it.savedSpots }, { old, r ->
+                old.copy(savedSpots = if (page > 1 && r.value != null) r.copy(value = r.value.copy(
+                    spots = (old.savedSpots.value?.spots.orEmpty() + r.value.spots).distinctBy { it.id })) else r)
+            }) { runtime.savedSpots.savedSpots(page) }
+            s.route.extra == "private" && s.ownsPublicProfile -> fetch("public-profile-content", { it.publicPrivatePlans }, { old, r -> old.copy(publicPrivatePlans = r) }) {
+                when (val result = runtime.itineraries.mine()) {
+                    is CatalogResult.Ready -> CatalogResult.Ready(result.value.filter { it.isOwner && it.visibility in setOf("private", "unlisted") })
+                    else -> result.failure()
+                }
+            }
+            else -> fetch("public-profile-content", { it.publicPlans }, { old, r -> old.copy(publicPlans = r) }) { runtime.publicContent.profileItineraries(username) }
         }
     }
 
@@ -484,6 +609,105 @@ internal class TravelerViewModel(
             runtime.catalog.browse(CatalogKind.STORY, "id", 1, storyType = StoryType.ARTICLE, locationId = id)
         }
     }
+
+    private fun loadSpotContent(entry: CatalogEntry) {
+        if (state.value.spotContent.id != entry.id) mutable.update { it.copy(spotContent = SpotContentState(entry.id)) }
+        entry.locationId?.let { id -> fetch("spot-location", { it.spotContent.location }, { s, r -> s.copy(spotContent = s.spotContent.copy(location = r)) }) {
+            runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), "id")
+        } }
+        fetch("spot-quests", { it.spotContent.quests }, { s, r -> s.copy(spotContent = s.spotContent.copy(quests = r)) }) { runtime.catalog.spotQuests(entry.id, "id", 1) }
+        fetch("spot-trips", { it.spotContent.trips }, { s, r -> s.copy(spotContent = s.spotContent.copy(trips = r)) }) { runtime.trips.openTrips(OpenTripQuery(spotId = entry.id)) }
+        fetch("spot-articles", { it.spotContent.articles }, { s, r -> s.copy(spotContent = s.spotContent.copy(articles = r)) }) { runtime.catalog.spotArticles(entry.id, "id", 1) }
+    }
+
+    fun moreSpotTrips() {
+        val s = state.value; val cursor = s.spotContent.trips.value?.nextCursor ?: return
+        if (s.route.destination != Destination.DETAIL || s.route.id != s.spotContent.id || s.spotContent.trips.loading) return
+        fetch("spot-trips", { it.spotContent.trips }, { old, r -> old.copy(spotContent = old.spotContent.copy(trips = if (r.value != null)
+            r.copy(value = r.value.copy(items = (old.spotContent.trips.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r)) }) {
+            runtime.trips.openTrips(OpenTripQuery(spotId = s.route.id, cursor = cursor))
+        }
+    }
+
+    fun openSpotComments() {
+        if (runtime.comments == null) return
+        val s = state.value
+        if (s.route.destination != Destination.DETAIL || s.route.extra != CatalogKind.SPOT.name || s.spotContent.id != s.route.id) return
+        mutable.update { it.copy(spotContent = it.spotContent.copy(comments = it.spotContent.comments.copy(open = true))) }
+        loadSpotComments()
+    }
+    fun closeSpotComments() {
+        if (!state.value.busy) mutable.update { it.copy(spotContent = it.spotContent.copy(comments = it.spotContent.comments.copy(open = false))) }
+    }
+    fun spotCommentDraft(value: String) { mutable.update { it.copy(spotContent = it.spotContent.copy(comments = it.spotContent.comments.copy(draft = value))) } }
+    fun replyToSpotComment(comment: TravelerComment?) { mutable.update { it.copy(spotContent = it.spotContent.copy(comments = it.spotContent.comments.copy(replyTo = comment))) } }
+    fun loadSpotComments(more: Boolean = false) {
+        val repository = runtime.comments ?: return
+        val s = state.value
+        if (s.route.destination != Destination.DETAIL || s.route.id != s.spotContent.id || !s.spotContent.comments.open) return
+        val cursor = if (more) s.spotContent.comments.page.value?.nextCursor ?: return else null
+        if (more && s.spotContent.comments.page.loading) return
+        fetch("spot-comments", { it.spotContent.comments.page }, { old, r -> old.copy(spotContent = old.spotContent.copy(comments = old.spotContent.comments.copy(
+            page = if (cursor != null && r.value != null) r.copy(value = r.value.copy(items = (old.spotContent.comments.page.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r))) }) {
+            repository.page(CommentTarget.SPOT, s.route.id, cursor)
+        }
+    }
+    fun sendSpotComment() {
+        val repository = runtime.comments ?: return
+        val s = state.value; val comments = s.spotContent.comments
+        val parent = comments.replyTo?.let { it.parentId ?: it.id }; val body = comments.draft.trim()
+        if (s.route.destination != Destination.DETAIL || s.route.id != s.spotContent.id || !comments.open ||
+            visibleCharacterCount(body) !in 1..100 || comments.uncertainDraft == (parent to body)) return
+        write({ (try { repository.create(CommentTarget.SPOT, s.route.id, body, parent) }
+            catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { CatalogResult.NetworkError }).also { result ->
+            if (result !is CatalogResult.Ready) mutable.update { current ->
+                if (current.spotContent.id == s.route.id && runtime.identity.generation == s.identity.generation)
+                    current.copy(spotContent = current.spotContent.copy(comments = current.spotContent.comments.copy(writeFailure = ReadState<Unit>().result(result.failure(), now()).failure))) else current
+            }
+            if (result == CatalogResult.NetworkError || result == CatalogResult.InvalidResponse || result is CatalogResult.Maintenance ||
+                result is CatalogResult.HttpError && result.status >= 500) mutable.update { current ->
+                if (current.spotContent.id == s.route.id && runtime.identity.generation == s.identity.generation)
+                    current.copy(spotContent = current.spotContent.copy(comments = current.spotContent.comments.copy(uncertainDraft = parent to body))) else current
+            }
+        } }) {
+            mutable.update { it.copy(spotContent = it.spotContent.copy(comments = it.spotContent.comments.copy(draft = "", replyTo = null, writeFailure = null))) }
+            loadSpotComments()
+            fetch("spot-comment-total", { it.detail }, { old, r -> old.copy(detail = r) }) {
+                when (val total = repository.total(CommentTarget.SPOT, s.route.id)) {
+                    is CatalogResult.Ready -> CatalogResult.Ready((state.value.detail.value ?: return@fetch CatalogResult.InvalidResponse).copy(commentCount = total.value))
+                    else -> total.failure()
+                }
+            }
+        }
+    }
+    fun likeSpotComment(comment: TravelerComment) {
+        val repository = runtime.comments ?: return
+        if (!state.value.spotContent.comments.open) return
+        val key = runtime.newOperationKey()
+        write({ repository.like(comment.id, !comment.liked, key) }) { confirmed ->
+            if (confirmed.commentId != comment.id) { mutable.update { it.copy(writeFailure = ReadFailure(502)) }; return@write }
+            fun TravelerComment.updated(): TravelerComment = copy(liked = if (id == confirmed.commentId) confirmed.liked else liked,
+                likeCount = if (id == confirmed.commentId) confirmed.count else likeCount,
+                replies = replies.map { if (it.id == confirmed.commentId) it.copy(liked = confirmed.liked, likeCount = confirmed.count) else it })
+            fun ReadState<CommentPage>.updated(): ReadState<CommentPage> = copy(value = value?.let { it.copy(items = it.items.map { row -> row.updated() }) })
+            mutable.update { s -> s.copy(spotContent = s.spotContent.copy(comments = s.spotContent.comments.copy(
+                page = s.spotContent.comments.page.updated(), replyPages = s.spotContent.comments.replyPages.mapValues { it.value.updated() }))) }
+        }
+    }
+
+    fun spotCommentReplies(parentId: String, more: Boolean = false) {
+        val repository = runtime.comments ?: return
+        val s = state.value
+        if (!s.spotContent.comments.open || s.route.id != s.spotContent.id) return
+        val previous = s.spotContent.comments.replyPages[parentId]
+        if (previous?.loading == true) return
+        val cursor = if (more) previous?.value?.nextCursor ?: return else null
+        fetch("spot-replies-$parentId", { it.spotContent.comments.replyPages[parentId] ?: ReadState() }, { old, r ->
+            val combined = if (cursor != null && r.value != null) r.copy(value = r.value.copy(items = (previous?.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r
+            old.copy(spotContent = old.spotContent.copy(comments = old.spotContent.comments.copy(replyPages = old.spotContent.comments.replyPages + (parentId to combined))))
+        }) { repository.page(CommentTarget.SPOT, s.route.id, cursor, parentId) }
+    }
     fun communityTab(index: Int) {
         mutable.update { it.copy(communityTab = index.coerceIn(0, 2), query = "", publicPlans = ReadState(), publicPage = 1, publicCanRequestNext = true) }
         refresh()
@@ -579,9 +803,12 @@ internal class TravelerViewModel(
                     if (s.route.id.isBlank()) runtime.catalog.activeQuests("id", previous.page + 1)
                     else runtime.catalog.untakenLocationQuests(s.route.id, "id", previous.page + 1)
                 } }
-            Destination.NOTIFICATIONS -> s.notifications.value?.takeIf { !s.notifications.loading && it.page < it.totalPages }?.let { previous ->
-                fetch("notifications", { it.notifications }, { old, r -> old.copy(notifications = if (r.value != null)
-                    r.copy(value = r.value.copy(items = (previous.items + r.value.items).distinctBy { it.id })) else r) }) { runtime.notifications.notifications(previous.page + 1, state.value.notificationClass, "id") } }
+            Destination.NOTIFICATIONS -> s.notifications.value?.takeIf { !s.notifications.loading && it.page < it.totalPages }?.let { loadNotifications(it.page + 1) }
+            Destination.PUBLIC_PROFILE -> when {
+                s.route.extra == "badges" -> s.publicBadges.value?.takeIf { !s.publicBadges.loading && it.page < it.totalPages }?.let { loadPublicProfileContent(it.page + 1) }
+                s.route.extra == "saved" && s.ownsPublicProfile -> s.savedSpots.value?.takeIf { !s.savedSpots.loading && it.page < it.totalPages }?.let { loadPublicProfileContent(it.page + 1) }
+                else -> Unit
+            }
             else -> Unit
         }
     }
@@ -778,21 +1005,31 @@ internal class TravelerViewModel(
     fun invitationDecision(id: String, decision: InvitationDecision) = write({ runtime.trips.decide(id, decision, runtime.newOperationKey()) }) { refresh() }
     fun removeMember(id: String) = write({ runtime.trips.removeMember(state.value.route.id, id, runtime.newOperationKey()) }) { refresh() }
 
-    fun openNotification(id: String) {
-        viewModelScope.launch {
-            val result = withContext(worker) { runtime.notifications.notification(id, "id") }
-            if (result is CatalogResult.Ready) {
-                val target = notificationRoute(result.value.targetUrl)
-                if (target != null) open(target.copy(inboxId = id))
-                else mutable.update { it.copy(writeFailure = ReadFailure(404, "TARGET_UNAVAILABLE")) }
-            } else mutable.update { it.copy(writeFailure = ReadState<Unit>().result(result.failure(), now()).failure) }
+    private fun loadNotifications(page: Int = 1) {
+        val filter = state.value.notificationClass
+        val previous = state.value.notifications.value
+        mutable.update { it.copy(notificationAppending = page > 1) }
+        fetch("notifications", { it.notifications }, { s, r -> s.copy(notifications = if (page > 1 && r.value != null)
+            r.copy(value = r.value.copy(items = (previous?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r) }) {
+            runtime.notifications.notifications(page, filter, "id")
         }
+    }
+    fun openNotification(id: String) = open(TravelerRoute(Destination.NOTIFICATION_OPEN, id))
+    fun returnToNotifications() {
+        if (state.value.busy) return
+        reads.values.forEach(Job::cancel); reads.clear()
+        mutable.update { s ->
+            val index = s.stack.indexOfLast { it.destination == Destination.NOTIFICATIONS }
+            s.copy(stack = if (index >= 0) s.stack.take(index + 1) else s.stack.take(1) + TravelerRoute(Destination.NOTIFICATIONS),
+                writeFailure = null, notification = ReadState())
+        }
+        refresh()
     }
     /** Called after the authorized target has rendered a frame, never by list fetch or target GET alone. */
     fun targetVisible(route: TravelerRoute) {
         val s = state.value
         val inbox = route.inboxId ?: return
-        if (route != s.route || !s.identity.signedIn) return
+        if (route != s.route || !s.identity.signedIn || s.identity.generation != runtime.identity.generation) return
         val visible = when (route.destination) {
             Destination.TRIP -> s.trip.value?.id == route.id && s.trip.failure == null && !s.trip.loading
             Destination.APPLICATION -> s.application.value?.id == route.id && s.application.failure == null && !s.application.loading
@@ -839,7 +1076,7 @@ internal class TravelerViewModel(
         refresh()
     }
     private fun <T> fetch(key: String, current: (TravelerState) -> ReadState<T>,
-        update: (TravelerState, ReadState<T>) -> TravelerState, ready: (T) -> Unit = {}, call: suspend () -> CatalogResult<T>) {
+        update: (TravelerState, ReadState<T>) -> TravelerState, ready: (T) -> Unit = {}, settled: () -> Unit = {}, call: suspend () -> CatalogResult<T>) {
         val initial = current(state.value)
         if ((initial.failure?.retryAtMillis ?: 0) > now()) return
         reads.remove(key)?.cancel()
@@ -853,6 +1090,7 @@ internal class TravelerViewModel(
             if (state.value.route == route && runtime.identity.generation == generation) {
                 mutable.update { update(it, current(it).result(result, now())) }
                 if (result is CatalogResult.Ready) ready(result.value)
+                if (state.value.route == route && runtime.identity.generation == generation) settled()
             }
         }
     }
