@@ -155,7 +155,7 @@ private fun HomeRail(title: String, read: ReadState<List<CatalogEntry>>, model: 
                             image = { Media(entry.coverUrl, it) }, onClick = { model.openEntry(entry) }, modifier = Modifier.testTag("home-location-${entry.id}"))
                         CatalogKind.COLLECTION -> FloopelDiscoveryCard(entry.title,
                             image = { Media(entry.coverUrl, it) }, list = false,
-                            onClick = { model.openEntry(entry) }, modifier = Modifier.width(260.dp))
+                            onClick = { model.openEntry(entry) }, modifier = Modifier.width(260.dp).testTag("home-collection-${entry.id}"))
                         else -> CatalogCard(entry, { model.openEntry(entry) }, Modifier.width(304.dp).testTag("home-spot-${entry.id}"), home = true)
                     }
                 }

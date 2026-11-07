@@ -19,6 +19,11 @@ import com.floopel.feature.traveler.resources.*
 
 @Composable
 internal fun CatalogScreen(state: TravelerState, model: TravelerViewModel) {
+    if (state.route.destination == Destination.CATALOG && state.route.extra == CatalogKind.COLLECTION.name &&
+        state.query.isBlank() && state.catalog.value?.items?.isEmpty() == true && !state.catalog.loading && state.catalog.failure == null) {
+        EmptyCollection { model.open(TravelerRoute(Destination.CATALOG, extra = CatalogKind.SPOT.name)) }
+        return
+    }
     if (state.route.destination == Destination.CATALOG && state.route.extra == CatalogKind.SPOT.name) {
         AllSpotScreen(state, model)
         return

@@ -367,6 +367,17 @@
     <string name="location_detail">Detail lokasi</string>
     <string name="story_detail">Cerita perjalanan</string>
     <string name="collection_detail">Collection</string>
+    <string name="collection_type">COLLECTION</string>
+    <string name="collection_error_header">Konten belum termuat</string>
+    <string name="collection_unavailable_header">Konten tidak tersedia</string>
+    <string name="collection_empty_title">Belum ada Collection tersedia</string>
+    <string name="collection_empty_body">Coba jelajahi Spot atau kembali lagi nanti.</string>
+    <string name="collection_explore_spots">Jelajahi Spot</string>
+    <string name="collection_retry_title">Coba muat kembali</string>
+    <string name="collection_retry_body">Periksa koneksi, lalu coba muat lagi.</string>
+    <string name="collection_unavailable_title">Collection belum bisa dibuka</string>
+    <string name="collection_unavailable_body">Collection ini mungkin sudah tidak tersedia untuk publik.</string>
+    <string name="collection_back_community">Kembali ke Community</string>
     <string name="community_body">Perjalanan traveler dan kurasi resmi Floopel.</string>
     <string name="community_inspiration">Inspirasi perjalanan</string>
     <string name="view_public_itinerary">Lihat itinerary</string>

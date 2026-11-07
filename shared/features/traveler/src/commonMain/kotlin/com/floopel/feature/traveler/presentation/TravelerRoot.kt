@@ -114,6 +114,9 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
         route.destination in setOf(Destination.CATALOG, Destination.DETAIL) && route.extra == "LOCATION"
     val spotArchive = route.destination == Destination.CATALOG && route.extra == CatalogKind.SPOT.name
     val spotDetail = route.destination == Destination.DETAIL && route.extra == CatalogKind.SPOT.name
+    val collectionFailure = state.detail.failure.takeIf {
+        route.destination == Destination.DETAIL && route.extra == CatalogKind.COLLECTION.name && state.detail.value == null
+    }
     val targetReady = when (route.destination) {
         Destination.TRIP -> state.trip.value?.id == route.id && !state.trip.loading && state.trip.failure == null
         Destination.APPLICATION -> state.application.value?.id == route.id && !state.application.loading && state.application.failure == null
@@ -131,8 +134,11 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.LEGAL, Destination.PASSPORT, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
                 Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
                 route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
-            FloopelTopBar(s(if (locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank())
-                    Res.string.location_search_title else route.title()), Modifier.testTag("traveler-top-bar"),
+            FloopelTopBar(s(when {
+                    collectionFailure != null -> if (collectionFailure.status in setOf(403, 404)) Res.string.collection_unavailable_header else Res.string.collection_error_header
+                    locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank() -> Res.string.location_search_title
+                    else -> route.title()
+                }), Modifier.testTag("traveler-top-bar"),
                 titleStyle = if (locationScreen) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
                 minimumHeight = if (locationScreen) 48.dp else 56.dp,
                 contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
@@ -164,6 +170,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.DETAIL -> when (route.extra) {
                         "LOCATION" -> LocationDetail(state, model)
                         "SPOT" -> SpotDetailScreen(state, model, share, runtime.comments != null)
+                        "COLLECTION" -> CollectionScreen(state, model)
                         else -> CatalogDetail(state, model)
                     }
                     Destination.OPEN_TRIPS -> OpenTripCatalog(state, model)
@@ -248,7 +255,7 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.EXPLORER -> Res.string.explorer
     Destination.CATALOG -> when (extra) {
         "LOCATION" -> Res.string.location_all
-        "COLLECTION" -> Res.string.collections
+        "COLLECTION" -> Res.string.collection_detail
         "STORY" -> Res.string.stories
         else -> Res.string.explorer
     }

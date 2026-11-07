@@ -1,0 +1,105 @@
+{
+  "scope": "Collection reader and empty archive; Home article regression",
+  "base_commit": "5ed9d7c6a4f16e901ec1838af85da7ec737085f3",
+  "native": {
+    "status": "PASS",
+    "tests": 22,
+    "collection": 10,
+    "home": 12,
+    "runner_seconds": 27.205,
+    "local_source_apk_freeze": "PASS"
+  },
+  "host": {
+    "tests": 477,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "traveler": {
+      "Error": 0,
+      "Warning": 45
+    },
+    "partner": {
+      "Error": 0,
+      "Warning": 2
+    }
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "package": "com.floopel.traveler.dev",
+    "test_viewport_dp": "400x900",
+    "test_pixels": "1080x2430",
+    "test_density": 432,
+    "font_scale": [
+      1,
+      1.3,
+      2
+    ],
+    "locales": [
+      "id",
+      "en"
+    ],
+    "live_viewport": "wm size/density reset; font 1.0"
+  },
+  "assets": {
+    "collection_search.svg": {
+      "figma_node": "276:8693 / 276:8378",
+      "sha256": "668996b66061430a405fd8dad124c7f4e2813b3945ed04df9dd7551d381b6128",
+      "intrinsic": "184 x 122.667",
+      "rendered_dp": "184 x 122.667",
+      "ready_asserted": true
+    },
+    "collection_unavailable.svg": {
+      "figma_node": "276:8483",
+      "sha256": "f5a216cdfd196c7870efd4e5f976a024a433edecb1cda0ea8ab496429819d527",
+      "intrinsic": "184 x 122.667",
+      "rendered_dp": "184 x 122.667",
+      "ready_asserted": true
+    }
+  },
+  "live_smoke": {
+    "status": "PASS",
+    "origin": "https://unawake-moonlit-reckless.ngrok-free.dev",
+    "steps": [
+      "session restored to Home",
+      "global Home article slider renders real API data",
+      "Collection archive opens",
+      "Collection reader shows its cover/title/intro/member data",
+      "member opens Spot detail",
+      "Back returns to same Collection"
+    ],
+    "delay_per_flow_seconds": 5,
+    "writes": "No data reset or mutation; existing local test account/session used",
+    "left_open": "Collection reader on emulator 5580"
+  },
+  "limits": {
+    "ios": "NOT_RUN: Windows; Mac/Xcode required",
+    "talkback": "NOT_RUN",
+    "archive_filled_layout": "Pre-existing generic catalog retained; supplied frames describe reader and empty Collection state",
+    "scope": "No map/provider, backend contract or production fixture changes"
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "e13600160c6767d3d5408e170c5d4fe7f512514c01f611470f9990d5d23a2a89",
+    "both-build.log": "0e77395d3854f54e844b874f23b2a2d76d952c543ebd0a78be5b2a23886479ce",
+    "collection-empty.png": "ee339aeb9001b110b58d765751e9920ddaceb39517b18e6d84522683352706cf",
+    "collection-en-font200.png": "24ed3a06981088a78484d878c98af67127c133e7ca88588727c64a8f115f765e",
+    "collection-error.png": "59435b68a50f3e234ca1a24a3797465087541014cf1e3d6a54c144d9a57fd827",
+    "collection-filled.png": "426491742b2ce80bd0d64ad198167795cb2beaf1fe521afea466d430a62806e9",
+    "collection-font130.png": "53ea32fc0d4d741db333b909dfe7411637fc56ac9d9a8867aa32540ffec62b10",
+    "collection-loading.png": "f587904e980264ee2926393f055468ae360974e4db2cd32e52b632d875bb1dec",
+    "collection-multiple-locations.png": "e247ed3558e6bed4a7b7a54f235ff161efb44c9ba2687c50b93acb546a2c8e0a",
+    "collection-no-members.png": "07e79a4e000fb9060d816cf7581da7aa6bf422662ed015f2a1658ae7c91d32e0",
+    "collection-not-found.png": "74307829e79fc752e4e818f8472a9f2af39194d9fdbb6529e456035f8cb51f29",
+    "collection-unknown-metrics.png": "426491742b2ce80bd0d64ad198167795cb2beaf1fe521afea466d430a62806e9",
+    "final-test-build.log": "7fc40dc7bfd09ad5a86ca11e5887656cdd408825245ae017b3f8b70b24a5dc34",
+    "live-collection-api.png": "a3910f0e4c0f5a0f5a00a76390ec7cfa4b60776fbaa4dbcb3526027f8a5fbcb9",
+    "live-home-articles-api.png": "36e6b95257ebe2dafcaff979558e880fde0bcd38e66b9a99a3cebf3fc36154b4",
+    "local-source-freeze.json": "cbd1620913a8f12ff332588825e5d787f1bbfd949fb0813be097fce4e62c7296",
+    "native.log": "dcb8e6bd5d0157564979891c8e496245cfecafd07f7e4e30d738fa319ba8b6b8"
+  }
+}

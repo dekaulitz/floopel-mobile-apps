@@ -48,7 +48,7 @@
     "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
   },
   "artifacts": {
-    ".gitattributes": "b73afb593a47ab22cedd91b5170f27a8d715a46ccfc77c6625f4398a7320f5bf",
+    ".gitattributes": "e13600160c6767d3d5408e170c5d4fe7f512514c01f611470f9990d5d23a2a89",
     "core-both-build.log": "f489e2263b178c99118f196d88540ff2ff4825f3ddfa6277c4bc9253e233da4e",
     "home-articles-empty.png": "ed784068aa993fcd7ddd4faca400d8636e5981603fb16b0830d8360378cbbeba",
     "home-articles-en-profile-failed.png": "0a82c7c9deae6f063e6942c1b0fc6a5a44f437db451cdaab116c9f67673f5152",
@@ -59,7 +59,7 @@
     "home-articles-loading.png": "e8f3e1981c904bbd2d88f0e2c36132ac30da547c317b08da7c158df7d9351808",
     "home-articles-one.png": "6727aa2781ae4ec8b5aa3770f44dbe21a0be270165ce9315483a5be8e6efea04",
     "home-articles-two.png": "4f7d016edf69f17074e4d2edc7826703e138ea052089298442c0d60792cbe75c",
-    "local-source-freeze.json": "2ce713115f997e7675697b4d69cd06fc4067b14644b92d2cce1b275bc9fc9cb2",
+    "local-source-freeze.json": "fb92a6cbb751e7b8c4c66788957d2095d8498169c41fbf38d7a3f18a6e07e971",
     "native.log": "76b10c404d28229fd92ee6c10691697e81404538be238213f9fda3c28fb5b441",
     "traveler-final-build.log": "935e6bf6ba3798b96980775aec5023f2a4782ca64961950c08633f5f7ebd943e"
   }

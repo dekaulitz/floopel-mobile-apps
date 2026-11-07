@@ -25,7 +25,7 @@ fun FloopelDiscoveryCard(title: String, image: @Composable (Modifier) -> Unit, l
     listGap: Dp = FloopelSpace.medium, titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
     categoryStyle: TextStyle = MaterialTheme.typography.bodySmall,
     referenceStyle: TextStyle = MaterialTheme.typography.labelSmall, referenceDescription: String? = null,
-    shape: Shape = FloopelShape.card,
+    shape: Shape = FloopelShape.card, listVerticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     supportingContent: @Composable () -> Unit = {}) {
     @Composable fun Labels(modifier: Modifier = Modifier) {
         Column(modifier, verticalArrangement = Arrangement.spacedBy(FloopelSpace.tiny)) {
@@ -39,7 +39,7 @@ fun FloopelDiscoveryCard(title: String, image: @Composable (Modifier) -> Unit, l
     }
     Surface(onClick = onClick, modifier = modifier, shape = shape,
         color = if (framed) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface) {
-        if (list) Row(Modifier.padding(listPadding), verticalAlignment = Alignment.CenterVertically,
+        if (list) Row(Modifier.padding(listPadding), verticalAlignment = listVerticalAlignment,
             horizontalArrangement = Arrangement.spacedBy(listGap)) {
             image(Modifier.size(listImageSize).clip(listImageShape))
             Labels(Modifier.weight(1f))

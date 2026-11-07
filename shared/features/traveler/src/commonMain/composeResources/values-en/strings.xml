@@ -367,6 +367,17 @@
     <string name="location_detail">Location details</string>
     <string name="story_detail">Travel story</string>
     <string name="collection_detail">Collection</string>
+    <string name="collection_type">COLLECTION</string>
+    <string name="collection_error_header">Content has not loaded</string>
+    <string name="collection_unavailable_header">Content unavailable</string>
+    <string name="collection_empty_title">No Collections available yet</string>
+    <string name="collection_empty_body">Explore Spots or come back later.</string>
+    <string name="collection_explore_spots">Explore Spots</string>
+    <string name="collection_retry_title">Try loading again</string>
+    <string name="collection_retry_body">Check your connection, then try again.</string>
+    <string name="collection_unavailable_title">This Collection cannot be opened yet</string>
+    <string name="collection_unavailable_body">This Collection may no longer be publicly available.</string>
+    <string name="collection_back_community">Back to Community</string>
     <string name="community_body">Traveler journeys and official Floopel picks.</string>
     <string name="community_inspiration">Travel inspiration</string>
     <string name="view_public_itinerary">View itinerary</string>
