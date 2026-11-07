@@ -1,0 +1,33 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="280" height="236" viewBox="0 0 280 236" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="SVG scene / Penjelajah di alam" clip-path="url(#clip0_0_4)">
+<path id="Vector" d="M140 220C210.14 220 267 172.99 267 115C267 57.0101 210.14 10 140 10C69.8598 10 13 57.0101 13 115C13 172.99 69.8598 220 140 220Z" fill="#EEF0FF"/>
+<path id="Vector_2" d="M216 60C225.941 60 234 51.9411 234 42C234 32.0589 225.941 24 216 24C206.059 24 198 32.0589 198 42C198 51.9411 206.059 60 216 60Z" fill="white"/>
+<path id="Vector_3" d="M34 72C24 72 19 65 21 58C22 50 31 46 39 50C45 37 63 38 68 52C82 52 86 71 72 72H34Z" fill="white"/>
+<path id="Vector_4" d="M11 165L74 58L126 145L172 87L258 169L11 165Z" fill="#F7F8FC"/>
+<path id="Vector_5" d="M42 170L110 77L174 168L203 127L272 190H14L42 170Z" fill="white" stroke-width="2.5" stroke-linejoin="round" stroke="#3730A3"/>
+<path id="Vector_6" d="M95 98L109 112L120 98M161 108L173 122L185 111" stroke-width="2.5" stroke="#3730A3"/>
+<path id="Vector_7" d="M0 208C45 169 77 185 111 177C159 159 188 184 280 167V236H0V208Z" fill="#EEF0FF"/>
+<path id="Vector_8" d="M128 236C176 207 97 202 144 178" stroke-width="16" stroke-linecap="round" stroke="white"/>
+<path id="Vector_9" d="M81 155C86.5228 155 91 150.523 91 145C91 139.477 86.5228 135 81 135C75.4772 135 71 139.477 71 145C71 150.523 75.4772 155 81 155Z" fill="white" stroke-width="2" stroke="#3730A3"/>
+<path id="Vector_10" d="M71 158H91L99 187L70 190L71 158Z" fill="#3730A3"/>
+<path id="Vector_11" d="M70 159H68C64.6863 159 62 161.686 62 165V178C62 181.314 64.6863 184 68 184H70C73.3137 184 76 181.314 76 178V165C76 161.686 73.3137 159 70 159Z" fill="white" stroke-width="2" stroke="#3730A3"/>
+<g id="Vector_12">
+<path d="M75 188L70 211ZM88 187L96 208ZM92 165L108 181ZM109 173V215Z" fill="#3730A3"/>
+<path d="M75 188L70 211M88 187L96 208M92 165L108 181M109 173V215" stroke-width="4" stroke-linecap="round" stroke="#3730A3"/>
+</g>
+<path id="Vector_13" d="M234 207L242 181L250 207H234Z" fill="#3730A3"/>
+<g id="Vector_14">
+<path d="M242 206V218Z" fill="#3730A3"/>
+<path d="M242 206V218" stroke-width="3" stroke="#3730A3"/>
+</g>
+<g id="Vector_15">
+<path d="M11 219H39ZM20 207H36Z" fill="#3730A3"/>
+<path d="M11 219H39M20 207H36" stroke-width="2" stroke-linecap="round" stroke="#3730A3"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_4">
+<rect width="280" height="236" fill="white"/>
+</clipPath>
+</defs>
+</svg>

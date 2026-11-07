@@ -6,9 +6,12 @@ Gunakan skill [floopel-mobile-engineering](.agents/skills/floopel-mobile-enginee
 
 - Android Traveler: `:apps:android:traveler`, ID `com.floopel.traveler`.
 - Android Partner: `:apps:android:partner`, ID `com.floopel.partner`.
+- Flavor `development` menambahkan `.dev` pada kedua application ID; `production` mempertahankan ID utama. Namespace tetap stabil. Origin/provider development dan production tidak saling fallback; lihat `config/environments/README.md`.
 - iOS Traveler: `apps/ios/traveler`, framework `TravelerKit` dari `:shared:features:traveler`.
 - Partner khusus Android. Jangan memasukkan implementasi Partner ke dependensi framework Traveler.
 - Entry point native menangani lifecycle, izin, dan integrasi platform. UI/logika Traveler yang dapat dibagi berada di `commonMain`.
+- Traveler wajib login sebelum Home dan fitur aplikasi. Pulihkan sesi sebelum membuka konten; logout atau sesi tidak valid kembali ke login tanpa navigasi utama. Registrasi, verifikasi, dan pemulihan sandi tetap dapat dibuka dari login.
+- Figma [Final Mobile Layouts](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile) adalah sumber kebenaran visual. Gunakan revisi terbaru yang relevan dan komponen yang dipetakan; ukuran, hierarki, warna, jarak, dan perilaku scroll mengikuti frame terkait. Konfirmasi konflik aturan bisnis; jangan membuat pengganti desain berdasarkan preferensi sendiri.
 
 ## Aturan inti
 
@@ -33,8 +36,8 @@ Rincian normatif beserta alasannya:
 Gunakan Gradle Wrapper. Untuk perubahan source/build Android, jalankan build dan lint aplikasi yang terdampak; perubahan core perlu kedua aplikasi. Temukan task test nyata dengan `tasks --all` sebelum menggunakannya. Tambahkan test yang membuktikan perilaku bisnis atau regresi yang berubah; jangan membuat test yang hanya meniru implementasi.
 
 ```powershell
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
-.\gradlew.bat :apps:android:traveler:lintDebug :apps:android:partner:lintDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
+.\gradlew.bat :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug
 ```
 
 Perubahan yang memengaruhi Traveler bersama memerlukan kompilasi/pengujian iOS pada macOS/Xcode atau CI Mac. Keberhasilan Android, metadata, `NO-SOURCE`, atau target iOS yang dilewati di Windows tidak membuktikan keberhasilan iOS. Laporkan pemeriksaan yang benar-benar dijalankan, hasilnya, dan pemeriksaan yang masih diperlukan. Solusi kendala temporary Java Windows terdapat di `README.md`.

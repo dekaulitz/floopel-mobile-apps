@@ -1,0 +1,21 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp
+Calculating task graph as no cached configuration is available for tasks: :apps:android:traveler:preProductionReleaseBuild
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+> Task :apps:android:traveler:preBuild UP-TO-DATE
+> Task :apps:android:traveler:validateProductionEnvironment
+> Task :apps:android:traveler:validateProductionSigning FAILED
+Execution failed for task ':apps:android:traveler:validateProductionSigning'.
+> Set all FLOOPEL_TRAVELER_PRODUCTION_KEYSTORE_FILE/KEYSTORE_PASSWORD/KEY_ALIAS/KEY_PASSWORD variables for production release signing
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1s
+2 actionable tasks: 2 executed
+Configuration cache entry stored.

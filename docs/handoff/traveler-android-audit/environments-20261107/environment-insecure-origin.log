@@ -1,0 +1,19 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp
+Calculating task graph as configuration cache cannot be reused because the set of Gradle properties has changed: 'floopelApiOrigin' and 'floopelProductionApiOrigin' were removed.
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file 'C:\Users\Dekaulitz\Projects\floopel\floopel-mobile-apps\apps\android\traveler\build.gradle.kts' line: 15
+
+* What went wrong:
+Production API origin must be an origin without credentials, path, query or fragment
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1s
+Configuration cache entry stored.

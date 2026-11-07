@@ -1,0 +1,34 @@
+package main
+
+import (
+	"context"
+	"errors"
+	"os/exec"
+	"path/filepath"
+	"strings"
+)
+
+// Only libvips runs in the existing image. The container receives no backend configuration.
+type dockerVipsRunner struct{ image, root string }
+
+func (r dockerVipsRunner) Run(ctx context.Context, executable string, args, env []string) error {
+	if executable != "vipsthumbnail" || len(args) != 5 {
+		return errors.New("unexpected processor command")
+	}
+	workspace, err := filepath.Abs(filepath.Dir(args[0]))
+	if err != nil || !strings.HasPrefix(workspace, r.root+string(filepath.Separator)) || !strings.HasPrefix(filepath.Base(workspace), "floopel-media-") {
+		return errors.New("processor workspace outside fixture root")
+	}
+	converted := append([]string(nil), args...)
+	for i, value := range converted {
+		if strings.HasPrefix(value, workspace+string(filepath.Separator)) {
+			converted[i] = "/work/" + filepath.ToSlash(strings.TrimPrefix(value, workspace+string(filepath.Separator)))
+		}
+	}
+	command := []string{"run", "--rm", "--pull=never", "--network", "none", "--read-only", "--cap-drop", "ALL", "--security-opt", "no-new-privileges", "--user", "0:0",
+		"--mount", "type=bind,source=" + workspace + ",target=/work", "--env", "TMPDIR=/work", "--env", "VIPS_BLOCK_UNTRUSTED=TRUE", "--env", "VIPS_CONCURRENCY=1",
+		"--entrypoint", "vipsthumbnail", r.image}
+	cmd := exec.CommandContext(ctx, "docker", append(command, converted...)...)
+	// Docker's backend/credentials stay on the host; neither backend env nor image bytes are logged.
+	return cmd.Run()
+}

@@ -1,0 +1,2326 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Floopel Mobile Traveler — Native Identity API",
+    "version": "1.0.0",
+    "description": "Metadata request klien: aplikasi yang diperbarui mengirim X-App-Version dari versi build dan X-App-Platform bernilai ANDROID, IOS atau WEB pada seluruh operasi API, termasuk upload dan probe maintenance. Header ini deskriptif, bukan attestation atau otorisasi. Server tetap menerima klien lama tanpa versi; tidak ada gate minimum versi. Endpoint identitas native tetap mensyaratkan platform ANDROID/IOS sesuai parameter dan credential channel existing; WEB tidak diterima pada endpoint tersebut.",
+    "x-floopel-client": "mobile-traveler"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/api/mobile/v1/auth/account-deletion-context": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Verifikasi ulang native untuk penghapusan/pemulihan akun",
+        "description": "Password diverifikasi ulang. Akun aktif memerlukan native Bearer akun/profil yang sama; akun pending hanya mendapat proof cancel/status tanpa normal session. Google ditunda. Cookie Web ditolak; tidak memasang cookie. Rate bucket bersama verifikasi/mutasi penghapusan: 10/15 menit per client IP.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "security": [
+          {},
+          {
+            "nativeBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "method",
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "method": {
+                    "const": "password"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "maxLength": 320
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1024
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proof native berumur pendek; Cache-Control: no-store",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "meta",
+                    "error",
+                    "data"
+                  ],
+                  "properties": {
+                    "meta": {
+                      "$ref": "./openapi-apps.json#/components/schemas/Meta"
+                    },
+                    "error": {
+                      "type": "null"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "context_token",
+                        "purpose",
+                        "expires_at"
+                      ],
+                      "properties": {
+                        "context_token": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Sensitive credential, memory-only."
+                        },
+                        "purpose": {
+                          "enum": [
+                            "request",
+                            "cancel",
+                            "status"
+                          ]
+                        },
+                        "expires_at": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "./openapi-apps.json#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "./openapi-apps.json#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "./openapi-apps.json#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "./openapi-apps.json#/components/responses/InternalError"
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        }
+      }
+    },
+    "/api/mobile/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login — email + password (Slice 2)",
+        "description": "Validate existing email/password policy; issue native session tokens. GET /api/apps/v1/me hydrates owner profile and pending reconsent. No cookie is read or set. Kredensial valid pada deletion-pending mengembalikan 202 ACCOUNT_RECOVERY_REQUIRED. Lifecycle diperiksa ulang di bawah account lock; akun/password tidak valid tetap 401 generik tanpa status penghapusan.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Native session established. Profile and pending reconsent are read through GET /api/apps/v1/me.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileSessionEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated",
+            "description": "meta.code=UNAUTHORIZED for invalid credentials; meta.code=PASSWORD_RESET_REQUIRED after valid credential verification when reset is mandatory. For PASSWORD_RESET_REQUIRED, offer the existing forgot-password HTTPS Web recovery flow and explicit return to mobile login. Do not retry login automatically or treat this as access-token expiry."
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden",
+            "description": "meta.code=FORBIDDEN: account restricted; do not present this as incorrect password."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "ACCOUNT_RECOVERY_REQUIRED: kredensial valid dan permintaan penghapusan pending/erasing dikonfirmasi server. Hanya proof terbatas native; tidak membuat identity session, cookie atau refresh family.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "const": "no-store",
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileAccountRecoveryEnvelope"
+                },
+                "examples": {
+                  "verifiedDeletionPending": {
+                    "summary": "Kredensial valid; hanya recovery terbatas",
+                    "value": {
+                      "meta": {
+                        "request_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "timestamp": 1792209600000,
+                        "code": "ACCOUNT_RECOVERY_REQUIRED"
+                      },
+                      "error": null,
+                      "data": {
+                        "status": "account_recovery",
+                        "context_token": "synthetic-restricted-context",
+                        "purpose": "cancel",
+                        "expires_at": "2026-10-17T04:05:00Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileLogin",
+        "security": [],
+        "x-implementation-status": "Implemented; native integration verification in progress",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "x-uncertain-outcome": "No automatic resubmission or stored token replay. Offer explicit email/password sign-in or a fresh user-initiated Google sign-in. A committed account is reused. An uncommitted registration remains eligible for existing verification/resend; uncompleted Google onboarding reacquires required fields. Consumed proofs cannot mint another session."
+      }
+    },
+    "/api/mobile/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Rotate the session (Slice 2)",
+        "description": "Receive native-bound refresh token and rotate through existing Identity family policy. Current access lifetime is 15 minutes and refresh lifetime 30 days. Duplicate rotation within the existing 10-second grace returns 409 without revoking the winning successor; later reuse revokes the family. On lost successor response, do not blindly retry the old token indefinitely: require login if the successor cannot be recovered. No automatic retry of uncertain non-idempotent business mutations.",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rotated native token pair.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileRefreshEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated",
+            "description": "refresh_reuse_detected (family revoked) / refresh_expired Stored credential channel differs from X-App-Platform: 401, no credential mutation."
+          },
+          "409": {
+            "description": "CONFLICT: concurrent rotation. Keep the winner's credentials; never erase the winning session.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileRefresh",
+        "x-implementation-status": "Implemented; native integration verification in progress",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "refresh_token"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mobile/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "End this session (Slice 2)",
+        "description": "A non-empty native refresh_token is required; missing body/field or empty value returns 422 VALIDATION. Revoke only the presented native refresh family; an unknown or already-invalid token is a no-op returning 204. When local storage has no refresh token, Flutter clears local credentials/private state without making this request. On a request, clear local state regardless of remote outcome, but do not claim confirmed remote revocation on failure. Already-issued stateless access can remain valid until expiry unless account restrictions deny it. No global logout claim.",
+        "security": [],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Current refresh family revoked or already invalid; no response body.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated",
+            "description": "UNAUTHORIZED: invalid credential. Stored credential channel differs from X-App-Platform: 401, no credential mutation. Unknown logout token remains a 204 no-op; no stored channel exists to compare."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileLogout",
+        "x-implementation-status": "Implemented; native integration verification in progress",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "refresh_token"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mobile/v1/auth/google": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "OAuth login or adult onboarding proof",
+        "description": "Android native Google sign-in submits an ID token issued for the configured server client ID. Backend validates signature, issuer, audience, expiry and verified identity; Google subject is authoritative. Native SDK binds the sign-in result to the user-initiated attempt. A supplied nonce alone is not attestation or a server challenge. Existing account returns native session; new user returns restricted opaque onboarding proof without creating an underage identity. Identitas Google terverifikasi pada deletion-pending mengembalikan recovery terbatas setelah recheck lifecycle; tidak membuat link/session baru.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id_token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "writeOnly": true
+                  }
+                },
+                "required": [
+                  "id_token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Native session established. Profile and pending reconsent are read through GET /api/apps/v1/me.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileSessionEnvelope"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "NEEDS_PROFILE untuk pengguna baru atau ACCOUNT_RECOVERY_REQUIRED untuk akun dengan permintaan penghapusan terverifikasi. Tidak ada normal session pada kedua outcome.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/MobileOnboardingEnvelope"
+                    },
+                    {
+                      "$ref": "#/components/schemas/MobileAccountRecoveryEnvelope"
+                    }
+                  ]
+                },
+                "examples": {
+                  "verifiedDeletionPending": {
+                    "summary": "Google identity valid; hanya recovery terbatas",
+                    "value": {
+                      "meta": {
+                        "request_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "timestamp": 1792209600000,
+                        "code": "ACCOUNT_RECOVERY_REQUIRED"
+                      },
+                      "error": null,
+                      "data": {
+                        "status": "account_recovery",
+                        "context_token": "synthetic-restricted-context",
+                        "purpose": "status",
+                        "expires_at": "2026-10-17T04:05:00Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileGoogle",
+        "security": [],
+        "x-implementation-status": "approved contract; implementation pending",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "x-uncertain-outcome": "No automatic resubmission or stored token replay. Offer explicit email/password sign-in or a fresh user-initiated Google sign-in. A committed account is reused. An uncommitted registration remains eligible for existing verification/resend; uncompleted Google onboarding reacquires required fields. Consumed proofs cannot mint another session."
+      }
+    },
+    "/api/mobile/v1/auth/google/complete": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Finish Google sign-up",
+        "description": "Use native onboarding Bearer proof, not cookies. Reuse locked proof, UTC adult gate and atomic identity/consent completion. Underage rejection consumes the proof without creating identity. Native proof must be transport-bound and must not complete through Web cookie routes. On success issue native session and fetch /api/apps/v1/me.",
+        "security": [
+          {
+            "nativeOnboarding": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "first_name",
+                  "last_name",
+                  "username",
+                  "dob",
+                  "nationality_country_code",
+                  "consent"
+                ],
+                "properties": {
+                  "first_name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "last_name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "consent": {
+                    "$ref": "#/components/schemas/Consent"
+                  },
+                  "nationality_country_code": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$",
+                    "description": "ISO 3166-1 alpha-2 code from the nationality catalog; the server derives the canonical name."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Native session established; fetch /api/apps/v1/me. No stored token replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileSessionEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthenticated",
+            "description": "UNAUTHORIZED: missing, invalid, expired or consumed native onboarding proof. Offer fresh Google sign-in; existing committed identity is reused. Stored credential channel differs from X-App-Platform: 401, no credential mutation."
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict",
+            "description": "CONFLICT: existing business conflict such as username already taken; preserve non-secret input and use structured field errors."
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileGoogleComplete",
+        "x-implementation-status": "approved contract; implementation pending",
+        "x-credential-boundary": "Require one active unused native onboarding Bearer proof. Reject session cookies and access JWTs. Missing, malformed, expired or consumed proof returns 401. No replay exception; uncertain success recovers through fresh user-initiated Google sign-in.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "x-uncertain-outcome": "No automatic resubmission or stored token replay. Offer explicit email/password sign-in or a fresh user-initiated Google sign-in. A committed account is reused. An uncommitted registration remains eligible for existing verification/resend; uncompleted Google onboarding reacquires required fields. Consumed proofs cannot mint another session."
+      }
+    },
+    "/api/mobile/v1/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Email + password sign-up",
+        "description": "Reuse Register business fields, age/consent rules and generic 202 response regardless of existing email. No session until successful verification. return_to is not supported; preserve safe navigation intent locally.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobileRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Verification required (generic, also returned when email already exists)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "status": {
+                              "type": "string",
+                              "const": "verification_required"
+                            },
+                            "email_masked": {
+                              "type": "string",
+                              "example": "y••@email.com"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileRegister",
+        "security": [],
+        "x-implementation-status": "approved contract; implementation pending",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "x-idempotency-security": "Retain existing registration idempotency and generic non-enumerating accepted response. Never cache credentials. Account uniqueness and pending-account rules remain authoritative."
+      }
+    },
+    "/api/mobile/v1/auth/verify-email": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Confirm OTP, activate, sign in",
+        "description": "Consume OTP and activate through existing registration transaction, then issue native tokens. Existing invalid/expired/consumed-proof rules remain. Never replay raw credentials from a generic shared response cache.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "code"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Native session established. Profile and pending reconsent are read through GET /api/apps/v1/me.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileSessionEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileVerifyEmail",
+        "security": [],
+        "x-implementation-status": "approved contract; implementation pending",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits.",
+        "x-uncertain-outcome": "No automatic resubmission or stored token replay. Offer explicit email/password sign-in or a fresh user-initiated Google sign-in. A committed account is reused. An uncommitted registration remains eligible for existing verification/resend; uncompleted Google onboarding reacquires required fields. Consumed proofs cannot mint another session."
+      }
+    },
+    "/api/mobile/v1/auth/otp/resend": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Resend OTP code (cooldown)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Resend accepted (cooldown enforced, R2)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "resend_in_seconds": {
+                              "type": "integer",
+                              "example": 30
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "description": "INTERNAL: fail closed, no credential leakage. On uncertain credential issuance do not automatically retry; offer explicit sign-in or Google restart. No stored credential response replay.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "operationId": "mobileOtpResend",
+        "security": [],
+        "description": "Reuse OTP resend and server cooldown, shared email/IP abuse budgets and non-enumeration behavior.",
+        "x-implementation-status": "approved contract; implementation pending",
+        "x-credential-boundary": "Reject authentication cookies or unexpected Authorization headers with 422 VALIDATION; do not fall back to Web auth.",
+        "x-abuse-policy": "Reuse logical operation, account/email and source budgets across Web/mobile; no independent quota bypass. Enforce existing body limits."
+      }
+    },
+    "/api/mobile/v1/auth/username-available": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Live username availability (ADR-0011 R5)",
+        "description": "Rate-limited, generic. Never reveals who owns a taken handle. `suggestions` only present when taken.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Availability result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "available": {
+                              "type": "boolean"
+                            },
+                            "suggestions": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "example": [
+                                "sulaimanfahmi1",
+                                "sulaiman_fahmi"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "available"
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/mobile/v1/auth/nationalities": {
+      "get": {
+        "operationId": "listNationalities",
+        "summary": "List supported nationalities",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Backend-owned ISO country catalog with English and Indonesian labels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Envelope"
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "meta",
+                        "error",
+                        "data"
+                      ],
+                      "properties": {
+                        "error": {
+                          "type": "null"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "code",
+                              "name",
+                              "labels"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "labels": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "en": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "country_catalog": {
+                    "summary": "Bentuk envelope sukses; contoh satu entri katalog.",
+                    "value": {
+                      "meta": {
+                        "request_id": "11111111-1111-4111-8111-111111111111",
+                        "timestamp": 1793926800000,
+                        "code": "NATIONALITIES"
+                      },
+                      "error": null,
+                      "data": [
+                        {
+                          "code": "ID",
+                          "name": "Indonesia",
+                          "labels": {
+                            "id": "Indonesia",
+                            "en": "Indonesia"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        }
+      }
+    },
+    "/api/mobile/v1/auth/forgot-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Minta email pemulihan password native tanpa enumerasi akun",
+        "description": "Memakai usecase Forgot Identity dan email HTTPS Web yang sama dengan Web. Email dikenal/tidak dikenal serta kegagalan delivery menghasilkan202 PASSWORD_RESET_REQUESTED dengan pesan/cooldown generik yang sama; response floor dan timeout provider existing dipertahankan. Tidak menyatakan email benar-benar dikirim. Input email malformed/missing atau field tambahan ditolak422. Setelah menyelesaikan reset pada Web, pengguna kembali login Android secara eksplisit; tidak ada token email pada push/deep link aplikasi atau parameter redirect client baru.",
+        "operationId": "mobileForgotPassword",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "email"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "PASSWORD_RESET_REQUESTED: hasil generik untuk semua akun.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobilePasswordRecoveryAcceptedEnvelope"
+                },
+                "examples": {
+                  "genericAccepted": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "PASSWORD_RESET_REQUESTED"
+                      },
+                      "error": null,
+                      "data": {
+                        "message": "If an account exists, we've sent a reset link.",
+                        "retry_in_seconds": 60
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "PAYLOAD_TOO_LARGE: body melebihi16 KiB sebelum parsing/penjadwalan; kirim body sesuai kontrak.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "PAYLOAD_TOO_LARGE"
+                      },
+                      "error": {
+                        "message": "request body exceeds the allowed size",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION: X-App-Platform hilang/invalid/duplikat, Cookie autentikasi/Authorization tercampur, JSON unknown/trailing/malformed atau input/policy invalid; perbaiki input, jangan fallback Web authentication.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "VALIDATION"
+                      },
+                      "error": {
+                        "message": "invalid request body",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "RATE_LIMITED: budget auth/source/subject permintaan reset habis. Hormati Retry-After; namespace/platform baru tidak memberi kuota baru.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "description": "Detik sebelum permintaan eksplisit berikutnya."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "RATE_LIMITED"
+                      },
+                      "error": {
+                        "message": "too many requests; please slow down",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "INTERNAL: dependency gagal; jangan tampilkan detail internal atau me-retry mutasi reset otomatis. Tidak ada replay credential.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "INTERNAL"
+                      },
+                      "error": {
+                        "message": "internal error",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "x-implementation-status": "Implemented in native Identity adapter; runtime/provider verification is reported separately.",
+        "x-credential-boundary": "NativeBoundary requires one X-App-Platform ANDROID/IOS; rejects authentication cookies and every Authorization header. All application outcomes are no-store; no cookie/session issuance.",
+        "x-abuse-policy": "Reuse Web auth/source/email subject reset-request budgets and credential-token-verification budget. Same namespace, limits, cooldown and existing limiter failure policy; body limit16 KiB."
+      }
+    },
+    "/api/mobile/v1/auth/reset-password": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Selesaikan pemulihan password native",
+        "description": "Memakai usecase Reset Identity yang sama dengan Web: proof hash-at-rest sekali pakai, expiry30 menit, password policy, konsumsi atomik dan pencabutan seluruh refresh family/sesi. Tidak menerbitkan credential/sesi atau cookie. Unknown/expired/replayed/superseded/failed-delivery proof yang berbentuk valid mengembalikan410 PASSWORD_RESET_UNUSABLE; body/proof/password yang tidak memenuhi binding/policy mengembalikan422 VALIDATION. UI Android tetap menyelesaikan tautan HTTPS Web existing lalu kembali login eksplisit sesuai ADR-0065; tidak menambahkan callback email atau token pada deep link aplikasi.",
+        "operationId": "mobileResetPassword",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AppPlatform"
+          }
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "token",
+                  "password"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "minLength": 32,
+                    "maxLength": 512,
+                    "writeOnly": true,
+                    "description": "Proof satu kali dari mekanisme email existing; bukan access/refresh token atau payload push."
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "minLength": 12,
+                    "maxLength": 128,
+                    "writeOnly": true,
+                    "x-max-utf8-bytes": 72,
+                    "description": "Minimal12 karakter, huruf ASCII dan digit; maksimal72 byte UTF-8. Tidak dipotong dan tidak diterbitkan sesi otomatis."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "PASSWORD_RESET: password diganti; wajib login ulang.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobilePasswordResetEnvelope"
+                },
+                "examples": {
+                  "completed": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "PASSWORD_RESET"
+                      },
+                      "error": null,
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "PASSWORD_RESET_UNUSABLE: proof tidak dikenal, kedaluwarsa, sudah dipakai, diganti atau delivery gagal. Minta tautan baru.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "PASSWORD_RESET_UNUSABLE"
+                      },
+                      "error": {
+                        "message": "reset link is no longer usable",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "PAYLOAD_TOO_LARGE: body melebihi16 KiB sebelum parsing/penjadwalan; kirim body sesuai kontrak.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "PAYLOAD_TOO_LARGE"
+                      },
+                      "error": {
+                        "message": "request body exceeds the allowed size",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "VALIDATION: X-App-Platform hilang/invalid/duplikat, Cookie autentikasi/Authorization tercampur, JSON unknown/trailing/malformed atau input/policy invalid; perbaiki input, jangan fallback Web authentication.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "VALIDATION"
+                      },
+                      "error": {
+                        "message": "invalid request body",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "RATE_LIMITED: budget auth/source/subject atau verifikasi proof habis. Hormati Retry-After; namespace/platform baru tidak memberi kuota baru.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Retry-After": {
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "description": "Detik sebelum permintaan eksplisit berikutnya."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "RATE_LIMITED"
+                      },
+                      "error": {
+                        "message": "too many requests; please slow down",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "INTERNAL: dependency gagal; jangan tampilkan detail internal atau me-retry mutasi reset otomatis. Tidak ada replay credential.",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemEnvelope"
+                },
+                "examples": {
+                  "safeFailure": {
+                    "value": {
+                      "meta": {
+                        "request_id": "00000000-0000-4000-8000-000000000001",
+                        "timestamp": 1792846800000,
+                        "code": "INTERNAL"
+                      },
+                      "error": {
+                        "message": "internal error",
+                        "details": null
+                      },
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/SystemMaintenance"
+          }
+        },
+        "x-implementation-status": "Implemented in native Identity adapter; runtime/provider verification is reported separately.",
+        "x-credential-boundary": "NativeBoundary requires one X-App-Platform ANDROID/IOS; rejects authentication cookies and every Authorization header. All application outcomes are no-store; no cookie/session issuance.",
+        "x-abuse-policy": "Reuse Web auth/source/email subject reset-request budgets and credential-token-verification budget. Same namespace, limits, cooldown and existing limiter failure policy; body limit16 KiB."
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "AppPlatform": {
+        "name": "X-App-Platform",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "ANDROID",
+            "IOS"
+          ]
+        },
+        "description": "Owner-approved X-App-Platform header, case-sensitive ANDROID or IOS. Client-asserted session channel, not attestation. Missing/unsupported values: 422 VALIDATION. Completion/refresh/logout must match stored credential channel; mismatch: 401 UNAUTHORIZED with no credential mutation. Unknown logout token remains a 204 no-op. WEB is not accepted. Shared private APIs authorize using the signed JWT channel; X-App-Platform on those reads is descriptive metadata, not an authorization source.",
+        "x-decision-status": "Approved",
+        "x-decision-scope": "Header name, required presence on native auth, ANDROID/IOS values, and stored-channel matching. Full contract is Approved; not implemented.",
+        "example": "ANDROID"
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "description": "Dedupe a mutating retry (ADR-0003 / golang.md §9). A retried mutation with the same key returns the stored result, not a second row/event."
+      }
+    },
+    "responses": {
+      "Forbidden": {
+        "description": "403 forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "429 RATE_LIMITED (comment/like create rate-limit — anti-abuse, PRD-0004 §12)",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "Unauthenticated": {
+        "description": "401 UNAUTHORIZED (missing/invalid JWT or session)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "422 VALIDATION (e.g. COMMENT_MAX_DEPTH on a depth-2 reply; non-image/SVG upload; invalid locale-map)",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Envelope"
+            },
+            "example": {
+              "meta": {
+                "request_id": "11111111-1111-4111-8111-111111111111",
+                "timestamp": 0,
+                "code": "COMMENT_MAX_DEPTH"
+              },
+              "error": {
+                "details": [],
+                "message": "A reply cannot be replied to."
+              }
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "409 conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Envelope"
+            }
+          }
+        }
+      },
+      "SystemMaintenance": {
+        "description": "Pemeliharaan seluruh backend oleh gateway. HTTP503 dengan penanda system memicu pemberitahuan global native tanpa menghapus sesi atau input. HTTP503 tanpa penanda tetap gangguan layanan biasa. Proxy mengirim teks tanpa envelope aplikasi.",
+        "headers": {
+          "X-Floopel-Maintenance": {
+            "description": "Hanya disetel oleh gateway ketika maintenance backend aktif; tidak dipakai pada maintenance frontend terpisah.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "system"
+              ]
+            }
+          },
+          "Retry-After": {
+            "description": "Detik sebelum pemeriksaan ulang layanan diizinkan; bukan perkiraan akhir pemeliharaan.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "example": 60
+          },
+          "Cache-Control": {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "no-store"
+              ]
+            }
+          }
+        },
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            },
+            "example": "Layanan sedang dipelihara. Silakan coba lagi nanti."
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Envelope": {
+        "type": "object",
+        "description": "Standard response envelope (golang rules #12). error is null on success; data is null on error.",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          },
+          "data": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "meta"
+        ]
+      },
+      "ErrorBody": {
+        "type": [
+          "object",
+          "null"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Safe text"
+          },
+          "details": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "description": "apperror body (golang #11/#12): safe message + details[]; never a stack trace."
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "description": "For validation errors.",
+        "properties": {
+          "field": {
+            "type": "string",
+            "example": "username"
+          },
+          "code": {
+            "type": "string",
+            "example": "taken"
+          },
+          "message": {
+            "type": "string",
+            "example": "safe text"
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "timestamp": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Unix ms",
+            "example": 1718700000000
+          },
+          "code": {
+            "type": "string",
+            "description": "Business code",
+            "example": "OK",
+            "pattern": "^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$"
+          },
+          "pagination": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "page": {
+                "type": "integer"
+              },
+              "per_page": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "total_pages": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "required": [
+          "request_id",
+          "timestamp",
+          "code"
+        ]
+      },
+      "MobileRefreshEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ],
+            "properties": {
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "$ref": "#/components/schemas/MobileTokens"
+              }
+            }
+          }
+        ]
+      },
+      "MobileSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "tokens": {
+            "$ref": "#/components/schemas/MobileTokens"
+          }
+        },
+        "required": [
+          "tokens"
+        ]
+      },
+      "MobileSessionEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ],
+            "properties": {
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "$ref": "#/components/schemas/MobileSession"
+              }
+            }
+          }
+        ]
+      },
+      "MobileTokens": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "token_type": {
+            "type": "string",
+            "const": "Bearer"
+          },
+          "access_token": {
+            "type": "string",
+            "minLength": 1,
+            "readOnly": true,
+            "description": "Sensitive credential; never log, cache in shared infrastructure, or put in URLs."
+          },
+          "access_expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "refresh_token": {
+            "type": "string",
+            "minLength": 1,
+            "readOnly": true,
+            "description": "Sensitive credential; never log, cache in shared infrastructure, or put in URLs."
+          },
+          "refresh_expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "token_type",
+          "access_token",
+          "access_expires_at",
+          "refresh_token",
+          "refresh_expires_at"
+        ]
+      },
+      "MobileOnboardingEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ],
+            "properties": {
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "$ref": "#/components/schemas/MobileOnboarding"
+              }
+            }
+          }
+        ]
+      },
+      "Consent": {
+        "type": "object",
+        "required": [
+          "terms_version",
+          "privacy_version",
+          "locale",
+          "terms_hash",
+          "privacy_hash"
+        ],
+        "properties": {
+          "terms_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "privacy_version": {
+            "type": "string",
+            "example": "1.0"
+          },
+          "locale": {
+            "type": "string",
+            "example": "id"
+          },
+          "terms_hash": {
+            "type": "string",
+            "example": "sha256:…"
+          },
+          "privacy_hash": {
+            "type": "string",
+            "example": "sha256:…"
+          }
+        }
+      },
+      "MobileRegisterRequest": {
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "first_name",
+          "last_name",
+          "username",
+          "dob",
+          "nationality_country_code",
+          "consent"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date",
+            "description": "Age >= 18 gate evaluated against the server-observed UTC calendar date."
+          },
+          "consent": {
+            "$ref": "#/components/schemas/Consent"
+          },
+          "nationality_country_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "description": "ISO 3166-1 alpha-2 code from the nationality catalog; the server derives the canonical name."
+          }
+        },
+        "additionalProperties": false
+      },
+      "MobileOnboarding": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "needs_profile"
+          },
+          "onboarding_token": {
+            "type": "string",
+            "minLength": 1,
+            "readOnly": true,
+            "description": "Sensitive credential; never log, cache in shared infrastructure, or put in URLs."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "status",
+          "onboarding_token",
+          "expires_at"
+        ]
+      },
+      "MobileAccountRecovery": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "status",
+          "context_token",
+          "purpose",
+          "expires_at"
+        ],
+        "properties": {
+          "status": {
+            "const": "account_recovery",
+            "type": "string"
+          },
+          "context_token": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Proof penghapusan native terbatas; hanya di memori, bukan access/refresh token. Gunakan X-Account-Deletion-Context pada endpoint status/cancellation existing.",
+            "readOnly": true
+          },
+          "purpose": {
+            "enum": [
+              "cancel",
+              "status"
+            ],
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Kedaluwarsa 5 menit dari server; expiry membutuhkan login eksplisit kembali."
+          }
+        }
+      },
+      "MobileAccountRecoveryEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "$ref": "#/components/schemas/MobileAccountRecovery"
+              }
+            },
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ]
+          }
+        ]
+      },
+      "ProblemEnvelope": {
+        "type": "object",
+        "required": [
+          "meta",
+          "error",
+          "data"
+        ],
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          },
+          "data": {
+            "type": "null"
+          }
+        }
+      },
+      "MobilePasswordRecoveryAcceptedEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ],
+            "properties": {
+              "meta": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Meta"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "const": "PASSWORD_RESET_REQUESTED"
+                      }
+                    }
+                  }
+                ]
+              },
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "message",
+                  "retry_in_seconds"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "retry_in_seconds": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 60,
+                    "description": "Cooldown generik yang sama untuk email dikenal/tidak dikenal; bukan konfirmasi pengiriman."
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MobilePasswordResetEnvelope": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          {
+            "type": "object",
+            "required": [
+              "meta",
+              "error",
+              "data"
+            ],
+            "properties": {
+              "meta": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Meta"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "const": "PASSWORD_RESET"
+                      }
+                    }
+                  }
+                ]
+              },
+              "error": {
+                "type": "null"
+              },
+              "data": {
+                "type": "null"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "nativeBearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Native Identity access token; cookie Web ditolak."
+      },
+      "nativeOnboarding": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque",
+        "description": "Opaque native onboarding proof, completion-only, active and unused, with existing 10-minute lifetime. Not an access JWT. Expired/consumed proofs cannot be replayed to issue or recover tokens."
+      }
+    }
+  },
+  "x-floopel-system-maintenance": {
+    "response": "#/components/responses/SystemMaintenance",
+    "scope": "Seluruh route API pada gateway backend, termasuk login/refresh dan pembacaan publik. Health engine langsung bukan pemeriksaan pemulihan traffic API.",
+    "recovery": "Satu GET publik existing melalui gateway setelah Retry-After, tanpa replay mutasi otomatis."
+  }
+}

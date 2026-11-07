@@ -1,0 +1,14 @@
+package main
+
+type fixtureManifest struct {
+	Version  int              `json:"version"`
+	RunID    string           `json:"run_id"`
+	Accounts []fixtureSubject `json:"accounts"`
+}
+
+// Credentials are deliberately absent from the worker's fixture projection.
+type fixtureSubject struct {
+	Role      string `json:"role"`
+	ProfileID string `json:"profile_id"`
+	Username  string `json:"username"`
+}

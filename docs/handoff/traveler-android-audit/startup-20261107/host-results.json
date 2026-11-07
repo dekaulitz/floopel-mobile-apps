@@ -1,0 +1,2308 @@
+{
+  "counts": {
+    "tests": 383,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cases": [
+    {
+      "suite": "com.floopel.feature.traveler.core.network.AppRequestMetadataTest",
+      "name": "nativeMetadataFollowsEveryApiTransportWithoutOverridingCredentials",
+      "seconds": "0.259",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.AppRequestMetadataTest",
+      "name": "absentLegacyVersionIsNotInventedAndInvalidHeaderValuesFailBeforeSending",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "httpBaseUrlIsRejected",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "handlesPlainTextMaintenanceWithoutTryingToParseIt",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "returnsSuccessAndPreservesContractResponse",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "cancellationPropagatesToTheCaller",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "retryAfterPolicyIsBounded",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "networkFailureDoesNotLeakException",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "doesNotLeakErrorBodyFrom401",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "rateLimitPreservesRetryAfterWithoutRetryingOrLeakingProxyHtml",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+      "name": "unsafePathIsRejected",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.SystemMaintenanceTest",
+      "name": "explicitModeBlocksBothTransportsUntilAnEligibleSuccessfulRecoveryRead",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.SystemMaintenanceTest",
+      "name": "oldSuccessfulReadCannotCloseANewerMaintenanceNotice",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.SystemMaintenanceTest",
+      "name": "genericServiceErrorsDoNotActivateSystemMaintenance",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.SystemMaintenanceTest",
+      "name": "nativeAuthObservesTheSameMaintenanceSignal",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "refreshBypassesSnapshotAndUpdatesItWithoutDiscardingOtherPages",
+      "seconds": "0.012",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "noStoreAndRevalidationResponsesCannotHidePublicationRevocation",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "authConsentSecurityDeletionAndGameplayAlwaysReadServer",
+      "seconds": "0.01",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "revokedMembershipAndOrganizerRightsAreCheckedOnEveryTripRead",
+      "seconds": "0.012",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "nearbyRadiusRefreshBypassesSnapshotWhileGlobalSpotFeedStillCaches",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "revisitingUsesOneMinuteSnapshotThenExpiresWithoutExtendingLifetime",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "failuresAndInvalidBodiesNeverBecomeCachedData",
+      "seconds": "0.01",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "cacheIsBoundedAndLargeResponsesAreNotRetained",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "delayedReadCannotRepopulateAnEntryAfterANoStoreResponse",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "nearestLocationAlwaysReadsCurrentCatalogRatherThanPageSnapshot",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "freshNoStoreAndRejectedReadsEvictOlderSnapshots",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "mutationInvalidatesReadsAndLatePreMutationReadCannotRestoreOldData",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "explicitNoCacheRequestReadsAndReplacesAnOlderPageSnapshot",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "profileAvailabilityIsReadAgainAfterPrivacyChanges",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+      "name": "ownerLocaleQueryAndPageAreIsolatedAndLogoutInvalidatesSnapshot",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.dto.PassportSummaryTest",
+      "name": "qrSummaryHasOnlyApprovedFieldsAndNumericValues",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest",
+      "name": "itineraryPicksCombineTrimmedSearchRegionAndAuthoritativePage",
+      "seconds": "0.014",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest",
+      "name": "untakenEntryUsesOwnedQueryWithoutChangingTheGeneralCatalog",
+      "seconds": "0.013",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest",
+      "name": "questCriteriaAreSentToTheServerBeforePagination",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest",
+      "name": "invalidQuestBoundsAndLocationIdsNeverReachTransport",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+      "name": "profileProofDoesNotUnlockOrPersistAndCompletionOmitsEmailPassword",
+      "seconds": "0.045",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+      "name": "cancelledExpiredOrLateProofCannotCreateSession",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+      "name": "invalidTokenAndMalformedOnboardingFailClosed",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+      "name": "validationAllowsCorrectionButUncertainCompletionRequiresFreshSignIn",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+      "name": "existingAccountUsesOnlyNativeTokens",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "proxyMaintenancePreservesStatusAndNeverRetriesMutation",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "ownerReadUsesIdentityBearerAndDoesNotRefreshOnFailure",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "cancellationIsNotConvertedIntoServiceFailure",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "multipleChoiceMutationUsesTypedPayloadAndDoesNotRetryFailure",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "malformedSuccessfulPayloadIsNotAnEmptyPassport",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "malformedLoginEnvelopeIsReportedAsInvalidResponse",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "ownerStateUsesIdentityAndRejectsPathInjection",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "loginUsesNativePlatformAndRedactsCredentials",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "questListReadsPaginationWithoutSendingIdentity",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+      "name": "retryAfterSupportsSecondsDatesAndInvalidValues",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestBadgeMediaTest",
+      "name": "badgeMediaUsesExistingOriginPolicyAndNeverDowngradesRemoteHttp",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestCompletionReceiptTest",
+      "name": "aMismatchedCompletionOrNegativeXpCannotBecomeAnAward",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestCompletionReceiptTest",
+      "name": "questionAndGpsResultsKeepActualXpBadgeAndResolvedArtwork",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestCompletionReceiptTest",
+      "name": "legacyResultsRemainReadableWithoutInventingAReceipt",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestLocationCoverageTest",
+      "name": "currentQuestAndOwnedRevisionKeepTheirSeparateCoverageAndRejectRetiredWire",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestProofApiTest",
+      "name": "malformedCoordinatesAreNotSent",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestProofApiTest",
+      "name": "gpsRequestsUseExecutionAndServerOutcomes",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestProofApiTest",
+      "name": "lostObservationResponseIsNotAutomaticallyReplayed",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestTravelerProjectionTest",
+      "name": "tenPreviewIdentitiesPreserveTheAuthoritativeTotalAndRejectInconsistentCounts",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestTravelerProjectionTest",
+      "name": "malformedDuplicateAndOversizedPreviewsFailInsteadOfDisplayingInventedIdentities",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.QuestTravelerProjectionTest",
+      "name": "oldDetailDefaultsToEmptyAndPublicPreviewPreservesCanonicalHandles",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.VerifiedAccountRecoveryTest",
+      "name": "wrongPasswordExpiredProofAndLogoutNeverExposeRecovery",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.remote.VerifiedAccountRecoveryTest",
+      "name": "passwordAndGoogleRecoveryOnlyUseRestrictedProofAndCancellationHidesTheEntry",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsCommentTotalsTest",
+      "name": "countersDeduplicateAndChunkTargetsWithoutRequestingCommentThreads",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsCommentTotalsTest",
+      "name": "countersIgnoreUnrequestedAndNegativeValuesAndKeepTargetFamiliesSeparate",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsCommentTotalsTest",
+      "name": "unavailableOrMalformedCountersStayUnknownInsteadOfBecomingZero",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "attachedArticlesRejectAnUnfilteredOlderResponse",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "maintenanceAndHttpErrorsRemainDifferentFromAnEmptyResult",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "articleAttachmentUsesPublicParentPhotoAndOptionalFailureKeepsArticleReadable",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "emptySuccessfulListIsARealEmptyState",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "spotQuestScopeIsEncodedBeforePagination",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "malformedEnvelopeIsNotSilentlyShownAsAnEmptyCatalog",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "unsafeMediaVariantNeverRendersAsAnExternalImage",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "catalogListsFollowExistingRoutesAndParsePublicFields",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "searchUsesCanonicalSortAndSpotCategoryWithoutInventingEndpoints",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "spotCollectionCoverUsesExistingParentReadAndOptionalFailureKeepsSpot",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "searchCollectionUsesTheCanonicalSearchHitName",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "storyTypeFacetFollowsApprovedContentTypes",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "locationDetailPreservesNullableSourceTimezoneWithoutInferringItFromSpotOrDevice",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "locationAndEditorialDetailsRespectContractBodyKeys",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "exploreNearbyUsesAllowedRadiusAndAuthoritativePagination",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "shortSearchDoesNotCallBackendEvenWithSortOrCategory",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "spotDetailUsesItsImmediateLocationZoneEvenWithAnExistingPlaceLabel",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "nearestCatalogContextDistinguishesEmptyFailureAndMalformedData",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "attachedArticlesSelectTheirTypeBeforePaging",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "regionSearchUsesServerKindFacetAndPreservesBreadcrumb",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "searchHonorsThreeCharacterMinimumAndOfficialSearchGroups",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "publicAiReferenceScoreIsShownOnlyWhenEligible",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "spotLocationNamesResolveOncePerLocationAndPreserveLocale",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "homeRailPaginationMatchesWebTravelerLimits",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "curatedCopyCapabilityRequiresACanonicalBoolean",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+      "name": "requestEncodesLocationParentAndSelectedSpotSlug",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.AppsTravelerStoryAvatarsTest",
+      "name": "actualAuthorPhotoIsNotReplacedByAnUnrelatedTravelersMatchingHandle",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogLocationCoverageTest",
+      "name": "catalogListsAndReadersKeepAllCoverageAndNeverHideMalformedEntities",
+      "seconds": "0.016",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogLocationCoverageTest",
+      "name": "collectionKeepsOwnCoverageAndEligibleItineraryMemberWithoutInventingItsGeography",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+      "name": "rankedGlobalFeedsUseExactLimitsWithoutTripOrRegionFilters",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+      "name": "malformedPagesAreNotAnEmptyArchiveAndUnavailableResponsesRemainRecoverable",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+      "name": "browseUsesServerPagesAndOnlySupportedTargetFilters",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+      "name": "homeActiveQuestsUseTheExistingGlobalEndpointWithoutLocationScope",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+      "name": "catalogRetainsServerCooldownForRateLimitAndMaintenance",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "imageRetryAfterRecreationKeepsKeyAndMultipartAndRejectsOtherContent",
+      "seconds": "0.018",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "cancellationPreservesTheIntentAndPropagates",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "changedReviewCannotReplaceAnUncertainPublication",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "bodylessCommandCanRecoverWithItsOriginalKey",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "expiredIntentIsNotReissuedUnderANewKey",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "concurrentPublishDoesNotSendTwoRequests",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+      "name": "lostPublishResponseReusesFrozenKeyAfterRepositoryRecreation",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.ExplorerMarkersTest",
+      "name": "viewportFeedIsLeanDeduplicatedAndNeverLoadsAllDetails",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.IntegratedOwnerApiTest",
+      "name": "savedAndItineraryUseQuestIdentityAndReconsentBlocksWrites",
+      "seconds": "0.016",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.LocationDiscoveryTest",
+      "name": "activePublicQuestsAreScopedAndUseServerPagination",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.LocationDiscoveryTest",
+      "name": "questBadgeImageUsesTheExistingMediaResolver",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.LocationDiscoveryTest",
+      "name": "emptyErrorsAndMalformedResponsesStayDistinct",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.MediaUrlTest",
+      "name": "emulatorMediaUsesOnlyTheAuthorizedLocalApiHostAndProductionNeverDowngrades",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeAccountApiTest",
+      "name": "ownerEditorsUseExistingContractsAndPreservePartialUpdates",
+      "seconds": "0.013",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeAccountApiTest",
+      "name": "interestsAreServerDrivenAndFailuresDoNotRetryWritesOrLoseIdentity",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeAccountApiTest",
+      "name": "credentialChangeEnforcesPolicyAndDiscardsTheSharedSessionAfter204",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeCommunityApiTest",
+      "name": "commentConsentAndUnavailableWritesNeverReplayOrLoseSession",
+      "seconds": "0.014",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeCommunityApiTest",
+      "name": "authorPhotoNeverComesFromAnotherTravelersMatchingDisplayLabel",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeCommunityApiTest",
+      "name": "commentsRespectUnicodeCursorDepthPlainTextAndServerLikeState",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeCommunityApiTest",
+      "name": "reportsAndAppealsUseOnlyOwnerProjectionAndExactReasonFamilies",
+      "seconds": "0.018",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeErasureApiTest",
+      "name": "requestResponseLossKeepsTheKeyAndDoesNotAutomaticallyRepeatTheMutation",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeErasureApiTest",
+      "name": "restrictedRecoveryNeverCreatesNormalIdentityAndClearsItsCapability",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest",
+      "name": "publicationUsesReviewedVersionAndOwnerMutationsDoNotInventReadiness",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest",
+      "name": "coverUploadIsBoundedParentScopedMultipartAndNeverAutomaticallyReplayed",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest",
+      "name": "spotPreviewImagesNeverCountAsTheRequiredItineraryCover",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest",
+      "name": "shareUrlIsOneTimeAndNeverIncludedInModelStringOrStatusReplay",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "ownerEditsDayOperationsAndStopFieldsUseTheContractAndDoNotRetry",
+      "seconds": "0.017",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "curatedDetailMapsAuthorizedCoverWithoutChangingClonePolicy",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "workingItineraryCoverageRetainsServerOrderAndMissingCoverageIsAnError",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "boundedRecoveryNeverReplacesExpiredOrCorruptIntentsAutomatically",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "summaryMutationResponsesCompleteWithoutPretendingThatStopsWereLoaded",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "consentWaitCannotMoveAnOldItineraryIntentIntoTheSuccessorIdentity",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "pendingStopRetainsItsOriginalTargetAndDayAcrossAdapterRecreation",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+      "name": "uncertainCreateSurvivesAdapterRecreationAndReusesExactlyTheSameKeyAndInput",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeLegalApiTest",
+      "name": "exactPendingDocumentHashIsAcceptedOnlyInItsOriginalIdentityGeneration",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeNotificationApiTest",
+      "name": "bindingIdIsReturnedAndDisableUsesItWithoutLeakingOrReplayingToken",
+      "seconds": "0.01",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeNotificationApiTest",
+      "name": "invalidPaginationAndNullableFieldsDoNotBecomeEmptySuccess",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeNotificationApiTest",
+      "name": "canonicalFailureCodesRetainNullAndArrayDetailsOutsideTheAuthRetryPath",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeNotificationApiTest",
+      "name": "nativeInboxUsesCanonicalPagesAndSeparateReadMutation",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "canonicalCodesAndNullableDetailsSurviveNativeThrottleWithoutReplay",
+      "seconds": "0.012",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "cancellationPropagatesWithoutAnotherUpload",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "malformedErrorCannotSupplyBranchCodeAndMaintenanceKeepsCredential",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "invalidSelectionAndPathAreRejectedBeforeNetwork",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "malformedSuccessCannotBecomeCompletedPhoto",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "unrelatedReadyRequestAndNetworkFailureCannotReplaceSelectedPhoto",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "optimizedWebpUsesTheMatchingMultipartMimeAndExtension",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "meAvatarProjectionSupportsLegacyAndRejectsInvalidWireType",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+      "name": "oneNativeMultipartAdmissionIsSeparateFromReadOnlyStatus",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "guestActivityFeedUsesOnlyThePublicProjection",
+      "seconds": "0.02",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "publishedStopPreservesZeroAndNullDurationButRejectsANegativeValue",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "communitySearchPreservesLiteralQueryAndRegionOnEveryPage",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "missingNullOrMalformedCoverageFailsInsteadOfHidingNonemptyActivities",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "publicThresholdsComeFromTheTargetAndRemainCompatibleWithOlderResponses",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "publicProfileAndSnapshotNeverProjectPrivateFieldsOrMutableWorkingData",
+      "seconds": "0.023",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "malformedActivitiesAndInvalidCriteriaNeverBecomeAnEmptySuccess",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "boundActivityCoveragePreservesEveryLocationAndRecoversWithoutSuccessorReads",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "activityFeedUsesCanonicalQuestLocationsAndFiveItemNearbyPreview",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "invalidPublicThresholdsAndReadFailuresDoNotProduceInventedProgress",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+      "name": "inaccessibleHiddenOrMalformedPublicProjectionsAreNotDisplayedAsAnEmptyProfile",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "groupDetailMembersAndBothInvitationListsUseTheirOwnedReadPaths",
+      "seconds": "0.014",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "untakenPaginationAcceptsAnEmptyPageWhenConcurrentAdmissionsShrinkTheCatalog",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "canonicalErrorDetailsAcceptArrayAndNullWithoutAcceptingMalformedDetails",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "explorerNeverLabelsPublicTakenOrMalformedRowsAsUntaken",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "explorerUntakenQuestsUseOwnedFiltersAndPreserveBadgeAndActivityMetadata",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "publicInvitationSharingReadsCurrentMetadataAndPreservesAccessErrors",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "failedMutationsAreNotReplayedAndRetainBusinessCodeAndRetryTiming",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "groupCreateAndMutationUseNativeIdentityAndAnExplicitStableKey",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "groupsUseCanonicalBatchTransportAndRejectMalformedSuccess",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "invitationAndManagerOperationsRetainObjectPathsAndRealProfileText",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+      "name": "hiddenPolicyDoesNotTriggerPublicReadAndGrantedCompletionUsesOnlyOwnerFacts",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeRecommendationApiTest",
+      "name": "recommendationsDistinguishMissingInterestsNoMatchAndAuthorizedProjection",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeRecommendationApiTest",
+      "name": "personalizationErrorsDoNotMasqueradeAsEditorialFallbackOrLoseIdentity",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeRegistrationApiTest",
+      "name": "malformedOrUnavailableOnboardingKeepsFailuresSafeAndNeverRetriesIssuance",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeRegistrationApiTest",
+      "name": "nativeRegistrationEchoesServedLegalHashesAndNeverIssuesAViewerSessionBeforeVerification",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeRegistrationApiTest",
+      "name": "passwordRecoveryUsesNativeTransportAndPreservesUnusableProofFailures",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeSettingsApiTest",
+      "name": "settingsPreserveUnknownConsentUseNativeIdentityAndDoNotRetryMutations",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "completedTripsStillUseLiveWorkingCoverageAndEmptyCoverageDoesNotAddAGate",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "confirmedCreationWithoutBannerSurvivesRepositoryRecreationUntilAcknowledged",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "invalidReadModelsAndUnavailableWritesFailWithoutRetriesOrSessionLoss",
+      "seconds": "0.012",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "publicCreationRestoresExactAdmissionFieldsAndKeyWithoutAnotherPost",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "legacyPatchOmissionDoesNotInventPrivateTypeAndItsReplayKeepsTheOriginalBody",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "tripFailuresPreserveCanonicalKnownAndUnknownCodes",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "malformedOrMissingMemberCapabilitiesAreNotInferredAsPermission",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "uncertainCreationRestoresExactIntentAndKeyAcrossRepositoryRecreation",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "ownedNoticeRejectsMissingNullableFieldsInvalidEpisodesAndMalformedAuthority",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "durableCreationKeepsItsOriginalKeyAfterTheLegacyWindow",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "missingSourceTimezoneAndPrivateRegistrationNeverSendAWrite",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "acknowledgedCreationCanStillBeRecoveredByItsSavedRouteKeyWithoutAnotherWrite",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "invalidBannerIsRejectedBeforeTransportAndReadStatusKeepsProcessingState",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "uncertainBannerRetryUsesIdenticalMultipartBytesBoundaryAndKey",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "ownedNoticeHandlesApplicantAndUnknownOutcomesWithoutInventingMembership",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "tripNameLimitCountsUnicodeScalarsInsteadOfRejectingValidSupplementaryCharacters",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "reenteredAndLegacyRoutesKeepTheOriginalCreationAfterAcknowledgement",
+      "seconds": "0.013",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "memberAffordancesUseServerFlagsWithoutRecomputingFromTheDeviceCalendar",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "pendingIntentCannotBeReplacedWithoutSuccessfulAuthoritativeReview",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "interruptedCreationRecoversByReadAndRetainsAnAbsentOperationIntent",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "ownedNoticeKeepsTheHistoricalEpisodeSeparateFromCurrentMembership",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "invitationSummaryAllowsEmptyWorkingPlansButRejectsNegativeCounts",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "expiredLegacyUpdateNeverResendsOutsideTheIdempotencyWindow",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "storageFailureStopsTheMutationAndAccountChangesDoNotReuseAnotherOwnersKey",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "publicWindowPatchRestoresExactFieldsWithoutChangingVisibility",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "pendingInviteeIsCallerAccessOnlyAndCannotAppearAsAMemberRole",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "tripsAndInvitationsUseMembershipProjectionAndExactExistingMutations",
+      "seconds": "0.021",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "memberAndInviterPhotosComeFromOneIdentityBatchPerRead",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+      "name": "confirmedCreationStaysConfirmedWhenIntentCleanupFails",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "onlyAnOwnedMatchingReceiptCanConfirmOrReleaseTheIntent",
+      "seconds": "0.024",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "logoutDuringThePostDiscardsTheLateReceiptAndDoesNotRecreateClearedRecovery",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "lostResponseRestoresTheExactActorBodyAndKeyAndChecksBeforeExplicitRetry",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "confirmingOneTripDoesNotRemoveAnotherUnresolvedTarget",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "malformedFailureAndReadValidationNeverReleaseAnUnknownIntentButConfirmedWriteValidationCan",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "scalarBoundaryRejectsOverflowBeforeAnyWriteAndConfirmedReceiptSurvivesCleanupStorageFailure",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+      "name": "foreignActorChangedInputAndStorageFailureCannotReplaceOrSubmitAnUnresolvedReport",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "inclusiveDateFiltersRoundTripAndInvalidPairsNeverReachTransport",
+      "seconds": "0.01",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "applicationUncertaintyCannotBeReplacedByDifferentTextOrAnotherTrip",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicPagesRejectRepeatedCursorsOversizedPagesAndMalformedCapacity",
+      "seconds": "0.012",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicSpotPreservesRatingVisibleCommentZeroAndLocation",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "applicationHistoryDoesNotRecreateAnEndedMembership",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "applicationDecisionsUseLiteralAuthorizedEndpointsAndReturnServerHistory",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "applicationViewerUsesTheRealProfileRatherThanTheApplicantsMembership",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicSuppressionAndMissingCountersNeverBecomeGuessedRatingsOrZero",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "interruptedApplicationMessageIsRestoredWithoutReplayingOrExposingAnotherTripIntent",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "mismatchedDecisionAcknowledgementDoesNotClearAnUnknownIntent",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "confirmedDecisionConflictReleasesItsIntentButUnknownOutcomesKeepTheOriginalChoice",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "unknownStatusesRemainSafeAndMissingNullableApplicationFieldsFail",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicUpdateInstantIsParsedFromTheTripProjectionWithoutInventingLegacyMetadata",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicQueryCountsUnicodeScalarsAndTrimsBeforeSending",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicDescriptionIsAnOptionalStrictStringFromThePublicProjectionOnly",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "ownerAndOrganizerApplicationPagesStayScopedAndRetainServerCapabilities",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "personalDiscoveryUsesServerEligibilityAndRejectsAnUnfilteredResponse",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "publicFiltersRoundTripPunctuationAndUnicodeWithoutPrivateReads",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "oversizedUnicodeApplicationAndInvalidDecisionResourceNeverWrite",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "interruptedDecisionsRestoreOnlyTheSameActorAndApplicationWithoutPosting",
+      "seconds": "0.013",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+      "name": "ambiguousApplicationRetriesTheSameNormalizedBodyAndKeyAfterTheLegacyWindow",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+      "name": "capacityAndUnknownStatusCannotBecomeAReadyGroup",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+      "name": "boundedPaginationAcceptsPartialServerBatchesButRejectsDriftAndDuplicates",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+      "name": "profileIdentityIsTextWhileBusinessIdentityIsUuid",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+      "name": "legacyPersonalRemainsCompatibleButUnknownOrIncompleteGroupModeFailsClosed",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+      "name": "membershipProgressNeverTreatsMalformedNumbersAsZero",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+      "name": "hiddenCompletionUsesBoundRevisionAndConfirmedGrant",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+      "name": "hiddenAndMissingPolicyBlockPreCompletionSnapshots",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+      "name": "revokedAndInconsistentRewardCannotOpenAnotherShare",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+      "name": "invitationRequiresCurrentPublicAvailabilityWithoutProgressOrRewardClaim",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+      "name": "malformedOrCrossQuestFactsAreRejected",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.StoryDetailProjectionTest",
+      "name": "storyKeepsAuthorMetadataFeaturedPlacesAndSafeMediaWithoutTreatingInlineGeoAsAnEntity",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.StoryDetailProjectionTest",
+      "name": "spotKeepsVisitContextAndCollectionNavigationWithoutAnotherRequest",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+      "name": "missingAndBlankPhotosPreserveTheAuthoritativeLevel",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+      "name": "largePagesUseBoundedRequestsRatherThanOneRequestPerAvatar",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+      "name": "invalidOrUnexpectedMetadataCannotInventAnIdentity",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+      "name": "cancellationIsNotConvertedIntoUnknownMetadata",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+      "name": "uniqueNamesShareOneBatchAndIneligibleProfilesStayUnknown",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripCommandRecoveryRejectionTest",
+      "name": "canonicalTerminalRejectionsReleaseTheRejectedIntentWithoutReplayingIt",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripCommandRecoveryRejectionTest",
+      "name": "anUnstructuredServerConflictStillRetainsAndBlocksReplacingTheUnknownIntent",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripMemberScheduleTest",
+      "name": "presentScheduleMustBeAStringRatherThanNullOrACoercedPrimitive",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripMemberScheduleTest",
+      "name": "scheduleUsesTheAuthorizedServerProjectionWithoutDeviceDateInference",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripMemberScheduleTest",
+      "name": "oldPayloadAndFutureEnumsRemainUnknownWithoutInventingAnOngoingTrip",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripTransferPrivacyTest",
+      "name": "malformedDetailsAndHtmlDoNotCreateAPrivacyRequirement",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.data.repository.TripTransferPrivacyTest",
+      "name": "confirmedTransferDenialPreservesTheCanonicalDetailAndReleasesOnlyTheRejectedIntent",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "unboundedHeightUsesTheImageRatio",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "squareCropRequiresEnoughPixelsForTheCoveredHeight",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "missingOrInvalidDimensionsKeepTheAuthorizedFallback",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "fullWidthHighDensityFeedSelectsLarge",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "thumbnailDoesNotDownloadTheFeedVariant",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+      "name": "unavailableResolutionUsesLargestWithoutInventingAUrl",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.TravelerAgeTest",
+      "name": "ageGateUsesWholeYearsAndRejectsInvalidDates",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.TripCommandRejectionTest",
+      "name": "canonicalRejectionsRequireTheirStatusEnvelopeAndFieldPair",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.domain.model.TripCommandRejectionTest",
+      "name": "localLegacyFutureAndContradictoryConflictsNeverBecomeTerminalRejections",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+      "name": "uncertainStartReplaysTheOriginalLocationAndKey",
+      "seconds": "0.016",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+      "name": "backgroundKeepsStartLockedAndOwnedDetailAccessible",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+      "name": "rejectedStartAllowsAFreshLocationAndKey",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+      "name": "backgroundDiscardsUnsentStartLocationBeforeRetry",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+      "name": "backgroundDiscardsLateLocationWithoutSendingReveal",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "foreignOwnerSlugIsRejectedWithoutOfferingOrTakingLocation",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "cancellationAndBackgroundDiscardLateForegroundLocation",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "backgroundRejectsLateProofBeforeCredentialIssuance",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "permissionDenialKeepsExplicitRecoveryAndNeverSendsProof",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "oldHiddenCompletionNeverUsesPublicSuccessorAsBoundSnapshot",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "coldOwnersKeepBoundFactsWithoutInventingFullDetailOrRevealingLocation",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "accountSwitchDiscardsLatePrivateOwnerSnapshot",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "coldRecipientOffersExplicitRevealWithoutLocationOrProof",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "outsideRadiusAndMalformedOrCrossSlugResponsesNeverBecomeEligibleDetail",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+      "name": "accountSwitchDiscardsLateTargetResponseAndDoesNotReadOwnerForNewAccount",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "aLateProjectionCannotReplaceTheResultOfNewerNavigation",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "lateProjectionSuccessCannotClearTheDestinationFailure",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "anUnrelatedProjectionFailureCannotClearPendingNavigation",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "aSignedOutProjectionRefreshDoesNotIssueRequests",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "lateProjectionFailureCannotReplaceTheDestinationFailure",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "anExpiredCredentialIsRenewedBeforeReadingTheProjection",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "theNewestProjectionWinsWithoutReplayingEitherRequest",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "logoutAndAccountSwitchRejectThePreviousPrivateProjection",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "disposingTheInitialHomeReadCannotCancelItsQuestDestination",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "passiveProgressCannotDiscardThePendingLinkedQuest",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "anUnauthorizedProjectionRotatesOnceWithoutDiscardingTheDestination",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+      "name": "progressFinishingFirstCannotClearTheNavigationLoadingState",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCollectionsReadTest",
+      "name": "ownedContinuationAndRetryRetainTakenOriginAndRejectForeignIDs",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCollectionsReadTest",
+      "name": "catalogModeAndTakenStatusUseTheAccountEndpoint",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "logoutRejectsALatePostCompletionProjection",
+      "seconds": "0.015",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "aCompletedAnswerRefreshesAfterTheMutationWithoutLeavingPlay",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "logoutDuringTheBaselineCannotRequestAChallengeOrProviderProof",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "anUnavailableBaselineDoesNotPreventAnOtherwiseValidAdmission",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "completedGpsRefreshesAfterCollectionAndMutationRelease",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "cancellingTheBaselinePropagatesWithoutProofOrAdmission",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "anIncompleteAnswerDoesNotFetchCompletionProgress",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "coldTakeCapturesTheBaselineBeforeProofAndAdmission",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+      "name": "anExistingProjectionAvoidsAnotherBaselineRequest",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestExecutionTest",
+      "name": "startRetryKeepsKeyAndQuestionUsesOnlyExecutionCredential",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "backgroundStopsSamplesAndResumeReusesUnexpiredSession",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "failedSubmitRequiresExplicitRetryWithSameKey",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "submitStopsCollectionAndUsesServerProgress",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "gpsProjectionAndPermissionRetryKeepTheCorrectActivityMode",
+      "seconds": "0.011",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "expiryStopsCollectionWithoutAwardingProgress",
+      "seconds": "0.009",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+      "name": "logoutCancelsCollectionAndClearsPrivateProof",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "nativeCleanupFailureCannotPreventSignOut",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "cancellingTheCallerStillDisposesCredentialsAfterBoundedNativeCleanup",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "refreshFamilyRevocationCannotHoldLocalSignOutIndefinitely",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "previousLogoutCannotClearAnIdentityCommittedDuringNativeCleanup",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "anExpiredSessionDuringBindingCleanupStillClearsPrivateRecovery",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+      "name": "nativeCleanupRetainsAuthorizationWithoutHoldingTheSessionGuard",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "revokedRefreshClearsCredentialAndRevokesLocalEligibility",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "pendingAndSuccessfulRestoreKeepTheExistingOwnerEligible",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "cleanupCallbackFailureStillLeavesTheSessionSignedOutWithRecovery",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "unreadableStorageDisposesEligibilityInsteadOfKeepingAnUnrecoverableOwner",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "cleanupStillRunsWhenClearingAnEmptyCredentialStoreFails",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "cancelledRefreshRevokesEligibilityBecauseRotationMayHaveCommitted",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "emptyCredentialRevokesPersistedEligibilityWithoutAnInMemoryOwner",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "maintenanceAndRateLimitPreserveCredentialAndCanRestoreAfterExplicitRetry",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+      "name": "oldRestoreCannotRevokeAnIdentityCommittedAfterLogout",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "catalogIdentityRequiresLoginAndDiscardsResponseAfterLogout",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "uncertainRefreshRequiresExplicitSignInInsteadOfReusingOldToken",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "logoutDiscardsLateHomeProgressWithoutRestoringPrivateData",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "failedHomeRefreshKeepsLastKnownLevelAndXp",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "concurrentUnauthorizedReadsRotateOnceAndUseStoredSuccessor",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "homeRefreshHonorsCooldownBeforeRetryingMissingProgress",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "expiryRenewsBeforeReadAndLogoutDiscardsLateRefresh",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "questFeedAppendsDeduplicatesAndRetainsItemsUntilExplicitRetry",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "maintenanceKeepsProtectedRefreshAndDoesNotRepeatRefresh",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "lateLoginCannotRestoreLoggedOutState",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "cancellationDuringRotationDiscardsUncertainCredential",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "rateLimitAndMaintenancePreserveSessionAndNeverReplayWrites",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "catalogReadRefreshesOnceAndMaintenanceRetainsIdentity",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "replacingQuestFiltersRejectsThePreviousPageAndKeepsNewCriteriaForNextPage",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "catalogMutationIsNotReplayedOnUnauthorized",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "lateQuestListCannotReplacePassportAfterNavigation",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "homeRefreshRecoversLevelAfterInitialPassportReadFailed",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+      "name": "repeatedUnauthorizedReadClearsPrivateStateWithoutRefreshLoop",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest",
+      "name": "failedPendingReadDoesNotOpenOrApproveAReview",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest",
+      "name": "dismissDoesNotAcceptAndNewLegalVersionRequiresAnotherExplicitReview",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest",
+      "name": "concurrentGatedActionsShareReviewAndStableKeysOnExplicitRetry",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest",
+      "name": "changedIdentityCannotAcceptTheRemainingDocumentsOrOverwriteASuccessorReview",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.NotificationRouteTest",
+      "name": "unknownExternalAndEncodedTargetsRemainUnavailable",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.NotificationRouteTest",
+      "name": "lifecycleNoticeUsesItsSourceId",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.RichBodyTest",
+      "name": "malformedFormattingAndNumericEntitiesRemainReadable",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.RichBodyTest",
+      "name": "richTextKeepsFormattingLinksAndAltTextWithoutExecutingMarkup",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.RichBodyTest",
+      "name": "activeContentAndUnsafeUrlsAreInert",
+      "seconds": "0.0",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.RichBodyTest",
+      "name": "documentedWebAndMailLinksSurviveWithoutAllowingActiveSchemes",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "builderBackReturnsToOwnedListWithoutReplayingPublication",
+      "seconds": "0.037",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "deletingTheEditedStopReturnsToItsBuilder",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "unavailableReaderAndLateVisibilityAfterLogoutDoNotAcknowledge",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "builderOpenedFromSpotFeedbackReturnsToThatSpot",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "inviteeDoesNotRequestWorkingPlan",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "knownSessionSkipsFirstUseAndLogoutDoesNotReintroduceIt",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "tabRestorationRetainsOnlyNavigationContext",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "feedCopyUsesItsOwnPublicIdAndHonorsTheServerCapability",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "onlyTheLastIntroActionCompletesInstallationAndReturningGuestsSeeLogin",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "processLossDuringBannerAfterJournalClearRecoversSavedCreationWithoutAnotherPost",
+      "seconds": "0.008",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "firstInstallRetainsIntroProgressAndBlocksFeatureReads",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "refreshReconcilesAnAlreadyLoadedQuestReaderWithoutSubmittingProofOrAnswer",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "tripDateValidationRejectsInvalidCalendarAndReversedIntervals",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "confirmedTripRecoveryAndBannerFailureNeverCreateAnotherTrip",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "savedOperationResultTakesPrecedenceOverAnotherPendingCreateForTheSamePlan",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "validRestoredSessionKeepsTheProtectedRouteUntilItsReadCompletes",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "revokedReaderHidesPreviouslyLoadedPrivateContent",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "coldGuestWaitsForRestoreAndCannotReadOrNavigateOutsideAuthentication",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "expiredSessionClearsContentAndBackCannotBypassLogin",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "addSpotFeedbackRetainsTheSelectedPlanAndDay",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "cancelledIntroCompletionDoesNotPersistASuccessOrBypassLogin",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "failedIntroSaveKeepsTheStepAndRequiresAnExplicitRetry",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "twoCreateTapsIssueOneMutation",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "inboxAndReaderFetchesDoNotAcknowledgeUntilVisible",
+      "seconds": "0.005",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "legacyCreationRouteGetsAStableIdentityAcrossRepeatedRestoration",
+      "seconds": "0.001",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "emptyPlanIsRejectedAgainAtPublicationConfirmation",
+      "seconds": "0.002",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "startupSaveRetryAfterSessionExpiryDoesNotReintroduceFirstUse",
+      "seconds": "0.003",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "name": "aCancelledDetailCannotReplaceANewerDestination",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TripCatalogDateTest",
+      "name": "localDatesKeepTheirDayAcrossSingleDayMonthAndYearBoundaries",
+      "seconds": "0.001",
+      "status": "PASS"
+    }
+  ]
+}

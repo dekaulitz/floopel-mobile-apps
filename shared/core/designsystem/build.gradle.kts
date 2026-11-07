@@ -10,6 +10,7 @@ kotlin {
         namespace = "com.floopel.core.designsystem"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+        androidResources { enable = true }
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
@@ -23,8 +24,12 @@ kotlin {
             api(project(":shared:core:model"))
             api(libs.compose.runtime)
             api(libs.compose.ui)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
+            api(libs.compose.foundation)
+            api(libs.compose.material3)
+            implementation(libs.compose.icons)
+            implementation(libs.compose.resources)
         }
     }
 }
+
+compose.resources { packageOfResClass = "com.floopel.core.designsystem.resources" }

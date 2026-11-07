@@ -1,0 +1,71 @@
+{
+  "kind": "Selected working-tree source bytes; Git normalization can change blob hashes",
+  "base_commit": "cda0cc5b4d2d9d698a38bed953ff17e02b387c99",
+  "files": [
+    {
+      "file": "apps/android/traveler/src/androidTest/kotlin/com/floopel/traveler/TravelerPublicationStateTest.kt",
+      "sha256": "14c7e160a732d12803bf76d9ae94d0254a623c9e3b06b4f98e129cc3a65dc97f",
+      "bytes": 3670
+    },
+    {
+      "file": "shared/features/traveler/src/androidHostTest/kotlin/com/floopel/feature/traveler/presentation/TravelerPublicationStateTest.kt",
+      "sha256": "567d3fe3b396be3681619401eaced132f84ef393010dcd294a8644c210fa3cb5",
+      "bytes": 5884
+    },
+    {
+      "file": "shared/features/traveler/src/androidTestFixtures/kotlin/com/floopel/feature/traveler/testing/TravelerPublicationFixture.kt",
+      "sha256": "aa461c34bd0b3335ecf03493928bda14de350f40c9b66b85e8895917ada3fd12",
+      "bytes": 2762
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryDistributionApi.kt",
+      "sha256": "36a1a319ab3e8c88a93be9776fee9daeeb050683b191418ffcab46f3904fc483",
+      "bytes": 9228
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerItineraryDistribution.kt",
+      "sha256": "2caf9b61b629ed5366c02c427d636ba29d55fd03f625518d91849e9d0f21390e",
+      "bytes": 1251
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerState.kt",
+      "sha256": "0a180ef2c8b96974978a96dc3e59e831515ea0b239921e566a494e2f4bdae17f",
+      "bytes": 7396
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/TravelerViewModel.kt",
+      "sha256": "fb02232a1fef65c4c746683705ef65d1e09089cd3e4793bbe2bbb55a492ef3b2",
+      "bytes": 64802
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/itinerary/ItineraryScreens.kt",
+      "sha256": "bdc5c492c5ad710719f19bb1d6399dae4e4d3d1339ec6378fa3030fef93785ad",
+      "bytes": 20624
+    },
+    {
+      "file": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryDistributionApiTest.kt",
+      "sha256": "fdd4e505632c9efaecf992f422034937e25d4cd30540c92096652c6114bbae3c",
+      "bytes": 11639
+    }
+  ],
+  "apks": [
+    {
+      "file": "apps/android/traveler/build/outputs/apk/debug/traveler-debug.apk",
+      "sha256": "0767389adcec5f4e33b4154d6959a88583d5178c6c144275b827861b1941cf0d",
+      "bytes": 25374542
+    },
+    {
+      "file": "apps/android/traveler/build/outputs/apk/androidTest/debug/traveler-debug-androidTest.apk",
+      "sha256": "40ad034c30f566c72a8e223b602ada87a9a0bf5c85507ae11200dd77b7221e99",
+      "bytes": 1263118
+    }
+  ],
+  "build_context": [
+    {
+      "file": "apps/android/traveler/src/main/res/values/styles.xml",
+      "sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0",
+      "bytes": 1038,
+      "disposition": "Pre-existing external edit compiled but excluded from this commit"
+    }
+  ]
+}

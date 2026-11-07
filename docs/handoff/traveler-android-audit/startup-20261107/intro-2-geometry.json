@@ -1,0 +1,9 @@
+{
+  "root_width_px": 1080,
+  "root_height_px": 2430,
+  "window_height_px": 2430,
+  "density": 2.7,
+  "view_tree": "DecorView h=2430 y=0.0 fits=false visibility=8208\n FrameLayout h=2430 y=0.0 fits=true visibility=0\n  FrameLayout h=2430 y=0.0 fits=false visibility=0\n   ComposeView h=2430 y=0.0 fits=false visibility=0\n    AndroidComposeView h=2430 y=0.0 fits=false visibility=0\n     View h=0 y=0.0 fits=false visibility=0\n     RippleContainer h=0 y=0.0 fits=false visibility=0\n      RippleHostView h=130 y=0.0 fits=false visibility=0\n  ViewStub h=0 y=0.0 fits=false visibility=0\n",
+  "status_bar_color": 0,
+  "navigation_bar_color": 0
+}

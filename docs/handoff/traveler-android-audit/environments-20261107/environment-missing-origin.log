@@ -1,0 +1,20 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp
+Calculating task graph as no cached configuration is available for tasks: :apps:android:traveler:preProductionDebugBuild
+> Task :apps:android:traveler:preBuild UP-TO-DATE
+> Task :apps:android:traveler:validateProductionEnvironment FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':apps:android:traveler:validateProductionEnvironment'.
+> Set FLOOPEL_PRODUCTION_API_ORIGIN or floopelProductionApiOrigin before building production
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1s
+1 actionable task: 1 executed
+Configuration cache entry stored.

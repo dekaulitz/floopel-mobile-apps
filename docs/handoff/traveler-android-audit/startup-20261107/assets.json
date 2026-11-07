@@ -1,0 +1,154 @@
+[
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/startup_mark_white.svg",
+    "bytes": 6725,
+    "sha256": "bd7fe4921bb2583a6f62fe8a551a3050fbe3c4707d21d445e5fbb315bff118d8",
+    "figma_frames": [
+      "164:2263",
+      "164:2351",
+      "164:2439"
+    ],
+    "figma_slots": [
+      "175:2906",
+      "175:2910",
+      "175:2914"
+    ],
+    "source_dimensions": [
+      96,
+      96
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_mark_early.svg",
+    "bytes": 6855,
+    "sha256": "7d7951b45ed9fd47cd1c910dc90c32ad639f4335e304f041264700488bd8f8c7",
+    "figma_frames": [
+      "164:2527",
+      "164:2615"
+    ],
+    "figma_slots": [
+      "175:2918",
+      "175:2922"
+    ],
+    "source_dimensions": [
+      36,
+      36
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_mark_late.svg",
+    "bytes": 6852,
+    "sha256": "90763ed70e40935e9f70245c836e7f4bff3df89f24da67df4180eb1ce940f479",
+    "figma_frames": [
+      "164:2703",
+      "164:2791"
+    ],
+    "figma_slots": [
+      "175:2926",
+      "175:2930"
+    ],
+    "source_dimensions": [
+      36,
+      36
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_meaningful.svg",
+    "bytes": 2458,
+    "sha256": "5f8375c6147e48316a0bd22de5f25c50566ef30a2dc9956d96fc88e7355f9989",
+    "figma_frames": [
+      "164:2527"
+    ],
+    "figma_slots": [
+      "168:2918"
+    ],
+    "source_dimensions": [
+      280,
+      236
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_stories.svg",
+    "bytes": 2449,
+    "sha256": "5bf0322e82de52df06f0b9f86f0cec560a84bfd1a955a16b384bebc3e2743e25",
+    "figma_frames": [
+      "164:2615"
+    ],
+    "figma_slots": [
+      "168:2934"
+    ],
+    "source_dimensions": [
+      280,
+      236
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_together.svg",
+    "bytes": 3684,
+    "sha256": "764148a8d75b04b69ba9ff4bb8ed4f35755b7100d31d0c331cad822fa2f72a36",
+    "figma_frames": [
+      "164:2703"
+    ],
+    "figma_slots": [
+      "168:2950"
+    ],
+    "source_dimensions": [
+      280,
+      236
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/intro_quests.svg",
+    "bytes": 2278,
+    "sha256": "865c585632324d5cdb04358826c28a46dc3e5e40d56ddc34a9a0366c6cffefc6",
+    "figma_frames": [
+      "164:2791"
+    ],
+    "figma_slots": [
+      "168:2967"
+    ],
+    "source_dimensions": [
+      280,
+      236
+    ],
+    "renderer": "AsyncImage + SvgDecoder, ContentScale.Fit",
+    "callsite": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/account/TravelerStartupScreens.kt"
+  },
+  {
+    "file": "apps/android/traveler/src/main/res/drawable/floopel_startup_mark.xml",
+    "bytes": 5837,
+    "sha256": "73415d83ee56753864e855e537ba6064e8e5b27c9f46b1989de9ee3dc120c200",
+    "source": "startup_mark_white.svg",
+    "format_conversion": "Android SDK Svg2Vector 32.1.0, complete input file, no diagnostics, no manual geometry edits",
+    "source_dimensions": [
+      96,
+      96
+    ],
+    "native_canvas_dp": [
+      288,
+      288
+    ],
+    "native_inset_dp": 96
+  },
+  {
+    "file": "apps/android/traveler/src/main/res/drawable-v31/floopel_startup_icon.xml",
+    "sha256": "9f4864422a72852f0e5021333d8bbd87f321df74369e27b4ede7afb402a0b048",
+    "bytes": 365,
+    "kind": "Android 12+ proportional wrapper; no vector path edits",
+    "inset_fraction": 0.3333333333333333,
+    "native_pre_render": "System adaptive viewport 108dp -> foreground 162dp -> final 192dp; mark 96dp",
+    "source": "floopel_startup_mark.xml"
+  }
+]

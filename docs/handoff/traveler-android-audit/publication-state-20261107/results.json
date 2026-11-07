@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "host": {
+    "tests": 417,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native_total": 15,
+  "native": [
+    {
+      "className": "TravelerPublicationStateTest",
+      "tests": 2,
+      "status": "PASS"
+    },
+    {
+      "className": "TravelerJourneyTest",
+      "tests": 13,
+      "status": "PASS"
+    }
+  ],
+  "native_layer": "Production ViewModel/Compose with explicit domain doubles; separate from live backend",
+  "build": "PASS: Traveler assembleDebug and assembleDebugAndroidTest",
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 42
+  },
+  "partner": "NOT_RUN this batch: neither core nor Partner changed; previous checkpoint retained",
+  "ios": "NOT_RUN: Windows; Mac/Xcode required for shared Traveler source",
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "pixels": "1080x2430",
+    "density": 432,
+    "viewport_dp": "400x900",
+    "font_scale": 1.0,
+    "theme": "light",
+    "locale": "en-US",
+    "resources": "default Indonesian"
+  },
+  "scope": "PUB-STATE-02 only: absent counts remain unknown; authoritative detail controls empty state; confirmed mutation followed by GET; retry never repeats mutation",
+  "backend_contract": "UNCHANGED: owner mutation fields remain optional; no server fields/endpoints required",
+  "source_manifest": "source-manifest.json",
+  "figures": [
+    {
+      "file": "confirmed-not-empty.png",
+      "sha256": "7854fcf07fa7237ad267eabf679c1a69f95d99f0d8a7478595f18df2844ae7bf",
+      "bytes": 145426
+    },
+    {
+      "file": "owner-read-failed.png",
+      "sha256": "32c4fcb568fcd3b670ddedb61a149148c5c5f5ccd1fa66aa75a6f82181d056ef",
+      "bytes": 140656
+    },
+    {
+      "file": "owner-read-recovered.png",
+      "sha256": "0c68f6ba1fb5fec55280504ad016c5e15292bccbc82d447a808c040b5d06eb33",
+      "bytes": 140791
+    }
+  ],
+  "limits": [
+    "Publication layout parity is not signed off by state tests",
+    "Unknown/409 journal conflict handling is separate work",
+    "Provider/device/iOS and full application parity are not inferred"
+  ]
+}

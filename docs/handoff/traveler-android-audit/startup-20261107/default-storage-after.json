@@ -1,0 +1,40 @@
+{
+  "scope": "Default origin-scoped sessions/journals and installation preferences only",
+  "files": [
+    {
+      "file": "distribution_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "itinerary_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "media_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "native_session_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "quest_group_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "trip_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    },
+    {
+      "file": "trip_creation_routes_a6b79e0e7aaa2c29.xml",
+      "sha256": "3325d2a819fdd8062c2cdc48a09b995c9b012915bcdf88b1cf9742a7f057c793",
+      "bytes": 65
+    }
+  ]
+}

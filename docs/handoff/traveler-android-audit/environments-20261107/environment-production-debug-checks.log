@@ -1,0 +1,207 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp
+Calculating task graph as no cached configuration is available for tasks: :apps:android:traveler:assembleProductionDebug :apps:android:partner:assembleProductionDebug
+> Task :apps:android:traveler:preBuild UP-TO-DATE
+> Task :apps:android:traveler:validateProductionEnvironment
+> Task :shared:core:designsystem:androidPreBuild UP-TO-DATE
+> Task :apps:android:traveler:preProductionDebugBuild
+> Task :shared:core:designsystem:preAndroidMainBuild UP-TO-DATE
+> Task :apps:android:traveler:mergeProductionDebugNativeDebugMetadata NO-SOURCE
+> Task :apps:android:traveler:generateProductionDebugResValues
+> Task :apps:android:traveler:generateProductionDebugBuildConfig
+> Task :shared:core:designsystem:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :shared:core:model:androidPreBuild UP-TO-DATE
+> Task :shared:core:model:preAndroidMainBuild UP-TO-DATE
+> Task :shared:core:model:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :shared:features:traveler:androidPreBuild UP-TO-DATE
+> Task :shared:features:traveler:preAndroidMainBuild UP-TO-DATE
+> Task :shared:features:traveler:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :apps:android:traveler:generateProductionDebugResources
+> Task :apps:android:traveler:packageProductionDebugResources
+> Task :shared:core:designsystem:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:core:designsystem:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:core:designsystem:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:convertXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:core:designsystem:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:core:designsystem:packageAndroidMainResources UP-TO-DATE
+> Task :shared:core:designsystem:parseAndroidMainLocalResources UP-TO-DATE
+> Task :shared:core:designsystem:generateAndroidMainRFile UP-TO-DATE
+> Task :shared:core:designsystem:generateComposeResClass UP-TO-DATE
+> Task :shared:core:designsystem:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :shared:core:model:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:core:model:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:core:model:compileAndroidMain UP-TO-DATE
+> Task :shared:core:model:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :apps:android:traveler:processProductionDebugNavigationResources
+> Task :apps:android:traveler:parseProductionDebugLocalResources
+> Task :apps:android:traveler:generateProductionDebugRFile
+> Task :shared:features:traveler:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:features:traveler:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:features:traveler:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:convertXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :shared:features:traveler:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:features:traveler:packageAndroidMainResources UP-TO-DATE
+> Task :shared:features:traveler:parseAndroidMainLocalResources UP-TO-DATE
+> Task :shared:features:traveler:generateAndroidMainRFile UP-TO-DATE
+> Task :shared:features:traveler:generateComposeResClass UP-TO-DATE
+> Task :shared:features:traveler:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :apps:android:traveler:javaPreCompileProductionDebug
+> Task :apps:android:traveler:generateProductionDebugAssets UP-TO-DATE
+> Task :shared:core:designsystem:generateAndroidMainAssets UP-TO-DATE
+> Task :shared:core:designsystem:mergeAndroidMainAssets UP-TO-DATE
+> Task :shared:features:traveler:generateAndroidMainAssets UP-TO-DATE
+> Task :shared:features:traveler:mergeAndroidMainAssets UP-TO-DATE
+> Task :shared:core:designsystem:compileAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :apps:android:traveler:mergeProductionDebugAssets
+> Task :apps:android:traveler:compressProductionDebugAssets
+> Task :shared:features:traveler:compileAndroidMain UP-TO-DATE
+> Task :shared:features:traveler:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :apps:android:traveler:checkProductionDebugDuplicateClasses
+> Task :apps:android:traveler:desugarProductionDebugFileDependencies
+
+> Task :apps:android:traveler:compileProductionDebugKotlin
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/apps/android/traveler/src/main/kotlin/com/floopel/traveler/platform/location/AndroidQuestLocation.kt:72:26 This declaration overrides a deprecated member but is not marked as deprecated itself. Add the '@Deprecated' annotation or suppress the diagnostic.
+
+> Task :apps:android:traveler:compileProductionDebugJavaWithJavac
+> Task :shared:features:traveler:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :shared:core:model:bundleLibRuntimeToDirAndroidMain UP-TO-DATE
+> Task :apps:android:traveler:mergeExtDexProductionDebug
+> Task :shared:features:traveler:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :shared:core:designsystem:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :shared:core:model:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :shared:core:designsystem:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:core:model:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:features:traveler:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :apps:android:traveler:mergeLibDexProductionDebug
+> Task :apps:android:traveler:mapProductionDebugSourceSetPaths
+> Task :apps:android:traveler:checkProductionDebugAarMetadata
+> Task :apps:android:traveler:compileProductionDebugNavigationResources
+> Task :apps:android:traveler:createProductionDebugCompatibleScreenManifests
+> Task :apps:android:traveler:extractDeepLinksProductionDebug
+> Task :shared:core:designsystem:processAndroidMainManifest UP-TO-DATE
+> Task :shared:core:model:processAndroidMainManifest UP-TO-DATE
+> Task :shared:features:traveler:processAndroidMainManifest UP-TO-DATE
+> Task :apps:android:traveler:processProductionDebugMainManifest
+> Task :apps:android:traveler:processProductionDebugManifest
+> Task :apps:android:traveler:processProductionDebugManifestForPackage
+> Task :shared:core:designsystem:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :shared:core:designsystem:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :shared:features:traveler:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :shared:features:traveler:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :apps:android:traveler:processProductionDebugJavaRes
+> Task :shared:core:designsystem:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:core:model:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:features:traveler:processAndroidMainJavaRes UP-TO-DATE
+> Task :apps:android:traveler:mergeProductionDebugResources
+> Task :apps:android:traveler:mergeProductionDebugJavaResource
+> Task :apps:android:traveler:mergeProductionDebugJniLibFolders
+> Task :shared:core:designsystem:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :shared:core:designsystem:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:core:designsystem:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :shared:core:model:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :shared:core:model:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:core:model:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :shared:features:traveler:mergeAndroidMainJniLibFolders UP-TO-DATE
+> Task :shared:features:traveler:mergeAndroidMainNativeLibs NO-SOURCE
+> Task :shared:features:traveler:copyAndroidMainJniLibsProjectOnly UP-TO-DATE
+> Task :apps:android:traveler:processProductionDebugResources
+> Task :apps:android:traveler:mergeProductionDebugNativeLibs
+> Task :apps:android:traveler:dexBuilderProductionDebug
+> Task :apps:android:traveler:stripProductionDebugDebugSymbols
+> Task :apps:android:traveler:mergeProductionDebugGlobalSynthetics
+> Task :apps:android:traveler:validateSigningProductionDebug
+> Task :apps:android:traveler:writeProductionDebugAppMetadata
+> Task :apps:android:traveler:writeProductionDebugSigningConfigVersions
+> Task :apps:android:partner:preBuild UP-TO-DATE
+> Task :apps:android:partner:preProductionDebugBuild UP-TO-DATE
+> Task :apps:android:partner:mergeProductionDebugNativeDebugMetadata NO-SOURCE
+> Task :apps:android:partner:generateProductionDebugBuildConfig
+> Task :apps:android:partner:generateProductionDebugResValues
+> Task :apps:android:partner:generateProductionDebugResources
+> Task :apps:android:partner:packageProductionDebugResources
+> Task :shared:features:partner:preBuild UP-TO-DATE
+> Task :shared:features:partner:preDebugBuild UP-TO-DATE
+> Task :apps:android:traveler:mergeProjectDexProductionDebug
+> Task :shared:features:partner:processDebugNavigationResources UP-TO-DATE
+> Task :apps:android:partner:processProductionDebugNavigationResources
+> Task :apps:android:partner:parseProductionDebugLocalResources
+> Task :apps:android:partner:generateProductionDebugRFile
+> Task :shared:features:partner:generateDebugResources UP-TO-DATE
+> Task :shared:features:partner:packageDebugResources UP-TO-DATE
+> Task :shared:features:partner:parseDebugLocalResources UP-TO-DATE
+> Task :shared:features:partner:generateDebugRFile UP-TO-DATE
+> Task :shared:features:partner:compileDebugKotlin UP-TO-DATE
+> Task :shared:features:partner:javaPreCompileDebug UP-TO-DATE
+> Task :shared:features:partner:compileDebugJavaWithJavac NO-SOURCE
+> Task :shared:features:partner:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :apps:android:traveler:packageProductionDebug
+> Task :apps:android:traveler:createProductionDebugApkListingFileRedirect
+> Task :apps:android:traveler:assembleProductionDebug
+> Task :apps:android:partner:javaPreCompileProductionDebug
+> Task :apps:android:partner:generateProductionDebugAssets UP-TO-DATE
+> Task :shared:features:partner:generateDebugAssets UP-TO-DATE
+> Task :shared:features:partner:mergeDebugAssets UP-TO-DATE
+> Task :apps:android:partner:mergeProductionDebugAssets
+> Task :apps:android:partner:compressProductionDebugAssets
+> Task :apps:android:partner:checkProductionDebugDuplicateClasses
+> Task :apps:android:partner:desugarProductionDebugFileDependencies
+> Task :apps:android:partner:compileProductionDebugKotlin
+> Task :apps:android:partner:compileProductionDebugJavaWithJavac
+> Task :shared:features:partner:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :apps:android:partner:mergeLibDexProductionDebug
+> Task :shared:features:partner:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :shared:features:partner:writeDebugAarMetadata UP-TO-DATE
+> Task :apps:android:partner:checkProductionDebugAarMetadata
+> Task :apps:android:partner:mapProductionDebugSourceSetPaths
+> Task :apps:android:partner:compileProductionDebugNavigationResources
+> Task :apps:android:partner:mergeExtDexProductionDebug
+> Task :apps:android:partner:createProductionDebugCompatibleScreenManifests
+> Task :apps:android:partner:extractDeepLinksProductionDebug
+> Task :shared:features:partner:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:features:partner:processDebugManifest UP-TO-DATE
+> Task :apps:android:partner:processProductionDebugMainManifest
+> Task :apps:android:partner:processProductionDebugManifest
+> Task :apps:android:partner:processProductionDebugManifestForPackage
+> Task :shared:features:partner:mapDebugSourceSetPaths UP-TO-DATE
+> Task :shared:features:partner:compileDebugLibraryResources UP-TO-DATE
+> Task :apps:android:partner:processProductionDebugJavaRes
+> Task :shared:features:partner:processDebugJavaRes UP-TO-DATE
+> Task :apps:android:partner:mergeProductionDebugResources
+> Task :apps:android:partner:mergeProductionDebugJavaResource
+> Task :apps:android:partner:mergeProductionDebugJniLibFolders
+> Task :shared:features:partner:mergeDebugJniLibFolders UP-TO-DATE
+> Task :shared:features:partner:mergeDebugNativeLibs NO-SOURCE
+> Task :shared:features:partner:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :apps:android:partner:mergeProductionDebugNativeLibs
+> Task :apps:android:partner:processProductionDebugResources
+> Task :apps:android:partner:stripProductionDebugDebugSymbols
+> Task :apps:android:partner:validateSigningProductionDebug
+> Task :apps:android:partner:writeProductionDebugAppMetadata
+> Task :apps:android:partner:writeProductionDebugSigningConfigVersions
+> Task :apps:android:partner:dexBuilderProductionDebug
+> Task :apps:android:partner:mergeProjectDexProductionDebug
+> Task :apps:android:partner:mergeProductionDebugGlobalSynthetics
+> Task :apps:android:partner:packageProductionDebug
+> Task :apps:android:partner:assembleProductionDebug
+> Task :apps:android:partner:createProductionDebugApkListingFileRedirect
+
+[Incubating] Problems report is available at: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 18s
+158 actionable tasks: 82 executed, 76 up-to-date
+Configuration cache entry stored.

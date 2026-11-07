@@ -1,0 +1,183 @@
+// Local fixture setup uses the application's own crypto and password seams.
+// It never migrates, deletes, resets, or updates an existing account.
+package main
+
+import (
+	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"time"
+
+	"github.com/floopel/backend/internal/adapter/security"
+	"github.com/floopel/backend/internal/infrastructure/config"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func fail(code string) { fmt.Printf("{\"status\":\"failed\",\"code\":%q}\n", code); os.Exit(1) }
+
+func main() {
+	seed := flag.Bool("seed", false, "Create only the named local fixture accounts")
+	output := flag.String("output", "", "Ignored credential manifest, outside source control")
+	flag.Parse()
+	cfg := config.Load()
+	if cfg.SecretError() != nil {
+		fail("CONFIG_SECRET_ERROR")
+	}
+	if cfg.AppEnv != "local" && cfg.AppEnv != "dev" {
+		fail("LOCAL_ENV_REQUIRED")
+	}
+	target, err := url.Parse(cfg.PostgresDSN)
+	if err != nil || (target.Hostname() != "127.0.0.1" && target.Hostname() != "localhost" && target.Hostname() != "::1") {
+		fail("LOCAL_DATABASE_REQUIRED")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
+	defer cancel()
+	pool, err := pgxpool.New(ctx, cfg.PostgresDSN)
+	if err != nil {
+		fail("DATABASE_CONFIGURATION")
+	}
+	defer pool.Close()
+	if pool.Ping(ctx) != nil {
+		fail("DATABASE_UNAVAILABLE")
+	}
+	var database string
+	var schema int64
+	if pool.QueryRow(ctx, `SELECT current_database(), COALESCE(MAX(version_id),0) FROM goose_db_version WHERE is_applied`).Scan(&database, &schema) != nil {
+		fail("SCHEMA_PREFLIGHT")
+	}
+	if !*seed {
+		fmt.Printf("{\"status\":\"ready\",\"host\":%q,\"database\":%q,\"schema\":%d}\n", target.Hostname(), database, schema)
+		return
+	}
+	if schema != 163 {
+		fail("FIXTURE_SCHEMA_163_REQUIRED")
+	}
+	if *output == "" {
+		fail("OUTPUT_REQUIRED")
+	}
+	credentialPath, err := filepath.Abs(*output)
+	if err != nil {
+		fail("OUTPUT_PATH")
+	}
+	cipher, err := security.NewAESCrypto(cfg)
+	if err != nil {
+		fail("CRYPTO_CONFIGURATION")
+	}
+	pii, err := security.NewPIIEncryptor(cipher, cfg)
+	if err != nil {
+		fail("PII_CONFIGURATION")
+	}
+	hasher := security.NewBcryptHasher()
+	var fixture fixtureFile
+	bytes, readErr := os.ReadFile(credentialPath)
+	if readErr == nil {
+		if json.Unmarshal(bytes, &fixture) != nil || fixture.Version != 1 || fixture.Database != database || len(fixture.Accounts) != 8 {
+			fail("FIXTURE_FILE_MISMATCH")
+		}
+	} else if os.IsNotExist(readErr) {
+		entropy := make([]byte, 4)
+		if _, err := rand.Read(entropy); err != nil {
+			fail("RANDOM_SOURCE")
+		}
+		fixture = fixtureFile{Version: 1, RunID: hex.EncodeToString(entropy), Database: database}
+		for _, role := range []string{"organizer", "applicant", "member2", "member3", "member4", "member5", "overflow", "outsider"} {
+			secret := make([]byte, 24)
+			if _, err := rand.Read(secret); err != nil {
+				fail("RANDOM_SOURCE")
+			}
+			fixture.Accounts = append(fixture.Accounts, fixtureAccount{Role: role, AccountID: uuid.NewString(), ProfileID: uuid.NewString(), IdentityID: uuid.NewString(), Username: "aqa_" + fixture.RunID + "_" + role, Email: "android-fixture+" + fixture.RunID + "-" + role + "@example.invalid", Password: base64.RawURLEncoding.EncodeToString(secret) + "aA9!"})
+		}
+		bytes, err = json.MarshalIndent(fixture, "", "  ")
+		if err != nil || os.MkdirAll(filepath.Dir(credentialPath), 0700) != nil {
+			fail("OUTPUT_CREATE")
+		}
+		f, err := os.OpenFile(credentialPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+		if err != nil {
+			fail("OUTPUT_EXISTS")
+		}
+		_, writeErr := f.Write(bytes)
+		closeErr := f.Close()
+		if writeErr != nil || closeErr != nil {
+			fail("OUTPUT_WRITE")
+		}
+	} else {
+		fail("OUTPUT_READ")
+	}
+	ids := make([]string, 0, len(fixture.Accounts))
+	for _, account := range fixture.Accounts {
+		ids = append(ids, account.AccountID)
+	}
+	var count int
+	if pool.QueryRow(ctx, `SELECT count(*) FROM accounts WHERE id=ANY($1::text[])`, ids).Scan(&count) != nil {
+		fail("FIXTURE_PREFLIGHT")
+	}
+	if count == len(ids) {
+		fmt.Printf("{\"status\":\"existing_fixture\",\"run_id\":%q,\"accounts\":%d}\n", fixture.RunID, count)
+		return
+	}
+	if count != 0 {
+		fail("PARTIAL_FIXTURE_REQUIRES_REVIEW")
+	}
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		fail("TRANSACTION_START")
+	}
+	defer tx.Rollback(context.Background())
+	for _, account := range fixture.Accounts {
+		var blocked bool
+		hash := pii.UsernameBlindIndex(account.Username)
+		if _, err = tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended(encode($1::bytea,'hex'),27))`, hash); err != nil {
+			fail("USERNAME_LOCK")
+		}
+		if tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM protected_username WHERE username_bidx=$1 AND expires_at>now())`, hash).Scan(&blocked) != nil || blocked {
+			fail("USERNAME_UNAVAILABLE")
+		}
+		email, err := pii.Encrypt(account.Email)
+		if err != nil {
+			fail("ENCRYPTION")
+		}
+		first, err := pii.Encrypt("Android QA")
+		if err != nil {
+			fail("ENCRYPTION")
+		}
+		last, err := pii.Encrypt(account.Role + " Fixture")
+		if err != nil {
+			fail("ENCRYPTION")
+		}
+		birth, err := pii.Encrypt("1995-05-14")
+		if err != nil {
+			fail("ENCRYPTION")
+		}
+		password, err := hasher.Hash(account.Password)
+		if err != nil {
+			fail("PASSWORD_HASH")
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO accounts(id,email_enc,email_bidx,password_hash,status,email_verified_at) VALUES($1,$2,$3,$4,'active',now())`, account.AccountID, email, pii.EmailBlindIndex(account.Email), password); err != nil {
+			fail("ACCOUNT_INSERT")
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO auth_identity(id,account_id,provider,email_verified) VALUES($1,$2,'password',true)`, account.IdentityID, account.AccountID); err != nil {
+			fail("IDENTITY_INSERT")
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO profiles(id,account_id,type,display_name) VALUES($1,$2,'traveler',$3)`, account.ProfileID, account.AccountID, "Android QA "+account.Role+" Fixture"); err != nil {
+			fail("PROFILE_INSERT")
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO traveler_profile(profile_id,username,first_name_enc,last_name_enc,dob_enc,locale,nationality_country_code,nationality,is_adult) VALUES($1,$2,$3,$4,$5,'id','ID','Indonesia',true)`, account.ProfileID, account.Username, first, last, birth); err != nil {
+			fail("TRAVELER_INSERT")
+		}
+		if _, err = tx.Exec(ctx, `INSERT INTO traveler_settings(profile_id,notif_trip_updates,notif_marketing,notif_product,privacy_discoverable) VALUES($1,false,false,false,true)`, account.ProfileID); err != nil {
+			fail("SETTINGS_INSERT")
+		}
+	}
+	if tx.Commit(ctx) != nil {
+		fail("TRANSACTION_COMMIT_UNCERTAIN")
+	}
+	fmt.Printf("{\"status\":\"seeded\",\"run_id\":%q,\"accounts\":%d,\"schema\":%d}\n", fixture.RunID, len(fixture.Accounts), schema)
+}

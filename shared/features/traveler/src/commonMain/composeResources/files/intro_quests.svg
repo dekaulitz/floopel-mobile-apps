@@ -1,0 +1,29 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="280" height="236" viewBox="0 0 280 236" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="SVG scene / Pencapaian Quest" clip-path="url(#clip0_0_4)">
+<path id="Vector" d="M140 220C210.14 220 267 172.99 267 115C267 57.0101 210.14 10 140 10C69.8598 10 13 57.0101 13 115C13 172.99 69.8598 220 140 220Z" fill="#EEF0FF"/>
+<path id="Vector_2" d="M15 211C50 182 77 212 114 186C146 163 187 191 270 163V236H15V211Z" fill="#F7F8FC"/>
+<path id="Vector_3" d="M198 237C136 202 229 203 176 177" stroke-width="13" stroke-linecap="round" stroke="white"/>
+<path id="Vector_4" d="M137 114H43C36.3726 114 31 119.373 31 126V200C31 206.627 36.3726 212 43 212H137C143.627 212 149 206.627 149 200V126C149 119.373 143.627 114 137 114Z" fill="white" stroke-width="2.5" stroke="#3730A3"/>
+<g id="Vector_5">
+<path d="M48 137H97ZM48 151H114ZM48 181L60 193L86 167" fill="#3730A3"/>
+<path d="M48 137H97M48 151H114M48 181L60 193L86 167" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke="#3730A3"/>
+</g>
+<path id="Vector_6" d="M143 89L127 151L155 140L170 161L186 96L143 89Z" fill="white" stroke-width="2.5" stroke="#3730A3"/>
+<path id="Vector_7" d="M171 29L184 38L199 37L203 52L216 61L209 75L211 91L196 97L187 109L173 104L157 108L150 94L136 88L139 72L132 58L145 49L151 34L171 29Z" fill="white" stroke-width="2.5" stroke-linejoin="round" stroke="#3730A3"/>
+<path id="Vector_8" d="M173 95C186.807 95 198 83.8071 198 70C198 56.1929 186.807 45 173 45C159.193 45 148 56.1929 148 70C148 83.8071 159.193 95 173 95Z" fill="#EEF0FF" stroke-width="2" stroke="#3730A3"/>
+<path id="Vector_9" d="M173 50L179 62L192 64L182 74L184 87L173 81L161 87L164 74L154 64L167 62L173 50Z" fill="#3730A3"/>
+<g id="Vector_10">
+<path d="M239 82V130ZM239 82H264L257 94L264 105H239" fill="white"/>
+<path d="M239 130V82H264L257 94L264 105H239" stroke-width="2.5" stroke-linejoin="round" stroke="#3730A3"/>
+</g>
+<g id="Vector_11">
+<path d="M46 51H60ZM53 44V58ZM228 144H242ZM235 137V151Z" fill="#3730A3"/>
+<path d="M46 51H60M53 44V58M228 144H242M235 137V151" stroke-width="2.5" stroke-linecap="round" stroke="#3730A3"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_4">
+<rect width="280" height="236" fill="white"/>
+</clipPath>
+</defs>
+</svg>

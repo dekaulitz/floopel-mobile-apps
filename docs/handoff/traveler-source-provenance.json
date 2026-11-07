@@ -1,0 +1,959 @@
+{
+  "date": "2026-11-07",
+  "scope": "Traveler shared API/domain/session baseline; source working tree, not deployment proof",
+  "source_repository": "https://github.com/dekaulitz/com.github.floopel.prjct",
+  "files": [
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/ApiFailure.kt",
+      "sha256": "60e76cae58e3af814402d742fbd4498da22ecff750f5e42b0e57c13b04cb4811",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/ApiFailure.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/AppPlatform.kt",
+      "sha256": "dbd2c27936e698178634bc838445212080425ef4d72e636a5cfa7fa85804f88e",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/AppPlatform.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/AppRequestMetadata.kt",
+      "sha256": "f553b01c311c0176d74c432caa1b478f29bb853f13f4dd1828bdffafb31baf16",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/AppRequestMetadata.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/FloopelRestClient.kt",
+      "sha256": "a889929fd95ce70259b3bdd9693e4168b6f4f5353b40e13f2db90afa52a4f344",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/FloopelRestClient.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/NativeAuthorizedRequests.kt",
+      "sha256": "aee6319bed4538b4d0236dbc291bccc6426cc2145cf6d2644a0acda161d30516",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/NativeAuthorizedRequests.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/RestTypes.kt",
+      "sha256": "6318f6ff09e44e63c4b61a0f843d2d09047b89b570943688103e0b8449559fbb",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/RestTypes.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/SystemAvailability.kt",
+      "sha256": "d87efeb884e835075a4f95085ae51cc8985a4e1402b2b7273a66972a25f2100a",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/SystemAvailability.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/core/network/TravelerReadCache.kt",
+      "sha256": "d0b1aa91e822ea7813e8dbcbf03d8cfd185e4f2a3468313747b955d4286cd1d4",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/core/network/TravelerReadCache.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/AppsEnvelopeDtos.kt",
+      "sha256": "d67b5fe50c63c510ac9ba9925cbda474e1dc8a9b9ba26492245b8791bb3e79c6",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/AppsEnvelopeDtos.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/LocationReferenceDto.kt",
+      "sha256": "389a7e8d9b150b0a828ff36e9482d8c19688ca03cc46fec5e5038a30a2046b68",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/LocationReferenceDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/NativeResponses.kt",
+      "sha256": "17facb5fe17fed480706f31fb4640aac927bfbc4bde16dada73a108769e7fb7f",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/NativeResponses.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/OpenTripDto.kt",
+      "sha256": "d25a842ceecb52e8390794c3a3c3e6e2c19153b0e6e59b3cd8a066ab2c114c84",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/OpenTripDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/PassportSummary.kt",
+      "sha256": "9e77d105ad8442165a15ee690658ca3238cc04cb9801298ce5690180a9c85b0c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/PassportSummary.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/PersonalProfileDto.kt",
+      "sha256": "2abd2f058c0ac8801de9362d61ee6cc96438a3cd0b23e81bcfb09052e17cddc4",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/PersonalProfileDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/ProfilePhotoDtos.kt",
+      "sha256": "ddc1c4c9bee655c3d40bfd3116ddfc43719b734276fc654e7af9c4f32b25ded4",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/ProfilePhotoDtos.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/PublicProfileIdentityDto.kt",
+      "sha256": "a96232d8468090c35160a2388ea534ccd6e2a3fda6a5dc5f46aaa6009f71a97d",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/PublicProfileIdentityDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/PublicQuestActivityDto.kt",
+      "sha256": "7d4f29d8dc4c59fbd626ed5335fe76f158e7b84e9b87abb7cd9402bb7f71ef61",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/PublicQuestActivityDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestCompletionReceipt.kt",
+      "sha256": "7bf477e856567e2a244a3a77cfc4ff73188ac42aed96bb1a11c2d786ff4c45ee",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestCompletionReceipt.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestExecution.kt",
+      "sha256": "c269c68402088ea2274a357a526d3aa18524a4a138f8d079862b61d858f2db96",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestExecution.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestGroupDtos.kt",
+      "sha256": "492e60312fde8f5159af6cdec83b62bccbcb1a426f5e3b94c1e995938f992c62",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestGroupDtos.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestModels.kt",
+      "sha256": "588234584ff19d6ebaee8447f4b0ba28f37f74553c99e8a038f8af95880b24b3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestModels.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestRewardGrant.kt",
+      "sha256": "467ac3463398cd2178a3964eee1da241ff657845b8c6d2452cb3c4749b05c166",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestRewardGrant.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/QuestSharingDtos.kt",
+      "sha256": "4812eb045de26efae6139b9a0baa63f58fb47e196c4df8af50075558e4cedac0",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/QuestSharingDtos.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TravelerNotificationDto.kt",
+      "sha256": "90e3a401cef216628092e1c62f70b02f21b416e4b88bde214290071f0dc88e59",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TravelerNotificationDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripApplicationDto.kt",
+      "sha256": "6ba14ed04b0d142809e329146b948cdc103507e943e886cea7ba78998b44ad8c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripApplicationDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripMemberCapabilitiesDto.kt",
+      "sha256": "318cebf5ea3b67112a934bea19a80800caff3bbe92b277f7fbc99d604ad416b9",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripMemberCapabilitiesDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripOutcomeNoticeDto.kt",
+      "sha256": "5d6d4209583c91fd9e6963937475c928ba7d2835bc3d0b0a6593a30f9c921d59",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripOutcomeNoticeDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripReportReceiptDto.kt",
+      "sha256": "3760519b400228d3120d171dd91dca45df11e301f4d904ff36f880838dcef4bf",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripReportReceiptDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripReportRecoveryDto.kt",
+      "sha256": "de9b651ce6ef533e7ae1e38ba381361953fecb8cbff15174c6a3dad9b8edf3c6",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripReportRecoveryDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/dto/TripReportRecoveryIndexDto.kt",
+      "sha256": "5d3a67e96afc07065f760e880260c613c1ae843d58fd191b830923b58f385b4c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/dto/TripReportRecoveryIndexDto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/remote/AppsEnvelopeDecoder.kt",
+      "sha256": "64054d5fbed1dec0345a09d9089e7f17713c6897b04c7f05ea7263684f6b4458",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/remote/AppsEnvelopeDecoder.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/remote/NativeApi.kt",
+      "sha256": "3648f4f4a43c213484aed70fec89cb01478a28af946560487f743d406dfe36e7",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/remote/NativeApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/remote/NativeAuthentication.kt",
+      "sha256": "db49b0eaaf64cc55893176c06f2279d3d4369195b57310e5446b42f4667082b3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/remote/NativeAuthentication.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/AppsCommentTotals.kt",
+      "sha256": "548eda83174915405613d5ed3450682b2c84c72c63090ea8cbcd99fe6d033e8a",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/AppsCommentTotals.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/AppsTravelerCatalog.kt",
+      "sha256": "7450a1b392b40999b348389f16367fc193d5f94c35ccb8352b1a6fadef6b5170",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/AppsTravelerCatalog.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/CatalogMediaDescriptor.kt",
+      "sha256": "38c5a2d4d8d3f7902c9d74564b31eac709224ee6b034637cdfab10283836f654",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/CatalogMediaDescriptor.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/LocationReferenceMapper.kt",
+      "sha256": "57976f8e3861965b7f7954e5ee992a28c4b138040ae006775e865fd85d6587ba",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/LocationReferenceMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/MemoryTripReportRecoveryStore.kt",
+      "sha256": "466a04b28974c63ae4728d6919230e2de574e998a0b8902f189119cb79f00ab1",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/MemoryTripReportRecoveryStore.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeAccountApi.kt",
+      "sha256": "794d547d055d1b6d4efaa9ae3c61c6c37058801c1b15a9e2008b83e8dc60ea2b",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeAccountApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeCommentApi.kt",
+      "sha256": "57f1ecc2e864254626afab9ad3b0fe1b5d3d05cd80f3896e933eb5b3c6c7f4c6",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeCommentApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeErasureApi.kt",
+      "sha256": "4b21f2297416f176404256100037f9a72409b5972c294bba5b0728020e7cfb39",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeErasureApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeItineraryApi.kt",
+      "sha256": "f8d36a70fafabf42658aad46e4805244c0aa978ef1e65ad31426a9d47a6dc967",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeItineraryDistributionApi.kt",
+      "sha256": "caca9cd2327108d76cf1341d8c23dc6bf073d7900384a583329293eb53dedfc5",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryDistributionApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeLegalApi.kt",
+      "sha256": "5c4c654593c3096a3841d1b4429b1feabd10b53738b63c9d687f5c689232ebdf",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeLegalApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeModerationApi.kt",
+      "sha256": "7425cb5aeef5a66ad5631c826ddb2a92d680c729fb19667f6af43847a7bc5e8f",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeModerationApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeNotificationApi.kt",
+      "sha256": "b12b23dd4ef8dafbcfbaafacef37086c4da6286cb365812550bce897a655c5e2",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeNotificationApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeProfilePhotoApi.kt",
+      "sha256": "201a6bd9fbb391e78c9c65e859fcb76c24e90f2b7cc34cb3d0c3644dc93534b3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeProfilePhotoApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativePublicTravelerApi.kt",
+      "sha256": "8bce43ec06f61405a24d7b53fed332db473a88a7a9e66704001b67a6e7f94a9c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativePublicTravelerApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeQuestGroupApi.kt",
+      "sha256": "721fed6a6a03bac57cc1d6faa98bd6666a86daeb7f5f20a9d31c8b00c53569b1",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeQuestGroupApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeQuestSharingApi.kt",
+      "sha256": "5640b405dea76c305ba50652ba40ef811a3e479b91c3c6b18f5b09837fd85ea3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeQuestSharingApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeRecommendationApi.kt",
+      "sha256": "8a2f9175df021ac30a323101f45a3a40f781b96eeef8808f9678b82782d0fac2",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeRecommendationApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeRegistrationApi.kt",
+      "sha256": "198b5910e1b7901c134239da33175fceac1992e7d8aaf134f9492b81e408ee09",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeRegistrationApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeSavedSpotApi.kt",
+      "sha256": "bc22473638f6e0bcaa6270039fa5c97512702d10c8cfa768dc07ae1bb67ccb76",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeSavedSpotApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeSettingsApi.kt",
+      "sha256": "4e00cd483a33f7043691b399d94d4d7678400beeed0a92e1b27f2becc543f030",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeSettingsApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeTravelerCatalog.kt",
+      "sha256": "37afbdcd9f6c8ddd02b98b6822777a4cff09752b7b49857bc73b94419daaf73a",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeTravelerCatalog.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeTripApi.kt",
+      "sha256": "99f76d11508009716307cabda546d442d6ee8443a381e1d35ae3c221ebdf0d3c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeTripApi.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/NativeTripReportRequests.kt",
+      "sha256": "3205a4e8bc9f10c9752ce838ceffac9ba76aa7866e815fadd5c4aeb73d814468",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeTripReportRequests.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/OpenTripMapper.kt",
+      "sha256": "5a4597fc5b6133e4cefd99856ac590f4ce52e4c898b9ab48cfd0da0ea7175621",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/OpenTripMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/OpenTripQuery.kt",
+      "sha256": "d0806375598676220799fb2d21176a377f154bc39ca5ca31d2b018e9fb9edd95",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/OpenTripQuery.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/OpenTripWireDecoder.kt",
+      "sha256": "e023d8c821fac9ab35d740d29ea5063dae2b41a379c13824edbcdebefa40dca2",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/OpenTripWireDecoder.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/PersonalProfileMapper.kt",
+      "sha256": "83574523276689b643f7838fce8de7a5f20f1752bec4c45a82ea93cf71604cd0",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/PersonalProfileMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/ProfilePhotoMapper.kt",
+      "sha256": "711565630fe05e01ac59ce2530e16326d418a58325052be1ddde14a9a6b46551",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/ProfilePhotoMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/PublicQuestActivityMapper.kt",
+      "sha256": "82377dcd09f6031bb557d086f41d5164a23a60484b9fd0053608040df0d463ed",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/PublicQuestActivityMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/QuestGroupMapper.kt",
+      "sha256": "2cd511f473f2769239dd2b90df71def51ef7e9cb8de25c850b589e1dd62255b3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/QuestGroupMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/QuestSharingMapper.kt",
+      "sha256": "b5c100e7fad5fd6d996a57543605e43669302d299f32544788f2648bb3875c6c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/QuestSharingMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TravelerAvatarIdentities.kt",
+      "sha256": "c1677e9ba982843cab4478f5aeedbd576ebecc4b80b5645179f1c71650a57b9d",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TravelerAvatarIdentities.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TravelerNotificationMapper.kt",
+      "sha256": "05d7ecd1cf0e4a8d9ee151834f6e5ef893b5bad6636337f52cca902c573e9de3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TravelerNotificationMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripApplicationMapper.kt",
+      "sha256": "4b3febaf7cf11faa573348b2c5dc6a2e66341cd19356c1140455ddeb43dbaceb",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripApplicationMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripApplicationWireDecoder.kt",
+      "sha256": "0d10c4706587055b9965c7f587a93eb738823fac01c7852754cd95845ceca702",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripApplicationWireDecoder.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripMemberCapabilitiesMapper.kt",
+      "sha256": "95b97b950a0bba9e24a898ee11df514178240b13069938fb9f30713a668fb9e8",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripMemberCapabilitiesMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripMutationPolicy.kt",
+      "sha256": "44f3fc8b96a86acebb252cbff11d6a90adae03f831346c9f3cdabf1f98658132",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripMutationPolicy.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripOutcomeNoticeMapper.kt",
+      "sha256": "90504840528d09e936b764ddb74a1d9587caec3ccbefb7ecc498242dec8ca97e",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripOutcomeNoticeMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripReportRecoveryMapper.kt",
+      "sha256": "ef1864d45ab45c086f39f43cff341d5b29be7e131cd53b69e936399b81ef2a77",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripReportRecoveryMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/TripWireValues.kt",
+      "sha256": "d341b1413f365c98c3dbd38b8e83dace97a0ccf3ae9ecd652beea1779f3e9656",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/TripWireValues.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/data/repository/UntakenLocationQuestMapper.kt",
+      "sha256": "85b27429dbcc7decbfa7010752cb36d98542fddd261a699ed3f26d70cb003b11",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/UntakenLocationQuestMapper.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/CatalogFieldIssue.kt",
+      "sha256": "955c3367c8b6f3f5676b75c623b01f55bdd18e255c24b55197ce946360f7ae19",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/CatalogFieldIssue.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/LocationReference.kt",
+      "sha256": "a630099523b5669a74bf38a4fe231db0102cef1f692d238371b5d16754a3fd01",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/LocationReference.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/OpenTrip.kt",
+      "sha256": "42bd410eb4b8b369602784cd0c329679232664c97ff71862802ea46b179c9337",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/OpenTrip.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/PublicQuestActivity.kt",
+      "sha256": "81d275b2c17913db4baf606e74cecf00c9061958e4b422a663532a0d8a717727",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/PublicQuestActivity.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/QuestDiscoveryFilter.kt",
+      "sha256": "6140cce17edd98c1908e26aad61f629546156f039bf180efdc34aa2632d34745",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/QuestDiscoveryFilter.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/QuestGroups.kt",
+      "sha256": "fbcc8191d2ce35e3078d97506311a0404dbd54bd249960631bc9772ad9f5cf11",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/QuestGroups.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/QuestLocation.kt",
+      "sha256": "d727dde0bdbcd14755d145f39f3c7e05046efc662878f8e4ec1002a03a327450",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/QuestLocation.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/QuestSharing.kt",
+      "sha256": "59c94192c3096148411f43ac55c16e6041dcfc1518c56aa2486afd7fe66570b3",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/QuestSharing.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/SystemMaintenance.kt",
+      "sha256": "4ea52d65d311b47ff4be36391a05273c463a6411456657a18705d78f13c1550d",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/SystemMaintenance.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerAccountDetails.kt",
+      "sha256": "21e4c80e2999c23d87bd5afb967e0c4dc25cb382c25b1ef5b22c7b3518ac40c7",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerAccountDetails.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerAvatarIdentity.kt",
+      "sha256": "3398945ff0e158003f47d0fe497811ccb82e5414cdec7fcd7bde2ff572f8288f",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerAvatarIdentity.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerCatalog.kt",
+      "sha256": "de07a31c8cc9fa8d990e09d1c874b728af82b76707d4c2329ee5bc865a6017aa",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerCatalog.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerComments.kt",
+      "sha256": "3551b07a6c89491afa26598edce77eb3eb710b56453670c86cc40ab6f038935d",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerComments.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerErasure.kt",
+      "sha256": "02ef76bae0bd804b2d5acd6a60f4e05f0305581b15931ec1824d00d6b8958351",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerErasure.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerItineraries.kt",
+      "sha256": "facef75a604541237e2dddf8a47ac0a170f8bad5aef6c0718895a1f39f8d86bd",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerItineraries.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerItineraryDistribution.kt",
+      "sha256": "9d9f13b47f5cb97288fb131864f5939d342572bb080bf32fbd2c2e58d445cf70",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerItineraryDistribution.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerModeration.kt",
+      "sha256": "9877fdfe9d81b2a251686325391b8b2594a3e774169552f3880134d61a474edf",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerModeration.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerNotification.kt",
+      "sha256": "875f8d5208b962da3c5ae40af80babb9cadbe2044b6702d935407e505cf26056",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerNotification.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerProfilePhoto.kt",
+      "sha256": "9ad28bfe98e53542e0bcaaabdb10b819579f3e97178d84142f03b98a2bf94990",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerProfilePhoto.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerPublic.kt",
+      "sha256": "0ef250ee9c31bba8efd4cb9035d8cded1ec8ea366c94aa0599e9cf98d2c1fcd1",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerPublic.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerRegistration.kt",
+      "sha256": "34512c79ac80bddd4f9429d04928f9881505a2aba66c59cf48e45a3456e59548",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerRegistration.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerSettings.kt",
+      "sha256": "63d41eeb84650b77eb2720d4eca1491f65f21fc08b85a8b3d276481130c63aea",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerSettings.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TravelerTrips.kt",
+      "sha256": "56ff083bf41d908326667c95f9e8008b9ce732f173521b020ba5a8ecd43b4c0a",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TravelerTrips.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripApplication.kt",
+      "sha256": "6ad9a7135e9e854a316c5ac8d248b18476f3685f88ccb0ba7893b2b8ebf2a08c",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripApplication.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripCommandRejection.kt",
+      "sha256": "3ad471f3f174fc4eef49eb694ff6b42dd9ad295d8cf82d58fb98512a200f1bc8",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripCommandRejection.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripDraft.kt",
+      "sha256": "923d46e59ec643017c4b7c0269e5ce493375f899f35d15893c60b31a70e8c79a",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripDraft.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripMemberCapabilities.kt",
+      "sha256": "a4a08658f6905ec576c4b7256cd649f8816c653329c4f0eaf79790cacdee4490",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripMemberCapabilities.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripOutcomeNotice.kt",
+      "sha256": "4c6778144150e2cd02c74d0d1b6f673aee3490067c6d3dbf518a42f8802fc0ff",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripOutcomeNotice.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/model/TripReportIntent.kt",
+      "sha256": "38897f140daedf7601fd4c81dbdf26e54e224fe3e547bc78e12d1dfefba04a88",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/model/TripReportIntent.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/QuestAttestation.kt",
+      "sha256": "cb2d2fbde5e503368df3f9bec4213052e209169ff4b50b8917d547f24f743eb0",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/QuestAttestation.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/QuestLocationSource.kt",
+      "sha256": "0b37526f50c60a7202784952ad34dd22ecd253e9120ae340cb6b9ed82b0ee208",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/QuestLocationSource.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/RefreshCredentialStore.kt",
+      "sha256": "f38c634a9f0056562b575b553fa678c6effcef33b4b9077794128a7051170abb",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/RefreshCredentialStore.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerAccountDetailsRepositories.kt",
+      "sha256": "a3cfea143ad3a2155fdd7dbf8b1f465b91f2f42f5d297e73197883348480b5bb",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerAccountDetailsRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerCatalogRepositories.kt",
+      "sha256": "160656f9d16de2932739d62aacd907a26a313e5d1c06a3e5860b1c6dc387a2dc",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerCatalogRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerCommentsRepositories.kt",
+      "sha256": "1708d327d40d5afe1db03357a354db88c5578ce8cc0ad8400c915576597ac42f",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerCommentsRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerErasureRepositories.kt",
+      "sha256": "1004feca27026cfdc9f3376e8a45b61157999b803fad6555222851a560dfa542",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerErasureRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerItinerariesRepositories.kt",
+      "sha256": "eafd1a6107a8bd75fff720ff75abb9d5b0591540262c37aac829fb78cd3250e9",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerItinerariesRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerItineraryDistributionRepositories.kt",
+      "sha256": "3fc3d5bd30a4cc3bf17c0aef70b112b2209773ee979f63c6da5e9acbf452476d",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerItineraryDistributionRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerLegalRepositories.kt",
+      "sha256": "626bfd594756891656f9e8f68f6a8d6b275467a4493ce003a7c8d962f44c3c98",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerLegalRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerModerationRepositories.kt",
+      "sha256": "ce47defb0f2a27f80baf1c010475a736043981985541f73c68b19c8be73d77ad",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerModerationRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerNotificationRepository.kt",
+      "sha256": "a4089b0a862da351bae8c3486800aa9eaf66ad04e1bd881a3706c91eab4ba294",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerNotificationRepository.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerProfilePhotoRepository.kt",
+      "sha256": "1caac975a85ecd3027af92de0f6ecf32f9bfe9ec54598dfa7f6792cbff81a417",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerProfilePhotoRepository.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerPublicRepositories.kt",
+      "sha256": "18a941a6a59e9dfdf297a1603739e2b14521bfc477b7ae2f4191bce33e3b8d58",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerPublicRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerQuestGroupRepository.kt",
+      "sha256": "8cda3530e410afc8c42fd8730655275ef0f0c8a7532de729cf92ed7612ae5a86",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerQuestGroupRepository.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerQuestSharingRepository.kt",
+      "sha256": "0040316699fa7f2e680202b47e375629bb710827a1d0603420569bdee6f35e1b",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerQuestSharingRepository.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerRegistrationRepositories.kt",
+      "sha256": "1efa9157efcf006f321538854fd5b27fd4e05a13d377718809e98998fd8d8070",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerRegistrationRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerSettingsRepositories.kt",
+      "sha256": "bdea376ec0066f80f78a60810117c3d85d78af58e4fc9c4c83f64a897610ddca",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerSettingsRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerSystemMaintenance.kt",
+      "sha256": "7b83ef2a51eb66879106d6395952e5daf013f891cda853f0f23dfd9174a2dbb2",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerSystemMaintenance.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/domain/repository/TravelerTripsRepositories.kt",
+      "sha256": "571de4c89e302dc9a0b5734126a1c5b7af09b6f51513c276e8417bbbc9f86a71",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/domain/repository/TravelerTripsRepositories.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/feature/auth/LogoutLifecyclePolicy.kt",
+      "sha256": "ac3a316e2d6464ce9b63849ee7a8da8b47008359fe822ee20ed02aaccc244b48",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/feature/auth/LogoutLifecyclePolicy.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/feature/auth/TravelerSession.kt",
+      "sha256": "911311c3fff5a0c73f3ad2de560a97db7662d950b125eee7fc3a9d105f1d210f",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/feature/auth/TravelerSession.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/feature/auth/TravelerSessionModels.kt",
+      "sha256": "db706e7c2cf3827a26886afe58232cd3698b41cd58ecfe38668c523ee2a8e2c4",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/feature/auth/TravelerSessionModels.kt"
+    },
+    {
+      "source": "commonMain/kotlin/com/floopel/mobile/feature/legal/TravelerConsentCoordinator.kt",
+      "sha256": "c33ff2a9f12b728c0ca1810200483e0188f4f2a5ecb6cb32fae7a80dbd871a09",
+      "target": "shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/feature/legal/TravelerConsentCoordinator.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/core/network/AppRequestMetadataTest.kt",
+      "sha256": "9ef193ab7e19cc5f082b0bcb3dd91b1e00f131470537e0f99cf3d2617d415e2c",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/core/network/AppRequestMetadataTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/core/network/FloopelRestClientTest.kt",
+      "sha256": "685d64fa64c1eb8d550d2ef17c524d083ff1e400adfaabb578dbdc976ccea118",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/core/network/FloopelRestClientTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/core/network/SystemMaintenanceTest.kt",
+      "sha256": "913fe5885b5d418624b7b6e9c88c284adb6944f0a667d81ad0ad5b46f482c637",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/core/network/SystemMaintenanceTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/core/network/TravelerReadCacheTest.kt",
+      "sha256": "27d929590aea8740460ec2905e3220f5fb45677dd35c403052cb23fd0342ea71",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/core/network/TravelerReadCacheTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/dto/PassportSummaryTest.kt",
+      "sha256": "7541ed552b1f03e0762aca3215230a6cd60507b986eb67f73deaad47e85116ed",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/dto/PassportSummaryTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/DiscoveryCriteriaTest.kt",
+      "sha256": "1d1d8e4540612e381c05f166b97e7ef97fb053453853bdd5d128f776be5edc21",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/DiscoveryCriteriaTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/GoogleAuthenticationTest.kt",
+      "sha256": "cdb8aeaafbd7554f79eed8b6641f3a4f35e8b45668498fdaa88c8cd06664d374",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/GoogleAuthenticationTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/NativeApiTest.kt",
+      "sha256": "4a8945ad1b3f0a2061e609b6ca980800c995e2f14121159bd08e9eaa1045b5c3",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/NativeApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/QuestBadgeMediaTest.kt",
+      "sha256": "464c034f55eee5c6c289eee31eeb53da75bba3a7922a81a13c8279cc58ff879d",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/QuestBadgeMediaTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/QuestCompletionReceiptTest.kt",
+      "sha256": "5acd43a10fd26f2c26756c08206f3dca376068fbe5788d7f3ef114c234d59809",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/QuestCompletionReceiptTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/QuestLocationCoverageTest.kt",
+      "sha256": "645c890e14dbf5e9ac632ea0b716083a1133cb2e4025d22fa375ae50ffdf5546",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/QuestLocationCoverageTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/QuestProofApiTest.kt",
+      "sha256": "2a8112e44338e32013bce643a22ca7a7c061beade1f86e956407544514aec638",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/QuestProofApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/QuestTravelerProjectionTest.kt",
+      "sha256": "306e3852c570f917b85af537c8d7f452de480a32d9cd678f7b7daf3dc454fa92",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/QuestTravelerProjectionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/remote/VerifiedAccountRecoveryTest.kt",
+      "sha256": "fa3bfd71ef27492cbf07d812901e150a17aede0f8b0afe5fa8de85e5d72551e1",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/VerifiedAccountRecoveryTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/AppsCommentTotalsTest.kt",
+      "sha256": "2899f54f0f2a94e7a6085fc9c6b421702aa024f4d818d065bee672f5c274ad9f",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/AppsCommentTotalsTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/AppsTravelerCatalogTest.kt",
+      "sha256": "19a52d831463d6410af916c217de0870f3b9071b6b4425fb23de2aaf023fece4",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/AppsTravelerCatalogTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/AppsTravelerStoryAvatarsTest.kt",
+      "sha256": "f9355f739aab5015d467342a367f31b4baa6011ca224a55d8dcc4fd4d9d341a3",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/AppsTravelerStoryAvatarsTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/CatalogLocationCoverageTest.kt",
+      "sha256": "6cc4f9081952e33773ebbd11d07ac771a509e0835ebbe0a63994927ea66d6d5e",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/CatalogLocationCoverageTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/CatalogPaginationTest.kt",
+      "sha256": "f307b3f2ae5626dc7504da698534fc692dc47af04a7c10dd2546a886e204c9d4",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/CatalogPaginationTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/ExplorerMarkersTest.kt",
+      "sha256": "c0438385d2fa026c5a159e093b51aa5bbecbc3e046ab50677aaa0d4d205d533e",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/ExplorerMarkersTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/IntegratedOwnerApiTest.kt",
+      "sha256": "38cf739176464804e366c0f051240e1b8ca1e2827dcc8ecc9c4533c284e690c2",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/IntegratedOwnerApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/LocationCoverageFixtures.kt",
+      "sha256": "c1065c2aeeb82edeb901384e4caf9657b3fb2462a580ad29c32d70a15692dd31",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/LocationCoverageFixtures.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/LocationDiscoveryTest.kt",
+      "sha256": "dff651a04b46923c3fac99d83b3d21a6687a59d58e438a6a1176167877acf0c5",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/LocationDiscoveryTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/MediaUrlTest.kt",
+      "sha256": "d0b5b41cdd2d0fef48a82e59c1f7768b51131f78941547b989effd572491f5f5",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/MediaUrlTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeAccountApiTest.kt",
+      "sha256": "d11733a5e85ac9ee1169415c1408fa6d7855b94030b44139fd9bcf69ee6ecd5b",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeAccountApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeCommunityApiTest.kt",
+      "sha256": "a7069bf615365f0e3052824f621a57393f93e4ae153ffe1bcce70c6bfb071260",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeCommunityApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeErasureApiTest.kt",
+      "sha256": "67a22f8136fb818372c7d699e26225aeb50867ef99c14a093b122a8a9404855c",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeErasureApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeItineraryDistributionApiTest.kt",
+      "sha256": "3e109c0ee62df45be0eb7d166a858e0ab9f46f957b2beacdd219b0d6dcadd475",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryDistributionApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeItineraryRecoveryTest.kt",
+      "sha256": "d4a7e4edfe2621e97c0c20c6236449525af29350dfcd8fb3ac95a76ce9c58bbd",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeItineraryRecoveryTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeLegalApiTest.kt",
+      "sha256": "af795098c89c3811454f774e34809cd524f883b6c256ffbba8e0a14c49a7d65b",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeLegalApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeNotificationApiTest.kt",
+      "sha256": "9fc86cfd6e13effeee5614bdfc935e3f3565656368b1ab4876547a6119ec3248",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeNotificationApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeProfilePhotoApiTest.kt",
+      "sha256": "c4db52f3d7730406b81c65088a5d964b2b0aeea30a0e9d916a8e96077d53557a",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeProfilePhotoApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativePublicTravelerApiTest.kt",
+      "sha256": "4c1dbe6d768a2a1e2f008b4020cff3fa03a458f1e240a50b8b6c4ce0245b6e27",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativePublicTravelerApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeQuestFeaturesApiTest.kt",
+      "sha256": "71e16529569925172bbea8247e45fad4f4a27bf6837e2fae3dc00ff3c7b20078",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeQuestFeaturesApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeRecommendationApiTest.kt",
+      "sha256": "e3c0a9bdca6d347a57269f186ab6cd9257d48b1d4dab45813027833f04a79f97",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeRecommendationApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeRegistrationApiTest.kt",
+      "sha256": "7cd2c61a0b6101e585fe47adbb79f904ff3f933958a3c0d376944ef47ba68720",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeRegistrationApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeSettingsApiTest.kt",
+      "sha256": "155abd4948e7ab34d71fe990573da2056dea5b0b1d82703e3ca42ef93fa3f2b8",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeSettingsApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeTripApiTest.kt",
+      "sha256": "47aa2600f3f14af454c427d539eeb5f9001a10de84cec6459debfe1c3396c69e",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeTripApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/NativeTripReportRecoveryTest.kt",
+      "sha256": "e0069874697dfd9c5657f97ff15026089d8779d585ccbb6e6b76134382ef9d5e",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeTripReportRecoveryTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/OpenTripNativeApiTest.kt",
+      "sha256": "c7f6ccd9f290f4374bf6bdc1ebec33c48bdc884a1682dff48fcfe31f377e0985",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/OpenTripNativeApiTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/QuestGroupMapperTest.kt",
+      "sha256": "138295a1a0d85f6d442793cbad4380152092e5d66f1c974fcb949ecb8ee5eb5c",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/QuestGroupMapperTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/QuestSharingMapperTest.kt",
+      "sha256": "82eaf0e862e5d962539f54c8c50bd1c9652f24562fcf07a1e3708dbe10ff086d",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/QuestSharingMapperTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/StoryDetailProjectionTest.kt",
+      "sha256": "d888667f0c6f0b94aa84eae2f6ef959858267977489a2729efd192a01bc9d699",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/StoryDetailProjectionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/TravelerAvatarIdentitiesTest.kt",
+      "sha256": "3cd3c5fb909ec89d0c661f2382113e427a03143cc84732d51e3dd37bb796905a",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/TravelerAvatarIdentitiesTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/TripCommandRecoveryRejectionTest.kt",
+      "sha256": "1309ac7dd3f8137c8731df3e0877c3e0c94cfcd3915170038582caef08ae7a27",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/TripCommandRecoveryRejectionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/TripMemberScheduleTest.kt",
+      "sha256": "770b3abaaa46bb2b454ef2c25457cea2ccd957fa8fca956ef9b0a65c41b04276",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/TripMemberScheduleTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/data/repository/TripTransferPrivacyTest.kt",
+      "sha256": "f43c88e587fd66595716c589f88f09ea0bde3bfea36a98e0aa7e5b28e61733a3",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/TripTransferPrivacyTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/domain/model/CatalogPhotoTest.kt",
+      "sha256": "3a1505ffa2226f97241118d5f6c47ec882d701ddd6d93a72814cdcec5253b7be",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/domain/model/CatalogPhotoTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/domain/model/TravelerAgeTest.kt",
+      "sha256": "0e0663fab3f2793d75006b102c4c90a9928e55052c989084887b347d4c1b875c",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/domain/model/TravelerAgeTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/domain/model/TripCommandRejectionTest.kt",
+      "sha256": "5200d2be272f2c1ee91aec46f7df59a41df641359e65e2ba1efec2a56bed1477",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/domain/model/TripCommandRejectionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/HiddenQuestLifecycleTest.kt",
+      "sha256": "8454778a3a975206db3a66eab0a668d15501062ff00c726cf05635674f92d6bb",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/HiddenQuestLifecycleTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/LinkedHiddenQuestTest.kt",
+      "sha256": "7739c8fe16aa8a9c62e61c02ea3a68e9aa9d2c0742b1d41d3a587cfe9d2cdbc4",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/LinkedHiddenQuestTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/PassportProgressNavigationTest.kt",
+      "sha256": "ff596a057faf0adecf70371dbc05e7ed139af6f174ab6e22166e2ca0ed7d85a3",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/PassportProgressNavigationTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/QuestCollectionsReadTest.kt",
+      "sha256": "9ffa7bc283f27fa163643241c02351d28712ddb75d3152784aac684541c029f3",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/QuestCollectionsReadTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/QuestCompletionProgressTest.kt",
+      "sha256": "1efca96454560d313fa584572d30a44232bc5cbb95258523dc7f1c0e802ddf18",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/QuestCompletionProgressTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/QuestExecutionTest.kt",
+      "sha256": "63cdbd070708142956b30c8e8b2bfaaa7c2308cf9c2e20c61d2f356823cebf32",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/QuestExecutionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/QuestGpsTest.kt",
+      "sha256": "47a5a3a665a0d61be95a4a612a03331a430450240d2e99b844779e0ec910cceb",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/QuestGpsTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/TravelerSessionLogoutTest.kt",
+      "sha256": "efb93a45639df7f30d3030d85acabfa70559b014a5301a0788d27e68de9ad8b2",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/TravelerSessionLogoutTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/TravelerSessionRestoreTest.kt",
+      "sha256": "16811c3ac2be963b21fe18abcb04d934fd406a5d66d40733bb815b73b5034623",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/TravelerSessionRestoreTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/auth/TravelerSessionTest.kt",
+      "sha256": "190257e1e6fcfd11af0bf2eababa52aaf1f5edb02da57204848233b969a39d34",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/auth/TravelerSessionTest.kt"
+    },
+    {
+      "source": "commonTest/kotlin/com/floopel/mobile/feature/legal/TravelerConsentCoordinatorTest.kt",
+      "sha256": "b92136ff77d9ae4b7a830126e48180c920240f2e644db29ddfc303a185899402",
+      "target": "shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/feature/legal/TravelerConsentCoordinatorTest.kt"
+    },
+    {
+      "source": "androidMain/kotlin/com/floopel/mobile/core/network/AndroidNativeApi.kt",
+      "sha256": "f627c1d44043de1881b0c9cd208d15fc194607178b72053379db68ec3b8dd9df",
+      "target": "shared/features/traveler/src/androidMain/kotlin/com/floopel/feature/traveler/core/network/AndroidNativeApi.kt"
+    }
+  ],
+  "source_root": "application/mobile/shared/src",
+  "adaptation": "Namespace, visibility, Android composition, guest public access, domain projections and recovery updated in this repository; source hashes are pre-adaptation."
+}
