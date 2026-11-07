@@ -21,22 +21,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type fixtureAccount struct {
-	Role       string `json:"role"`
-	AccountID  string `json:"account_id"`
-	ProfileID  string `json:"profile_id"`
-	IdentityID string `json:"identity_id"`
-	Username   string `json:"username"`
-	Email      string `json:"email"`
-	Password   string `json:"password"`
-}
-type fixtureFile struct {
-	Version  int              `json:"version"`
-	RunID    string           `json:"run_id"`
-	Database string           `json:"database"`
-	Accounts []fixtureAccount `json:"accounts"`
-}
-
 func fail(code string) { fmt.Printf("{\"status\":\"failed\",\"code\":%q}\n", code); os.Exit(1) }
 
 func main() {

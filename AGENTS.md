@@ -9,6 +9,8 @@ Gunakan skill [floopel-mobile-engineering](.agents/skills/floopel-mobile-enginee
 - iOS Traveler: `apps/ios/traveler`, framework `TravelerKit` dari `:shared:features:traveler`.
 - Partner khusus Android. Jangan memasukkan implementasi Partner ke dependensi framework Traveler.
 - Entry point native menangani lifecycle, izin, dan integrasi platform. UI/logika Traveler yang dapat dibagi berada di `commonMain`.
+- Traveler wajib login sebelum Home dan fitur aplikasi. Pulihkan sesi sebelum membuka konten; logout atau sesi tidak valid kembali ke login tanpa navigasi utama. Registrasi, verifikasi, dan pemulihan sandi tetap dapat dibuka dari login.
+- Figma [Final Mobile Layouts](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile) adalah sumber kebenaran visual. Gunakan revisi terbaru yang relevan dan komponen yang dipetakan; ukuran, hierarki, warna, jarak, dan perilaku scroll mengikuti frame terkait. Konfirmasi konflik aturan bisnis; jangan membuat pengganti desain berdasarkan preferensi sendiri.
 
 ## Aturan inti
 

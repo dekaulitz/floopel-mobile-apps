@@ -1,0 +1,36 @@
+# Koreksi UI Traveler — 7 November 2026
+
+Figma final `ifQcOxbjGTXw9aNH2JGl9g` menjadi sumber kebenaran visual. Batch ini menangani kolom pencarian dan kartu yang ditandai pemilik, efek reuse kartu pada profil publik, serta entry/login wajib. Koreksi komponen tidak menjadi sign-off semua layar. Daftar audit mencakup 883 state Android; angka test di sini tidak menjadi persentase penyelesaian desain.
+
+## Acuan dan koreksi
+
+| Acuan Figma | Perubahan dan bukti |
+| --- | --- |
+| [Community — itinerary publik, 5:242](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=5-242) | Search filled 48 dp, ikon 24 dp, gutter 16 dp; header 26 sp, tab pill 32 dp dalam target 48 dp; satu komposisi scroll. [Default](traveler-android-audit/layout-20261107/community-public-search.png), [dua CTA 48 dp](traveler-android-audit/layout-20261107/community-public-card-actions.png), [scroll](traveler-android-audit/layout-20261107/community-public-card-scrolled.png). |
+| [Community — Open Trip publik, 12:305](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=12-305) | Identitas pembuat sebelum foto 204 dp/radius 12 dp; deskripsi, ringkasan, Lihat Open Trip dan Bagikan. [Default](traveler-android-audit/layout-20261107/community-open-trip-search.png), [aksi](traveler-android-audit/layout-20261107/community-open-trip-actions.png). Bagikan memakai native share untuk teks publik yang tersedia, tanpa mengarang domain tautan. |
+| [Community — Curated Trip, 102:1255](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=102-1255) | Kartu kurasi memakai publisher Floopel/Shield, cover 170 dp, ringkasan dan CTA bertumpuk sesuai consumer-nya. [Default](traveler-android-audit/layout-20261107/community-curated-search.png), [aksi](traveler-android-audit/layout-20261107/community-curated-actions.png). Simpan salinan hanya tersedia jika boolean `allow_clone` server bernilai true. |
+| [Open Trip utama, 5:326](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=5-326) | Cover 190 dp/radius 14 dp, ikon lokasi, avatar pengelola 28 dp, tanggal kalender terbaca dan compact action 36 dp dalam target 48 dp. [Kartu](traveler-android-audit/layout-20261107/open-trip-card.png). Ukuran CTA berbeda dari feed Community karena frame sumbernya berbeda. |
+| [Kartu itinerary profil publik, 22:522](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=22-522) | Consumer terpisah: cover 180 dp/radius 12 dp, judul 19 sp, ringkasan dan satu secondary CTA 48 dp. Tidak memakai anatomi feed/dua CTA. [Kartu profil](traveler-android-audit/layout-20261107/public-profile-itinerary-card.png); bukan sign-off header/tab/owner controls profil. |
+| [Login, 165:3376](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g?node-id=165-3376) | Toolbar login dihapus; ritme 16 dp, copy dan posisi brand mengikuti frame. [Entry](traveler-android-audit/layout-20261107/login-required.png), [sesudah logout](traveler-android-audit/layout-20261107/login-after-logout.png). Konfigurasi audit belum menyediakan Google client, sehingga tombol Google disabled dengan helper yang menjelaskan pilihan email. |
+
+Aset mark resmi 48×48, wordmark 112×47,0588 dan Google mark 20×20 tetap berasal dari SVG lokal yang sudah dipetakan, non-empty, dengan root dimensions sesuai callsite. Glyph memakai katalog Floopel/Material existing. Foto katalog dan avatar tetap data API; PNG fixture tanpa media memperlihatkan placeholder, bukan foto Figma yang dipaketkan sebagai data production.
+
+## Konteks bukti
+
+- Android 15/API 35, emulator test `emulator-5580`, viewport 400×900 dp, 1080×2430 px, density 432; locale sistem en-US, resource default Bahasa Indonesia, font sistem 1.0, light theme. System bar Android mengikuti OS.
+- Lima belas test native memakai domain fixture yang dinyatakan eksplisit. Actor signed-in digunakan untuk fitur; entry/logout memakai actor signed-out. Kartu profil mencakup publikasi clone true/false. Fixture hanya masuk APK androidTest.
+- Dua capture memakai Compose fontScale 2.0: [search](traveler-android-audit/layout-20261107/community-search-font-200.png), [aksi](traveler-android-audit/layout-20261107/community-actions-font-200.png). Assertion membuktikan teks search berada di dalam kontrol dan kedua CTA mendapat tinggi sama. Label navigasi bawah pada ukuran ini masih terpotong; ini gap aksesibilitas tersendiri, bukan PASS seluruh aplikasi pada font 200%.
+- Geometri search sama ketika berpindah ketiga tab Community dan katalog Open Trip. Test juga memeriksa peran copy terhadap ID publikasi yang dipilih, capability server, serta header yang scroll tanpa menggeser navigasi bawah.
+- Source snapshot, hash APK aplikasi/androidTest, log dan screenshot dicatat pada [manifest layout](traveler-android-audit/layout-20261107/results.json). Bukti API host dan Native MainActivity dicatat terpisah pada [manifest privat](traveler-android-audit/private/results.json).
+
+## Login wajib dan navigasi
+
+Read fitur menunggu restore selesai. Tanpa sesi valid, aplikasi membuka login dan menyembunyikan navigasi utama. Registrasi, verifikasi dan forgot tetap dapat dibuka sebagai child login. Sesi valid dapat memulihkan target yang berizin. Logout/expired membuang konten akun lama, menormalisasi stack/tab, dan login ulang menuju Home dengan Home selected.
+
+Test state dimulai dari tab Profile, memicu expiry, menolak navigasi ke fitur, lalu login ulang. Test lain mempertahankan target itinerary dengan root Profile saat sesi valid dipulihkan. Test UI native memeriksa Back handler root login nonaktif, Back child forgot, dan Home/Profile selected setelah autentikasi kedua. MainActivity nyata juga diuji: [Back sistem menghasilkan ON_STOP](traveler-android-audit/private/live-private-back.json), [buka ulang tetap login](traveler-android-audit/layout-20261107/live-login-after-back.png), lalu [Home aktif sesudah login kedua](traveler-android-audit/layout-20261107/live-login-home-selected.png). Ikon Back yang tidak tampil tidak dianggap bukti Back hardware.
+
+## Gap yang tetap terbuka
+
+Splash dan intro instalasi pertama sedang ditindaklanjuti sebagai batch berikutnya. Kontrol lokasi pada ketiga tab Community dan lokasi/tanggal pada katalog Open Trip belum terhubung. Overflow/status pembaruan feed, owner footer publikasi, header/tab/owner controls profil, layout builder/Stop/publikasi/Quest/Trip, reader artikel/Collection/lokasi, Explorer map/sheet, registrasi/forgot, Passport dan inbox masih memerlukan pekerjaan sesuai frame masing-masing. Temuan review yang belum diverifikasi ulang dipertahankan di [backlog layout](traveler-android-audit/layout-20261107/open-gaps.json).
+
+Media/teks API dapat berubah; screenshot satu state tidak menutup loading/empty/error, scroll panjang, font, actor/capability atau semua state keluarganya. TalkBack, perangkat fisik dan iOS belum diverifikasi. Build/lint dan test API tidak menjadi pengganti sign-off visual.

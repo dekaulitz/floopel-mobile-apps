@@ -491,6 +491,7 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
         val kind = entry.kind
         val title = entry.title
         return entry.copy(
+            allowClone = if (kind == CatalogKind.ITINERARY) (obj["allow_clone"] as? JsonPrimitive)?.takeUnless { it.isString }?.booleanOrNull else null,
             commentCount = (obj["comment_count"] as? JsonPrimitive)?.takeUnless { it.isString }?.content?.toLongOrNull()?.takeIf { it >= 0 },
             itineraryDays = (obj["day_count"] as? JsonPrimitive)?.content?.toIntOrNull()?.takeIf { it >= 0 },
             spotCount = (obj["stop_count"] as? JsonPrimitive)?.content?.toIntOrNull()?.takeIf { it >= 0 },

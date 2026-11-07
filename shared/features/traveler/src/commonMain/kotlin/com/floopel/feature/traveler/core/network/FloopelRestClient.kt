@@ -61,7 +61,8 @@ internal class FloopelRestClient internal constructor(
         if (mutation) readCache?.clear()
         val cacheKey = if (!probe && !mutation && readCache?.eligible(path) == true)
             TravelerReadCache.Key(path, headers.entries.firstOrNull { it.key.equals("Authorization", true) }?.value) else null
-        if (cacheKey != null) readCache?.get(cacheKey)?.let { return it }
+        val requestControl = headers.entries.firstOrNull { it.key.equals(HttpHeaders.CacheControl, true) }?.value
+        if (cacheKey != null && !requiresFreshRead(requestControl)) readCache?.get(cacheKey)?.let { return it }
         val cacheGeneration = readCache?.generation() ?: 0
         return try {
             val response = client.request(baseUrl.trimEnd('/') + path) {
@@ -85,7 +86,12 @@ internal class FloopelRestClient internal constructor(
                     if (response.status.value == 429) parseRetryAfter(response.headers[HttpHeaders.RetryAfter]) else null,
                 )
             }
-            if (cacheKey != null && outcome is ApiOutcome.Success) readCache?.put(cacheKey, outcome, cacheGeneration)
+            if (cacheKey != null) {
+                if (outcome is ApiOutcome.Success && !requiresFreshRead(response.headers[HttpHeaders.CacheControl]) &&
+                    requestControl?.split(',')?.none { it.trim().equals("no-store", true) } != false) {
+                    readCache?.put(cacheKey, outcome, cacheGeneration)
+                } else readCache?.remove(cacheKey)
+            }
             outcome
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -148,6 +154,13 @@ internal class FloopelRestClient internal constructor(
     internal suspend fun invalidatePageReads() { readCache?.clear() }
     fun close() = client.close()
 }
+
+/** Explicit server/client revalidation directives override the short application snapshot. */
+private fun requiresFreshRead(control: String?): Boolean = control?.split(',')?.any { directive ->
+    val value = directive.trim().lowercase()
+    value == "no-store" || value == "no-cache" || value.startsWith("no-cache=") ||
+        value.substringBefore('=').trim() == "max-age" && value.substringAfter('=', "").trim().trim('"').toLongOrNull() == 0L
+} == true
 
 /** Share native Retry-After parsing for seconds/HTTP dates, bounded to the existing one-hour policy. */
 internal fun parseRetryAfter(header: String?, nowMillis: Long = kotlin.time.Clock.System.now().toEpochMilliseconds()): Long? =

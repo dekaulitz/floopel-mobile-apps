@@ -1,0 +1,194 @@
+{
+  "date": "2026-11-07",
+  "source_manifest_sha256": "80b0f18dd0015f40e7a18d8f68e38921f7e8d5408b3ad503a24583ab6755f5d1",
+  "apk_sha256": {
+    "application": "48105c21ba269902f9a14218dfb2a72a1832e761fed0425ec224f26438c28615",
+    "androidTest": "c39f1f1a8c46e95dc4bc8e950a23310e3281240d4a6686a1d0a1237baade9a88"
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "viewport_dp": "400x900",
+    "resolution": "1080x2430",
+    "density": 432,
+    "locale": "en-US",
+    "resource_locale": "default Indonesian",
+    "system_font_scale": 1.0,
+    "night": false,
+    "after_audit_restored": {
+      "resolution": "1080x2400",
+      "density": 420
+    }
+  },
+  "native_domain_fixture": {
+    "status": "PASS",
+    "tests": 15,
+    "raw_log_sha256": "4f7f25ef98f855075a6cfe93d029b129341dbc9d84f0d5333a6fe1589c6a03cf"
+  },
+  "native_live_phases": {
+    "journey": {
+      "status": "PASS",
+      "tests": 1,
+      "raw_log_sha256": "2a26d5c039edbb3b84500662661e4f18762ca44bfe0bb57e9011b5aef7754d15"
+    },
+    "restore_system_back": {
+      "status": "PASS",
+      "tests": 1,
+      "raw_log_sha256": "4d620da781322a290ee6411208dbf2403cfc9845ea7c30a452005a09b725eea0"
+    },
+    "reopen_login_home_selected": {
+      "status": "PASS",
+      "tests": 1,
+      "raw_log_sha256": "142a98028079bdfc240aa654f9fbebcbabd23055aa76dc07bfd8ffaf10b37799"
+    }
+  },
+  "screenshots": {
+    "community-actions-font-200.png": {
+      "sha256": "8b90d44deeb5b067fb9890603ee17e10d2fb746c8da7f8e35d434b214fc0ff38",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 2.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-curated-actions.png": {
+      "sha256": "22f822e7c8fff6de5b68d3344bac1396a27be4f86f7f17d88078a7631a319626",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-curated-search.png": {
+      "sha256": "ef44f6117216f83ce87e1edeb73bb94dc32993f302cc4649cd82d04d9b04e772",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-open-trip-actions.png": {
+      "sha256": "737e6c326a990cc3f891fb24da97a1ac77e4414c629928e74e79e81ddb25166a",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-open-trip-search.png": {
+      "sha256": "737e6c326a990cc3f891fb24da97a1ac77e4414c629928e74e79e81ddb25166a",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-public-card-actions.png": {
+      "sha256": "80ef37d64426a2136267261d2c8e79022a49e6bc94629435ff8b0f3ccfeb1e33",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-public-card-scrolled.png": {
+      "sha256": "b19d360389d5658c22d4eb0f6dd7239209a998cc82a9b416dd20d1b39d6ad4c6",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-public-search.png": {
+      "sha256": "80ef37d64426a2136267261d2c8e79022a49e6bc94629435ff8b0f3ccfeb1e33",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "community-search-font-200.png": {
+      "sha256": "1a4322b8a7f8e2d665d72ef5b1401fd0158884fa02b7bcd82ad46a53e301e015",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 2.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "live-community-curated.png": {
+      "sha256": "32a8ae0e04fecf0b2bef0c27482e25dd806afa0fa7780bd7e559cc9b020f9189",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-community-open-trip.png": {
+      "sha256": "61cdd655678bbc5c2cb6b9aff4945868ba04ac7b0e1177184e4b19f1cb9988ba",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-community-public.png": {
+      "sha256": "6ee3f920a677547de3ac7600013ca8a3986e6d3de76cd344cac9096c55b92e73",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-login-after-back.png": {
+      "sha256": "59d6fd91acea8968cf54d76486e81ae49ff511e62b070eac7bc0afa8daf1f824",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-login-after-logout.png": {
+      "sha256": "59d6fd91acea8968cf54d76486e81ae49ff511e62b070eac7bc0afa8daf1f824",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-login-home-selected.png": {
+      "sha256": "0df773476bf52d3eab01cdbf35e2b28811e686ab5c391c36d22c2eb3cc197347",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "live-open-trip-catalog.png": {
+      "sha256": "64aaea3aaaa9baf09fe0ac592ee29193c0633a550f6df115a2e722e7384fa25c",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native MainActivity + local API"
+    },
+    "login-after-logout.png": {
+      "sha256": "59d6fd91acea8968cf54d76486e81ae49ff511e62b070eac7bc0afa8daf1f824",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "login-required.png": {
+      "sha256": "59d6fd91acea8968cf54d76486e81ae49ff511e62b070eac7bc0afa8daf1f824",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "open-trip-card.png": {
+      "sha256": "9f7f5c856176a97897238d3f2e4721feca5f469a107149b5e33a868aa6804d22",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    },
+    "public-profile-itinerary-card.png": {
+      "sha256": "fc15a420ac3f93916b03894fbc1269a131050835eaedf5899d0460b8d5a86f32",
+      "width": 1080,
+      "height": 2430,
+      "compose_font_scale": 1.0,
+      "source": "native Compose + explicit domain fixture"
+    }
+  },
+  "full_native_layout_parity": false,
+  "limits": [
+    "component geometry and selected interactions only",
+    "filters/overflow and other layout gaps remain open",
+    "font200 bottom-navigation labels still clip",
+    "OS bars follow native rendering"
+  ]
+}

@@ -77,6 +77,7 @@ data class CatalogEntry(
     val locationLevel: String? = null,
     val parentLocationId: String? = null,
     val locations: List<LocationReference> = emptyList(),
+    val allowClone: Boolean? = null,
 ) {
     val coverPhoto: CatalogPhoto? get() = coverUrl?.let { url -> photos.firstOrNull { it.url == url } ?: CatalogPhoto(url, title) }
 }

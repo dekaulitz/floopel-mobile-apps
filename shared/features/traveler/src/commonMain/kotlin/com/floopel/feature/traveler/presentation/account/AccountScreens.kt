@@ -1,6 +1,7 @@
 package com.floopel.feature.traveler.presentation.account
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -53,24 +54,33 @@ internal fun LoginScreen(state: TravelerState, model: TravelerViewModel, google:
     var email by rememberSaveable { mutableStateOf("") }
     // Credentials deliberately never enter a Bundle/SavedStateHandle or route.
     var password by remember { mutableStateOf("") }
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 28.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Spacer(Modifier.height(16.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(Res.getUri("files/floopel_mark.svg"), null, Modifier.size(48.dp), contentScale = ContentScale.Fit)
             AsyncImage(Res.getUri("files/floopel_wordmark.svg"), s(Res.string.app_name), Modifier.size(112.dp, 47.0588.dp), contentScale = ContentScale.Fit)
         }
         Text(s(Res.string.login_title), Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.headlineLarge)
-        Body(s(Res.string.login_body), Modifier.fillMaxWidth())
+        Text(s(Res.string.login_body), Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
         FloopelFormTextField(email, { email = it }, Modifier.fillMaxWidth(), label = { Text(s(Res.string.email)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), singleLine = true, enabled = !state.busy)
         PasswordInput(password, { password = it }, !state.busy)
-        TextButton({ model.open(TravelerRoute(Destination.FORGOT)) }, Modifier.align(Alignment.End)) { Text(s(Res.string.forgot_password)) }
+        TextButton({ model.open(TravelerRoute(Destination.FORGOT)) }, Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)) {
+            Text(s(Res.string.forgot_password), Modifier.fillMaxWidth(), textAlign = TextAlign.End)
+        }
         FloopelButton(s(Res.string.sign_in), { model.login(email.trim(), password) }, Modifier.fillMaxWidth(),
-            enabled = !state.busy && !state.identity.busy && email.contains('@') && password.isNotBlank())
+            enabled = !state.busy && !state.identity.busy && email.contains('@') && password.isNotBlank(),
+            colors = ButtonDefaults.buttonColors(disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = 0.5f),
+                disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)))
         if (state.identity.accountRecoveryRequired) InfoCard(s(Res.string.account_recovery))
         Text(s(Res.string.or), Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodySmall)
         OutlinedButton({ google?.invoke() }, Modifier.fillMaxWidth().heightIn(min = 48.dp),
-            enabled = google != null && !googleBusy && !state.busy, shape = FloopelShape.pill) {
+            enabled = google != null && !googleBusy && !state.busy, shape = FloopelShape.pill,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)) {
             AsyncImage(Res.getUri("files/google_mark.svg"), null, Modifier.size(20.dp), contentScale = ContentScale.Fit)
             Spacer(Modifier.width(12.dp))
             Text(s(Res.string.google_continue))

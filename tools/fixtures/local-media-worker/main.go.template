@@ -1,0 +1,110 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"flag"
+	"fmt"
+	"github.com/floopel/backend/internal/adapter/repository/postgres"
+	"github.com/floopel/backend/internal/infrastructure/config"
+	"github.com/floopel/backend/internal/infrastructure/imageprocessor"
+	"github.com/floopel/backend/internal/infrastructure/objectstore"
+	pgmedia "github.com/floopel/backend/internal/modules/media/adapter/repository/postgres/media"
+	mediauc "github.com/floopel/backend/internal/modules/media/usecase/media"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"net/url"
+	"os"
+	"path/filepath"
+	"regexp"
+	"time"
+)
+
+type fixtureIDs struct{}
+
+func (fixtureIDs) NewID() string { return uuid.NewString() }
+func fail(code string)           { fmt.Printf("{\"status\":\"failed\",\"code\":%q}\n", code); os.Exit(1) }
+
+func main() {
+	manifestPath := flag.String("fixture", "", "Local ignored fixture manifest")
+	mediaID := flag.String("media", "", "One fixture-owned cover")
+	serviceRoot := flag.String("service-root", "", "Canonical backend service root")
+	image := flag.String("processor-image", "", "Existing pinned local image digest")
+	flag.Parse()
+	if _, err := uuid.Parse(*mediaID); err != nil {
+		fail("MEDIA_ID_REQUIRED")
+	}
+	if !regexp.MustCompile(`^sha256:[0-9a-f]{64}$`).MatchString(*image) {
+		fail("PINNED_LOCAL_PROCESSOR_REQUIRED")
+	}
+	if os.Chdir(*serviceRoot) != nil {
+		fail("SERVICE_ROOT_REQUIRED")
+	}
+	cfg := config.Load()
+	if cfg.SecretError() != nil {
+		fail("CONFIG_SECRET_ERROR")
+	}
+	if cfg.AppEnv != "dev" && cfg.AppEnv != "local" {
+		fail("LOCAL_ENV_REQUIRED")
+	}
+	target, err := url.Parse(cfg.PostgresDSN)
+	if err != nil || (target.Hostname() != "127.0.0.1" && target.Hostname() != "localhost" && target.Hostname() != "::1") || cfg.MediaStoreProvider != "local" {
+		fail("LOCAL_PROVIDERS_REQUIRED")
+	}
+	raw, err := os.ReadFile(*manifestPath)
+	var fixture fixtureManifest
+	if err != nil || json.Unmarshal(raw, &fixture) != nil || fixture.Version != 1 || !regexp.MustCompile(`^[0-9a-f]{8}$`).MatchString(fixture.RunID) {
+		fail("FIXTURE_MANIFEST_REQUIRED")
+	}
+	profileID := ""
+	for _, account := range fixture.Accounts {
+		if account.Role == "organizer" && account.Username == "aqa_"+fixture.RunID+"_organizer" {
+			profileID = account.ProfileID
+		}
+	}
+	if profileID == "" {
+		fail("ORGANIZER_FIXTURE_REQUIRED")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 110*time.Second)
+	defer cancel()
+	pool, err := pgxpool.New(ctx, cfg.PostgresDSN)
+	if err != nil {
+		fail("DATABASE_CONFIGURATION")
+	}
+	defer pool.Close()
+	var schema int64
+	if pool.QueryRow(ctx, `SELECT COALESCE(MAX(version_id),0) FROM goose_db_version WHERE is_applied`).Scan(&schema) != nil || schema != 163 {
+		fail("FIXTURE_SCHEMA_163_REQUIRED")
+	}
+	var eligible bool
+	if pool.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM itinerary i JOIN traveler_profile tp ON tp.profile_id=i.owner_profile_id
+ WHERE i.cover_media_id=$1 AND i.owner_profile_id=$2 AND i.source='user_created' AND tp.username=$3)`, *mediaID, profileID, "aqa_"+fixture.RunID+"_organizer").Scan(&eligible) != nil || !eligible {
+		fail("FIXTURE_COVER_REQUIRED")
+	}
+	root, err := filepath.Abs(filepath.Join("tmp", "android-traveler-media-worker", "processor-workspaces"))
+	if err != nil || os.MkdirAll(root, 0700) != nil {
+		fail("PROCESSOR_ROOT")
+	}
+	os.Setenv("TMP", root)
+	os.Setenv("TEMP", root)
+	os.Setenv("TMPDIR", root)
+	jobs := &scopedMediaJobs{Repository: pgmedia.NewRepository(pool), pool: pool, mediaID: *mediaID, profileID: profileID}
+	tx := postgres.NewTxManager(pool)
+	claims := mediauc.NewJobService(jobs, tx, fixtureIDs{}, nil)
+	processor := imageprocessor.NewVipsWithRunner("vipsthumbnail", dockerVipsRunner{image: *image, root: root})
+	worker := mediauc.NewWorkerService(jobs, claims, objectstore.NewLocal(cfg), processor, tx, fixtureIDs{}, nil)
+	worked, appErr := worker.ProcessOne(ctx, "android-fixture-media", time.Now().UTC())
+	if appErr != nil {
+		fail("PROCESSING_FAILED")
+	}
+	if !worked {
+		fail("NO_DUE_FIXTURE_JOB")
+	}
+	var status string
+	var variants int
+	if pool.QueryRow(ctx, `SELECT a.processing_status,(SELECT count(*) FROM media_variant v WHERE v.media_asset_id=a.id AND v.deleted_at IS NULL)
+ FROM media_asset a WHERE a.id=$1`, *mediaID).Scan(&status, &variants) != nil || status != "ready" || variants != 4 {
+		fail("READY_VARIANTS_REQUIRED")
+	}
+	fmt.Printf("{\"status\":\"ready\",\"variants\":%d,\"scope\":\"one_fixture_cover\"}\n", variants)
+}

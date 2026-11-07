@@ -2,7 +2,7 @@
 
 Audit lokal 7 November 2026 memakai emulator Android 15/API 35, 1080×2400, density 420. [Catatan implementasi dan gap](../traveler-android.md) membedakan kode yang tersedia, fixture, integrasi nyata dan gate rilis. [Manifest hasil](results.json) mencatat jumlah test dan hash bukti.
 
-Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itinerary/admission lokal nyata, recovery dan sesi native. [Manifest follow-up](private/results.json) memisahkan 366 host, 3 host live, 9 native fixture dan 2 fase native live. Tabel di bawah adalah bukti baseline sebelumnya.
+Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itinerary/admission lokal nyata, recovery dan sesi native. [Manifest follow-up](private/results.json) memisahkan 377 host, 3 host admission + 1 host media live, 15 native fixture dan fase native live. [Audit UI terbaru](../traveler-ui-audit.md) memuat screenshot pada viewport Figma 400×900 dp dan gap yang masih terbuka. Tabel di bawah adalah bukti baseline sebelumnya; Home guest lama tidak lagi menjadi entry aplikasi setelah keputusan mandatory login.
 
 ## Screenshot runtime dengan API nyata
 

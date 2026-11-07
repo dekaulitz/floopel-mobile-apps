@@ -1,0 +1,475 @@
+{
+  "date": "2026-11-07",
+  "source_review_sha256": "7dec38e00dc900a919ca2b0c8b566211d80444c44c6a3cb76c4901e05c01b7eb",
+  "meaning": "Prior source findings retained for follow-up; component evidence does not sign off entire states.",
+  "inventory_android_states": 883,
+  "findings": [
+    {
+      "id": "CORE-V01",
+      "priority": "P2",
+      "title": "Builder satu Spot menambah cover placeholder yang tidak ada pada komposisi final",
+      "affected_figma_ids": [
+        "290:5233"
+      ],
+      "minimum_correction": "Ikuti varian single-Spot final: hilangkan slot cover saat tidak dipakai varian tersebut dan satukan metadata yang sudah tersedia; pertahankan cover pada consumer/state yang memang mendesainnya.",
+      "verification_needed": "Capture ulang single-Spot tanpa cover dan dengan cover sesuai varian, judul panjang dan font besar. Pastikan tidak ada region kosong154dp dan CTA tetap terbaca; jangan membuka kembali isu hierarki CTA yang sudah ditutup.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "CORE-V02",
+      "priority": "P2",
+      "title": "Tinjauan publikasi memakai urutan seksi dan kontrol izin salin yang berbeda",
+      "affected_figma_ids": [
+        "113:2058"
+      ],
+      "minimum_correction": "Susun section sesuai final dan gunakan SwitchRow untuk allowClone, pisahkan dari dua checkbox review. Pertahankan guard READY/ack/revision yang sudah ada.",
+      "verification_needed": "Render READY unchecked/checked, PROCESSING, error dan disabled. Periksa row switch, urutan fokus, helper dan IME tanpa mengubah semantik publish.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "CORE-V03",
+      "priority": "P2",
+      "title": "Aktivitas Quest kehilangan konteks Quest, progres, urutan dan preview Spot",
+      "affected_figma_ids": [
+        "218:3040"
+      ],
+      "minimum_correction": "Komposisikan context/progress/step preview dari partisipasi dan aktivitas yang sesuai. Render Spot hanya saat target diketahui dari kontrak; jangan mengisi data fixture.",
+      "verification_needed": "Capture aktivitas GPS ready/collecting/pending/rejected serta question dengan ID yang sama; context dan progress tetap terlihat tanpa menutupi CTA.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "CORE-V05",
+      "priority": "P2",
+      "title": "Header editor Stop tereduksi menjadi judul teks",
+      "affected_figma_ids": [
+        "113:1882"
+      ],
+      "minimum_correction": "Gunakan compact preview dengan metadata yang memang tersedia dari Stop/spotCards sebelum form; pertahankan draft dan validasi existing.",
+      "verification_needed": "Capture default dan invalid input dengan Spot sama, loading/absent media dan label panjang. Pastikan preview tidak hilang akibat error dan footer aman dari IME.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "CORE-V06",
+      "priority": "P2",
+      "title": "Trip detail melewati seksi peserta dan ringkasan itinerary",
+      "affected_figma_ids": [
+        "315:15847"
+      ],
+      "minimum_correction": "Komposisikan seksi peserta/ringkasan dari read berizin yang sesuai, tanpa menyalin nama/count fixture. Pertahankan batas invitee/private child access.",
+      "verification_needed": "Render organizer/participant/invitee dan empty/loading/error roster. Isi serta posisi summary sesuai plan aktual dan tidak membuka data roster bagi yang tidak berizin.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-AUTH-01",
+      "priority": "P2",
+      "title": "Komposisi login menambah toolbar dan merenggangkan column",
+      "affected_figma_ids": [
+        "165:3376"
+      ],
+      "minimum_correction": "Cocokkan scaffold khusus state login165:3376, ritme16 dan posisi brand/form; pertahankan Back hanya pada konteks/frame yang memang memilikinya. Jangan mengubah semua toolbar auth secara global.",
+      "verification_needed": "Render login empty/filled/busy dan Google unavailable; viewport matching, font100/130, IME show/hide dan scroll sampai CTA.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "COMPONENT_CORRECTION_WITH_NATIVE_EVIDENCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-LOC-01",
+      "priority": "P2",
+      "title": "Semua Lokasi memakai katalog foto generik",
+      "affected_figma_ids": [
+        "81:993",
+        "81:1151",
+        "81:1291",
+        "81:1446"
+      ],
+      "minimum_correction": "Gunakan komposisi country/region/subregion yang sesuai entry81:993, bukan mengganti datanya saja. Pertahankan ID/location data nyata.",
+      "verification_needed": "Home Lihat semua→country→provinsi→kota/kabupaten→hasil; screenshot tiap hierarchy, long name, empty/error, Back/query.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-LOC-02",
+      "priority": "P2",
+      "title": "Reader lokasi mendapat hero Spot dan kehilangan peta/rails",
+      "affected_figma_ids": [
+        "53:945",
+        "53:1149"
+      ],
+      "minimum_correction": "Pisahkan komposisi LOCATION dalam owner reader yang benar: title/parent→map→context rails; jangan menambah hero foto Spot pada layout53:945.",
+      "verification_needed": "Reader lokasi dengan/ tanpa parent dan Spot; map unavailable/loading/error; rail swipe; long text; Back ke origin.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-EXP-01",
+      "priority": "P1",
+      "title": "Explorer belum memiliki komposisi peta dan sheet",
+      "affected_figma_ids": [
+        "5:284",
+        "16:475",
+        "313:5166",
+        "796:11095",
+        "840:11615",
+        "313:5334",
+        "313:5427",
+        "313:5533",
+        "313:5739",
+        "313:5834"
+      ],
+      "minimum_correction": "Implementasikan composition/state owner Explorer dari reference; ketiadaan map/provider harus menjadi state jujur dalam journey yang disetujui, bukan menyebut generic catalog sebagai Explorer selesai.",
+      "verification_needed": "EX-FS-01–08 compact/half/full, drag vs content-scroll, horizontal rails, search/subregion, sticky header, safe area, Back/context/offset.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-SPOT-01",
+      "priority": "P2",
+      "title": "Galeri tidak menandai foto terpilih dan rail lebih pendek",
+      "affected_figma_ids": [
+        "36:696",
+        "37:983"
+      ],
+      "minimum_correction": "Pertahankan ukuran96/gutter20/gap8 sambil mengembalikan padding vertikal12 dan stroke2 untuk selected photo; state selection harus terbaca.",
+      "verification_needed": "Matching multi-photo, pilih tiap thumbnail, selected-border, scroll/Back, no/error media, font130 dan long title.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-COM-01",
+      "priority": "P1",
+      "title": "Komposisi komentar dan composer belum tersedia",
+      "affected_figma_ids": [
+        "37:762",
+        "308:4855",
+        "330:7057",
+        "330:7384",
+        "330:8370",
+        "452:10450",
+        "452:11003"
+      ],
+      "minimum_correction": "Hubungkan entry dan sheet/composer/state sesuai kontrak comments yang existing; jangan menambah dummy sheet hanya untuk screenshot.",
+      "verification_needed": "37:762/list serta draft/sending/error/unknown/reply/guest; IME/safe area, list-scroll, scrim dismiss/Back, return focus.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-AUTH-02",
+      "priority": "P2",
+      "title": "Registrasi memakai heading dan footer seragam lintas langkah",
+      "affected_figma_ids": [
+        "165:3640",
+        "235:3251"
+      ],
+      "minimum_correction": "Gunakan komposisi/headings/helper/footer per-step yang sudah ditentukan Figma; jangan memaksa satu footer-placement untuk semua state.",
+      "verification_needed": "Step1/2 empty/filled/validation dengan font100/130 dan IME; Next/Back mempertahankan input; validasi disabled/feedback.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VD-AUTH-03",
+      "priority": "P2",
+      "title": "Lupa password kehilangan ikon dan CTA dipaku di footer",
+      "affected_figma_ids": [
+        "165:4168",
+        "165:4256"
+      ],
+      "minimum_correction": "Susun icon→title→copy→field→inline CTA untuk state request; jadikan sent/error state berbeda sesuai reference.",
+      "verification_needed": "Request empty/filled/busy, sent/error, long email, IME/Back/focus dan viewport kecil.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-01",
+      "priority": "P2",
+      "title": "Community: header dan tab",
+      "affected_figma_ids": [
+        "5:242",
+        "12:340",
+        "12:341",
+        "102:1763",
+        "886:11762"
+      ],
+      "minimum_correction": "Gunakan header Community dan consumer tab pill sesuai peran; pertahankan target sentuh48.",
+      "verification_needed": "Render default+font130; ukur header/pill/warna, tap tiap tab dan bell, periksa overflow label.",
+      "review_snapshot_status": "SOURCE_FIXED_RETEST_PENDING",
+      "current_disposition": "COMPONENT_CORRECTION_WITH_NATIVE_EVIDENCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-02",
+      "priority": "P2",
+      "title": "Community: lokasi dan posisi isi",
+      "affected_figma_ids": [
+        "5:242",
+        "12:355",
+        "12:356",
+        "12:361"
+      ],
+      "minimum_correction": "Pulihkan kontrol lokasi dan komposisi scroll sesuai root; jangan menambahkan spacer untuk meniru satu screenshot.",
+      "verification_needed": "Scroll sampai kartu kedua lalu Back, font besar, buka/pilih/batalkan lokasi dan pastikan query/konteks bertahan.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-03",
+      "priority": "P2",
+      "title": "Community: parameter cover dan CTA kartu terbaru",
+      "affected_figma_ids": [
+        "5:242",
+        "12:372",
+        "12:373",
+        "12:383",
+        "12:384",
+        "12:386"
+      ],
+      "minimum_correction": "Verifikasi render native source terbaru sebelum menyatakan selesai; pertahankan kondisi allowClone sumber server.",
+      "verification_needed": "Ambil PNG native pasca build dari source hash ini untuk clone true/false/null, label panjang/font130, tap kedua CTA.",
+      "review_snapshot_status": "SOURCE_FIXED_RETEST_PENDING",
+      "current_disposition": "COMPONENT_CORRECTION_WITH_NATIVE_EVIDENCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-04",
+      "priority": "P2",
+      "title": "Community: identitas dan menu kartu",
+      "affected_figma_ids": [
+        "5:242",
+        "12:364",
+        "12:365",
+        "12:367",
+        "12:370"
+      ],
+      "minimum_correction": "Pulihkan menu sesuai aksi yang tersedia; metadata tambahan harus berasal dari kontrak nyata atau ditandai gap, bukan diisi fixture.",
+      "verification_needed": "PNG native dan tap author/menu; uji nama panjang, avatar gagal/kosong, status data tidak tersedia.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-05",
+      "priority": "P1",
+      "title": "Itinerary publik detail milik sendiri",
+      "affected_figma_ids": [
+        "290:6459",
+        "290:6547",
+        "290:6548",
+        "290:6549",
+        "290:6550",
+        "290:6588"
+      ],
+      "minimum_correction": "Pisahkan header/metadata publikasi dan footer CTA berizin dari content scroll; terapkan dimensi dan role sesuai owner state.",
+      "verification_needed": "PNG owner dan visitor; scroll panjang memastikan CTA tidak tertutup/hilang, Back/cancel, safe-area dan font130.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-06",
+      "priority": "P2",
+      "title": "Open Trip: filter katalog",
+      "affected_figma_ids": [
+        "5:326",
+        "14:449",
+        "14:450",
+        "14:455"
+      ],
+      "minimum_correction": "Implementasikan consumer filter dan entry/hasil/cancel sesuai flow existing; butuh kontrak filter yang benar.",
+      "verification_needed": "PNG default/applied/reset/empty/error, buka pilih-batal filter, query/filter tetap saat Back.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-07",
+      "priority": "P2",
+      "title": "Open Trip: parameter card terbaru",
+      "affected_figma_ids": [
+        "5:326",
+        "14:460",
+        "14:461",
+        "14:462",
+        "14:467",
+        "14:471",
+        "14:475",
+        "896:11759"
+      ],
+      "minimum_correction": "Ambil screenshot versi terbaru; jangan mengecilkan button umum karena CTA card berbeda dari tombol form/footer.",
+      "verification_needed": "PNG awal/tengah/akhir list, nama dua baris/tanggal panjang/font130, sentuh target CTA, avatar/media gagal.",
+      "review_snapshot_status": "SOURCE_FIXED_RETEST_PENDING",
+      "current_disposition": "COMPONENT_CORRECTION_WITH_NATIVE_EVIDENCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-08",
+      "priority": "P2",
+      "title": "Profile pribadi: header/aksi/ringkasan/menu",
+      "affected_figma_ids": [
+        "5:368",
+        "13:393",
+        "13:398",
+        "13:404",
+        "13:405",
+        "13:407",
+        "13:409"
+      ],
+      "minimum_correction": "Pulihkan composition Profile dan peran consumer; data progress/lokasi harus tersedia dari sumber benar, jangan mengarang.",
+      "verification_needed": "PNG native signed-in/empty/error, nama panjang/font130, tap Settings/editor/Passport/menu, Back ke Profile.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-09",
+      "priority": "P1",
+      "title": "Profil publik: header/tab/visibility",
+      "affected_figma_ids": [
+        "22:522",
+        "22:623",
+        "22:625",
+        "22:632"
+      ],
+      "minimum_correction": "Bangun komposisi owner/visitor sesuai flow; hindari memindahkan semua fitur ke satu daftar.",
+      "verification_needed": "PNG pemilik/pengunjung/private/saved/badge/loading/error, tap tab/visibility/Share, Back dan privacy.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-10",
+      "priority": "P1",
+      "title": "Profil publik: consumer kartu berbeda dari feed",
+      "affected_figma_ids": [
+        "22:522",
+        "22:641",
+        "22:642",
+        "22:643",
+        "22:644",
+        "22:645",
+        "22:646"
+      ],
+      "minimum_correction": "Pisahkan varian/card consumer profil dari feed dengan bagian bersama seperlunya; jangan memaksakan satu anatomi ke semua surface.",
+      "verification_needed": "PNG profil dengan dua kartu dan clone true/false; bandingkan gutter/tinggi/CTA role, tap detail dan Back.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "COMPONENT_CORRECTION_WITH_NATIVE_EVIDENCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-11",
+      "priority": "P1",
+      "title": "Passport overview",
+      "affected_figma_ids": [
+        "274:4284",
+        "274:4372",
+        "274:4393",
+        "274:4395",
+        "274:4402",
+        "274:4409",
+        "274:4412"
+      ],
+      "minimum_correction": "Implementasikan composition dan state Passport dari model yang berizin; barcode/identitas mengikuti kontrak yang benar.",
+      "verification_needed": "PNG overview/completed/badges/stats/empty/loading/failed/identity_error/QR/badge-focus; semua aksi dan Back.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-12",
+      "priority": "P1",
+      "title": "Editorial artikel detail",
+      "affected_figma_ids": [
+        "276:7976",
+        "276:8064",
+        "276:8065",
+        "276:8066",
+        "276:8067",
+        "276:8068",
+        "452:11617",
+        "276:8071"
+      ],
+      "minimum_correction": "Buat consumer reader artikel dengan susunan/gaya sesuai final; rich body aman dan data tetap berasal API.",
+      "verification_needed": "PNG artikel pendek/panjang/media gagal/loading/error, tombol komentar/related links/Back; font130 dan scroll akhir.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-13",
+      "priority": "P1",
+      "title": "Collection detail",
+      "affected_figma_ids": [
+        "276:7604",
+        "276:7692",
+        "276:7693",
+        "276:7694",
+        "276:7695",
+        "276:7696"
+      ],
+      "minimum_correction": "Gunakan composition Collection yang sesuai sambil mempertahankan data/tujuan Spot; jangan mengubah detail Spot hanya demi Collection.",
+      "verification_needed": "PNG Collection satu/banyak/kosong/media gagal/loading/error, tap item dan Back, font130/scroll akhir.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    },
+    {
+      "id": "VP-14",
+      "priority": "P1",
+      "title": "Inbox: perangkat/filter/card notifikasi",
+      "affected_figma_ids": [
+        "386:7783",
+        "392:7972",
+        "386:7873",
+        "386:7881",
+        "386:7888",
+        "386:7889",
+        "386:7892"
+      ],
+      "minimum_correction": "Pulihkan composition inbox dan peran UI masing-masing; jangan menganggap in-app inbox sudah membuktikan izin/FCM.",
+      "verification_needed": "PNG unread/read/all/activity/system/empty/loading/error, izin on/off/deny, tap target ack sesudah render, font130 dan screen reader.",
+      "review_snapshot_status": "OPEN_SOURCE_DIFFERENCE",
+      "current_disposition": "OPEN_RECHECK_LATEST_SOURCE",
+      "full_native_layout_parity": false
+    }
+  ],
+  "auth_navigation": {
+    "id": "AUTH-NAV-01",
+    "status": "PASS",
+    "evidence": "../private/live-private-back.json",
+    "reopen": "live-login-home-selected.png"
+  },
+  "startup_pending": {
+    "ids": [
+      "SI-01",
+      "SI-02"
+    ],
+    "status": "OPEN",
+    "figma_ids": [
+      "164:2263",
+      "164:2527",
+      "164:2615",
+      "164:2703",
+      "164:2791"
+    ]
+  },
+  "font200_navigation": {
+    "status": "OPEN",
+    "evidence": "community-search-font-200.png"
+  }
+}

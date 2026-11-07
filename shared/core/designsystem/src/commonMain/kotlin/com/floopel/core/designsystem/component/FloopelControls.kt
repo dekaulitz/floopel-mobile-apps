@@ -17,10 +17,10 @@ import com.floopel.core.designsystem.icons.FloopelIcons
 /** Native 48dp target; a growing label never clips under font scaling. */
 @Composable
 fun FloopelButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier,
-    enabled: Boolean = true, secondary: Boolean = false) {
+    enabled: Boolean = true, secondary: Boolean = false, colors: ButtonColors? = null) {
     Button(onClick, modifier.heightIn(min = 48.dp), enabled = enabled,
         shape = FloopelShape.pill, contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        colors = if (secondary) ButtonDefaults.buttonColors(
+        colors = colors ?: if (secondary) ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             contentColor = MaterialTheme.colorScheme.primary) else ButtonDefaults.buttonColors()) {
         Text(label, textAlign = TextAlign.Center)
@@ -58,7 +58,9 @@ fun FloopelCompactButton(label: String, onClick: () -> Unit, modifier: Modifier 
     Box(modifier.heightIn(min = 48.dp).clickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.CenterStart) {
         Surface(shape = FloopelShape.pill, color = MaterialTheme.colorScheme.primary, contentColor = MaterialTheme.colorScheme.onPrimary) {
-            Text(label, Modifier.padding(horizontal = 16.dp, vertical = 8.dp), style = MaterialTheme.typography.labelLarge)
+            Box(Modifier.heightIn(min = 36.dp).padding(horizontal = 16.dp, vertical = 8.dp), contentAlignment = Alignment.Center) {
+                Text(label, style = MaterialTheme.typography.labelLarge)
+            }
         }
     }
 }

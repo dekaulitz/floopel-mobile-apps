@@ -27,7 +27,8 @@ internal class TravelerViewModel(
                 route.copy(operationKey = "restored-trip-create:${route.id}") else route
         }
     private val mutable = MutableStateFlow(TravelerState(tab = restored?.firstOrNull()?.destination?.takeIf { it in rootTabs } ?: Destination.HOME,
-        stack = restored ?: listOf(TravelerRoute(Destination.HOME))))
+        stack = restored ?: listOf(TravelerRoute(Destination.HOME)),
+        identityRestored = !autoStart))
     val state = mutable.asStateFlow()
     private val reads = mutableMapOf<String, Job>()
     private val acknowledgements = mutableSetOf<Pair<Long, String>>()
@@ -38,29 +39,53 @@ internal class TravelerViewModel(
         if (autoStart) {
             viewModelScope.launch {
                 runtime.identity.view.collect { identity ->
+                    if (state.value.identity.generation != identity.generation || state.value.identity.signedIn != identity.signedIn) {
+                        reads.values.forEach(Job::cancel); reads.clear()
+                        writeJob?.cancel()
+                        acknowledgements.clear()
+                    }
                     mutable.update { current ->
                         if (current.identity.generation != identity.generation) {
                             val routeStack = if (current.identity.signedIn && !identity.signedIn)
-                                listOf(TravelerRoute(Destination.HOME)) else current.stack
-                            TravelerState(tab = current.tab, stack = routeStack, identity = identity, home = current.home)
-                        } else current.copy(identity = identity)
+                                listOf(TravelerRoute(Destination.LOGIN)) else current.stack
+                            TravelerState(tab = rootTab(routeStack), stack = routeStack, identity = identity, identityRestored = current.identityRestored)
+                        } else if (current.identityRestored && !identity.signedIn && !current.route.destination.isAuthenticationScreen())
+                            TravelerState(stack = listOf(TravelerRoute(Destination.LOGIN)), identity = identity, identityRestored = true)
+                        else current.copy(identity = identity)
                     }
+                    if (state.value.identityRestored && !identity.signedIn) requireLogin()
                 }
             }
             viewModelScope.launch {
-                withContext(worker) { runtime.identity.restore() }
-                if (runtime.identity.view.first().signedIn) mutable.update { current -> current.copy(stack = current.stack
-                    .dropLastWhile { it.destination in setOf(Destination.LOGIN, Destination.VERIFY) }.ifEmpty { listOf(TravelerRoute(Destination.HOME)) }) }
+                try { withContext(worker) { runtime.identity.restore() } }
+                catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { mutable.update { it.copy(writeFailure = ReadFailure()) } }
+                val identity = runtime.identity.view.first()
+                mutable.update { current ->
+                    val stack = if (identity.signedIn) signedInStack(current.stack) else authenticationStack(current.stack)
+                    current.copy(identity = identity, identityRestored = true, stack = stack, tab = rootTab(stack))
+                }
                 refresh()
             }
         }
     }
 
     fun savedStack(): String = Json.encodeToString(state.value.stack)
+    private fun requireLogin() {
+        if (!state.value.identity.signedIn && !state.value.route.destination.isAuthenticationScreen()) {
+            reads.values.forEach(Job::cancel); reads.clear()
+            mutable.update { TravelerState(stack = listOf(TravelerRoute(Destination.LOGIN)), identity = it.identity,
+                identityRestored = it.identityRestored) }
+        } else if (!state.value.identity.signedIn && state.value.identityRestored) {
+            mutable.update { it.copy(tab = Destination.HOME, stack = authenticationStack(it.stack)) }
+        }
+    }
     fun openEntry(entry: CatalogEntry) = open(TravelerRoute(Destination.DETAIL, entry.id, entry.kind.name, slug = entry.slug))
     private fun creationRoute(route: TravelerRoute): TravelerRoute =
         if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank()) route.copy(operationKey = runtime.newOperationKey()) else route
     fun open(requested: TravelerRoute) {
+        if (!state.value.identityRestored) return
+        if (!state.value.identity.signedIn && !requested.destination.isAuthenticationScreen()) { requireLogin(); return }
         if (state.value.busy || state.value.route == requested ||
             requested.destination == Destination.TRIP_FORM && state.value.route.destination == Destination.TRIP_FORM && state.value.route.id == requested.id) return
         val route = creationRoute(requested)
@@ -78,6 +103,7 @@ internal class TravelerViewModel(
         refresh()
     }
     fun tab(destination: Destination) {
+        if (!state.value.identityRestored || !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy) return
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(tab = destination, stack = listOf(TravelerRoute(destination)), query = "",
@@ -102,6 +128,8 @@ internal class TravelerViewModel(
     fun clearFeedback() { mutable.update { it.copy(feedback = null, saved = false) } }
 
     fun refresh() {
+        if (!state.value.identityRestored) return
+        if (!state.value.identity.signedIn && !state.value.route.destination.isAuthenticationScreen()) { requireLogin(); return }
         val route = state.value.route
         when (route.destination) {
             Destination.HOME -> home()
@@ -301,9 +329,16 @@ internal class TravelerViewModel(
     }
     fun clonePlan() {
         val plan = state.value.publicPlan.value ?: return
+        copyPublishedPlan(plan.id, plan.allowClone)
+    }
+    fun clonePublicPlan(plan: PublicItinerarySummary) = copyPublishedPlan(plan.id, plan.allowClone == true)
+    fun cloneCuratedPlan(plan: CatalogEntry) {
+        if (plan.kind == CatalogKind.ITINERARY) copyPublishedPlan(plan.id, plan.allowClone == true)
+    }
+    private fun copyPublishedPlan(id: String, allowed: Boolean) {
+        if (!allowed) return
         if (!state.value.identity.signedIn) { open(TravelerRoute(Destination.LOGIN)); return }
-        if (!plan.allowClone) return
-        write({ runtime.itineraries.clone(plan.id).catalog() }) { replace(TravelerRoute(Destination.ITINERARY, it.itinerary.id)) }
+        write({ runtime.itineraries.clone(id).catalog() }) { replace(TravelerRoute(Destination.ITINERARY, it.itinerary.id)) }
     }
     private fun loadGroups(page: Int = 1) = fetch("groups", { it.groups }, { s, r -> s.copy(groups =
         if (page > 1 && r.value != null) r.copy(value = r.value.copy(items = (s.groups.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r) }) {
@@ -384,9 +419,10 @@ internal class TravelerViewModel(
                 val identity = runtime.identity.view.first()
                 mutable.update { it.copy(identity = identity, busy = false) }
                 if (identity.signedIn) {
-                    mutable.update { current -> current.copy(registrationStep = 1,
-                        stack = current.stack.dropLastWhile { it.destination in setOf(Destination.LOGIN, Destination.REGISTER, Destination.VERIFY) }
-                            .ifEmpty { listOf(TravelerRoute(Destination.HOME)) }) }
+                    mutable.update { current ->
+                        val stack = signedInStack(current.stack)
+                        current.copy(registrationStep = 1, stack = stack, tab = rootTab(stack))
+                    }
                     refresh()
                 }
                 else if (identity.googleOnboardingRequired) { open(TravelerRoute(Destination.REGISTER)); registrationStep(2) }
@@ -625,6 +661,7 @@ internal class TravelerViewModel(
         }
     }
     private fun <T> write(call: suspend () -> CatalogResult<T>, checkConsent: Boolean = true, success: suspend (T) -> Unit) {
+        if (checkConsent && !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy || writeJob?.isActive == true || (state.value.writeFailure?.retryAtMillis ?: 0) > now()) return
         val epoch = runtime.identity.generation
         mutable.update { it.copy(busy = true, writeFailure = null, saved = false) }
@@ -657,6 +694,16 @@ internal class TravelerViewModel(
 }
 
 private val rootTabs = setOf(Destination.HOME, Destination.COMMUNITY, Destination.EXPLORER, Destination.OPEN_TRIPS, Destination.PROFILE)
+
+internal fun Destination.isAuthenticationScreen() = this in setOf(Destination.LOGIN, Destination.REGISTER, Destination.VERIFY, Destination.FORGOT)
+
+private fun rootTab(stack: List<TravelerRoute>) = stack.first().destination.takeIf { it in rootTabs } ?: Destination.HOME
+private fun signedInStack(stack: List<TravelerRoute>) = stack.dropLastWhile { it.destination.isAuthenticationScreen() }
+    .ifEmpty { listOf(TravelerRoute(Destination.HOME)) }
+private fun authenticationStack(stack: List<TravelerRoute>): List<TravelerRoute> {
+    val children = stack.takeLastWhile { it.destination.isAuthenticationScreen() }
+    return if (children.firstOrNull()?.destination == Destination.LOGIN) children else listOf(TravelerRoute(Destination.LOGIN)) + children
+}
 
 private fun CatalogResult<ItineraryCoverStatus>.coverProcessing(): CatalogResult<CoverProcessing> = when (this) {
     is CatalogResult.Ready -> CatalogResult.Ready(value.processing)

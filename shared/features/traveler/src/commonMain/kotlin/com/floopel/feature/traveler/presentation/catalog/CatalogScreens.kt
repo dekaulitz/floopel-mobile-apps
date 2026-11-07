@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.floopel.core.designsystem.component.*
 import com.floopel.core.designsystem.theme.*
@@ -18,10 +19,10 @@ import com.floopel.feature.traveler.resources.*
 
 @Composable
 internal fun CatalogScreen(state: TravelerState, model: TravelerViewModel) {
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    val gutter = if (state.route.destination == Destination.COMMUNITY) FloopelSpace.large else FloopelSpace.gutter
+    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(gutter), verticalArrangement = Arrangement.spacedBy(FloopelSpace.large)) {
         item {
-            OutlinedTextField(state.query, model::query, Modifier.fillMaxWidth(), label = { Text(s(Res.string.search)) },
-                singleLine = true, shape = FloopelShape.pill)
+            FloopelSearchField(state.query, model::query, s(Res.string.search), Modifier.fillMaxWidth().testTag("catalog-search"))
             if (state.route.destination == Destination.EXPLORER) InfoCard(s(Res.string.maps_unavailable))
         }
         if (state.catalog.loading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }

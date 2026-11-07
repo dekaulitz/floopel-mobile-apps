@@ -123,7 +123,7 @@ internal class NativePublicTravelerApi(private val rest: FloopelRestClient, priv
                 }
                 PublicItineraryStop(stop.text("id"), CatalogEntry(spot.text("id"), spot.text("slug"), spot.text("name"), null, CatalogKind.SPOT, null, geo = geo),
                     stop.number("day")!!.also { require(it >= 1) }, stop.number("position")!!.also { require(it >= 0) }, stop.optional("public_note"), stop.optional("public_tips"),
-                    stop.number("duration_minutes")?.also { require(it >= 1) }, stop.optional("arrive_time"), stop.optional("public_travel_note"))
+                    stop.number("duration_minutes")?.also { require(it >= 0) }, stop.optional("arrive_time"), stop.optional("public_travel_note"))
             }.sortedWith(compareBy(PublicItineraryStop::day, PublicItineraryStop::position))
             require(stops.isNotEmpty())
             PublicItinerarySnapshot(value.text("id"), value.text("slug").also { require(it == slug) }, value.text("title"), value.text("description"), media(value["cover_image"]),

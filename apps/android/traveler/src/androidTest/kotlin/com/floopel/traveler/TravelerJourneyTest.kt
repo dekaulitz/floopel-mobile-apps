@@ -26,9 +26,10 @@ import org.junit.runner.RunWith
 class TravelerJourneyTest {
     @get:Rule val ui = createAndroidComposeRule<ComponentActivity>()
     private lateinit var fixture: TravelerFixture
+    private var sharedText: String? = null
     @Before fun launch() {
         fixture = TravelerFixture()
-        ui.setContent { TravelerApp(fixture.runtime, {}, backHandler = { enabled, back -> BackHandler(enabled, back) }) }
+        ui.setContent { TravelerApp(fixture.runtime, { sharedText = it }, backHandler = { enabled, back -> BackHandler(enabled, back) }) }
         ui.waitUntil(10_000) { ui.onAllNodesWithText("Halo, Traveler").fetchSemanticsNodes().isNotEmpty() }
     }
 
@@ -37,6 +38,90 @@ class TravelerJourneyTest {
         ui.onNodeWithText("Itinerary saya").performScrollTo().performClick()
         ui.onNodeWithText("Rencana budaya simulasi").performClick()
         ui.onNodeWithTag("itinerary-title").assertTextEquals("Rencana budaya simulasi")
+    }
+
+    @Test fun communitySearchKeepsItsGeometryAcrossAllTabsAndTheOpenTripCatalog() {
+        ui.onAllNodesWithText("Community").onLast().performClick()
+        val publicSearch = ui.onNodeWithTag("catalog-search").fetchSemanticsNode().boundsInRoot
+        val density = ui.activity.resources.displayMetrics.density
+        assertEquals(48f * density, publicSearch.height, 1f)
+        capture("community-public-search")
+        ui.onNodeWithText("Open Trip publik").performClick()
+        val openSearch = ui.onNodeWithTag("catalog-search").fetchSemanticsNode().boundsInRoot
+        assertEquals(publicSearch, openSearch)
+        capture("community-open-trip-search")
+        ui.onNodeWithTag("community-trip-share").performScrollTo()
+        capture("community-open-trip-actions")
+        ui.onNodeWithTag("community-trip-share").performClick()
+        assertTrue(sharedText.orEmpty().contains("Jelajah Magelang bersama"))
+        assertTrue(sharedText.orEmpty().contains("14–16 Nov 2026"))
+        ui.onNodeWithText("Curated Trip").performScrollTo().performClick()
+        val curatedSearch = ui.onNodeWithTag("catalog-search").fetchSemanticsNode().boundsInRoot
+        assertEquals(publicSearch, curatedSearch)
+        capture("community-curated-search")
+        ui.onAllNodesWithText("Open Trip").onLast().performClick()
+        val rootSearch = ui.onNodeWithTag("catalog-search").fetchSemanticsNode().boundsInRoot
+        assertEquals(publicSearch.left, rootSearch.left, 1f)
+        assertEquals(publicSearch.width, rootSearch.width, 1f)
+        assertEquals(publicSearch.height, rootSearch.height, 1f)
+        ui.onNodeWithTag("trip-catalog-schedule").performScrollTo()
+            .assertTextEquals("14–16 Nov 2026 · 2 dari 5 peserta + 1 organizer")
+        ui.onNodeWithText("Bersama Arif Simulasi").assertExists()
+        capture("open-trip-card")
+    }
+
+    @Test fun curatedCardUsesItsOwnPublicationLayoutAndFullWidthActions() {
+        ui.onAllNodesWithText("Community").onLast().performClick()
+        ui.onNodeWithText("Curated Trip").performClick()
+        ui.onNodeWithText("Dikurasi Floopel").assertExists()
+        ui.onNodeWithTag("curated-plan-copy").performScrollTo()
+        val view = ui.onNodeWithTag("curated-plan-action").fetchSemanticsNode().boundsInRoot
+        val copy = ui.onNodeWithTag("curated-plan-copy").fetchSemanticsNode().boundsInRoot
+        assertEquals(view.width, copy.width, 1f)
+        assertEquals(view.height, copy.height, 1f)
+        capture("community-curated-actions")
+        ui.onNodeWithTag("curated-plan-copy").performClick()
+        ui.waitUntil(5_000) { fixture.cloneCalls.get() == 1 }
+        assertEquals(fixture.curatedPlan.id, fixture.lastCloneId)
+        ui.onNodeWithTag("itinerary-title").assertExists()
+    }
+
+    @Test fun publicCardActionsHaveEqualTargetsAndCopyTheSelectedPublication() {
+        ui.onAllNodesWithText("Community").onLast().performClick()
+        val headingBefore = ui.onNodeWithTag("community-heading").fetchSemanticsNode().boundsInRoot
+        val navigationBefore = ui.onNodeWithTag("traveler-navigation").fetchSemanticsNode().boundsInRoot
+        ui.onNodeWithTag("public-plan-copy").performScrollTo()
+        val view = ui.onNodeWithTag("public-plan-action").fetchSemanticsNode().boundsInRoot
+        val copy = ui.onNodeWithTag("public-plan-copy").fetchSemanticsNode().boundsInRoot
+        val density = ui.activity.resources.displayMetrics.density
+        assertEquals(48f * density, view.height, 1f)
+        assertEquals(view.height, copy.height, 1f)
+        assertEquals(view.top, copy.top, 1f)
+        assertTrue(view.right < copy.left)
+        capture("community-public-card-actions")
+        ui.onNodeWithTag("traveler-viewport").performTouchInput { swipeUp() }
+        val headingAfter = ui.onNodeWithTag("community-heading").fetchSemanticsNode().boundsInRoot
+        assertTrue("Community heading must scroll with its publication", headingAfter.top < headingBefore.top)
+        assertEquals(navigationBefore, ui.onNodeWithTag("traveler-navigation").fetchSemanticsNode().boundsInRoot)
+        capture("community-public-card-scrolled")
+        ui.onNodeWithTag("public-plan-copy").performClick()
+        ui.waitUntil(5_000) { fixture.cloneCalls.get() == 1 }
+        ui.onNodeWithTag("itinerary-title").assertExists()
+        assertEquals(fixture.publicPlan.id, fixture.lastCloneId)
+    }
+
+    @Test fun profilePublicationKeepsItsOwnCardWhenFeedCopyIsAllowed() {
+        ui.onAllNodesWithText("Community").onLast().performClick()
+        ui.onNodeWithText("Arif Simulasi").performClick()
+        ui.waitUntil(5_000) { ui.onAllNodesWithTag("profile-itinerary-action").fetchSemanticsNodes().size == 2 }
+        ui.onNodeWithTag("public-plan-action").assertDoesNotExist()
+        ui.onNodeWithTag("public-plan-copy").assertDoesNotExist()
+        ui.onNodeWithText(fixture.publicPlan.description).assertDoesNotExist()
+        ui.onAllNodesWithTag("profile-itinerary-action").onFirst().performScrollTo()
+        capture("public-profile-itinerary-card")
+        ui.onAllNodesWithTag("profile-itinerary-action").onFirst().performClick()
+        ui.onNodeWithText(fixture.publicPlan.title).assertExists()
+        assertEquals(0, fixture.cloneCalls.get())
     }
 
     @Test fun coversUseViewportWidthAndTitleKeepsItsOwnGutter() {

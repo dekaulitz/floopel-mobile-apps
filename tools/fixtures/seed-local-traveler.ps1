@@ -19,6 +19,7 @@ if ($LASTEXITCODE -ne 0) { throw 'The temporary helper must be ignored by the ba
 $helperPath = Join-Path $backendService $helperRelative
 New-Item -ItemType Directory -Path $helperPath | Out-Null
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'traveler-local.go.template') -Destination (Join-Path $helperPath 'main.go')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'local-account-seeder/dto.go.template') -Destination (Join-Path $helperPath 'dto.go')
 Push-Location $backendService
 try {
     $arguments = @('run', '-mod=readonly', ('./' + $helperRelative))

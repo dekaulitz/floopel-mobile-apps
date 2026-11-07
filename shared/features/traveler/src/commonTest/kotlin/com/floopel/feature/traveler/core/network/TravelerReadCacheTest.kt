@@ -7,6 +7,70 @@ import kotlinx.coroutines.*
 import kotlin.test.*
 
 class TravelerReadCacheTest {
+    @Test fun noStoreAndRevalidationResponsesCannotHidePublicationRevocation() = runBlocking {
+        for (control in listOf("private, no-store", "No-Cache", "max-age=0")) {
+            var requests = 0
+            val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine {
+                requests++
+                if (requests == 1) respond(body(1), headers = headersOf(HttpHeaders.CacheControl, control))
+                else respond("{}", HttpStatusCode.NotFound)
+            }), readCache = TravelerReadCache())
+            try {
+                val path = "/api/apps/v1/public-itineraries/fixture"
+                assertIs<ApiOutcome.Success>(client.execute(RestMethod.GET, path))
+                assertEquals(404, assertIs<ApiOutcome.HttpFailure>(client.execute(RestMethod.GET, path)).status)
+                assertEquals(2, requests)
+            } finally { client.close() }
+        }
+    }
+
+    @Test fun explicitNoCacheRequestReadsAndReplacesAnOlderPageSnapshot() = runBlocking {
+        var requests = 0
+        val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine { respond(body(++requests)) }), readCache = TravelerReadCache())
+        try {
+            client.execute(RestMethod.GET, path)
+            assertEquals(body(2), assertIs<ApiOutcome.Success>(client.execute(RestMethod.GET, path,
+                headers = mapOf(HttpHeaders.CacheControl to "no-cache"))).responseBody)
+            assertEquals(body(2), assertIs<ApiOutcome.Success>(client.execute(RestMethod.GET, path)).responseBody)
+            assertEquals(2, requests)
+        } finally { client.close() }
+    }
+
+    @Test fun freshNoStoreAndRejectedReadsEvictOlderSnapshots() = runBlocking {
+        for (status in listOf(HttpStatusCode.OK, HttpStatusCode.NotFound)) {
+            var requests = 0
+            val cache = TravelerReadCache()
+            val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine {
+                val index = ++requests
+                if (index == 2) respond(body(index), status, headersOf(HttpHeaders.CacheControl, "no-store"))
+                else respond(body(index))
+            }), readCache = cache)
+            try {
+                client.execute(RestMethod.GET, path)
+                cache.withFreshReads { client.execute(RestMethod.GET, path) }
+                assertEquals(body(3), assertIs<ApiOutcome.Success>(client.execute(RestMethod.GET, path)).responseBody)
+            } finally { client.close() }
+        }
+    }
+
+    @Test fun delayedReadCannotRepopulateAnEntryAfterANoStoreResponse() = runBlocking {
+        var requests = 0
+        val started = CompletableDeferred<Unit>(); val release = CompletableDeferred<Unit>()
+        val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine {
+            val index = ++requests
+            if (index == 1) { started.complete(Unit); release.await() }
+            respond(body(index), headers = if (index == 2) headersOf(HttpHeaders.CacheControl, "no-store") else headersOf())
+        }), readCache = TravelerReadCache())
+        try {
+            val delayed = async { client.execute(RestMethod.GET, path) }
+            started.await()
+            client.execute(RestMethod.GET, path)
+            release.complete(Unit); delayed.await()
+            assertEquals(body(3), assertIs<ApiOutcome.Success>(client.execute(RestMethod.GET, path)).responseBody)
+            assertEquals(3, requests)
+        } finally { release.complete(Unit); client.close() }
+    }
+
     @Test fun nearbyRadiusRefreshBypassesSnapshotWhileGlobalSpotFeedStillCaches() = runBlocking {
         var requests = 0
         val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine { respond(body(++requests)) }), readCache = TravelerReadCache())

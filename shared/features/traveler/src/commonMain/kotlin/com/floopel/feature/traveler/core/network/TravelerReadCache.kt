@@ -40,6 +40,8 @@ internal class TravelerReadCache(
             entries.remove(entries.keys.first())
     }
     suspend fun clear() = lock.withLock { entries.clear(); generation++; revisions.value = generation }
+    /** A fresh rejection/no-store response also fences older in-flight reads from restoring the entry. */
+    internal suspend fun remove(key: Key) { lock.withLock { entries.remove(key); generation++ } }
     suspend fun withFreshReads(block: suspend () -> Unit) {
         lock.withLock { freshReaders++ }
         try { block() } finally { withContext(NonCancellable) { lock.withLock { freshReaders-- } } }

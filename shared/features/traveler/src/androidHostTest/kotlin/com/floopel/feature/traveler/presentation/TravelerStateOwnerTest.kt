@@ -29,6 +29,94 @@ class TravelerStateOwnerTest {
         assertEquals("EMPTY_ITINERARY", model.state.value.writeFailure?.code)
     }
 
+    @Test fun coldGuestWaitsForRestoreAndCannotReadOrNavigateOutsideAuthentication() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1)
+        val released = CompletableDeferred<Unit>()
+        var discoveryCalls = 0
+        val identity = object : TravelerIdentity by f.runtime.identity {
+            override suspend fun restore() { released.await() }
+        }
+        val catalog = object : TravelerCatalog by f.catalog {
+            override suspend fun discoverySpots(locale: String, center: GeoPoint?, locationId: String?): CatalogResult<List<CatalogEntry>> {
+                discoveryCalls++; return CatalogResult.Ready(listOf(f.spot))
+            }
+        }
+        val base = f.runtime
+        val runtime = TravelerRuntime(identity, catalog, base.itineraries, base.distribution, base.trips, base.notifications,
+            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+        val restored = """[{"destination":"HOME"},{"destination":"ITINERARY","id":"${f.planId}"}]"""
+        val model = model(f, runtime, restored); runCurrent()
+        assertFalse(model.state.value.identityRestored); assertEquals(0, discoveryCalls)
+        model.refresh(); model.tab(Destination.COMMUNITY); assertEquals(0, discoveryCalls)
+        released.complete(Unit); advanceUntilIdle()
+        assertTrue(model.state.value.identityRestored)
+        assertEquals(listOf(TravelerRoute(Destination.LOGIN)), model.state.value.stack)
+        for (destination in listOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.PUBLIC_PLAN)) {
+            model.open(TravelerRoute(destination)); model.back(); model.refresh(); advanceUntilIdle()
+            assertEquals(Destination.LOGIN, model.state.value.route.destination)
+        }
+        assertEquals(0, discoveryCalls); assertNull(model.state.value.itinerary.value)
+        model.open(TravelerRoute(Destination.FORGOT)); advanceUntilIdle()
+        assertEquals(Destination.FORGOT, model.state.value.route.destination)
+        model.back(); assertEquals(Destination.LOGIN, model.state.value.route.destination)
+        model.open(TravelerRoute(Destination.REGISTER)); advanceUntilIdle()
+        assertEquals(Destination.REGISTER, model.state.value.route.destination)
+    }
+
+    @Test fun expiredSessionClearsContentAndBackCannotBypassLogin() = runTest {
+        val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
+        model.tab(Destination.PROFILE); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.ITINERARY, f.planId)); advanceUntilIdle()
+        assertNotNull(model.state.value.itinerary.value)
+        f.identityState.value = TravelerIdentityView(generation = 2); advanceUntilIdle()
+        assertEquals(listOf(TravelerRoute(Destination.LOGIN)), model.state.value.stack)
+        assertEquals(Destination.HOME, model.state.value.tab); assertFalse(model.state.value.canGoBack)
+        assertNull(model.state.value.itinerary.value); assertNull(model.state.value.profile.value)
+        model.back(); model.tab(Destination.EXPLORER); model.refresh(); advanceUntilIdle()
+        assertEquals(Destination.LOGIN, model.state.value.route.destination)
+        model.login("fixture@example.test", "synthetic-password"); advanceUntilIdle()
+        assertTrue(model.state.value.identity.signedIn)
+        assertEquals(listOf(TravelerRoute(Destination.HOME)), model.state.value.stack)
+        assertEquals(Destination.HOME, model.state.value.tab)
+    }
+
+    @Test fun validRestoredSessionKeepsTheProtectedRouteUntilItsReadCompletes() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1)
+        val released = CompletableDeferred<Unit>()
+        val identity = object : TravelerIdentity by f.runtime.identity {
+            override suspend fun restore() {
+                released.await(); f.identityState.value = TravelerIdentityView(signedIn = true, generation = 2)
+            }
+        }
+        val base = f.runtime
+        val runtime = TravelerRuntime(identity, base.catalog, base.itineraries, base.distribution, base.trips, base.notifications,
+            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+        val restored = """[{"destination":"PROFILE"},{"destination":"ITINERARY","id":"${f.planId}"}]"""
+        val model = model(f, runtime, restored); runCurrent()
+        assertFalse(model.state.value.identityRestored); assertNull(model.state.value.itinerary.value)
+        released.complete(Unit); advanceUntilIdle()
+        assertTrue(model.state.value.identityRestored); assertTrue(model.state.value.identity.signedIn)
+        assertEquals(Destination.ITINERARY, model.state.value.route.destination)
+        assertEquals(Destination.PROFILE, model.state.value.tab)
+        assertEquals(f.planId, model.state.value.itinerary.value?.itinerary?.id)
+    }
+
+    @Test fun feedCopyUsesItsOwnPublicIdAndHonorsTheServerCapability() = runTest {
+        val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
+        model.clonePublicPlan(f.publicPlan.copy(allowClone = false)); model.clonePublicPlan(f.publicPlan.copy(allowClone = null))
+        advanceUntilIdle(); assertEquals(0, f.cloneCalls.get())
+        model.clonePublicPlan(f.publicPlan); model.clonePublicPlan(f.publicPlan); advanceUntilIdle()
+        assertEquals(1, f.cloneCalls.get()); assertEquals(f.publicPlan.id, f.lastCloneId)
+        assertEquals(Destination.ITINERARY, model.state.value.route.destination)
+        model.cloneCuratedPlan(f.curatedPlan.copy(allowClone = null)); model.cloneCuratedPlan(f.spot.copy(allowClone = true))
+        advanceUntilIdle(); assertEquals(1, f.cloneCalls.get())
+        model.cloneCuratedPlan(f.curatedPlan); advanceUntilIdle()
+        assertEquals(2, f.cloneCalls.get()); assertEquals(f.curatedPlan.id, f.lastCloneId)
+        f.identityState.value = TravelerIdentityView(generation = 2); advanceUntilIdle()
+        model.clonePublicPlan(f.publicPlan); advanceUntilIdle()
+        assertEquals(2, f.cloneCalls.get()); assertEquals(Destination.LOGIN, model.state.value.route.destination)
+    }
+
     @Test fun inviteeDoesNotRequestWorkingPlan() = runTest {
         val f = TravelerFixture(); f.trip = f.trip.copy(role = TripCallerRole.INVITEE)
         val model = model(f); advanceUntilIdle()

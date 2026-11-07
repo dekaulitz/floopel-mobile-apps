@@ -1,10 +1,10 @@
 # Traveler Android — implementasi dan audit
 
-7 November 2026 · PR #1, branch feature/mobile-openapi-contracts · baseline kontrak 2fc35ab37091b4ea78a37174bb1058477b9a1900.
+7 November 2026 · PR #1, branch feature/mobile-openapi-contracts · kontrak durasi nol 34dbaeee8ec76f81a3a19659cfe877db6ba68f86.
 
 Android Traveler kini memakai runtime API native dan UI Compose di commonMain. Fokus implementasi adalah Quest, itinerary/publikasi dan Trip/admission, dilanjutkan reader publik, Saved Spot, kelompok dan inbox. Ini baseline yang dapat dibangun serta ditinjau, bukan sign-off seluruh desain atau kandidat rilis. Partner dan host iOS masih scaffold; merge/rilis tidak dilakukan.
 
-Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 366 host test, API privat dan dua fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Tabel/bukti awal di bawah tetap membedakan status baseline; audit privat memperbarui kasus yang sudah dijalankan.
+Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). [Audit UI terbaru](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Tabel/bukti awal di bawah tetap membedakan status baseline.
 
 ## Acuan
 
@@ -20,7 +20,7 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 366 host test, 
 | Home 5:200 | home/TravelerHomeContent.kt | Rail Spot/Location/Collection/Story, sesi/Passport, Trip aktif, inbox | Screenshot data publik nyata; gambar bukan fallback fixture |
 | Quest 97:1286, progress 218:2911 | quest + domain/session | Discovery/owner snapshot, start/continue, question, GPS, hasil/progres, Passport | Test kontrak/cancellation/GPS memakai provider double; provider nyata NOT_RUN |
 | Builder 113:1618, form 290:4697, Stop 113:1882 | itinerary | Create/edit, hari/judul, tambah/hapus/edit Stop, HH:mm, null versus durasi 0, recovery draft/Stop | Emulator: cover 154 dp full viewport, gutter 20 dp, validasi, Back/day/feedback |
-| Publikasi 113:2058, share 431:8111 | itinerary + distribution/media journal | Revision + dua acknowledgement, cover READY, empty guard, publish/unpublish, tautan rotate/revoke | Intent/key/body tetap setelah respons hilang; emulator menolak PROCESSING; write backend privat NOT_RUN |
+| Publikasi 113:2058, share 431:8111 | itinerary + distribution/media journal | Revision + dua acknowledgement, cover READY, empty guard, publish/unpublish, tautan rotate/revoke | Intent/key/body tetap setelah respons hilang; emulator menolak PROCESSING; API media/publikasi PASS pada audit privat; Photo Picker native NOT_RUN |
 | Trip 315:15847, form 114:1739 | trip | Working itinerary yang sama, create/recover, banner sebagai hasil parsial, roster/lifecycle, undangan | Invitee tidak mengambil working plan; banner gagal tidak membuat Trip kedua; [API privat/recovery](traveler-private-audit.md) |
 | Open Trip 5:326, detail 316:5228 | trip | Katalog/cursor publik, route publik, apply/pending, approve/reject/withdraw, reader pemilik | Guest API nyata PASS; follow-up write privat/kapasitas 5+1 PASS pada [audit privat](traveler-private-audit.md) |
 | Spot 36:696 | catalog | Detail/gallery, lokasi, rich body, tambah ke rencana/hari, Saved | Detail native data nyata + emulator penambahan hari 3/footer |
@@ -30,6 +30,8 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 366 host test, 
 | Login 165:3376, registrasi 165:3640 | account + native host | Password/Google, registrasi 4 langkah/legal versi-hash, verify, forgot, profil | Referensi/legal API nyata PASS; login privat/restore native PASS pada audit follow-up; email/provider NOT_RUN |
 
 Aturan bisnis tetap: maksimal 5 peserta + 1 pengelola; pending application/invitation bukan membership dan tidak memesan slot. Kemampuan mengikuti server. Trip memakai working itinerary yang sama, bukan copy. Media processing tidak dianggap READY.
+
+Keputusan pemilik 7 November: durasi Stop 0 menit valid pada working plan dan snapshot publik; null berarti belum ditentukan. Schema kanonis/bundle kini minimum 0. Aplikasi wajib login sebelum fitur, termasuk katalog yang endpoint backend-nya publik. Saat logout, tab dan stack dinormalisasi ke root login; login ulang menuju Home dengan tab Home aktif. Pemulihan sesi valid mempertahankan route yang berizin.
 
 ## Arsitektur dan keamanan
 
@@ -52,16 +54,16 @@ Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug defaul
 | --- | --- |
 | assembleDebug Traveler + Partner | PASS; kedua aplikasi dibangun karena core berubah |
 | lintDebug Traveler + Partner | PASS tanpa error. Traveler 38 warning, Partner 2: mayoritas saran upgrade, juga OldTargetApi, MissingApplicationIcon, UseKtx. Toolchain tidak di-upgrade |
-| testAndroidHostTest | 366 test PASS; 0 failure/error/skipped pada follow-up; baseline sebelumnya 357 |
+| testAndroidHostTest | 377 test PASS; 0 failure/error/skipped pada follow-up; baseline sebelumnya 357 |
 | Host dengan floopelLiveSmoke=true dan origin tunnel | 4 public-read test PASS; 0 failure/error/skipped. Discovery/detail/search, UUID/slug, Quest/Open Trip guest, referensi registrasi/legal |
-| connectedDebugAndroidTest dan runner adb untuk screenshot final | Baseline connected 8 journey; follow-up runner 9 test memakai domain fixture PASS, 0 skipped |
-| Host privat dan dua fase native nyata | 3 host live PASS, ditambah journey native dan restore/logout setelah force-stop masing-masing 1 test PASS; [rincian batas](traveler-private-audit.md) |
+| connectedDebugAndroidTest dan runner adb untuk screenshot final | Baseline connected 8 journey; follow-up runner 15 test memakai domain fixture PASS pada viewport 400×900 dp, 0 skipped; bukan 15 state Figma yang ditandatangani |
+| Host privat dan tiga fase native nyata | 3 host live admission dan 1 host live media/publikasi PASS, ditambah journey native, restore/logout/Back sistem setelah force-stop, dan reopen/login kedua masing-masing 1 test PASS; [rincian batas](traveler-private-audit.md) |
 | Font 130% dan mode gelap | Masing-masing 2 skenario (cover/gutter dan feedback/day) PASS; bukan seluruh aplikasi. Emulator dipulihkan ke font 100%/mode terang |
 | Guard kontrak Node | check-examples.mjs PASS + 4 test guard PASS |
 | Batas layer/graf, pola credential, diff check | PASS pada pemeriksaan lokal; bukan audit keamanan menyeluruh atau kontrol CI otomatis |
 | iOS framework/host/test | NOT_RUN: Windows, perlu Mac/Xcode; host iOS belum dihubungkan runtime |
 
-Emulator: Android 15/API 35, 1080×2400, density 420, package com.floopel.traveler. Sembilan test native memakai domain fixture. Dua fase native live memakai MainActivity, Keystore dan backend nyata dengan akun fixture database lokal; hasil provider lain tidak disimpulkan darinya.
+Emulator: Android 15/API 35, package com.floopel.traveler. Batch koreksi UI memakai viewport 400×900 dp (1080×2430, density 432), locale en-US, resource default Bahasa Indonesia, font 100%; dua capture memakai Compose fontScale 2. Konfigurasi awal 1080×2400/density 420 dipulihkan setelah audit. Test fixture, API host dan MainActivity nyata dilaporkan terpisah; hasil provider lain tidak disimpulkan darinya.
 
 Bukti: [audit dan screenshot](traveler-android-audit/README.md), [manifest hasil](traveler-android-audit/results.json). XML/report mentah berada di output build dan arsip lokal .gradle/audit/traveler-android.
 
@@ -69,9 +71,9 @@ Bukti: [audit dan screenshot](traveler-android-audit/README.md), [manifest hasil
 
 | Bagian | Status / kebutuhan berikutnya |
 | --- | --- |
-| Write backend privat | Itinerary/Stop, Trip dan admission telah diuji memakai delapan akun fixture lokal. Publikasi/media serta notice/inbox privat nyata masih NOT_RUN; lihat audit privat |
+| Write backend privat | Itinerary/Stop, Trip dan admission telah diuji memakai delapan akun fixture lokal. Publikasi/media API telah lulus; notice/inbox privat nyata masih NOT_RUN; lihat audit privat |
 | Google Sign-In / Play Integrity / GPS nyata | Adapter ada; registrasi package/signature, project/client ID dan konfigurasi backend perlu disediakan serta diuji pada distribusi/perangkat sesuai |
-| Photo Picker → upload → media READY nyata | Adapter/journal/status/polling terhubung, test deterministik ada. E2E belum dijalankan; worker media audit nonaktif |
+| Photo Picker → upload → media READY nyata | Adapter/journal/status/polling terhubung, test deterministik ada. Pipeline upload/processing/publikasi API PASS dengan worker scoped; Photo Picker dan scheduler deployment belum diuji |
 | Maps Explorer dan FCM | Belum dihubungkan; perlu provider/config dan uji izin/delivery/deep link. Inbox in-app sudah tersedia |
 | Kunjungan manual Trip | Kontrak operasi/persistensi belum tersedia; tidak membuat endpoint/status palsu atau menyamakannya dengan proof Quest |
 | Lanjutan UI | Settings/edit akun/security/emergency/interests/avatar, komentar/report, filter tanggal/lokasi Open Trip, advanced day/reorder, serta pagination lanjutan kelompok belum seluruhnya dihubungkan. Adapter bukan bukti UI selesai |

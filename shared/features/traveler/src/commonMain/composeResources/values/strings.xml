@@ -74,10 +74,10 @@
     <string name="trips">Perjalanan</string>
     <string name="account">Akun</string>
     <string name="email">Email</string>
-    <string name="password">Kata sandi</string>
-    <string name="forgot_password">Lupa kata sandi?</string>
-    <string name="login_title">Selamat datang kembali</string>
-    <string name="login_body">Masuk untuk melanjutkan penjelajahanmu.</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Lupa password?</string>
+    <string name="login_title">Selamat datang</string>
+    <string name="login_body">Masuk untuk melanjutkan perjalananmu.</string>
     <string name="login_invalid">Isi email dan kata sandi.</string>
     <string name="registration_title">Mulai perjalananmu</string>
     <string name="registration_step">Langkah %1$d dari 4</string>
@@ -257,8 +257,27 @@
     <string name="location_detail">Detail lokasi</string>
     <string name="story_detail">Cerita perjalanan</string>
     <string name="collection_detail">Collection</string>
-    <string name="community_body">Temukan rencana dan cerita dari sesama traveler.</string>
-    <string name="community_curated">Pilihan kurator</string>
+    <string name="community_body">Perjalanan traveler dan kurasi resmi Floopel.</string>
+    <string name="community_inspiration">Inspirasi perjalanan</string>
+    <string name="view_public_itinerary">Lihat itinerary</string>
+    <string name="view_trip">Lihat trip</string>
+    <string name="trip_with_organizer">Bersama %1$s</string>
+    <string name="search_community_trip">Cari Open Trip publik</string>
+    <string name="search_curated_trip">Cari Curated Trip</string>
+    <string name="community_open_trips_heading">Perjalanan terbuka</string>
+    <string name="view_open_trip">Lihat Open Trip</string>
+    <string name="share_trip">Bagikan</string>
+    <string name="curated_heading">Pilihan Floopel</string>
+    <string name="curated_body">Itinerary yang dikurasi untuk menjadi inspirasi perjalananmu.</string>
+    <string name="curated_by_floopel">Dikurasi Floopel</string>
+    <string name="catalog_itinerary_summary">%1$d hari · %2$d tempat</string>
+    <string name="catalog_trip_capacity">%1$d dari %2$d peserta + %3$d organizer</string>
+    <string-array name="calendar_months_short">
+        <item>Jan</item><item>Feb</item><item>Mar</item><item>Apr</item><item>Mei</item><item>Jun</item>
+        <item>Jul</item><item>Agu</item><item>Sep</item><item>Okt</item><item>Nov</item><item>Des</item>
+    </string-array>
+    <string name="community_curated">Curated Trip</string>
+    <string name="community_open_trip">Open Trip publik</string>
     <string name="all_locations">Semua lokasi</string>
     <string name="date">Tanggal</string>
     <string name="maps_unavailable">Peta belum tersedia. Pencarian dan katalog tetap dapat digunakan.</string>

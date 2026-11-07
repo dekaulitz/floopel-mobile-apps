@@ -15,6 +15,19 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.*
 
 class NativePublicTravelerApiTest {
+    @Test fun publishedStopPreservesZeroAndNullDurationButRejectsANegativeValue() = runTest {
+        val fixture = PublicFixture()
+        try {
+            fixture.login()
+            for (duration in listOf("0", "null", "-1")) {
+                fixture.response = fixture.snapshot.replace("\"position\":0", "\"position\":0,\"duration_minutes\":$duration")
+                val result = fixture.repository.itinerary("culture-day")
+                if (duration == "-1") assertEquals(CatalogResult.InvalidResponse, result)
+                else assertEquals(duration.toIntOrNull(), assertIs<CatalogResult.Ready<PublicItinerarySnapshot>>(result).value.stops.single().durationMinutes)
+            }
+        } finally { fixture.client.close() }
+    }
+
     @Test
     fun boundActivityCoveragePreservesEveryLocationAndRecoversWithoutSuccessorReads() = runTest {
         val fixture = PublicFixture()

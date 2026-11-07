@@ -64,18 +64,25 @@ tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
     if (name == "testAndroidHostTest") {
         val live = providers.gradleProperty("floopelLiveSmoke").orElse("false").get().toBooleanStrict()
         val privateLive = providers.gradleProperty("floopelPrivateSmoke").orElse("false").get().toBooleanStrict()
-        require(!live || !privateLive) { "Choose public or private live smoke, not both" }
-        if (live || privateLive) outputs.upToDateWhen { false }
-        if (privateLive) {
-            filter.includeTestsMatching("*.LivePrivateTravelerTest")
+        val privateMedia = providers.gradleProperty("floopelPrivateMediaSmoke").orElse("false").get().toBooleanStrict()
+        require(listOf(live, privateLive, privateMedia).count { it } <= 1) { "Choose one live smoke mode" }
+        if (live || privateLive || privateMedia) outputs.upToDateWhen { false }
+        if (privateLive || privateMedia) {
+            filter.includeTestsMatching(if (privateMedia) "*.LivePrivateMediaPublicationTest" else "*.LivePrivateTravelerTest")
             systemProperty("floopel.test.origin", providers.gradleProperty("floopelApiOrigin").get())
             systemProperty("floopel.test.fixture", providers.gradleProperty("floopelPrivateFixtureFile").get())
+            if (privateMedia) {
+                systemProperty("floopel.test.mediaWorker", providers.gradleProperty("floopelPrivateMediaWorker").get())
+                systemProperty("floopel.test.backendService", providers.gradleProperty("floopelPrivateBackendService").get())
+                systemProperty("floopel.test.processorImage", providers.gradleProperty("floopelPrivateProcessorImage").get())
+            }
         } else if (live) {
             filter.includeTestsMatching("*.LiveCatalogSmokeTest")
             systemProperty("floopel.test.origin", providers.gradleProperty("floopelApiOrigin").get())
         } else {
             filter.excludeTestsMatching("*.LiveCatalogSmokeTest")
             filter.excludeTestsMatching("*.LivePrivateTravelerTest")
+            filter.excludeTestsMatching("*.LivePrivateMediaPublicationTest")
         }
     }
 }

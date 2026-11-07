@@ -20,8 +20,18 @@ object FloopelShape {
     val chip = RoundedCornerShape(8.dp)
     val pill = RoundedCornerShape(24.dp)
     val control = RoundedCornerShape(4.dp)
+    val tripCover = RoundedCornerShape(14.dp)
+    val publicationCover = RoundedCornerShape(12.dp)
 }
 
 object FloopelControlSize { val touchTarget = 48.dp; val compactInput = 44.dp }
 
-object FloopelMediaSize { val profileAvatar = 48.dp }
+object FloopelMediaSize {
+    val profileAvatar = 48.dp
+    val publicationAvatar = 40.dp
+    val organizerAvatar = 28.dp
+    val tripCover = 190.dp
+    val publicationCover = 204.dp
+    val curatedCover = 170.dp
+    val profileItineraryCover = 180.dp
+}

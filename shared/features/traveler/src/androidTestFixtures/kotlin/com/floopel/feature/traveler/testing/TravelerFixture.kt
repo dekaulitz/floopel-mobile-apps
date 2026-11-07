@@ -22,6 +22,8 @@ class TravelerFixture {
     val workingPlanCalls = AtomicInteger()
     val tripCreateCalls = AtomicInteger()
     val bannerCalls = AtomicInteger()
+    val cloneCalls = AtomicInteger()
+    @Volatile var lastCloneId: String? = null
     @Volatile var pendingCreatedTrip: TravelerTrip? = null
     @Volatile var routeCreatedTrip: TravelerTrip? = null
     @Volatile var pendingTripDraft: TripDraft? = null
@@ -43,6 +45,16 @@ class TravelerFixture {
         passport = TravelerPassport(100, 1, "Penjelajah", emptyList(), emptyList()), executionConfigured = true))
     @Volatile var trip = TravelerTrip(tripId, planId, "Trip simulasi", "2026-11-14", "2026-11-15", "Asia/Jakarta",
         TripStatus.ACTIVE, TripCallerRole.ORGANIZER, 0)
+    val publicPlan = PublicItinerarySummary("public-plan", "rute-publik-simulasi", "Rute publik simulasi", "Inspirasi perjalanan untuk pengujian UI.",
+        null, "publication", 1, 6, "arif_simulasi", ownerDisplayName = "Arif Simulasi", dayCount = 2, allowClone = true,
+        locations = listOf(LocationReference("location", "Magelang", "magelang", "city")))
+    val publicSnapshot = PublicItinerarySnapshot(publicPlan.id, publicPlan.slug, publicPlan.title, publicPlan.description, null,
+        true, publicPlan.publicationId, 1, publicPlan.ownerUsername, "Arif Simulasi", emptyList())
+    val curatedPlan = CatalogEntry("curated-plan", "rute-kurasi-simulasi", "Dua hari menjelajah Magelang", "Rute budaya untuk menikmati cerita di sepanjang perjalanan.",
+        CatalogKind.ITINERARY, null, itineraryDays = 2, spotCount = 6, locations = publicPlan.locations, allowClone = true)
+    val openTrip = OpenTrip(tripId, "Jelajah Magelang bersama", "2026-11-14", "2026-11-16", "Asia/Jakarta", OpenTripSchedule.UPCOMING,
+        null, null, 2, 5, 1, 3, OpenTripOrganizer("organizer", "arif_simulasi", "Arif Simulasi"), publicPlan.locations, false,
+        null, null, OpenTripViewer.VISITOR, null, null, true, null)
     private val identities = AtomicInteger(100)
     private val quest = QuestReader(QuestCard("quest", "quest-simulasi", "Jejak budaya simulasi", 200, null, 1, emptyList(), "personal"),
         "Pelajari cerita perjalanan.", "Selesaikan aktivitas sesuai petunjuk.", null, 5, 10, "active", "available",
@@ -59,10 +71,13 @@ class TravelerFixture {
             gpsSubmissionPending = gpsSubmissionPending); Unit }
         "answer" -> { identityState.value = identityState.value.copy(answerOutcome = "correct", completed = true); Unit }
         "logout" -> { identityState.value = TravelerIdentityView(generation = 2); Unit }
+        "login" -> { identityState.value = TravelerIdentityView(signedIn = true, generation = identityState.value.generation + 1,
+            passport = TravelerPassport(100, 1, "Penjelajah", emptyList(), emptyList())); Unit }
         else -> Unit
     } }
     val catalog: TravelerCatalog = double { name, args -> when (name) {
-        "browse", "searchSpotPage", "countryPage", "nearbySpots", "curatedItineraries" -> CatalogResult.Ready(CatalogPage(listOf(spot), 1, 1))
+        "browse", "searchSpotPage", "countryPage", "nearbySpots" -> CatalogResult.Ready(CatalogPage(listOf(spot), 1, 1))
+        "curatedItineraries" -> CatalogResult.Ready(CatalogPage(listOf(curatedPlan), 1, 1))
         "activeQuests", "locationQuests", "spotQuests", "untakenLocationQuests" -> CatalogResult.Ready(LocationQuestPage(
             listOf(LocationQuest("quest", "quest-simulasi", quest.card.title, 200)), 1, 1))
         "detail" -> CatalogResult.Ready(spot.copy(id = (args[0] as CatalogEntry).id))
@@ -78,6 +93,7 @@ class TravelerFixture {
             plan = OwnedItineraryDetail(plan.itinerary.copy(title = draft.title, description = draft.description, days = 0, stops = 0), emptyList())
             ItineraryWriteResult.Completed(plan)
         }
+        "clone" -> { cloneCalls.incrementAndGet(); lastCloneId = args[0] as String; ItineraryWriteResult.Completed(plan) }
         "addStop" -> {
             stopCalls.incrementAndGet(); val day = args[2] as Int
             plan = plan.copy(itinerary = plan.itinerary.copy(stops = plan.stops.size + 1, days = maxOf(plan.itinerary.days, day)),
@@ -114,7 +130,9 @@ class TravelerFixture {
         "pendingOpenTripApplication" -> CatalogResult.Ready(null)
         "ownedTripNotice" -> noticeResult
         "members" -> CatalogResult.Ready(emptyList<TripMember>())
-        "openTrips" -> CatalogResult.Ready(OpenTripPage(emptyList(), null))
+        "openTrips" -> CatalogResult.Ready(OpenTripPage(listOf(openTrip), null))
+        "openTrip" -> CatalogResult.Ready(openTrip)
+        "openTripStops" -> CatalogResult.Ready(OpenTripStopPage(emptyList(), null))
         else -> CatalogResult.NetworkError
     } }
     val notifications: TravelerNotificationRepository = double { name, args -> when (name) {
@@ -130,7 +148,14 @@ class TravelerFixture {
     } }
     private val legal: TravelerLegalRepository = double { name, _ -> if (name == "pending") CatalogResult.Ready(emptyList<LegalDocument>()) else CatalogResult.Ready(Unit) }
     private val registration: TravelerRegistrationRepository = double { _, _ -> RegistrationResult.Failed(503) }
-    private val publicContent: TravelerPublicRepository = double { _, _ -> CatalogResult.NetworkError }
+    private val publicContent: TravelerPublicRepository = double { name, args -> when (name) {
+        "searchItineraries" -> CatalogResult.Ready(listOf(publicPlan))
+        "profileItineraries" -> CatalogResult.Ready(listOf(publicPlan, publicPlan.copy(id = "second-public-plan", slug = "rute-kedua", title = "Rute publik kedua", allowClone = false)))
+        "profile" -> CatalogResult.Ready(TravelerPublicProfile(args[0] as String, "Arif Simulasi", null, null, 2026, 2, 1, 0, null))
+        "progress" -> CatalogResult.Ready(PublicProfileProgress(1, "Penjelajah", 100))
+        "itinerary" -> CatalogResult.Ready(publicSnapshot)
+        else -> CatalogResult.NetworkError
+    } }
     private val savedSpots: TravelerSavedSpotRepository = double { _, _ -> CatalogResult.NetworkError }
     private val questGroups: TravelerQuestGroupRepository = double { _, _ -> CatalogResult.NetworkError }
     val runtime = TravelerRuntime(identity, catalog, itineraries, distribution, trips, notifications, account, legal, registration, publicContent, savedSpots, questGroups,

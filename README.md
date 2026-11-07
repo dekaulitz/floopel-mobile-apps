@@ -168,6 +168,8 @@ APK dihasilkan di `apps/android/<traveler|partner>/build/outputs/apk/debug/`. Un
 
 ### Konfigurasi Android Traveler
 
+Traveler wajib login sebelum Home dan fitur aplikasi. Aplikasi menunggu pemulihan sesi; sesi valid dapat dilanjutkan, sedangkan logout atau sesi tidak valid kembali ke login. Registrasi, verifikasi dan pemulihan sandi tetap tersedia dari login. Figma final adalah sumber kebenaran visual; bukti koreksi komponen dan gap tersisa ada pada [audit UI](docs/handoff/traveler-ui-audit.md).
+
 Debug default memakai backend lokal `http://10.0.2.2:8080` untuk emulator. Untuk tunnel ngrok yang aktif, ambil origin HTTPS dari ngrok lalu bangun ulang APK:
 
 ```powershell

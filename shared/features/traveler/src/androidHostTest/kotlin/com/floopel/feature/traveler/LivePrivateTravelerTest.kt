@@ -10,6 +10,11 @@ import java.security.SecureRandom
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.awt.Color
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
@@ -19,10 +24,7 @@ import kotlin.test.*
 /** Opt-in real native API integration. The ignored fixture manifest is never packaged in the app. */
 class LivePrivateTravelerTest {
     companion object {
-        private val fixture by lazy {
-            Json { ignoreUnknownKeys = true }.decodeFromString<PrivateFixture>(
-                File(requireNotNull(System.getProperty("floopel.test.fixture"))).readText())
-        }
+        private val fixture by lazy { loadPrivateFixture() }
         private val actors = mutableMapOf<String, PrivateActor>()
         @JvmStatic @org.junit.BeforeClass fun loginFixtures() = runBlocking {
             fixture.accounts.forEach { credentials ->
@@ -140,6 +142,98 @@ class LivePrivateTravelerTest {
     private fun actor(role: String) = actors.getValue(role)
 }
 
+/** Explicit real upload + scoped processing + publication. Separate from the admission smoke. */
+class LivePrivateMediaPublicationTest {
+    @Test fun realCoverProcessingPublishesAnImmutableSnapshotAndUnpublishesIt() = runBlocking {
+        val fixture = loadPrivateFixture()
+        val owner = PrivateActor(fixture.accounts.single { it.role == "organizer" })
+        val guest = PrivateActor(fixture.accounts.single { it.role == "outsider" })
+        try {
+            owner.login()
+            val spot = owner.catalog.discoverySpots("id").ready("discovery").first()
+            val detail = owner.itineraries.create(ItineraryDraft("Android QA ${fixture.runId} publication", "Synthetic publication fixture")).completed()
+            val id = detail.itinerary.id
+            val added = owner.itineraries.addStop(id, spot.id, 1).completed()
+            val stop = added.stops.single()
+            owner.itineraries.updateStop(id, stop.copy(note = "Initial reviewed fixture note", durationMinutes = 0)).ready("initial Stop note")
+            val before = owner.distribution.read(id).ready("owner publication controls")
+            val revision = requireNotNull(before.updatedAt) { "Owner controls must include updated_at" }
+            val notReady = owner.distribution.publish(id, ItineraryPublicationReview(revision, true, true, true), privateOperationKey())
+            assertEquals(422, assertIs<CatalogResult.HttpError>(notReady).status)
+            val cover = owner.distribution.uploadCover(id, publicationTestImage(), "image/jpeg", privateOperationKey()).ready("real cover upload")
+            assertTrue(cover.processing in setOf(CoverProcessing.UPLOADED, CoverProcessing.PROCESSING))
+            processFixtureCover(cover.mediaId)
+            assertEquals(CoverProcessing.READY, owner.distribution.cover(id).ready("processed cover readback").processing)
+            val fresh = owner.distribution.read(id).ready("fresh publication controls")
+            val published = owner.distribution.publish(id, ItineraryPublicationReview(requireNotNull(fresh.updatedAt), true, true, true), privateOperationKey())
+                .ready("publish actual snapshot")
+            val slug = requireNotNull(published.publicSlug)
+            assertEquals("public", published.visibility)
+            val snapshot = guest.publicContent.itinerary(slug).ready("guest publication read")
+            assertPublishedFixtureImage(requireNotNull(snapshot.coverUrl))
+            assertEquals(spot.id, snapshot.stops.single().spot.id)
+            assertEquals(0, snapshot.stops.single().durationMinutes)
+            assertNull(snapshot.stops.single().note) // A private Stop note is not made public by the review acknowledgement.
+            owner.itineraries.updateStop(id, stop.copy(note = "Private working change after publication", durationMinutes = 15)).ready("change working draft")
+            owner.itineraries.update(id, ItineraryDraft("Private working title after publication", "New private working description", cover.mediaId)).ready("change working metadata")
+            val unchanged = guest.publicContent.itinerary(slug).ready("immutable public snapshot")
+            assertEquals(snapshot.title, unchanged.title)
+            assertEquals(snapshot.description, unchanged.description)
+            assertEquals(0, unchanged.stops.single().durationMinutes)
+            assertNull(unchanged.stops.single().note)
+            assertTrue(owner.distribution.read(id).ready("unpublished changes").unpublishedChanges)
+            owner.distribution.unpublish(id, privateOperationKey()).ready("unpublish fixture")
+            assertDenied(guest.publicContent.itinerary(slug))
+            owner.itineraries.delete(id).ready("delete own publication fixture")
+        } finally {
+            owner.session.logout(); owner.close(); guest.close()
+        }
+    }
+}
+
+private val fixtureJson = Json { ignoreUnknownKeys = true }
+private fun loadPrivateFixture(): PrivateFixture = fixtureJson.decodeFromString(
+    File(requireNotNull(System.getProperty("floopel.test.fixture"))).readText())
+
+private fun publicationTestImage(): ByteArray {
+    val image = BufferedImage(1600, 1000, BufferedImage.TYPE_INT_RGB)
+    val graphics = image.createGraphics()
+    try {
+        graphics.color = Color(55, 48, 163); graphics.fillRect(0, 0, 1600, 1000)
+        graphics.color = Color(240, 170, 60); graphics.fillRect(100, 100, 800, 600)
+    } finally { graphics.dispose() }
+    return ByteArrayOutputStream().use { bytes ->
+        check(ImageIO.write(image, "jpeg", bytes)); image.flush(); bytes.toByteArray()
+    }
+}
+
+private fun processFixtureCover(mediaId: String) {
+    val process = ProcessBuilder(requireNotNull(System.getProperty("floopel.test.mediaWorker")),
+        "--fixture", requireNotNull(System.getProperty("floopel.test.fixture")), "--media", mediaId,
+        "--service-root", requireNotNull(System.getProperty("floopel.test.backendService")),
+        "--processor-image", requireNotNull(System.getProperty("floopel.test.processorImage")))
+        .redirectErrorStream(true).start()
+    try {
+        assertTrue(process.waitFor(115, TimeUnit.SECONDS), "Fixture media worker exceeded its budget")
+        assertEquals(0, process.exitValue(), "Scoped fixture processing failed")
+        val status = fixtureJson.parseToJsonElement(process.inputStream.bufferedReader().readText()).toString()
+        assertTrue(status.contains("\"status\":\"ready\""), "Four real variants must be ready")
+    } finally { if (process.isAlive) process.destroyForcibly() }
+}
+
+private fun assertPublishedFixtureImage(url: String) {
+    assertTrue(url.startsWith(requireNotNull(System.getProperty("floopel.test.origin")) + "/"), "Local fixture delivery must use the API origin")
+    val connection = java.net.URI(url).toURL().openConnection() as java.net.HttpURLConnection
+    connection.connectTimeout = 10_000; connection.readTimeout = 10_000; connection.instanceFollowRedirects = false
+    try {
+        assertEquals(200, connection.responseCode, "Published variant must be readable")
+        assertTrue(connection.contentType.startsWith("image/webp"))
+        val prefix = connection.inputStream.use { it.readNBytes(12) }
+        assertEquals("RIFF", prefix.take(4).toByteArray().decodeToString())
+        assertEquals("WEBP", prefix.drop(8).take(4).toByteArray().decodeToString())
+    } finally { connection.disconnect() }
+}
+
 @Serializable
 private data class PrivateFixture(@SerialName("run_id") val runId: String, val accounts: List<PrivateCredentials>) {
     override fun toString() = "PrivateFixture([redacted])"
@@ -163,12 +257,14 @@ private class PrivateActor(private val credentials: PrivateCredentials) {
     val account = NativeAccountApi(rest, session)
     val legal = NativeLegalApi(rest, session)
     val catalog = AppsTravelerCatalog(rest)
+    private val media = NativeMediaUploads(rest, session, PrivateJournal())
     val itineraries = NativeItineraryApi(rest, session, PrivateJournal(), ::privateOperationKey)
     private val tripJournal = PrivateJournal()
     private val creationRoutes = PrivateJournal()
-    fun recreateTrips() = NativeTripApi(rest, session, tripJournal, creationRoutes = creationRoutes)
+    fun recreateTrips() = NativeTripApi(rest, session, tripJournal, creationRoutes = creationRoutes, mediaUploads = media)
     val trips = recreateTrips()
-    val distribution = NativeItineraryDistributionApi(rest, session, PrivateJournal())
+    val distribution = NativeItineraryDistributionApi(rest, session, PrivateJournal(), mediaUploads = media)
+    val publicContent = NativePublicTravelerApi(rest, session)
     val notifications = NativeNotificationApi(rest, session)
     suspend fun login() {
         session.login(credentials.email, credentials.password)

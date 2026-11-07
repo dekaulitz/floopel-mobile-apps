@@ -5,6 +5,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.Lifecycle
@@ -42,6 +43,14 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     val platformScope = rememberCoroutineScope()
     var googleBusy by remember { mutableStateOf(false) }
     val state by model.state.collectAsStateWithLifecycle()
+    if (!state.identityRestored) {
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+        return
+    }
     var pickerBusy by remember { mutableStateOf(false) }
     val selectPhoto: TravelerImageSelection? = photoPicker?.let { picker -> { selected ->
         if (!pickerBusy && !state.busy) platformScope.launch {
@@ -76,7 +85,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     LaunchedEffect(route, targetReady) { if (targetReady) { withFrameNanos { }; model.targetVisible(route) } }
     Surface(color = MaterialTheme.colorScheme.surface) {
         Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
-            if (route.destination != Destination.HOME) Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 8.dp)) {
+            if (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN))
+            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 8.dp)) {
                 if (state.stack.size > 1) IconButton(model::back, enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
                 Text(s(route.title()), Modifier.weight(1f).padding(vertical = 14.dp, horizontal = 8.dp), style = MaterialTheme.typography.titleLarge)
                 if (route.destination == Destination.DETAIL && route.extra == "SPOT" && state.identity.signedIn) {
@@ -92,10 +102,10 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
             if (state.unknownOutcome) InfoCard(s(Res.string.unknown_outcome))
             state.identity.failure?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
             Box(Modifier.weight(1f).fillMaxWidth().testTag("traveler-viewport")) {
-                if (!state.identity.signedIn && route.destination.requiresIdentity()) LoginGate(model)
+                if (!state.identity.signedIn && !route.destination.isAuthenticationScreen()) LoginGate(model)
                 else when (route.destination) {
                     Destination.HOME -> TravelerHomeContent(state, model)
-                    Destination.COMMUNITY -> CommunityScreen(state, model)
+                    Destination.COMMUNITY -> CommunityScreen(state, model, share)
                     Destination.EXPLORER, Destination.CATALOG, Destination.ADD_SPOT -> CatalogScreen(state, model)
                     Destination.DETAIL -> CatalogDetail(state, model)
                     Destination.OPEN_TRIPS -> OpenTripCatalog(state, model)
@@ -155,7 +165,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     }
                 }
             }
-            if (state.stack.size == 1) NavigationBar(containerColor = MaterialTheme.colorScheme.surface, windowInsets = WindowInsets(0)) {
+            if (state.identity.signedIn && state.stack.size == 1 && !route.destination.isAuthenticationScreen()) NavigationBar(
+                modifier = Modifier.testTag("traveler-navigation"), containerColor = MaterialTheme.colorScheme.surface, windowInsets = WindowInsets(0)) {
                 listOf(Triple(Destination.HOME, Res.string.home, FloopelIcons.Home),
                     Triple(Destination.COMMUNITY, Res.string.community, FloopelIcons.Groups),
                     Triple(Destination.EXPLORER, Res.string.explorer, FloopelIcons.Explore),
@@ -171,14 +182,6 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
         }
     }
 }
-
-private fun Destination.requiresIdentity() = this in setOf(Destination.PROFILE, Destination.PASSPORT,
-    Destination.QUEST_PROGRESS, Destination.QUEST_ACTIVITY, Destination.ITINERARIES, Destination.ITINERARY,
-    Destination.ITINERARY_FORM, Destination.ADD_SPOT, Destination.PICK_PLAN, Destination.STOP_FORM,
-    Destination.SHARE, Destination.PUBLICATION, Destination.SHARE_LINK, Destination.TRIP_FORM, Destination.TRIPS,
-    Destination.TRIP, Destination.MEMBERS, Destination.INVITATIONS, Destination.APPLICATIONS, Destination.TRIP_APPLICATIONS,
-    Destination.APPLICATION, Destination.NOTICE, Destination.NOTIFICATIONS, Destination.LEGAL, Destination.SAVED_SPOTS,
-    Destination.QUEST_GROUPS, Destination.QUEST_GROUP, Destination.QUEST_GROUP_INVITATIONS, Destination.QUEST_GROUP_INVITATION)
 
 private fun TravelerRoute.title() = when (destination) {
     Destination.HOME -> Res.string.home

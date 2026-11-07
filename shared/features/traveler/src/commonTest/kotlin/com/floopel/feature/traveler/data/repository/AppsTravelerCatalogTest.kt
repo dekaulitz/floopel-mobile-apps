@@ -19,6 +19,18 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class AppsTravelerCatalogTest {
+    @Test fun curatedCopyCapabilityRequiresACanonicalBoolean() = runBlocking {
+        for ((wire, expected) in listOf("true" to true, "false" to false, "null" to null, "\"true\"" to null)) {
+            val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine {
+                respond("""{"meta":{"code":"OK","pagination":{"page":1,"total_pages":1}},"error":null,"data":[{"id":"curated","title":"Curated","description":"Route","locations":[],"allow_clone":$wire}]}""")
+            }))
+            try {
+                val result = assertIs<CatalogResult.Ready<CatalogPage>>(AppsTravelerCatalog(client).curatedItineraries("", null, "id", 1))
+                assertEquals(expected, result.value.items.single().allowClone)
+            } finally { client.close() }
+        }
+    }
+
     @Test fun spotDetailUsesItsImmediateLocationZoneEvenWithAnExistingPlaceLabel() = runBlocking {
         for (zone in listOf("\"Asia/Makassar\"", "null")) {
             val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine { request ->
