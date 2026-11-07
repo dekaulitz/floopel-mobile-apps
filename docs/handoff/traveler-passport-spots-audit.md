@@ -2,6 +2,8 @@
 
 7 November 2026 · PR #1 · `feature/mobile-openapi-contracts`.
 
+Checkpoint ini terikat pada `c85046b`. [Follow-up status pilihan Passport](traveler-passport-semantics-audit.md) menambahkan semantics pilihan/grup dan pengujian fokus berikutnya; log, PNG dan manifest checkpoint ini tetap historis.
+
 Batch ini menindaklanjuti tiga tautan Figma pemilik dan temuan tab Profil publik yang membuat halaman bergerak ketika dipilih. Checkpoint Settings/akun sebelumnya tetap berada pada commit `488ec54` dan auditnya tidak ditulis ulang. Detail Spot pada batch ini mengikuti frame utama 36:696 dari tautan terbaru pemilik, sehingga menggantikan geometri varian 308:4706 pada checkpoint sebelumnya.
 
 ## Acuan visual

@@ -1,6 +1,8 @@
 package com.floopel.traveler
 
 import android.graphics.Bitmap
+import android.content.res.Configuration
+import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
@@ -8,7 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.Density
@@ -28,11 +34,14 @@ import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import kotlinx.coroutines.CompletableDeferred
 import org.json.JSONObject
+import org.json.JSONArray
 import org.junit.Assert.*
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.Locale
 
 /** Synthetic identities only; decode the rendered pixels with an independent QR implementation. */
 @RunWith(AndroidJUnit4::class)
@@ -43,12 +52,17 @@ class TravelerPassportDesignTest {
     private val admissions = AtomicInteger()
     private val resumes = AtomicInteger()
     private val reads = AtomicInteger()
+    private val selectionEvidence = JSONArray()
+    private val originalLocale = Locale.getDefault()
+    @After fun restoreLocale() { Locale.setDefault(originalLocale) }
     private var beforePassport: suspend () -> Unit = {}
     private val progress = TravelerPassport(1250, 8, "Penjelajah", listOf(TravelerPassportBadge("earned", "Badge simulasi", null)),
         listOf(QuestRunning("participation", "Jelajah budaya simulasi", "active", 2, 4, emptyMap())), 1000, 750,
         listOf(TravelerPassportCompletion("completed", "Jejak selesai simulasi", "quest-simulasi", true, "awarded")))
 
-    private fun launch(scale: Float = 1f, value: TravelerPassport = progress, open: Boolean = true) {
+    private fun launch(scale: Float = 1f, value: TravelerPassport = progress, open: Boolean = true, language: String = "id") {
+        // Compose Resources 1.11 uses Locale.current; restore the process-only override after each test.
+        Locale.setDefault(Locale.forLanguageTag(language))
         fixture.base.identityState.value = fixture.base.identityState.value.copy(passport = value)
         val r = fixture.runtime
         val identity = object : TravelerIdentity by r.identity {
@@ -67,8 +81,15 @@ class TravelerPassportDesignTest {
         }
         ui.setContent {
             val density = LocalDensity.current.density
-            CompositionLocalProvider(LocalDensity provides Density(density, scale)) {
-                TravelerApp(runtime, { shared += it }, backHandler = { enabled, back -> BackHandler(enabled, back) })
+            val context = LocalContext.current
+            val configuration = LocalConfiguration.current
+            val localizedConfiguration = remember(configuration, language) { Configuration(configuration).apply {
+                setLocales(LocaleList.forLanguageTags(language))
+            } }
+            val localized = remember(context, localizedConfiguration) { context.createConfigurationContext(localizedConfiguration) }
+            CompositionLocalProvider(LocalDensity provides Density(density, scale), LocalContext provides localized,
+                LocalConfiguration provides localizedConfiguration) {
+                TravelerApp(runtime, { shared += it }, language = language, backHandler = { enabled, back -> BackHandler(enabled, back) })
             }
         }
         ui.waitUntil(8_000) { ui.onAllNodesWithTag("navigation-profile").fetchSemanticsNodes().isNotEmpty() }
@@ -82,6 +103,27 @@ class TravelerPassportDesignTest {
     }
     private fun ready() = ui.waitUntil(5_000) { ui.onAllNodesWithTag("floopel-qr-ready", useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
     private fun back() { ui.runOnUiThread { ui.activity.onBackPressedDispatcher.onBackPressed() } }
+    private fun selectedGroup(group: String, active: String, vararg tags: String) {
+        ui.onNodeWithTag(group).assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.SelectableGroup))
+        val items = JSONArray()
+        for (tag in tags) {
+            val node = ui.onNodeWithTag(tag).assertHasClickAction()
+                .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab)).assertHeightIsAtLeast(48.dp)
+            if (tag == active) node.assertIsSelected() else node.assertIsNotSelected()
+            val config = node.fetchSemanticsNode().config
+            items.put(JSONObject().put("tag", tag).put("selected", config[SemanticsProperties.Selected]).put("role", config[SemanticsProperties.Role].toString()))
+        }
+        assertEquals(tags.size, ui.onAllNodes(hasAnyAncestor(hasTestTag(group)) and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).fetchSemanticsNodes().size)
+        assertEquals(1, ui.onAllNodes(hasAnyAncestor(hasTestTag(group)) and isSelected()).fetchSemanticsNodes().size)
+        selectionEvidence.put(JSONObject().put("group", group).put("active", active).put("items", items))
+    }
+    private fun tabs(active: String) = selectedGroup("passport-tabs", "passport-tab-$active", "passport-tab-overview", "passport-tab-badges", "passport-tab-stats")
+    private fun status(active: String) = selectedGroup("passport-status-tabs", "passport-status-$active", "passport-status-running", "passport-status-completed")
+    private fun saveSelectionAudit(name: String) {
+        val directory = requireNotNull(InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir("passport-semantics-audit"))
+        directory.mkdirs()
+        directory.resolve("$name.json").writeText(JSONObject().put("checks", selectionEvidence).put("passport_reads", reads.get()).put("admissions", admissions.get()).toString(2))
+    }
     private fun image() = ui.onNodeWithTag("passport-qr-code", useUnmergedTree = true).captureToImage().asAndroidBitmap()
     private fun decode(bitmap: Bitmap): String {
         val pixels = IntArray(bitmap.width * bitmap.height)
@@ -204,13 +246,37 @@ class TravelerPassportDesignTest {
     @Test fun longNamesAndOneHundredThirtyPercentTextKeepAllTabsReachable() {
         fixture.profileResult = CatalogResult.Ready(fixture.profile.copy(firstName = "Traveler dengan nama yang panjang", lastName = "Simulasi aksesibilitas"))
         launch(1.3f); summary(); ui.onNodeWithTag("passport-tab-stats").performScrollTo().performClick()
-        ui.onNodeWithText("Pencapaianmu").performScrollTo().assertIsDisplayed(); capture("passport-font-130")
+        ui.onNodeWithText("Pencapaianmu").performScrollTo().assertIsDisplayed(); tabs("stats"); capture("passport-font-130"); saveSelectionAudit("font-130")
     }
     @Test fun doubledTextKeepsTheExpandedFooterAndTabsReachable() {
         launch(2f); ready(); ui.onNodeWithTag("passport-enlarge").performScrollTo().performClick(); summary()
         ui.onNodeWithText("Kembali ke Passport").assertIsDisplayed(); capture("passport-qr-font-200")
         ui.onNodeWithText("Kembali ke Passport").performClick(); ui.onNodeWithTag("passport-tab-badges").performScrollTo().performClick()
-        ui.onNodeWithTag("passport-badge-earned").performScrollTo().assertIsDisplayed()
+        ui.onNodeWithTag("passport-badge-earned").performScrollTo().assertIsDisplayed(); tabs("badges"); saveSelectionAudit("font-200")
+    }
+    @Test fun passportSelectionSemanticsRemainExclusiveAcrossSwitchesAndBackWithoutExtraReads() {
+        launch(); ready(); val initialReads = reads.get()
+        tabs("overview"); status("running")
+        ui.onNodeWithTag("passport-status-completed").performScrollTo().performClick(); status("completed")
+        ui.onNodeWithTag("passport-tab-badges").performScrollTo().performClick(); tabs("badges")
+        ui.onNodeWithTag("passport-status-tabs").assertDoesNotExist()
+        ui.onNodeWithTag("passport-badge-earned").performScrollTo().performClick(); back(); tabs("badges")
+        ui.onNodeWithTag("passport-tab-stats").performScrollTo().performClick(); tabs("stats")
+        ui.onNodeWithTag("passport-enlarge").performScrollTo().performClick(); back(); tabs("stats")
+        ui.onNodeWithTag("passport-tab-overview").performScrollTo().performClick(); tabs("overview"); status("completed")
+        ui.onNodeWithTag("passport-status-running").performScrollTo().performClick(); status("running")
+        assertEquals(initialReads, reads.get()); assertEquals(0, admissions.get()); assertEquals(0, resumes.get())
+        saveSelectionAudit("selection-id")
+    }
+    @Test fun englishPassportExposesTheSameLocalizedExclusiveSelectionGroups() {
+        launch(language = "en"); ready(); val initialReads = reads.get()
+        ui.onNodeWithText("Overview").assertExists(); ui.onNodeWithText("In progress").assertExists()
+        tabs("overview"); status("running")
+        ui.onNodeWithTag("passport-status-completed").performScrollTo().performClick(); status("completed")
+        ui.onNodeWithTag("passport-tab-badges").performScrollTo().performClick(); tabs("badges")
+        ui.onNodeWithTag("passport-badge-earned").performScrollTo().performClick(); back(); tabs("badges")
+        ui.onNodeWithTag("passport-tab-overview").performScrollTo().performClick(); tabs("overview"); status("completed")
+        assertEquals(initialReads, reads.get()); assertEquals(0, admissions.get()); saveSelectionAudit("selection-en")
     }
     @Test fun theSharedQrEncoderRoundTripsUnicodeAndPayloadChangesWithoutAPlatformProvider() {
         var payload by mutableStateOf("{\"username\":\"旅人_simulasi\",\"level\":1,\"total_xp\":0}")

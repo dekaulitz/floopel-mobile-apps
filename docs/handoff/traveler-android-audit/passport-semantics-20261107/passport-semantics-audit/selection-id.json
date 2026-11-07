@@ -1,0 +1,196 @@
+{
+  "checks": [
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-overview",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-status-tabs",
+      "active": "passport-status-running",
+      "items": [
+        {
+          "tag": "passport-status-running",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-status-completed",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-status-tabs",
+      "active": "passport-status-completed",
+      "items": [
+        {
+          "tag": "passport-status-running",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-status-completed",
+          "selected": true,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-badges",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-badges",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-stats",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": true,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-stats",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": true,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-overview",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-status-tabs",
+      "active": "passport-status-completed",
+      "items": [
+        {
+          "tag": "passport-status-running",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-status-completed",
+          "selected": true,
+          "role": "Tab"
+        }
+      ]
+    },
+    {
+      "group": "passport-status-tabs",
+      "active": "passport-status-running",
+      "items": [
+        {
+          "tag": "passport-status-running",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-status-completed",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    }
+  ],
+  "passport_reads": 1,
+  "admissions": 0
+}

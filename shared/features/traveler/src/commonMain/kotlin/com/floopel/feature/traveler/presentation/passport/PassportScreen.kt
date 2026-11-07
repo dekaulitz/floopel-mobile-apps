@@ -3,6 +3,7 @@ package com.floopel.feature.traveler.presentation.passport
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -16,6 +17,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -99,9 +102,10 @@ private fun ColumnScope.PassportOverview(state: TravelerState, passport: Travele
                 }
                 FloopelButton(s(Res.string.passport_identity_retry), model::refreshPassportIdentity, Modifier.fillMaxWidth(), secondary = true, enabled = !state.profile.loading)
             }
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(Modifier.fillMaxWidth().selectableGroup().testTag("passport-tabs"), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 listOf(PassportTab.OVERVIEW to Res.string.passport_summary, PassportTab.BADGES to Res.string.badges, PassportTab.STATS to Res.string.passport_stats).forEach { (tab, label) ->
-                    FloopelButton(s(label), { model.passportTab(tab) }, Modifier.weight(1f).testTag("passport-tab-${tab.name.lowercase()}"), secondary = ui.tab != tab)
+                    FloopelButton(s(label), { model.passportTab(tab) }, Modifier.weight(1f).testTag("passport-tab-${tab.name.lowercase()}")
+                        .semantics { selected = ui.tab == tab; role = Role.Tab }, secondary = ui.tab != tab)
                 }
             }
             when (ui.tab) {
@@ -110,9 +114,11 @@ private fun ColumnScope.PassportOverview(state: TravelerState, passport: Travele
                     PassportHeading(s(Res.string.passport_empty_title)); PassportBody(s(Res.string.passport_empty_body))
                     FloopelButton(s(Res.string.passport_discover), { model.open(TravelerRoute(Destination.QUESTS)) }, Modifier.fillMaxWidth())
                 } else {
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FloopelButton(s(Res.string.passport_running), { model.passportCompleted(false) }, Modifier.weight(1f), secondary = ui.completed)
-                        FloopelButton(s(Res.string.passport_finished), { model.passportCompleted(true) }, Modifier.weight(1f), secondary = !ui.completed)
+                    Row(Modifier.fillMaxWidth().selectableGroup().testTag("passport-status-tabs"), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FloopelButton(s(Res.string.passport_running), { model.passportCompleted(false) }, Modifier.weight(1f).testTag("passport-status-running")
+                            .semantics { selected = !ui.completed; role = Role.Tab }, secondary = ui.completed)
+                        FloopelButton(s(Res.string.passport_finished), { model.passportCompleted(true) }, Modifier.weight(1f).testTag("passport-status-completed")
+                            .semantics { selected = ui.completed; role = Role.Tab }, secondary = !ui.completed)
                     }
                     PassportSectionHeading(s(if (ui.completed) Res.string.passport_completed_heading else Res.string.passport_continue_heading))
                     if (ui.completed) {
