@@ -1,0 +1,35 @@
+{
+  "finding": "QUEST-GROUP-RECOVERY-TITLE-01",
+  "dedup": "quest-group-recovery-toolbar-title-20261108-0357",
+  "status": "NOT_REPRODUCED_AGAINST_VISIBLE_FIGMA_TEXT",
+  "client_date": "2026-11-08",
+  "file_key": "ifQcOxbjGTXw9aNH2JGl9g",
+  "session_id": "99452b43-49a0-40a0-9454-9557150c1d75",
+  "reference": "https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile?node-id=397-10812",
+  "read_only_plugin_api": {
+    "readOnly": true,
+    "texts": [
+      {
+        "id": "397:10812",
+        "name": "Hasil belum dapat dipastikan",
+        "characters": "Trip",
+        "width": 296,
+        "height": 27
+      },
+      {
+        "id": "397:10913",
+        "name": "Memeriksa kelompok",
+        "characters": "Memeriksa kelompok",
+        "width": 296,
+        "height": 27
+      }
+    ]
+  },
+  "design_context_node": "397:10812",
+  "design_context_visible_text": "Trip",
+  "design_context_code": "export default function HasilBelumDapatDipastikan() {\n  return (\n    <p className=\"[word-break:break-word] font-['Roboto:Medium'] font-medium leading-[1.35] relative size-full text-[20px] text-[color:var(--onsurface,#202332)]\" data-node-id=\"397:10812\" style={{ fontVariationSettings: '\"wdth\" 100' }}>\n      Trip\n    </p>\n  );\n}",
+  "native_source_commit": "26e4cc82bb99e26039c79bc5e6937c1ed56f28f6",
+  "native_run": "native.log: 27 PASS in 50.914s; source/APK freeze unchanged",
+  "native_capture": "unknown.png",
+  "decision": "Preserve the actual visible characters and rendered Figma label. Metadata name is a layer name, not the text content. No production or Figma mutation and no rerun are needed."
+}

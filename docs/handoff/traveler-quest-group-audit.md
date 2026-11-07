@@ -24,6 +24,10 @@ The list now uses `LazyColumn` and requests the next READ batch when its continu
 
 [397:8840](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile?node-id=397-8840) and [397:8429](https://www.figma.com/design/ifQcOxbjGTXw9aNH2JGl9g/Floopel-Mobile?node-id=397-8429) were inspected as invitation/manager context. Pagination follows the [existing API contract](../../api-contract/openapi-apps.json), not an invented page-two frame. The general manager/invitation reader and empty-list layouts are not claimed as a full visual reconciliation in this fix.
 
+## Toolbar title follow-up
+
+`QUEST-GROUP-RECOVERY-TITLE-01` (`quest-group-recovery-toolbar-title-20261108-0357`) is **not reproduced against the visible Figma text**. Fresh `get_design_context` for text node 397:10812 returns and renders **Trip**. A separate read-only Plugin API query confirms `name = "Hasil belum dapat dipastikan"`, while `characters = "Trip"`. Checking node 397:10913 has both name and characters “Memeriksa kelompok”. The metadata layer name must not be mistaken for displayed text. The existing native unknown capture therefore matches this reference; changing it to the layer name would depart from the current design. [Exact read proof](traveler-android-audit/quest-group-20261108/title-figma-read.json). No application/Figma edit or new runtime run was performed for this documentation-only follow-up; the 27-test run below remains bound to the source/APK already recorded.
+
 ## Executed verification
 
 - Traveler APK, instrumentation APK, full host suite and lint: **PASS**. Host: **509 tests**, zero failures/errors/skips. This includes five new actual-adapter/MockEngine cases and ten new state-owner cases with that adapter and recovery store. Lint: zero fatal/errors, 45 warnings. Core/Partner are unchanged.

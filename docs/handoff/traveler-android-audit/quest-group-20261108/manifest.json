@@ -107,6 +107,16 @@
     "review.png": "27a99b0366b0861238552829f8dee0ab486896abed5c13e8acac714d937b238d",
     "TEST-com.floopel.feature.traveler.data.repository.NativeQuestGroupRecoveryTest.xml": "8ae2ef6ab22ef8a387207478f5c30134b5bb96f4ed138f55996cf366b97fa913",
     "TEST-com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest.xml": "82062a09ca61328673d62629f96d281485f30acb86ba851a550da9f24e7b6d43",
-    "unknown.png": "f75dacb413c4bf43ac222c45b406995cf7ad9893221b8f4677a1583c296f8ca3"
+    "unknown.png": "f75dacb413c4bf43ac222c45b406995cf7ad9893221b8f4677a1583c296f8ca3",
+    "title-figma-read.json": "08cfd6ae130c2487114b22f74557f07ab05c361a8bf6690d3fba5ed36812a177"
+  },
+  "title_followup": {
+    "finding": "QUEST-GROUP-RECOVERY-TITLE-01",
+    "status": "NOT_REPRODUCED_AGAINST_VISIBLE_FIGMA_TEXT",
+    "visible_characters": "Trip",
+    "layer_name": "Hasil belum dapat dipastikan",
+    "application_figma_mutation": false,
+    "new_runtime_run": false,
+    "proof": "title-figma-read.json"
   }
 }
