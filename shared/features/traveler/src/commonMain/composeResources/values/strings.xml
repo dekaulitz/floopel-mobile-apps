@@ -69,6 +69,10 @@
     <string name="collections">Collection pilihan</string>
     <string name="quests_for_you">Quest untukmu</string>
     <string name="stories">Cerita perjalanan</string>
+    <string name="home_content_article">Artikel</string>
+    <string name="home_content_news">Berita</string>
+    <string name="home_content_editorial">Editorial</string>
+    <string name="home_article_comments_unknown">— komentar</string>
     <string name="passport">Passport</string>
     <string name="passport_brand">FLOOPEL PASSPORT</string>
     <string name="passport_summary">Ringkasan</string>

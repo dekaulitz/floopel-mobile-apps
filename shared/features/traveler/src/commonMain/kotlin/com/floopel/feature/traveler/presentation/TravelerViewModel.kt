@@ -459,7 +459,7 @@ internal class TravelerViewModel(
         fetch("homeSpots", { it.home.spots }, { s, r -> s.copy(home = s.home.copy(spots = r)) }) { runtime.catalog.discoverySpots(language) }
         fetch("homeLocations", { it.home.locations }, { s, r -> s.copy(home = s.home.copy(locations = r)) }) { runtime.catalog.topLocations(language) }
         fetch("homeCollections", { it.home.collections }, { s, r -> s.copy(home = s.home.copy(collections = r)) }) { runtime.catalog.collections(language, 8) }
-        fetch("homeStories", { it.home.stories }, { s, r -> s.copy(home = s.home.copy(stories = r)) }) { runtime.catalog.stories(language, perPage = 8) }
+        fetch("homeStories", { it.home.stories }, { s, r -> s.copy(home = s.home.copy(stories = r)) }) { runtime.catalog.stories(language, perPage = com.floopel.feature.traveler.presentation.home.HOME_ARTICLE_LIMIT) }
         fetch("homeQuests", { it.home.quests }, { s, r -> s.copy(home = s.home.copy(quests = r)) }) { runtime.catalog.activeQuests(language, 1) }
         if (state.value.identity.signedIn) {
             fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }

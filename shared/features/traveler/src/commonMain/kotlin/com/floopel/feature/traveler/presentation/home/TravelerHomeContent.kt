@@ -25,7 +25,7 @@ import com.floopel.feature.traveler.resources.*
 
 @Composable
 internal fun TravelerHomeContent(state: TravelerState, model: TravelerViewModel) {
-    LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp, 12.dp, 16.dp, 24.dp),
+    LazyColumn(Modifier.fillMaxSize().testTag("home-content"), contentPadding = PaddingValues(16.dp, 12.dp, 16.dp, 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
         item {
             Box(Modifier.fillMaxWidth().clip(FloopelShape.hero).background(MaterialTheme.colorScheme.primary)) {
@@ -134,20 +134,20 @@ internal fun TravelerHomeContent(state: TravelerState, model: TravelerViewModel)
                 } }
             }
         }
-        item { HomeRail(s(Res.string.stories), state.home.stories, model, CatalogKind.STORY) }
+        item(key = "articles") { HomeRail(s(Res.string.stories), state.home.stories, model, CatalogKind.STORY) }
     }
 }
 
 @Composable
 private fun HomeRail(title: String, read: ReadState<List<CatalogEntry>>, model: TravelerViewModel, kind: CatalogKind) {
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        if (kind == CatalogKind.LOCATION) FloopelCatalogSectionTitle(title, s(Res.string.see_all)) {
+    Column(Modifier.testTag("home-rail-${kind.name}"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (kind == CatalogKind.LOCATION || kind == CatalogKind.STORY) FloopelCatalogSectionTitle(title, s(Res.string.see_all)) {
             model.open(TravelerRoute(Destination.CATALOG, extra = kind.name))
         } else SectionTitle(title, s(Res.string.see_all)) { model.open(TravelerRoute(Destination.CATALOG, extra = kind.name)) }
         ReadContent(read, model::refresh) { entries ->
             if (entries.isEmpty()) EmptyContent()
-            if (kind == CatalogKind.STORY) Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                entries.take(3).forEach { entry -> CatalogCard(entry, { model.openEntry(entry) }, compact = false) }
+            if (kind == CatalogKind.STORY) {
+                if (entries.isNotEmpty()) HomeArticleSlider(entries, model::openEntry)
             } else LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(entries, key = { it.id }) { entry ->
                     when (kind) {

@@ -69,6 +69,10 @@
     <string name="collections">Selected Collections</string>
     <string name="quests_for_you">Quests for you</string>
     <string name="stories">Travel story</string>
+    <string name="home_content_article">Article</string>
+    <string name="home_content_news">News</string>
+    <string name="home_content_editorial">Editorial</string>
+    <string name="home_article_comments_unknown">— comments</string>
     <string name="passport">Passport</string>
     <string name="passport_brand">FLOOPEL PASSPORT</string>
     <string name="passport_summary">Overview</string>
