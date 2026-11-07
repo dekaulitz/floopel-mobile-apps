@@ -123,6 +123,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
         Destination.NOTICE -> state.notice.value?.id == route.id && !state.notice.loading && state.notice.failure == null
         Destination.QUEST_GROUP -> state.group.value?.id == route.id && !state.group.loading && state.group.failure == null
         Destination.QUEST_GROUP_INVITATION -> state.groupInvitation.value?.id == route.id && !state.groupInvitation.loading && state.groupInvitation.failure == null
+        Destination.OWNER_MODERATION -> state.ownerModerationVisible
         else -> false
     }
     LaunchedEffect(route, targetReady) { if (targetReady) { withFrameNanos { }; model.targetVisible(route) } }
@@ -140,7 +141,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank() -> Res.string.location_search_title
                     else -> route.title()
                 }), Modifier.testTag("traveler-top-bar"),
-                titleStyle = if (locationScreen || route.destination in setOf(Destination.QUEST_GROUP, Destination.QUEST_GROUP_RECOVERY, Destination.QUEST_GROUP_INVITATION)) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
+                titleStyle = if (locationScreen || route.destination in setOf(Destination.OWNER_MODERATION, Destination.QUEST_GROUP, Destination.QUEST_GROUP_RECOVERY, Destination.QUEST_GROUP_INVITATION)) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
                 minimumHeight = if (locationScreen) 48.dp else 56.dp,
                 contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
                 spacing = if (locationScreen) 8.dp else 12.dp,
@@ -227,6 +228,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.APPLICATION -> ApplicationReader(state, model)
                     Destination.NOTICE -> TripNoticeReader(state, model)
                     Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL -> NotificationScreen(state, model)
+                    Destination.OWNER_MODERATION -> OwnerModerationScreen(state, model)
                     Destination.PUBLIC_PLAN -> PublicPlanScreen(state, model)
                     Destination.PUBLIC_PROFILE -> PublicProfileContent(state, model, share)
                     Destination.SAVED_SPOTS -> SavedSpotScreen(state, model)
@@ -311,6 +313,7 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.NOTIFICATION_DEVICE -> Res.string.notification_device
     Destination.NOTIFICATION_OPEN -> Res.string.notification_opening
     Destination.NOTIFICATION_DETAIL -> Res.string.notification_detail
+    Destination.OWNER_MODERATION -> Res.string.moderation_title
     Destination.DETAIL -> when (extra) { "SPOT" -> Res.string.spot_detail; "LOCATION" -> Res.string.location_detail;
         "COLLECTION" -> Res.string.collection_detail; else -> Res.string.story_detail }
     Destination.LOGIN -> Res.string.sign_in

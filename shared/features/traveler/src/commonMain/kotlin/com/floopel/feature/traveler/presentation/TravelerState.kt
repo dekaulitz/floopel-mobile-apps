@@ -17,7 +17,7 @@ internal enum class Destination {
     ITINERARIES, ITINERARY, ITINERARY_FORM, ADD_SPOT, PICK_PLAN, STOP_FORM,
     SHARE, PUBLICATION, SHARE_LINK, TRIP_FORM, TRIPS, TRIP, MEMBERS, INVITATIONS,
     TRIP_APPLICATIONS, APPLICATIONS, APPLICATION, APPLY, NOTICE, NOTIFICATIONS,
-    NOTIFICATION_DEVICE, NOTIFICATION_OPEN, NOTIFICATION_DETAIL,
+    NOTIFICATION_DEVICE, NOTIFICATION_OPEN, NOTIFICATION_DETAIL, OWNER_MODERATION,
     CATALOG, COUNTRIES, DETAIL, LOGIN, REGISTER, VERIFY, FORGOT, LEGAL,
     PUBLIC_PLAN, PUBLIC_PROFILE, SAVED_SPOTS, QUEST_GROUPS, QUEST_GROUP, QUEST_GROUP_INVITATIONS, QUEST_GROUP_INVITATION, QUEST_GROUP_RECOVERY,
 }
@@ -93,6 +93,7 @@ internal data class TravelerState(
     val notice: ReadState<TripOutcomeNotice> = ReadState(),
     val notifications: ReadState<NotificationPage> = ReadState(),
     val notification: ReadState<TravelerNotification> = ReadState(),
+    val ownerModeration: ReadState<List<OwnerModerationAction>> = ReadState(),
     val notificationAppending: Boolean = false,
     val legal: ReadState<List<LegalDocument>> = ReadState(),
     val references: ReadState<RegistrationReferences> = ReadState(),
@@ -139,6 +140,8 @@ internal data class TravelerState(
     val groupInvitation: ReadState<QuestGroupInvitation> = ReadState(),
 ) {
     val route get() = stack.last()
+    val ownerModerationVisible get() = route.destination == Destination.OWNER_MODERATION &&
+        ownerModeration.value?.isNotEmpty() == true && !ownerModeration.loading && ownerModeration.failure == null
     val managesCurrentQuestGroup get() = identity.signedIn && route.destination == Destination.QUEST_GROUP &&
         group.value?.let { it.id == route.id && it.available && !group.loading && group.failure == null &&
             !profile.loading && profile.failure == null && profile.value?.profileId == it.managerProfileId } == true

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.NotificationRouteTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-07T23:50:50.167Z" hostname="DSKTP-ZYAN" time="0.001">
+  <properties/>
+  <testcase name="unknownExternalAndEncodedTargetsRemainUnavailable" classname="com.floopel.feature.traveler.presentation.NotificationRouteTest" time="0.001"/>
+  <testcase name="lifecycleNoticeUsesItsSourceId" classname="com.floopel.feature.traveler.presentation.NotificationRouteTest" time="0.0"/>
+  <testcase name="onlyTheExactRegisteredStaticModerationTargetIsAccepted" classname="com.floopel.feature.traveler.presentation.NotificationRouteTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

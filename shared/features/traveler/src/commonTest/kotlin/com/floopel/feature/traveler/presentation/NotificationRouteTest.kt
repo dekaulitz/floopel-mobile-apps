@@ -15,4 +15,11 @@ class NotificationRouteTest {
             assertNull(notificationRoute(it), it)
         }
     }
+    @Test fun onlyTheExactRegisteredStaticModerationTargetIsAccepted() {
+        assertEquals(TravelerRoute(Destination.OWNER_MODERATION), notificationRoute("/me/itinerary-moderation"))
+        listOf("/me/itinerary-moderation/", "/me/itinerary-moderation-actions", "/me/itinerary-moderation?owner=other",
+            "/me/itinerary-moderation#status", "/me/itinerary-%6doderation", "https://fixture.invalid/me/itinerary-moderation").forEach {
+            assertNull(notificationRoute(it), it)
+        }
+    }
 }

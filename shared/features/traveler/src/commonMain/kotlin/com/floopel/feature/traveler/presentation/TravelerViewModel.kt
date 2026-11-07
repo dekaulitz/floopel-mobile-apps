@@ -47,6 +47,7 @@ internal class TravelerViewModel(
     private var registrationKey: String? = null
     private var startupJob: Job? = null
     private val locationQueries = mutableMapOf<TravelerRoute, String>()
+    private val spotQueries = mutableMapOf<TravelerRoute, String>()
     private var groupInvitationsRoute: TravelerRoute? = null
 
     private var language = "id"
@@ -60,7 +61,7 @@ internal class TravelerViewModel(
                         reads.values.forEach(Job::cancel); reads.clear()
                         writeJob?.cancel()
                         acknowledgements.clear()
-                        locationQueries.clear(); spotReports.clear()
+                        locationQueries.clear(); spotQueries.clear(); spotReports.clear()
                         groupInvitationsRoute = null
                     }
                     mutable.update { current ->
@@ -104,7 +105,7 @@ internal class TravelerViewModel(
             catalog = ReadState(), spotScopeLocation = ReadState(), detail = ReadState(), locationBrowser = ReadState(),
             locationCountries = ReadState(), locationContent = LocationContentState(), spotContent = SpotContentState(),
             quests = ReadState(), quest = ReadState(), questSpots = emptyMap(), publicBadges = ReadState(),
-            notifications = ReadState(), notification = ReadState(), legal = ReadState(), references = ReadState(),
+            notifications = ReadState(), notification = ReadState(), ownerModeration = ReadState(), legal = ReadState(), references = ReadState(),
             group = ReadState(), groupInvitations = ReadState(), groupInvitation = ReadState()) }
         refresh()
     }
@@ -219,10 +220,10 @@ internal class TravelerViewModel(
         if (route.destination in rootTabs && route.id.isEmpty() && route.extra.isEmpty()) { tab(route.destination); return }
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(stack = it.stack + route, writeFailure = null, saved = false,
-            query = "", feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest,
+            query = spotQueries[route].orEmpty(), feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest,
             questSpots = if (route.destination == Destination.QUEST) emptyMap() else it.questSpots, itinerary = ReadState(),
             distribution = ReadState(), shareLink = ReadState(), trip = ReadState(), plan = ReadState(),
-            openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), tripTimezone = null,
+            openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), ownerModeration = ReadState(), tripTimezone = null,
             tripRecovery = ReadState(), media = ReadState(), mediaPartial = false,
             itineraryDraft = ReadState(), pendingStop = ReadState(), applicationDraft = ReadState(),
             pendingPublication = ReadState(), isSpotSaved = ReadState(), publicPlan = ReadState(), publicProfile = ReadState(),
@@ -239,7 +240,7 @@ internal class TravelerViewModel(
         if (!state.value.identityRestored || state.value.intro == null || state.value.showIntro || !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy) return
         reads.values.forEach(Job::cancel); reads.clear()
-        mutable.update { it.copy(tab = destination, stack = listOf(TravelerRoute(destination)), query = "",
+        mutable.update { it.copy(tab = destination, stack = listOf(TravelerRoute(destination)), query = spotQueries[TravelerRoute(destination)].orEmpty(),
             writeFailure = null, saved = false, feedback = null) }
         refresh()
     }
@@ -257,12 +258,14 @@ internal class TravelerViewModel(
             mutable.update { it.copy(registrationStep = it.registrationStep - 1) }; return
         }
         val previous = current.stack.dropLast(1).lastOrNull()
-        if (current.route.destination == Destination.ITINERARY && !(previous?.destination == Destination.DETAIL && previous.extra == CatalogKind.SPOT.name)) {
+        if (current.route.destination == Destination.ITINERARY && previous?.destination != Destination.OWNER_MODERATION &&
+            !(previous?.destination == Destination.DETAIL && previous.extra == CatalogKind.SPOT.name)) {
             mutable.update { it.copy(stack = listOf(TravelerRoute(it.tab), TravelerRoute(Destination.ITINERARIES)),
                 writeFailure = null, saved = false, feedback = null) }
         } else if (current.stack.size > 1) mutable.update { it.copy(stack = it.stack.dropLast(1), writeFailure = null, saved = false, feedback = null) }
         else if (current.tab != Destination.HOME) tab(Destination.HOME)
-        if (state.value.route.destination == Destination.COUNTRIES ||
+        if (state.value.route.retainsSpotQuery) mutable.update { it.copy(query = spotQueries[it.route].orEmpty()) }
+        else if (state.value.route.destination == Destination.COUNTRIES ||
             state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
             mutable.update { it.copy(query = locationQueries[it.route].orEmpty()) }
         val returningToInvitations = current.route.destination == Destination.QUEST_GROUP_INVITATION &&
@@ -417,6 +420,7 @@ internal class TravelerViewModel(
             Destination.NOTIFICATION_DETAIL -> fetch("notification-detail", { it.notification }, { s, r -> s.copy(notification = r) }) {
                 runtime.notifications.notification(route.id, language)
             }
+            Destination.OWNER_MODERATION -> loadOwnerModeration()
             Destination.PUBLIC_PLAN -> fetch("publicPlan", { it.publicPlan }, { s, r -> s.copy(publicPlan = r) }) { runtime.publicContent.itinerary(route.id) }
             Destination.PUBLIC_PROFILE -> {
                 fetch("publicProfile", { it.publicProfile }, { s, r -> s.copy(publicProfile = r) }, settled = { loadPublicProfileContent() }, routeKey = { it.copy(extra = "") }) { runtime.publicContent.profile(route.id) }
@@ -484,6 +488,7 @@ internal class TravelerViewModel(
     }
     fun query(value: String) {
         mutable.update { it.copy(query = value) }
+        if (state.value.route.retainsSpotQuery) spotQueries[state.value.route] = value
         if (state.value.route.destination == Destination.COUNTRIES ||
             state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
             locationQueries[state.value.route] = value
@@ -525,7 +530,9 @@ internal class TravelerViewModel(
         val id = if (scoped) current.route.locationContextId else ""
         if (current.route.id == id) return
         reads.values.forEach(Job::cancel); reads.clear()
-        mutable.update { it.copy(stack = it.stack.dropLast(1) + it.route.copy(id = id), catalog = ReadState()) }
+        val route = current.route.copy(id = id)
+        spotQueries[route] = current.query
+        mutable.update { it.copy(stack = it.stack.dropLast(1) + route, catalog = ReadState()) }
         refresh()
     }
 
@@ -1459,6 +1466,22 @@ internal class TravelerViewModel(
         }
     }
     fun openNotification(id: String) = open(TravelerRoute(Destination.NOTIFICATION_OPEN, id))
+    /** A restored static destination must revalidate its source; another owner action is not proof of this notification's target. */
+    private fun loadOwnerModeration() {
+        if ((state.value.ownerModeration.failure?.retryAtMillis ?: 0) > now()) return
+        fun actions() = fetch("owner-moderation", { it.ownerModeration }, { s, r -> s.copy(ownerModeration = r) }) {
+            runtime.moderation?.actions() ?: CatalogResult.HttpError(503)
+        }
+        val inbox = state.value.route.inboxId
+        if (inbox == null) { actions(); return }
+        fetch("moderation-notification", { it.notification }, { s, r ->
+            s.copy(notification = r, ownerModeration = if (r.loading || r.failure != null)
+                ReadState(loading = r.loading, failure = r.failure) else s.ownerModeration)
+        }, ready = { notification ->
+            if (notification.id == inbox && notification.targetUrl == "/me/itinerary-moderation") actions()
+            else mutable.update { it.copy(ownerModeration = ReadState(failure = ReadFailure(404, "TARGET_UNAVAILABLE"))) }
+        }) { runtime.notifications.notification(inbox, language) }
+    }
     fun returnToNotifications() {
         if (state.value.busy) return
         reads.values.forEach(Job::cancel); reads.clear()
@@ -1480,6 +1503,7 @@ internal class TravelerViewModel(
             Destination.NOTICE -> s.notice.value?.id == route.id && s.notice.failure == null && !s.notice.loading
             Destination.QUEST_GROUP -> s.group.value?.id == route.id && s.group.failure == null && !s.group.loading
             Destination.QUEST_GROUP_INVITATION -> s.groupInvitation.value?.id == route.id && s.groupInvitation.failure == null && !s.groupInvitation.loading
+            Destination.OWNER_MODERATION -> s.ownerModerationVisible
             else -> false
         }
         val identity = runtime.identity.generation
@@ -1587,6 +1611,9 @@ private val rootTabs = setOf(Destination.HOME, Destination.COMMUNITY, Destinatio
 internal fun Destination.isAuthenticationScreen() = this in setOf(Destination.LOGIN, Destination.REGISTER, Destination.VERIFY, Destination.FORGOT)
 
 private fun rootTab(stack: List<TravelerRoute>) = stack.first().destination.takeIf { it in rootTabs } ?: Destination.HOME
+private val TravelerRoute.retainsSpotQuery get() = destination == Destination.EXPLORER ||
+    destination == Destination.CATALOG && extra == CatalogKind.SPOT.name
+
 private fun signedInStack(stack: List<TravelerRoute>) = stack.dropLastWhile { it.destination.isAuthenticationScreen() }
     .ifEmpty { listOf(TravelerRoute(Destination.HOME)) }
 private fun authenticationStack(stack: List<TravelerRoute>): List<TravelerRoute> {

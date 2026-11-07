@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-07T23:50:47.738Z" hostname="DSKTP-ZYAN" time="0.535">
+  <properties/>
+  <testcase name="restoredOrRefreshedStaticTargetRechecksNullUnsafeAndRemovedSourceBeforeAnyOwnerReadOrAck" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.379"/>
+  <testcase name="lateOwnerReadAfterBackCannotRenderOrAcknowledgeTheOldTarget" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.016"/>
+  <testcase name="deniedRemovedEmptyMalformedAndFailedStatusReadsDoNotAcknowledge" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.03"/>
+  <testcase name="nullUnsafeAndRemovedNotificationsNeverReachTheOwnerEndpointOrAck" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.023"/>
+  <testcase name="lateOwnerReadAfterIdentityChangeCannotRestorePrivateDataOrAck" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.016"/>
+  <testcase name="bothCanonicalKindsLoadTheActualOwnerAdapterAndAckOnlyTheVisibleInboxIdOnce" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.029"/>
+  <testcase name="errorRetryAndPlanBackRetainTheOwnerReaderAndDoNotSubmitAnAppeal" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.031"/>
+  <testcase name="restoringTheCanonicalTargetRequiresAFreshAuthorizedReadBeforeVisibleAck" classname="com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest" time="0.009"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+]]></system-err>
+</testsuite>
