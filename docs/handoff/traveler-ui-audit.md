@@ -1,6 +1,6 @@
 # Koreksi UI Traveler — 7 November 2026
 
-Figma final `ifQcOxbjGTXw9aNH2JGl9g` menjadi sumber kebenaran visual. Batch ini menangani kolom pencarian dan kartu yang ditandai pemilik, efek reuse kartu pada profil publik, serta entry/login wajib. Follow-up [Splash dan intro](traveler-startup-audit.md) memiliki source/APK, PNG/video dan hasil test tersendiri. Koreksi komponen tidak menjadi sign-off semua layar. Daftar audit mencakup 883 state Android; angka test di sini tidak menjadi persentase penyelesaian desain.
+Figma final `ifQcOxbjGTXw9aNH2JGl9g` menjadi sumber kebenaran visual. Batch ini menangani kolom pencarian dan kartu yang ditandai pemilik, efek reuse kartu pada profil publik, serta entry/login wajib. Follow-up [Splash dan intro](traveler-startup-audit.md) memiliki source/APK, PNG/video dan hasil test tersendiri. Follow-up [state Quest](traveler-quest-state-audit.md) mengikat outcome/proof GPS dan Retry ke target reader, tanpa mengubah layout Quest. Koreksi komponen tidak menjadi sign-off semua layar. Daftar audit mencakup 883 state Android; angka test di sini tidak menjadi persentase penyelesaian desain.
 
 ## Acuan dan koreksi
 

@@ -4,7 +4,7 @@
 
 Android Traveler kini memakai runtime API native dan UI Compose di commonMain. Fokus implementasi adalah Quest, itinerary/publikasi dan Trip/admission, dilanjutkan reader publik, Saved Spot, kelompok dan inbox. Ini baseline yang dapat dibangun serta ditinjau, bukan sign-off seluruh desain atau kandidat rilis. Partner dan host iOS masih scaffold; merge/rilis tidak dilakukan.
 
-Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta verifikasi final 383 host/24 native test. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
+Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta checkpoint 383 host/24 native test. [Koreksi state Quest](traveler-quest-state-audit.md) mengikat hasil/proof GPS ke target dan memperbaiki Retry reader, dengan 391 host/20 native test pada batch tersendiri. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
 
 ## Acuan
 
@@ -18,7 +18,7 @@ Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test p
 | Journey / node Android | Source dalam presentation | Perilaku terhubung | Bukti dan batas |
 | --- | --- | --- | --- |
 | Home 5:200 | home/TravelerHomeContent.kt | Rail Spot/Location/Collection/Story, sesi/Passport, Trip aktif, inbox | Screenshot data publik nyata; gambar bukan fallback fixture |
-| Quest 97:1286, progress 218:2911 | quest + domain/session | Discovery/owner snapshot, start/continue, question, GPS, hasil/progres, Passport | Test kontrak/cancellation/GPS memakai provider double; provider nyata NOT_RUN |
+| Quest 97:1286, progress 218:2911 | quest + domain/session | Discovery/owner snapshot, start/continue, question, GPS, hasil/progres, Passport; outcome/proof terikat target, Retry reader tidak menambah stack | [State/retry](traveler-quest-state-audit.md) memakai provider/domain double; provider nyata dan parity layout lengkap NOT_RUN |
 | Builder 113:1618, form 290:4697, Stop 113:1882 | itinerary | Create/edit, hari/judul, tambah/hapus/edit Stop, HH:mm, null versus durasi 0, recovery draft/Stop | Emulator: cover 154 dp full viewport, gutter 20 dp, validasi, Back/day/feedback |
 | Publikasi 113:2058, share 431:8111 | itinerary + distribution/media journal | Revision + dua acknowledgement, cover READY, empty guard, publish/unpublish, tautan rotate/revoke | Intent/key/body tetap setelah respons hilang; emulator menolak PROCESSING; API media/publikasi PASS pada audit privat; Photo Picker native NOT_RUN |
 | Trip 315:15847, form 114:1739 | trip | Working itinerary yang sama, create/recover, banner sebagai hasil parsial, roster/lifecycle, undangan | Invitee tidak mengambil working plan; banner gagal tidak membuat Trip kedua; [API privat/recovery](traveler-private-audit.md) |
@@ -52,11 +52,12 @@ Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug defaul
 
 | Pemeriksaan | Hasil aktual |
 | --- | --- |
-| assembleDebug Traveler + Partner | PASS; kedua aplikasi dibangun karena core berubah |
-| lintDebug Traveler + Partner | PASS tanpa error/fatal. Final startup: Traveler 42 warning, Partner 2, terutama saran upgrade, OldTargetApi, MissingApplicationIcon dan UseKtx; [laporan](traveler-android-audit/startup-20261107/results.json). Toolchain tidak di-upgrade |
-| testAndroidHostTest | Final startup 383 test PASS; 0 failure/error/skipped. Checkpoint sebelumnya 377, baseline awal 357 |
+| assembleDebug Traveler + Partner | PASS pada checkpoint startup ketika core berubah. Batch state Quest membangun Traveler + APK androidTest; Core/Partner tidak berubah |
+| lintDebug Traveler + Partner | PASS tanpa error/fatal. Batch Quest: Traveler 42 warning; Partner 2 pada checkpoint startup, terutama saran upgrade, OldTargetApi, MissingApplicationIcon dan UseKtx; [laporan Quest](traveler-android-audit/quest-state-20261107/results.json), [startup](traveler-android-audit/startup-20261107/results.json). Toolchain tidak di-upgrade |
+| testAndroidHostTest | Batch Quest 391 test PASS; 0 failure/error/skipped. Checkpoint startup 383, sebelumnya 377, baseline awal 357 |
 | Host dengan floopelLiveSmoke=true dan origin tunnel | 4 public-read test PASS; 0 failure/error/skipped. Discovery/detail/search, UUID/slug, Quest/Open Trip guest, referensi registrasi/legal |
-| connectedDebugAndroidTest dan runner adb untuk screenshot final | Baseline connected 8 journey; final runner 24 test PASS pada viewport 400×900 dp: 16 domain-fixture/regresi dan 8 MainActivity nyata (4 startup/progres, 3 privat/login/Back, 1 invalid refresh); [manifest](traveler-android-audit/startup-20261107/results.json). Angka test bukan jumlah state Figma yang ditandatangani |
+| connectedDebugAndroidTest dan runner adb checkpoint startup | Baseline connected 8 journey; checkpoint startup 24 test PASS pada viewport 400×900 dp: 16 domain-fixture/regresi dan 8 MainActivity nyata (4 startup/progres, 3 privat/login/Back, 1 invalid refresh); [manifest](traveler-android-audit/startup-20261107/results.json). Tidak dilabel ulang sebagai rerun Quest |
+| Runner adb batch state Quest | 20 test PASS pada 400×900 dp: 4 interaksi Quest dan 16 regresi domain-fixture. Production Session/mapper dibuktikan terpisah di host; [manifest](traveler-android-audit/quest-state-20261107/results.json). Angka test bukan jumlah state Figma yang ditandatangani |
 | Host privat dan tiga fase native nyata | 3 host live admission dan 1 host live media/publikasi PASS, ditambah journey native, restore/logout/Back sistem setelah force-stop, dan reopen/login kedua masing-masing 1 test PASS; [rincian batas](traveler-private-audit.md) |
 | Font 130% dan mode gelap | Masing-masing 2 skenario (cover/gutter dan feedback/day) PASS; bukan seluruh aplikasi. Emulator dipulihkan ke font 100%/mode terang |
 | Guard kontrak Node | check-examples.mjs PASS + 4 test guard PASS |

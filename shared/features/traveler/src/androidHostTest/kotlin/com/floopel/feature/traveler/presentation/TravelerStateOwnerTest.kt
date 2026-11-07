@@ -362,6 +362,33 @@ class TravelerStateOwnerTest {
         assertTrue(model.state.value.identity.gpsSubmissionPending)
     }
 
+    @Test fun failedQuestActivityReadRetriesTheSameTargetWithoutExtendingNavigation() = runTest {
+        val f = TravelerFixture(); var reads = 0
+        val identity = object : TravelerIdentity by f.identity {
+            override suspend fun activity(id: String) {
+                reads++
+                if (reads == 1) f.identityState.value = f.identityState.value.copy(question = null, failure = IdentityFailure(503, null, null))
+                else { f.identityState.value = f.identityState.value.copy(failure = null); f.identity.activity(id) }
+            }
+            override suspend fun collectGps() { fail("Reader retry must not start GPS") }
+            override suspend fun submitGps() { fail("Reader retry must not submit GPS") }
+            override suspend fun answer(value: String) { fail("Reader retry must not submit an answer") }
+        }
+        val b = f.runtime
+        val runtime = TravelerRuntime(identity, b.catalog, b.itineraries, b.distribution, b.trips, b.notifications,
+            b.account, b.legal, b.registration, b.publicContent, b.savedSpots, b.questGroups, b.newOperationKey, b.startup)
+        val model = model(f, runtime); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.QUEST_PROGRESS, "participation")); advanceUntilIdle()
+        model.activity("activity"); advanceUntilIdle()
+        assertEquals(1, reads); assertNull(model.state.value.identity.question)
+        val stack = model.state.value.stack
+        model.refresh(); advanceUntilIdle()
+        assertEquals(2, reads); assertEquals(stack, model.state.value.stack)
+        assertEquals("activity", model.state.value.identity.question?.id); assertNull(model.state.value.identity.failure)
+        model.back(); advanceUntilIdle()
+        assertEquals(Destination.QUEST_PROGRESS, model.state.value.route.destination)
+    }
+
     @Test fun addSpotFeedbackRetainsTheSelectedPlanAndDay() = runTest {
         val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
         model.openEntry(f.spot); advanceUntilIdle()

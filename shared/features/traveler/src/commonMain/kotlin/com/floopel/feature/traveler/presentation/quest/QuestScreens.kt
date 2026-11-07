@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.floopel.core.designsystem.component.*
@@ -131,7 +132,7 @@ internal fun QuestActivity(state: TravelerState, model: TravelerViewModel) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
         if (question == null) {
             if (state.identity.busy) Text(s(Res.string.loading))
-            else FloopelButton(s(Res.string.retry), { model.activity(state.route.id) })
+            else FloopelButton(s(Res.string.retry), model::refresh, Modifier.testTag("quest-activity-retry"))
             return@Column
         }
         Text(question.title, style = MaterialTheme.typography.headlineMedium)
@@ -149,11 +150,11 @@ internal fun QuestActivity(state: TravelerState, model: TravelerViewModel) {
                 }))
                 FloopelButton(s(Res.string.quest_progress), model::back, Modifier.fillMaxWidth(), secondary = true)
             }
-            if (state.identity.gpsOutcome != "verified") FloopelButton(s(Res.string.quest_collect_gps), { model.gps() }, Modifier.fillMaxWidth(),
-                enabled = state.identity.executionConfigured && !state.identity.busy && !state.identity.gpsCollecting && !state.identity.gpsSubmissionPending)
+            if (state.identity.gpsOutcome != "verified") FloopelButton(s(Res.string.quest_collect_gps), { model.gps() }, Modifier.fillMaxWidth().testTag("quest-gps-collect"),
+                enabled = state.identity.executionConfigured && !state.identity.busy && !state.identity.gpsCollecting && !state.identity.gpsSubmissionPending && !state.identity.gpsCollectionBlocked)
             if (state.identity.gpsReady || state.identity.gpsSubmissionPending)
                 FloopelButton(s(if (state.identity.gpsSubmissionPending) Res.string.retry else Res.string.quest_submit_gps),
-                    { model.gps(true) }, Modifier.fillMaxWidth(), enabled = !state.identity.busy && retryAllowed)
+                    { model.gps(true) }, Modifier.fillMaxWidth().testTag("quest-gps-submit"), enabled = !state.identity.busy && retryAllowed)
         } else if (question.kind == QuestActivityKind.QUESTION) {
             var answer by rememberSaveable(question.id) { mutableStateOf("") }
             if (question.options.isNotEmpty()) question.options.forEach { (id, label) ->

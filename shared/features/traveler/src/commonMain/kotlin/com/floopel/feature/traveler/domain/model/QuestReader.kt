@@ -25,4 +25,6 @@ data class TravelerIdentityView(val signedIn: Boolean = false, val generation: L
     val gpsReady: Boolean = false, val completed: Boolean = false,
     val accountRecoveryRequired: Boolean = false, val googleOnboardingRequired: Boolean = false,
     val locationUnavailable: Boolean = false, val gpsSubmissionPending: Boolean = false,
-    val gpsOutcome: String? = null)
+    val gpsOutcome: String? = null,
+    // The Session retains an unresolved submission for another target; do not offer a no-op collect.
+    val gpsCollectionBlocked: Boolean = false)

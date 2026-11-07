@@ -11,7 +11,16 @@ import kotlinx.coroutines.flow.map
 
 internal class NativeTravelerIdentity(private val session: TravelerSession, private val api: NativeApi) : TravelerIdentity {
     override val generation get() = session.identityGeneration
-    override val view = session.view.map { v -> TravelerIdentityView(
+    override val view = session.view.map { v ->
+        // Results survive reader navigation for reconciliation/revisits, but belong to one
+        // participation/activity pair. A previous result must never complete another activity.
+        val gpsResult = v.gpsResult?.takeIf {
+            it.participation.id == v.participation?.id && it.attempt.activityId == v.activity?.activity?.id
+        }
+        val gpsProof = v.gpsProof?.takeIf {
+            it.participationId == v.participation?.id && it.activityId == v.activity?.activity?.id
+        }
+        TravelerIdentityView(
         v.signedIn, generation, v.busy,
         v.progress?.let { p -> TravelerPassport(p.xpTotal, p.level.level, p.level.name,
             p.badges.map { it.name to it.image?.url }, p.activeParticipations.map { it.reader() }) },
@@ -21,11 +30,12 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
             it.instructions, it.options.map { option -> option.id to option.text }, it.answerType) },
         v.questOwner?.status, v.answerResult?.outcome, v.answerResult?.explanation,
         v.failure?.let { IdentityFailure(it.status, it.code, it.retryAfterSeconds) },
-        v.retryAtMillis, session.executionAvailable, v.gpsCollecting,
-        v.gpsProof?.status == "active" && !v.gpsCollecting && !v.gpsSubmissionPending && v.gpsResult == null,
+        v.retryAtMillis, session.executionAvailable, v.gpsCollecting && gpsProof != null,
+        gpsProof?.status == "active" && !v.gpsCollecting && !v.gpsSubmissionPending && gpsResult == null,
         v.participation?.status == "completed" || v.questOwner?.status == "completed",
         v.accountRecoveryRequired, v.googleOnboardingRequired,
-        v.locationUnavailable, v.gpsSubmissionPending, v.gpsResult?.attempt?.status)
+        v.locationUnavailable && gpsProof != null, v.gpsSubmissionPending && gpsProof != null, gpsResult?.attempt?.status,
+        gpsCollectionBlocked = v.gpsSubmissionPending && gpsProof == null)
     }
     override suspend fun restore() = session.restore()
     override suspend fun login(email: String, password: String) = session.login(email, password)
