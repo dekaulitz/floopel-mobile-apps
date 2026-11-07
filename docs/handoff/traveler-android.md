@@ -4,7 +4,7 @@
 
 Android Traveler kini memakai runtime API native dan UI Compose di commonMain. Fokus implementasi adalah Quest, itinerary/publikasi dan Trip/admission, dilanjutkan reader publik, Saved Spot, kelompok dan inbox. Ini baseline yang dapat dibangun serta ditinjau, bukan sign-off seluruh desain atau kandidat rilis. Partner dan host iOS masih scaffold; merge/rilis tidak dilakukan.
 
-Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). [Audit UI terbaru](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Tabel/bukti awal di bawah tetap membedakan status baseline.
+Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta verifikasi final 383 host/24 native test. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
 
 ## Acuan
 
@@ -53,10 +53,10 @@ Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug defaul
 | Pemeriksaan | Hasil aktual |
 | --- | --- |
 | assembleDebug Traveler + Partner | PASS; kedua aplikasi dibangun karena core berubah |
-| lintDebug Traveler + Partner | PASS tanpa error. Traveler 38 warning, Partner 2: mayoritas saran upgrade, juga OldTargetApi, MissingApplicationIcon, UseKtx. Toolchain tidak di-upgrade |
-| testAndroidHostTest | 377 test PASS; 0 failure/error/skipped pada follow-up; baseline sebelumnya 357 |
+| lintDebug Traveler + Partner | PASS tanpa error/fatal. Final startup: Traveler 42 warning, Partner 2, terutama saran upgrade, OldTargetApi, MissingApplicationIcon dan UseKtx; [laporan](traveler-android-audit/startup-20261107/results.json). Toolchain tidak di-upgrade |
+| testAndroidHostTest | Final startup 383 test PASS; 0 failure/error/skipped. Checkpoint sebelumnya 377, baseline awal 357 |
 | Host dengan floopelLiveSmoke=true dan origin tunnel | 4 public-read test PASS; 0 failure/error/skipped. Discovery/detail/search, UUID/slug, Quest/Open Trip guest, referensi registrasi/legal |
-| connectedDebugAndroidTest dan runner adb untuk screenshot final | Baseline connected 8 journey; follow-up runner 15 test memakai domain fixture PASS pada viewport 400×900 dp, 0 skipped; bukan 15 state Figma yang ditandatangani |
+| connectedDebugAndroidTest dan runner adb untuk screenshot final | Baseline connected 8 journey; final runner 24 test PASS pada viewport 400×900 dp: 16 domain-fixture/regresi dan 8 MainActivity nyata (4 startup/progres, 3 privat/login/Back, 1 invalid refresh); [manifest](traveler-android-audit/startup-20261107/results.json). Angka test bukan jumlah state Figma yang ditandatangani |
 | Host privat dan tiga fase native nyata | 3 host live admission dan 1 host live media/publikasi PASS, ditambah journey native, restore/logout/Back sistem setelah force-stop, dan reopen/login kedua masing-masing 1 test PASS; [rincian batas](traveler-private-audit.md) |
 | Font 130% dan mode gelap | Masing-masing 2 skenario (cover/gutter dan feedback/day) PASS; bukan seluruh aplikasi. Emulator dipulihkan ke font 100%/mode terang |
 | Guard kontrak Node | check-examples.mjs PASS + 4 test guard PASS |

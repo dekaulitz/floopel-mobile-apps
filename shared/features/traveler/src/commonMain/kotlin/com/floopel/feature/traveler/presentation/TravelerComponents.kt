@@ -84,6 +84,7 @@ internal fun ErrorPanel(failure: ReadFailure, retry: () -> Unit) {
     }
     val remaining = ((failure.retryAtMillis - current + 999) / 1000).coerceAtLeast(0).toInt()
     val message = when {
+        failure.code == "STARTUP_STORAGE" -> s(Res.string.startup_storage_error)
         failure.code == "EMPTY_ITINERARY" -> s(Res.string.publication_empty)
         failure.code == "TARGET_UNAVAILABLE" -> s(Res.string.notification_unavailable)
         failure.code == "IMAGE_UNAVAILABLE" -> s(Res.string.image_unavailable)

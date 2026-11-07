@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     googleSignIn: (suspend () -> String?)?,
     photoPicker: (suspend () -> TravelerImage?)?,
+    startupSurface: (Boolean) -> Unit,
     backHandler: @Composable (Boolean, () -> Unit) -> Unit) {
     remember(runtime) {
         SingletonImageLoader.setSafe { context -> ImageLoader.Builder(context).components { add(SvgDecoder.Factory()) }.build() }
@@ -43,12 +44,15 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     val platformScope = rememberCoroutineScope()
     var googleBusy by remember { mutableStateOf(false) }
     val state by model.state.collectAsStateWithLifecycle()
-    if (!state.identityRestored) {
-        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
-            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
+    val brandedStartup = !state.identityRestored || state.intro == null
+    LaunchedEffect(brandedStartup) { startupSurface(brandedStartup) }
+    if (brandedStartup) {
+        TravelerStartupSplash(state.startupFailure, model::retryStartup)
+        return
+    }
+    if (state.showIntro) {
+        backHandler(state.introSaving || (state.intro?.step ?: 0) > 0, model::previousIntro)
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) { TravelerIntroScreen(state, model) }
         return
     }
     var pickerBusy by remember { mutableStateOf(false) }
@@ -99,6 +103,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
             }
             if (state.busy || state.identity.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
             state.writeFailure?.let { ErrorPanel(it, model::refresh) }
+            state.startupFailure?.let { ErrorPanel(it, model::retryStartup) }
             if (state.unknownOutcome) InfoCard(s(Res.string.unknown_outcome))
             state.identity.failure?.let { failure -> ErrorPanel(ReadFailure(failure.status, failure.code, state.identity.retryAtMillis), model::refresh) }
             Box(Modifier.weight(1f).fillMaxWidth().testTag("traveler-viewport")) {

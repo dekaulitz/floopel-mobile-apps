@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Native 288dp icon canvas keeps the unmodified 96dp brand within Android's mask. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="96dp"
+    android:drawable="@drawable/floopel_startup_mark" />

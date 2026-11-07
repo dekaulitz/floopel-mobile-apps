@@ -17,9 +17,12 @@ class QuestLocationBridge : QuestLocationSource {
     override suspend fun current(): QuestLocation = delegate?.current() ?: throw QuestLocationUnavailable()
 }
 
-class TravelerRuntimeOwner(context: Context) : ViewModel() {
+class TravelerRuntimeOwner(context: Context, runtimeScope: String? = null, startupReadDelayMillis: Long = 0) : ViewModel() {
+    init { require(runtimeScope == null || BuildConfig.DEBUG && Regex("qa-[a-z0-9-]{8,64}").matches(runtimeScope)) }
     val location = QuestLocationBridge()
-    private val scope = MessageDigest.getInstance("SHA-256").digest(BuildConfig.API_ORIGIN.toByteArray())
+    // The default digest stays byte-compatible with existing encrypted sessions and journals.
+    private val storageIdentity = BuildConfig.API_ORIGIN + runtimeScope?.let { "|$it" }.orEmpty()
+    private val scope = MessageDigest.getInstance("SHA-256").digest(storageIdentity.toByteArray())
         .take(8).joinToString("") { (it.toInt() and 255).toString(16).padStart(2, '0') }
     val runtime = androidTravelerRuntime(BuildConfig.API_ORIGIN, BuildConfig.VERSION_NAME,
         AndroidRefreshCredentialStore(context.applicationContext, scope),
@@ -30,13 +33,15 @@ class TravelerRuntimeOwner(context: Context) : ViewModel() {
         ::newItineraryOperationKey,
         AndroidQuestAttestation(context.applicationContext, BuildConfig.PLAY_CLOUD_PROJECT_NUMBER), location,
         AndroidTripRecoveryStore(context.applicationContext, "media_$scope"),
-        AndroidTripRecoveryStore(context.applicationContext, "trip_creation_routes_$scope"))
+        AndroidTripRecoveryStore(context.applicationContext, "trip_creation_routes_$scope"),
+        AndroidTravelerStartupPreferences(context.applicationContext, runtimeScope, startupReadDelayMillis))
     override fun onCleared() { location.delegate = null; runtime.close() }
 
-    class Factory(private val context: Context) : ViewModelProvider.Factory {
+    class Factory(private val context: Context, private val runtimeScope: String? = null,
+        private val startupReadDelayMillis: Long = 0) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             require(modelClass == TravelerRuntimeOwner::class.java)
-            return modelClass.cast(TravelerRuntimeOwner(context))
+            return modelClass.cast(TravelerRuntimeOwner(context, runtimeScope, startupReadDelayMillis))
         }
     }
 }

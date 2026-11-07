@@ -23,6 +23,21 @@ class TravelerFixture {
     val tripCreateCalls = AtomicInteger()
     val bannerCalls = AtomicInteger()
     val cloneCalls = AtomicInteger()
+    @Volatile var introProgress = TravelerIntroProgress(completed = true)
+    @Volatile var startupSaveFails = false
+    val startupWrites = AtomicInteger()
+    val featureReads = AtomicInteger()
+    val startup = object : TravelerStartupRepository {
+        override suspend fun read() = introProgress
+        override suspend fun saveStep(step: Int) {
+            if (startupSaveFails) error("Fixture storage unavailable")
+            startupWrites.incrementAndGet(); introProgress = TravelerIntroProgress(step = step)
+        }
+        override suspend fun complete() {
+            if (startupSaveFails) error("Fixture storage unavailable")
+            startupWrites.incrementAndGet(); introProgress = TravelerIntroProgress(completed = true, step = 3)
+        }
+    }
     @Volatile var lastCloneId: String? = null
     @Volatile var pendingCreatedTrip: TravelerTrip? = null
     @Volatile var routeCreatedTrip: TravelerTrip? = null
@@ -75,7 +90,7 @@ class TravelerFixture {
             passport = TravelerPassport(100, 1, "Penjelajah", emptyList(), emptyList())); Unit }
         else -> Unit
     } }
-    val catalog: TravelerCatalog = double { name, args -> when (name) {
+    val catalog: TravelerCatalog = double { name, args -> featureReads.incrementAndGet(); when (name) {
         "browse", "searchSpotPage", "countryPage", "nearbySpots" -> CatalogResult.Ready(CatalogPage(listOf(spot), 1, 1))
         "curatedItineraries" -> CatalogResult.Ready(CatalogPage(listOf(curatedPlan), 1, 1))
         "activeQuests", "locationQuests", "spotQuests", "untakenLocationQuests" -> CatalogResult.Ready(LocationQuestPage(
@@ -159,7 +174,7 @@ class TravelerFixture {
     private val savedSpots: TravelerSavedSpotRepository = double { _, _ -> CatalogResult.NetworkError }
     private val questGroups: TravelerQuestGroupRepository = double { _, _ -> CatalogResult.NetworkError }
     val runtime = TravelerRuntime(identity, catalog, itineraries, distribution, trips, notifications, account, legal, registration, publicContent, savedSpots, questGroups,
-        { "00000000-0000-4000-8000-${identities.incrementAndGet().toString().padStart(12, '0')}" })
+        { "00000000-0000-4000-8000-${identities.incrementAndGet().toString().padStart(12, '0')}" }, startup)
 
     private fun distributionValue(visibility: String) = ItineraryDistribution(planId, plan.itinerary.title, plan.itinerary.description,
         visibility, true, "active", false, null, "2026-11-06T00:00:00Z", emptyList(), plan.stops.size)

@@ -19,8 +19,9 @@ fun TravelerApp() {
 fun TravelerApp(runtime: TravelerRuntime, share: (String) -> Unit,
     googleSignIn: (suspend () -> String?)? = null,
     photoPicker: (suspend () -> TravelerImage?)? = null,
+    startupSurface: (Boolean) -> Unit = {},
     backHandler: @Composable (Boolean, () -> Unit) -> Unit) {
     FloopelTheme(product = AppProduct.TRAVELER) {
-        TravelerRoot(runtime, share, googleSignIn, photoPicker, backHandler)
+        TravelerRoot(runtime, share, googleSignIn, photoPicker, startupSurface, backHandler)
     }
 }

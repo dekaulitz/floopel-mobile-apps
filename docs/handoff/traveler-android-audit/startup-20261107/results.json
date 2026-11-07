@@ -1,0 +1,337 @@
+{
+  "date": "2026-11-07",
+  "product": "Android Traveler",
+  "package": "com.floopel.traveler",
+  "branch": "feature/mobile-openapi-contracts",
+  "scope": "Splash + four first-install intro pages; prior UI/Auth regression repeated",
+  "figma_file": "ifQcOxbjGTXw9aNH2JGl9g",
+  "figma_frames": [
+    "164:2263",
+    "164:2351",
+    "164:2439",
+    "164:2527",
+    "164:2615",
+    "164:2703",
+    "164:2791"
+  ],
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "pixels": [
+      1080,
+      2430
+    ],
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "density": 432,
+    "locale": "en-US",
+    "resources": "default Indonesian",
+    "theme": "light",
+    "font": 1.0
+  },
+  "small_window": {
+    "viewport_dp": [
+      320,
+      640
+    ],
+    "compose_font_scale": 1.3
+  },
+  "host": {
+    "tests": 383,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native": [
+    {
+      "log": "startup-native-regressions.log",
+      "status": "PASS",
+      "tests": 16,
+      "sha256": "e29a429bf14f63454bca7f5fcf0dc5992491262820fea3a654dee0081a377f43",
+      "original_log_sha256": "e29a429bf14f63454bca7f5fcf0dc5992491262820fea3a654dee0081a377f43"
+    },
+    {
+      "log": "startup-native-first.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "f1d9ba1cd3f20bb03079e87e664bb7b9df0f3d93babf2f26a564f37987fc41af",
+      "original_log_sha256": "f1d9ba1cd3f20bb03079e87e664bb7b9df0f3d93babf2f26a564f37987fc41af"
+    },
+    {
+      "log": "startup-native-reopen.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "23f7d52825c8d3f482043114231c1f8fef6b1352809fecc607631a8e4091f126",
+      "original_log_sha256": "23f7d52825c8d3f482043114231c1f8fef6b1352809fecc607631a8e4091f126"
+    },
+    {
+      "log": "startup-native-checkpoint.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "cdbb6255afce4d3752a136891802c4a5ff7572b2cf8a7c694298839032bce17e",
+      "original_log_sha256": "cdbb6255afce4d3752a136891802c4a5ff7572b2cf8a7c694298839032bce17e"
+    },
+    {
+      "log": "startup-native-progress-restore.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "c024f3fb623d66634348b98c46d4f7425a3d5f2c03cc92d2d90214dd7d0757d3",
+      "original_log_sha256": "c024f3fb623d66634348b98c46d4f7425a3d5f2c03cc92d2d90214dd7d0757d3"
+    },
+    {
+      "log": "startup-private-journey.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "39ac87cb5ffc6e203369545c44afb812b5cc018ea1af9b37d773996375576de9",
+      "original_log_sha256": "39ac87cb5ffc6e203369545c44afb812b5cc018ea1af9b37d773996375576de9"
+    },
+    {
+      "log": "startup-private-restore.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "b3a7a4c09fa7387a6fb008796b8608bdc791aad2dd6798a8d51be36e5a91159e",
+      "original_log_sha256": "b3a7a4c09fa7387a6fb008796b8608bdc791aad2dd6798a8d51be36e5a91159e"
+    },
+    {
+      "log": "startup-private-login-back.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "3e901cf11d21a2e71747d7acb5c542b10323e2b70b7d68a466047b71bc2e5b82",
+      "original_log_sha256": "3e901cf11d21a2e71747d7acb5c542b10323e2b70b7d68a466047b71bc2e5b82"
+    },
+    {
+      "log": "startup-private-invalid.log",
+      "status": "PASS",
+      "tests": 1,
+      "sha256": "1e31765291dfeb9e307e8e5cc60530519022ffa9d44386d661b998221bbda028",
+      "original_log_sha256": "1e31765291dfeb9e307e8e5cc60530519022ffa9d44386d661b998221bbda028"
+    }
+  ],
+  "native_total": 24,
+  "lint": {
+    "traveler": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 42
+    },
+    "partner": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 2
+    }
+  },
+  "evidence": [
+    {
+      "file": "cold-start-normal.mp4",
+      "sha256": "ab642e481c64cd5cca9f0268ba09d4efad1b2bf6f10f4292ade589b1edd9318e",
+      "bytes": 663497
+    },
+    {
+      "file": "cold-start-slow.mp4",
+      "sha256": "ebca1496bde3cf1a035735b557fc62a9a3ea5587f0edc68014ad9cb87d2e1e16",
+      "bytes": 292006
+    },
+    {
+      "file": "compose-splash-video.png",
+      "sha256": "39a009d68ec71615b4455c0da0db318fad7d61065886425b407f48a59a1101ef",
+      "bytes": 53115,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "default-storage-after.json",
+      "sha256": "559bebae4b87f989d69a4b6e9442c526440d4e74e6882c66ce4df0c9f179126c",
+      "bytes": 1301
+    },
+    {
+      "file": "default-storage-before.json",
+      "sha256": "559bebae4b87f989d69a4b6e9442c526440d4e74e6882c66ce4df0c9f179126c",
+      "bytes": 1301
+    },
+    {
+      "file": "intro-1-geometry.json",
+      "sha256": "c136aa899580b832447797a8e2b22866be6efbe529ab3e73b6608b37ee79a3e0",
+      "bytes": 530
+    },
+    {
+      "file": "intro-1.png",
+      "sha256": "419ec94c3309e50e9f09e007ddfbbe8dca873a895b3e6d65285812330c36897c",
+      "bytes": 107630,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-2-geometry.json",
+      "sha256": "d615b42e3b3d90ffd577a9ab439e0d7bd13c15e0f130aaef67ff23f05b5dce3f",
+      "bytes": 644
+    },
+    {
+      "file": "intro-2.png",
+      "sha256": "d662fd9a5d5c9c3d33cbdef0709c7999d142c6ffe7e3e6a4817204482fcc7cf7",
+      "bytes": 84846,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-3-geometry.json",
+      "sha256": "7a08ea84e4f27aaf0f42f34568617da09f1fe61384c5055062800cbe15c7fd87",
+      "bytes": 732
+    },
+    {
+      "file": "intro-3.png",
+      "sha256": "f8d4302f5a3afc2efb7f268f846f4a45f215fe7391567042bf04e79a891696b1",
+      "bytes": 107178,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-4-geometry.json",
+      "sha256": "7a08ea84e4f27aaf0f42f34568617da09f1fe61384c5055062800cbe15c7fd87",
+      "bytes": 732
+    },
+    {
+      "file": "intro-4.png",
+      "sha256": "d34cda3468544176bea930c23c9fd2b18d066715455a4f05cfa3eded965e0dec",
+      "bytes": 112645,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-completed-login.png",
+      "sha256": "db1467a31b221f81e3d2cfe2e7173ec899508c62fe919a4485d1ad69e9ac5e44",
+      "bytes": 113560,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-progress-process.json",
+      "sha256": "c439b0f7a96f08a3d86f5f99bbc0772cfbd83ab70e00f280b57b3c6047415b1d",
+      "bytes": 76
+    },
+    {
+      "file": "intro-progress-restored.json",
+      "sha256": "2e36f7f5fbc2e6d255df387aac4cc79597c9a8c66b24294f659aa1caf06effe6",
+      "bytes": 123
+    },
+    {
+      "file": "intro-returning-login.png",
+      "sha256": "08f143034d1317d27d88ee91b41361a760f7038587a7dbf3d838286b99281fca",
+      "bytes": 97964,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "intro-small-font130.png",
+      "sha256": "690b4682b9c55816f2b16327b9b5332197503c06a08b6675dee9d54218338bd8",
+      "bytes": 122149,
+      "pixels": [
+        864,
+        1728
+      ]
+    },
+    {
+      "file": "live-invalid-restore.json",
+      "sha256": "ecd8f29142eba321b4b5dfeac389454d47a8d05f7b77fcfd49ef6da5f479d437",
+      "bytes": 167
+    },
+    {
+      "file": "live-login-after-back.png",
+      "sha256": "59d6fd91acea8968cf54d76486e81ae49ff511e62b070eac7bc0afa8daf1f824",
+      "bytes": 103011,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "live-login-home-selected.png",
+      "sha256": "0df773476bf52d3eab01cdbf35e2b28811e686ab5c391c36d22c2eb3cc197347",
+      "bytes": 867766,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "live-private-back.json",
+      "sha256": "f3236f28a60a940bfb7005b8f4b433f75eeab1e62c227c9081da9a9dd134b092",
+      "bytes": 83
+    },
+    {
+      "file": "live-private-itinerary.png",
+      "sha256": "e3ff0db868595d31901c0b1b115b5270aa85e8446e976113192740d8408e79da",
+      "bytes": 250981,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "live-private-process-journey.json",
+      "sha256": "584635ec41096a00d3988b6f516774c7902fba574c21fb8ff09f45b52e601ecf",
+      "bytes": 58
+    },
+    {
+      "file": "live-private-process-login-back.json",
+      "sha256": "a444daedfd7a7ae51effa20c24ba5e71a48f04c54221da470a6e6b3f717f1ffd",
+      "bytes": 61
+    },
+    {
+      "file": "live-private-process-restore.json",
+      "sha256": "bd8189f221862efce0bd2ceb78e0db6ef14780838b5d8ff0ae64b4acf4650fe1",
+      "bytes": 58
+    },
+    {
+      "file": "os-splash.png",
+      "sha256": "690a82645649f03b3e87cf9ad05fcbcee64fbff46f23e36f0839b8ae10dc23cb",
+      "bytes": 68099,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "startup-branded-geometry.json",
+      "sha256": "2aa1c8a26b1ab7f1f76e5ad50e9db06e417cae29b7b26d6a4a94e2d987025496",
+      "bytes": 527
+    },
+    {
+      "file": "startup-branded.png",
+      "sha256": "8784310d16ce4812258b892e036721883573bd5c88a1c98b0f4443ce00addd90",
+      "bytes": 33068,
+      "pixels": [
+        1080,
+        2430
+      ]
+    }
+  ],
+  "source_manifest": "source-manifest.json",
+  "assets": "assets.json",
+  "isolation": "Debug intent scope isolates startup preferences + Keystore session + journals. Existing default files preserved; no pm clear, emulator or database reset.",
+  "slow_scenario": "First-install native test uses debug-only local preference read delay 600ms; zero production minimum wait; not a startup benchmark.",
+  "not_run": [
+    "iOS framework/host/tests (Windows; native host still scaffold)",
+    "manual TalkBack/VoiceOver",
+    "physical devices",
+    "other Android API levels",
+    "full Figma parity",
+    "dark intro design validation"
+  ],
+  "prior_api_audit": "Previous immutable media/admission/public-read result remains ca0430879d5b51f559cd2a1423f36d827fdcde3b; not rerun or relabeled by this startup audit."
+}

@@ -25,11 +25,12 @@ import java.util.concurrent.TimeUnit
 /** Opt-in native host + real API test. Fixture credentials are read from private device test setup. */
 @RunWith(AndroidJUnit4::class)
 class LivePrivateTravelerJourneyTest {
-    private val ui = createAndroidComposeRule<MainActivity>()
+    private val ui = nativeTravelerRule(privateRuntimeScope())
     // Check opt-in before the activity rule starts a runtime or touches the network.
     @get:Rule val liveRule: TestRule = RuleChain.outerRule(TestRule { base, _ -> object : Statement() {
         override fun evaluate() {
             assumeTrue(InstrumentationRegistry.getArguments().getString("floopelPrivateLive") == "true")
+            preparePrivateStartup()
             base.evaluate()
         }
     } }).around(ui)
@@ -99,11 +100,12 @@ class LivePrivateTravelerJourneyTest {
 /** Second explicit phase: launch after the journey runner has exited and the target process was stopped. */
 @RunWith(AndroidJUnit4::class)
 class LivePrivateSessionRestoreTest {
-    private val ui = createAndroidComposeRule<MainActivity>()
+    private val ui = nativeTravelerRule(privateRuntimeScope())
     @get:Rule val liveRule: TestRule = RuleChain.outerRule(TestRule { base, _ -> object : Statement() {
         override fun evaluate() {
             val arguments = InstrumentationRegistry.getArguments()
             assumeTrue(arguments.getString("floopelPrivateLive") == "true" && arguments.getString("floopelRestoreCheck") == "true")
+            preparePrivateStartup()
             base.evaluate()
         }
     } }).around(ui)
@@ -172,11 +174,12 @@ class LivePrivateSessionRestoreTest {
 /** Third explicit phase: reopen after the logged-out root's system Back, then verify active tabs. */
 @RunWith(AndroidJUnit4::class)
 class LivePrivateLoginBackTest {
-    private val ui = createAndroidComposeRule<MainActivity>()
+    private val ui = nativeTravelerRule(privateRuntimeScope())
     @get:Rule val liveRule: TestRule = RuleChain.outerRule(TestRule { base, _ -> object : Statement() {
         override fun evaluate() {
             val arguments = InstrumentationRegistry.getArguments()
             assumeTrue(arguments.getString("floopelPrivateLive") == "true" && arguments.getString("floopelLoginBackCheck") == "true")
+            preparePrivateStartup()
             base.evaluate()
         }
     } }).around(ui)

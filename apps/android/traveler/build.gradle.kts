@@ -49,6 +49,8 @@ kotlin {
 dependencies {
     implementation(project(":shared:features:traveler"))
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.splashscreen)
     implementation(libs.compose.runtime)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.coroutines.android)
@@ -59,6 +61,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.compose.ui.test)
+    androidTestImplementation(libs.compose.foundation)
     androidTestImplementation(libs.ktor.mock)
     androidTestImplementation(libs.coroutines.test)
     debugImplementation(libs.compose.ui.test.manifest)

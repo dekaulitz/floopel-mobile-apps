@@ -1,6 +1,6 @@
 # Koreksi UI Traveler — 7 November 2026
 
-Figma final `ifQcOxbjGTXw9aNH2JGl9g` menjadi sumber kebenaran visual. Batch ini menangani kolom pencarian dan kartu yang ditandai pemilik, efek reuse kartu pada profil publik, serta entry/login wajib. Koreksi komponen tidak menjadi sign-off semua layar. Daftar audit mencakup 883 state Android; angka test di sini tidak menjadi persentase penyelesaian desain.
+Figma final `ifQcOxbjGTXw9aNH2JGl9g` menjadi sumber kebenaran visual. Batch ini menangani kolom pencarian dan kartu yang ditandai pemilik, efek reuse kartu pada profil publik, serta entry/login wajib. Follow-up [Splash dan intro](traveler-startup-audit.md) memiliki source/APK, PNG/video dan hasil test tersendiri. Koreksi komponen tidak menjadi sign-off semua layar. Daftar audit mencakup 883 state Android; angka test di sini tidak menjadi persentase penyelesaian desain.
 
 ## Acuan dan koreksi
 
@@ -31,6 +31,6 @@ Test state dimulai dari tab Profile, memicu expiry, menolak navigasi ke fitur, l
 
 ## Gap yang tetap terbuka
 
-Splash dan intro instalasi pertama sedang ditindaklanjuti sebagai batch berikutnya. Kontrol lokasi pada ketiga tab Community dan lokasi/tanggal pada katalog Open Trip belum terhubung. Overflow/status pembaruan feed, owner footer publikasi, header/tab/owner controls profil, layout builder/Stop/publikasi/Quest/Trip, reader artikel/Collection/lokasi, Explorer map/sheet, registrasi/forgot, Passport dan inbox masih memerlukan pekerjaan sesuai frame masing-masing. Temuan review yang belum diverifikasi ulang dipertahankan di [backlog layout](traveler-android-audit/layout-20261107/open-gaps.json).
+Splash dan empat intro sudah dikoreksi serta diverifikasi pada [audit startup Android](traveler-startup-audit.md); validasi dark intro, TalkBack dan iOS tetap terbuka. Kontrol lokasi pada ketiga tab Community dan lokasi/tanggal pada katalog Open Trip belum terhubung. Overflow/status pembaruan feed, owner footer publikasi, header/tab/owner controls profil, layout builder/Stop/publikasi/Quest/Trip, reader artikel/Collection/lokasi, Explorer map/sheet, registrasi/forgot, Passport dan inbox masih memerlukan pekerjaan sesuai frame masing-masing. Temuan review yang belum diverifikasi ulang dipertahankan di [backlog layout checkpoint](traveler-android-audit/layout-20261107/open-gaps.json).
 
 Media/teks API dapat berubah; screenshot satu state tidak menutup loading/empty/error, scroll panjang, font, actor/capability atau semua state keluarganya. TalkBack, perangkat fisik dan iOS belum diverifikasi. Build/lint dan test API tidak menjadi pengganti sign-off visual.

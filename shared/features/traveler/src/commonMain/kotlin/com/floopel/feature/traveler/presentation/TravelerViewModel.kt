@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.*
+import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.serialization.encodeToString
@@ -34,6 +35,7 @@ internal class TravelerViewModel(
     private val acknowledgements = mutableSetOf<Pair<Long, String>>()
     private var writeJob: Job? = null
     private var registrationKey: String? = null
+    private var startupJob: Job? = null
 
     init {
         if (autoStart) {
@@ -48,15 +50,17 @@ internal class TravelerViewModel(
                         if (current.identity.generation != identity.generation) {
                             val routeStack = if (current.identity.signedIn && !identity.signedIn)
                                 listOf(TravelerRoute(Destination.LOGIN)) else current.stack
-                            TravelerState(tab = rootTab(routeStack), stack = routeStack, identity = identity, identityRestored = current.identityRestored)
+                            TravelerState(tab = rootTab(routeStack), stack = routeStack, identity = identity, identityRestored = current.identityRestored,
+                                intro = current.intro, introSaving = current.introSaving, startupFailure = current.startupFailure)
                         } else if (current.identityRestored && !identity.signedIn && !current.route.destination.isAuthenticationScreen())
-                            TravelerState(stack = listOf(TravelerRoute(Destination.LOGIN)), identity = identity, identityRestored = true)
+                            TravelerState(stack = listOf(TravelerRoute(Destination.LOGIN)), identity = identity, identityRestored = true,
+                                intro = current.intro, introSaving = current.introSaving, startupFailure = current.startupFailure)
                         else current.copy(identity = identity)
                     }
                     if (state.value.identityRestored && !identity.signedIn) requireLogin()
                 }
             }
-            viewModelScope.launch {
+            startupJob = viewModelScope.launch {
                 try { withContext(worker) { runtime.identity.restore() } }
                 catch (cancelled: CancellationException) { throw cancelled }
                 catch (_: Exception) { mutable.update { it.copy(writeFailure = ReadFailure()) } }
@@ -65,17 +69,63 @@ internal class TravelerViewModel(
                     val stack = if (identity.signedIn) signedInStack(current.stack) else authenticationStack(current.stack)
                     current.copy(identity = identity, identityRestored = true, stack = stack, tab = rootTab(stack))
                 }
-                refresh()
+                loadIntro()
             }
         }
     }
 
     fun savedStack(): String = Json.encodeToString(state.value.stack)
+    private suspend fun loadIntro() {
+        mutable.update { it.copy(startupFailure = null) }
+        try {
+            var progress = withContext(worker) { runtime.startup.read() }
+            if (!progress.completed && (state.value.identity.signedIn || state.value.intro?.completed == true)) {
+                // An authenticated installation is already returning. A local write failure must
+                // not turn logout into first-install onboarding during the same session.
+                progress = TravelerIntroProgress(completed = true, step = 3)
+                try { withContext(worker) { runtime.startup.complete() } }
+                catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { mutable.update { it.copy(startupFailure = ReadFailure(code = "STARTUP_STORAGE")) } }
+            }
+            mutable.update { it.copy(intro = progress) }
+        } catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { mutable.update { it.copy(startupFailure = ReadFailure(code = "STARTUP_STORAGE")) } }
+        refresh()
+    }
+
+    fun retryStartup() {
+        if (startupJob?.isActive == true) return
+        startupJob = viewModelScope.launch {
+            mutable.update { it.copy(introSaving = true) }
+            try { loadIntro() } finally { mutable.update { it.copy(introSaving = false) } }
+        }
+    }
+
+    fun nextIntro() = moveIntro(1)
+    fun previousIntro() = moveIntro(-1)
+    private fun moveIntro(direction: Int) {
+        val current = state.value
+        val progress = current.intro ?: return
+        if (!current.showIntro || current.introSaving || startupJob?.isActive == true || direction < 0 && progress.step == 0) return
+        val next = if (direction > 0 && progress.step == 3) TravelerIntroProgress(completed = true, step = 3)
+            else progress.copy(step = (progress.step + direction).coerceIn(0, 3))
+        mutable.update { it.copy(introSaving = true, startupFailure = null) }
+        startupJob = viewModelScope.launch {
+            try {
+                withContext(worker) { if (next.completed) runtime.startup.complete() else runtime.startup.saveStep(next.step) }
+                mutable.update { it.copy(intro = next) }
+                if (next.completed) { requireLogin(); refresh() }
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) { mutable.update { it.copy(startupFailure = ReadFailure(code = "STARTUP_STORAGE")) } }
+            finally { mutable.update { it.copy(introSaving = false) } }
+        }
+    }
+
     private fun requireLogin() {
         if (!state.value.identity.signedIn && !state.value.route.destination.isAuthenticationScreen()) {
             reads.values.forEach(Job::cancel); reads.clear()
             mutable.update { TravelerState(stack = listOf(TravelerRoute(Destination.LOGIN)), identity = it.identity,
-                identityRestored = it.identityRestored) }
+                identityRestored = it.identityRestored, intro = it.intro, introSaving = it.introSaving, startupFailure = it.startupFailure) }
         } else if (!state.value.identity.signedIn && state.value.identityRestored) {
             mutable.update { it.copy(tab = Destination.HOME, stack = authenticationStack(it.stack)) }
         }
@@ -84,7 +134,7 @@ internal class TravelerViewModel(
     private fun creationRoute(route: TravelerRoute): TravelerRoute =
         if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank()) route.copy(operationKey = runtime.newOperationKey()) else route
     fun open(requested: TravelerRoute) {
-        if (!state.value.identityRestored) return
+        if (!state.value.identityRestored || state.value.intro == null || state.value.showIntro) return
         if (!state.value.identity.signedIn && !requested.destination.isAuthenticationScreen()) { requireLogin(); return }
         if (state.value.busy || state.value.route == requested ||
             requested.destination == Destination.TRIP_FORM && state.value.route.destination == Destination.TRIP_FORM && state.value.route.id == requested.id) return
@@ -103,7 +153,7 @@ internal class TravelerViewModel(
         refresh()
     }
     fun tab(destination: Destination) {
-        if (!state.value.identityRestored || !state.value.identity.signedIn) { requireLogin(); return }
+        if (!state.value.identityRestored || state.value.intro == null || state.value.showIntro || !state.value.identity.signedIn) { requireLogin(); return }
         if (state.value.busy) return
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(tab = destination, stack = listOf(TravelerRoute(destination)), query = "",
@@ -128,7 +178,7 @@ internal class TravelerViewModel(
     fun clearFeedback() { mutable.update { it.copy(feedback = null, saved = false) } }
 
     fun refresh() {
-        if (!state.value.identityRestored) return
+        if (!state.value.identityRestored || state.value.intro == null || state.value.showIntro) return
         if (!state.value.identity.signedIn && !state.value.route.destination.isAuthenticationScreen()) { requireLogin(); return }
         val route = state.value.route
         when (route.destination) {

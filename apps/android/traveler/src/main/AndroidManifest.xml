@@ -14,6 +14,7 @@
         android:theme="@style/Theme.Floopel">
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.Floopel.Starting"
             android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>

@@ -20,6 +20,7 @@ class TravelerRuntime(
     val savedSpots: TravelerSavedSpotRepository,
     val questGroups: TravelerQuestGroupRepository,
     val newOperationKey: () -> String,
+    val startup: TravelerStartupRepository,
     val close: () -> Unit = {},
 )
 
@@ -27,7 +28,8 @@ class TravelerRuntime(
 internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStore,
     itineraryStore: ItineraryRecoveryStore, tripStore: TripRecoveryStore, distributionStore: TripRecoveryStore, questGroupStore: TripRecoveryStore,
     newOperationKey: () -> String, attestation: QuestAttestation? = null,
-    location: QuestLocationSource? = null, mediaStore: TripRecoveryStore, creationRouteStore: TripRecoveryStore): TravelerRuntime {
+    location: QuestLocationSource? = null, mediaStore: TripRecoveryStore, creationRouteStore: TripRecoveryStore,
+    startup: TravelerStartupRepository): TravelerRuntime {
     val session = TravelerSession(api, refreshStore, "id", attestation = attestation, locationSource = location,
         onLogout = { itineraryStore.clear(); tripStore.clear(); distributionStore.clear(); questGroupStore.clear(); mediaStore.clear(); creationRouteStore.clear() })
     val rest = api.catalogTransport()
@@ -40,5 +42,5 @@ internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStor
         NativeTripApi(rest, session, tripStore, mediaUploads = media, creationRoutes = creationRouteStore),
         NativeNotificationApi(rest, session), NativeAccountApi(rest, session), legal,
         NativeRegistrationApi(api), NativePublicTravelerApi(rest, session), NativeSavedSpotApi(rest, session, catalog),
-        NativeQuestGroupApi(rest, session, questGroupStore), newOperationKey, api::close)
+        NativeQuestGroupApi(rest, session, questGroupStore), newOperationKey, startup, api::close)
 }

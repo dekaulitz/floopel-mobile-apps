@@ -6,6 +6,8 @@ import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerCatalog
 import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
 import com.floopel.feature.traveler.domain.repository.TravelerIdentity
+import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
+import com.floopel.feature.traveler.domain.repository.TravelerStartupRepository
 import com.floopel.feature.traveler.testing.TravelerFixture
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -19,6 +21,88 @@ class TravelerStateOwnerTest {
     @AfterTest fun tearDown() { owners.forEach(ViewModelStore::clear); Dispatchers.resetMain() }
     private fun model(fixture: TravelerFixture, runtime: TravelerRuntime = fixture.runtime, restoredStack: String = ""): TravelerViewModel =
         TravelerViewModel(runtime, restoredStack, worker = dispatcher).also { model -> owners += ViewModelStore().apply { put("test", model) } }
+
+    @Test fun firstInstallRetainsIntroProgressAndBlocksFeatureReads() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1); f.introProgress = TravelerIntroProgress()
+        val first = model(f); advanceUntilIdle()
+        assertTrue(first.state.value.showIntro); assertEquals(0, first.state.value.intro?.step)
+        first.open(TravelerRoute(Destination.COMMUNITY)); first.tab(Destination.HOME); first.refresh(); advanceUntilIdle()
+        assertTrue(first.state.value.showIntro); assertEquals(0, f.featureReads.get())
+        advanceTimeBy(30_000); runCurrent(); assertEquals(0, first.state.value.intro?.step)
+        first.nextIntro(); first.nextIntro(); advanceUntilIdle()
+        assertEquals(1, first.state.value.intro?.step); assertEquals(1, f.startupWrites.get())
+        first.previousIntro(); advanceUntilIdle(); assertEquals(0, f.introProgress.step)
+        first.nextIntro(); advanceUntilIdle(); owners.last().clear()
+        val restored = model(f); advanceUntilIdle()
+        assertTrue(restored.state.value.showIntro); assertEquals(1, restored.state.value.intro?.step)
+        assertEquals(0, f.featureReads.get())
+    }
+
+    @Test fun onlyTheLastIntroActionCompletesInstallationAndReturningGuestsSeeLogin() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1); f.introProgress = TravelerIntroProgress()
+        val first = model(f); advanceUntilIdle()
+        repeat(3) { first.nextIntro(); advanceUntilIdle(); assertFalse(f.introProgress.completed) }
+        assertEquals(3, first.state.value.intro?.step); assertTrue(first.state.value.showIntro)
+        first.nextIntro(); advanceUntilIdle()
+        assertTrue(f.introProgress.completed); assertFalse(first.state.value.showIntro)
+        assertEquals(Destination.LOGIN, first.state.value.route.destination); assertFalse(first.state.value.canGoBack)
+        owners.last().clear()
+        val returning = model(f); advanceUntilIdle()
+        assertFalse(returning.state.value.showIntro); assertEquals(Destination.LOGIN, returning.state.value.route.destination)
+        assertEquals(0, f.featureReads.get())
+    }
+
+    @Test fun failedIntroSaveKeepsTheStepAndRequiresAnExplicitRetry() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1); f.introProgress = TravelerIntroProgress()
+        val model = model(f); advanceUntilIdle(); f.startupSaveFails = true
+        model.nextIntro(); advanceUntilIdle()
+        assertEquals(0, model.state.value.intro?.step); assertFalse(f.introProgress.completed)
+        assertEquals("STARTUP_STORAGE", model.state.value.startupFailure?.code)
+        assertFalse(model.state.value.introSaving); assertEquals(0, f.startupWrites.get())
+        f.startupSaveFails = false; model.nextIntro(); advanceUntilIdle()
+        assertEquals(1, model.state.value.intro?.step); assertNull(model.state.value.startupFailure)
+    }
+
+    @Test fun knownSessionSkipsFirstUseAndLogoutDoesNotReintroduceIt() = runTest {
+        val f = TravelerFixture(); f.introProgress = TravelerIntroProgress()
+        val routes = """[{"destination":"PROFILE"},{"destination":"ITINERARY","id":"${f.planId}"}]"""
+        val model = model(f, restoredStack = routes); advanceUntilIdle()
+        assertTrue(f.introProgress.completed); assertFalse(model.state.value.showIntro)
+        assertEquals(Destination.ITINERARY, model.state.value.route.destination); assertEquals(Destination.PROFILE, model.state.value.tab)
+        f.identityState.value = TravelerIdentityView(generation = 2); advanceUntilIdle()
+        assertEquals(Destination.LOGIN, model.state.value.route.destination); assertFalse(model.state.value.showIntro)
+        assertTrue(model.state.value.intro?.completed == true); assertFalse(model.state.value.canGoBack)
+    }
+
+    @Test fun cancelledIntroCompletionDoesNotPersistASuccessOrBypassLogin() = runTest {
+        val f = TravelerFixture(); f.identityState.value = TravelerIdentityView(generation = 1); f.introProgress = TravelerIntroProgress(step = 3)
+        val started = CompletableDeferred<Unit>()
+        val startup = object : TravelerStartupRepository by f.startup {
+            override suspend fun complete() { started.complete(Unit); awaitCancellation() }
+        }
+        val b = f.runtime
+        val runtime = TravelerRuntime(b.identity, b.catalog, b.itineraries, b.distribution, b.trips, b.notifications,
+            b.account, b.legal, b.registration, b.publicContent, b.savedSpots, b.questGroups, b.newOperationKey, startup)
+        val first = model(f, runtime); advanceUntilIdle(); first.nextIntro(); runCurrent(); started.await()
+        owners.last().clear(); runCurrent()
+        assertFalse(f.introProgress.completed)
+        val restored = model(f); advanceUntilIdle()
+        assertTrue(restored.state.value.showIntro); assertEquals(3, restored.state.value.intro?.step)
+        assertEquals(0, f.featureReads.get())
+    }
+
+    @Test fun startupSaveRetryAfterSessionExpiryDoesNotReintroduceFirstUse() = runTest {
+        val f = TravelerFixture(); f.introProgress = TravelerIntroProgress(); f.startupSaveFails = true
+        val model = model(f); advanceUntilIdle()
+        assertTrue(model.state.value.intro?.completed == true); assertFalse(f.introProgress.completed)
+        assertEquals("STARTUP_STORAGE", model.state.value.startupFailure?.code)
+        f.identityState.value = TravelerIdentityView(generation = 2); advanceUntilIdle()
+        model.retryStartup(); advanceUntilIdle()
+        assertFalse(model.state.value.showIntro); assertEquals(Destination.LOGIN, model.state.value.route.destination)
+        f.startupSaveFails = false; model.retryStartup(); advanceUntilIdle()
+        assertTrue(f.introProgress.completed); assertNull(model.state.value.startupFailure)
+        assertFalse(model.state.value.showIntro); assertFalse(model.state.value.canGoBack)
+    }
 
     @Test fun emptyPlanIsRejectedAgainAtPublicationConfirmation() = runTest {
         val f = TravelerFixture(); f.plan = f.plan.copy(stops = emptyList(), itinerary = f.plan.itinerary.copy(stops = 0))
@@ -43,7 +127,7 @@ class TravelerStateOwnerTest {
         }
         val base = f.runtime
         val runtime = TravelerRuntime(identity, catalog, base.itineraries, base.distribution, base.trips, base.notifications,
-            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey, base.startup)
         val restored = """[{"destination":"HOME"},{"destination":"ITINERARY","id":"${f.planId}"}]"""
         val model = model(f, runtime, restored); runCurrent()
         assertFalse(model.state.value.identityRestored); assertEquals(0, discoveryCalls)
@@ -90,7 +174,7 @@ class TravelerStateOwnerTest {
         }
         val base = f.runtime
         val runtime = TravelerRuntime(identity, base.catalog, base.itineraries, base.distribution, base.trips, base.notifications,
-            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+            base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey, base.startup)
         val restored = """[{"destination":"PROFILE"},{"destination":"ITINERARY","id":"${f.planId}"}]"""
         val model = model(f, runtime, restored); runCurrent()
         assertFalse(model.state.value.identityRestored); assertNull(model.state.value.itinerary.value)
@@ -151,7 +235,7 @@ class TravelerStateOwnerTest {
         }
         val base = f.runtime
         val runtime = TravelerRuntime(base.identity, base.catalog, base.itineraries, base.distribution, trips,
-            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey, base.startup)
         val first = model(f, runtime); advanceUntilIdle()
         first.open(TravelerRoute(Destination.TRIP_FORM, f.planId)); advanceUntilIdle()
         val savedBeforeSubmit = first.savedStack()
@@ -264,7 +348,7 @@ class TravelerStateOwnerTest {
         }
         val base = f.runtime
         val runtime = TravelerRuntime(identity, base.catalog, base.itineraries, base.distribution, base.trips,
-            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey, base.startup)
         val model = model(f, runtime); advanceUntilIdle()
         model.open(TravelerRoute(Destination.QUEST_PROGRESS, "participation")); advanceUntilIdle()
         val beforeProgress = progressReads
@@ -331,7 +415,7 @@ class TravelerStateOwnerTest {
             }
         }
         val runtime = f.runtime.let { TravelerRuntime(it.identity, catalog, it.itineraries, it.distribution, it.trips,
-            it.notifications, it.account, it.legal, it.registration, it.publicContent, it.savedSpots, it.questGroups, it.newOperationKey) }
+            it.notifications, it.account, it.legal, it.registration, it.publicContent, it.savedSpots, it.questGroups, it.newOperationKey, it.startup) }
         val model = model(f, runtime); advanceUntilIdle()
         model.openEntry(f.spot.copy(id = "slow")); runCurrent(); started.await()
         model.openEntry(f.spot.copy(id = "fast")); runCurrent(); release.complete(Unit); advanceUntilIdle()

@@ -1,6 +1,7 @@
 package com.floopel.feature.traveler.presentation
 
 import com.floopel.feature.traveler.domain.model.*
+import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,6 +34,9 @@ internal data class TravelerState(
     val stack: List<TravelerRoute> = listOf(TravelerRoute(Destination.HOME)),
     val identity: TravelerIdentityView = TravelerIdentityView(),
     val identityRestored: Boolean = false,
+    val intro: TravelerIntroProgress? = null,
+    val introSaving: Boolean = false,
+    val startupFailure: ReadFailure? = null,
     val home: HomeState = HomeState(),
     val profile: ReadState<PersonalProfile> = ReadState(),
     val catalog: ReadState<CatalogPage> = ReadState(),
@@ -92,6 +96,7 @@ internal data class TravelerState(
     val groupInvitation: ReadState<QuestGroupInvitation> = ReadState(),
 ) {
     val route get() = stack.last()
+    val showIntro get() = identityRestored && intro?.completed == false && !identity.signedIn
     val canGoBack get() = stack.size > 1 || identity.signedIn && tab != Destination.HOME
 }
 

@@ -7,6 +7,6 @@ import com.floopel.feature.traveler.domain.repository.*
 fun androidTravelerRuntime(origin: String, appVersion: String, refreshStore: RefreshCredentialStore,
     itineraryStore: ItineraryRecoveryStore, tripStore: TripRecoveryStore, distributionStore: TripRecoveryStore, questGroupStore: TripRecoveryStore,
     newOperationKey: () -> String, attestation: QuestAttestation? = null, location: QuestLocationSource? = null,
-    mediaStore: TripRecoveryStore, creationRouteStore: TripRecoveryStore): TravelerRuntime =
+    mediaStore: TripRecoveryStore, creationRouteStore: TripRecoveryStore, startup: TravelerStartupRepository): TravelerRuntime =
     travelerRuntime(androidNativeApi(origin, appVersion), refreshStore, itineraryStore, tripStore,
-        distributionStore, questGroupStore, newOperationKey, attestation, location, mediaStore, creationRouteStore)
+        distributionStore, questGroupStore, newOperationKey, attestation, location, mediaStore, creationRouteStore, startup)

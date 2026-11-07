@@ -1,0 +1,160 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=<user-profile>\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=<user-profile>\.gradle\floopel-java-tmp
+Starting a Gradle Daemon, 1 busy and 1 incompatible and 3 stopped Daemons could not be reused, use --status for details
+Calculating task graph as no cached configuration is available for tasks: :apps:android:traveler:lintDebug :shared:features:traveler:testAndroidHostTest
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+> Task :shared:core:designsystem:androidPreBuild UP-TO-DATE
+> Task :shared:core:model:androidPreBuild UP-TO-DATE
+> Task :shared:core:model:preAndroidMainBuild UP-TO-DATE
+> Task :shared:core:designsystem:preAndroidMainBuild UP-TO-DATE
+> Task :shared:core:model:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:core:designsystem:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:features:traveler:androidPreBuild UP-TO-DATE
+> Task :shared:features:traveler:preAndroidMainBuild UP-TO-DATE
+> Task :shared:core:designsystem:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:core:designsystem:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:core:designsystem:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:core:designsystem:convertXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :shared:core:designsystem:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :shared:core:designsystem:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :shared:core:designsystem:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:core:designsystem:packageAndroidMainResources UP-TO-DATE
+> Task :shared:core:designsystem:parseAndroidMainLocalResources UP-TO-DATE
+> Task :shared:core:designsystem:generateAndroidMainRFile UP-TO-DATE
+> Task :shared:core:designsystem:generateComposeResClass UP-TO-DATE
+> Task :shared:core:designsystem:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :shared:core:model:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:core:model:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:features:traveler:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:features:traveler:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :shared:features:traveler:convertXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:convertXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:core:model:compileAndroidMain UP-TO-DATE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForCommonMain UP-TO-DATE
+> Task :shared:core:model:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:copyAndroidMainComposeResourcesToAndroidAssets UP-TO-DATE
+> Task :shared:features:traveler:packageAndroidMainResources UP-TO-DATE
+> Task :shared:features:traveler:parseAndroidMainLocalResources UP-TO-DATE
+> Task :shared:features:traveler:generateAndroidMainRFile UP-TO-DATE
+> Task :shared:features:traveler:processAndroidMainManifest UP-TO-DATE
+> Task :shared:features:traveler:kmpPartiallyResolvedDependenciesChecker
+> Task :shared:features:traveler:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :shared:features:traveler:generateResourceAccessorsForAndroidMain NO-SOURCE
+> Task :shared:features:traveler:generateResourceAccessorsForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:generateActualResourceCollectorsForAndroidMain UP-TO-DATE
+> Task :shared:features:traveler:generateComposeResClass UP-TO-DATE
+> Task :shared:features:traveler:generateExpectResourceCollectorsForCommonMain UP-TO-DATE
+> Task :shared:features:traveler:writeAndroidMainAarMetadata UP-TO-DATE
+> Task :apps:android:traveler:preBuild UP-TO-DATE
+> Task :apps:android:traveler:preDebugBuild UP-TO-DATE
+> Task :apps:android:traveler:generateDebugBuildConfig UP-TO-DATE
+> Task :apps:android:traveler:generateDebugResources UP-TO-DATE
+> Task :apps:android:traveler:packageDebugResources UP-TO-DATE
+> Task :shared:core:model:generateAndroidMainEmptyResourceFiles UP-TO-DATE
+> Task :apps:android:traveler:processDebugNavigationResources UP-TO-DATE
+> Task :apps:android:traveler:parseDebugLocalResources UP-TO-DATE
+> Task :apps:android:traveler:generateDebugRFile UP-TO-DATE
+> Task :apps:android:traveler:javaPreCompileDebug UP-TO-DATE
+> Task :apps:android:traveler:checkDebugAarMetadata UP-TO-DATE
+> Task :apps:android:traveler:mapDebugSourceSetPaths UP-TO-DATE
+> Task :apps:android:traveler:compileDebugNavigationResources UP-TO-DATE
+> Task :shared:core:designsystem:compileAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:bundleAndroidMainClassesToCompileJar UP-TO-DATE
+> Task :apps:android:traveler:mergeDebugResources UP-TO-DATE
+> Task :shared:features:traveler:extractAndroidMainAnnotations UP-TO-DATE
+> Task :apps:android:traveler:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :apps:android:traveler:extractDeepLinksDebug UP-TO-DATE
+> Task :shared:core:designsystem:processAndroidMainManifest UP-TO-DATE
+> Task :shared:core:model:processAndroidMainManifest UP-TO-DATE
+> Task :apps:android:traveler:processDebugMainManifest UP-TO-DATE
+> Task :apps:android:traveler:processDebugManifest UP-TO-DATE
+> Task :apps:android:traveler:processDebugManifestForPackage UP-TO-DATE
+> Task :shared:core:designsystem:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :shared:core:designsystem:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :shared:features:traveler:mapAndroidMainSourceSetPaths UP-TO-DATE
+> Task :shared:features:traveler:compileAndroidMainLibraryResources UP-TO-DATE
+> Task :apps:android:traveler:processDebugResources UP-TO-DATE
+> Task :apps:android:traveler:preDebugAndroidTestBuild SKIPPED
+> Task :shared:features:traveler:prepareLintJarForPublish UP-TO-DATE
+> Task :apps:android:traveler:extractProguardFiles UP-TO-DATE
+> Task :shared:core:designsystem:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :shared:core:designsystem:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:core:designsystem:createFullJarAndroidMain UP-TO-DATE
+> Task :shared:core:designsystem:prepareLintJarForPublish UP-TO-DATE
+> Task :shared:core:model:bundleAndroidMainClassesToRuntimeJar UP-TO-DATE
+> Task :shared:core:model:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:core:model:createFullJarAndroidMain UP-TO-DATE
+> Task :shared:core:model:prepareLintJarForPublish UP-TO-DATE
+> Task :shared:core:designsystem:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:core:designsystem:extractAndroidMainAnnotations UP-TO-DATE
+> Task :shared:core:designsystem:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :shared:core:designsystem:syncAndroidMainLibJars UP-TO-DATE
+> Task :shared:core:designsystem:bundleAndroidMainLocalLintAar UP-TO-DATE
+> Task :shared:core:model:checkAndroidMainAarMetadata UP-TO-DATE
+> Task :shared:core:model:extractAndroidMainAnnotations UP-TO-DATE
+> Task :shared:core:model:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :shared:core:model:syncAndroidMainLibJars UP-TO-DATE
+> Task :shared:core:model:bundleAndroidMainLocalLintAar UP-TO-DATE
+> Task :apps:android:traveler:preDebugUnitTestBuild UP-TO-DATE
+> Task :shared:features:traveler:convertXmlValueResourcesForAndroidHostTest NO-SOURCE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForAndroidHostTest NO-SOURCE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForAndroidHostTest NO-SOURCE
+> Task :shared:features:traveler:generateResourceAccessorsForAndroidHostTest NO-SOURCE
+> Task :shared:features:traveler:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :shared:features:traveler:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :shared:features:traveler:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :shared:features:traveler:generateResourceAccessorsForCommonTest NO-SOURCE
+> Task :shared:features:traveler:preAndroidHostTestBuild UP-TO-DATE
+> Task :shared:features:traveler:androidJar UP-TO-DATE
+> Task :shared:features:traveler:processAndroidHostTestJavaRes NO-SOURCE
+
+> Task :shared:features:traveler:compileAndroidMain
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/data/repository/NativeErasureApi.kt:35:13 Expression is unused.
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/shared/features/traveler/src/commonMain/kotlin/com/floopel/feature/traveler/presentation/trip/TripScreens.kt:319:140 Unnecessary safe call on a non-null receiver of type 'TravelerTrip'.
+
+> Task :shared:features:traveler:processAndroidMainJavaRes UP-TO-DATE
+> Task :shared:features:traveler:mergeAndroidMainJavaResource UP-TO-DATE
+> Task :shared:features:traveler:bundleAndroidMainClassesToCompileJar
+> Task :shared:features:traveler:syncAndroidMainLibJars
+> Task :shared:features:traveler:bundleAndroidMainLocalLintAar
+> Task :shared:features:traveler:bundleAndroidMainClassesToRuntimeJar
+> Task :apps:android:traveler:compileDebugKotlin UP-TO-DATE
+> Task :shared:features:traveler:createFullJarAndroidMain
+> Task :apps:android:traveler:compileDebugJavaWithJavac UP-TO-DATE
+> Task :apps:android:traveler:bundleDebugClassesToCompileJar UP-TO-DATE
+> Task :apps:android:traveler:generateDebugAndroidTestLintModel
+> Task :shared:features:traveler:generateAndroidHostTestLintModel
+> Task :apps:android:traveler:generateDebugLintReportModel
+> Task :apps:android:traveler:generateDebugUnitTestLintModel
+> Task :apps:android:traveler:lintAnalyzeDebugAndroidTest
+> Task :apps:android:traveler:lintAnalyzeDebugUnitTest
+> Task :apps:android:traveler:lintAnalyzeDebug
+
+> Task :shared:features:traveler:compileAndroidHostTest
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/remote/GoogleAuthenticationTest.kt:52:62 This declaration needs opt-in. Its usage should be marked with '@kotlinx.coroutines.ExperimentalCoroutinesApi' or '@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)'
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeSettingsApiTest.kt:75:34 Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+w: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/shared/features/traveler/src/commonTest/kotlin/com/floopel/feature/traveler/data/repository/NativeTripApiTest.kt:44:62 Unnecessary safe call on a non-null receiver of type 'TripMemberCapabilities'.
+
+> Task :shared:features:traveler:testAndroidHostTest
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=<user-profile>\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=<user-profile>\.gradle\floopel-java-tmp
+
+> Task :shared:features:traveler:lintAnalyzeAndroidHostTest
+
+> Task :apps:android:traveler:lintReportDebug
+Wrote HTML report to file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/apps/android/traveler/build/reports/lint-results-debug.html
+
+> Task :apps:android:traveler:lintDebug
+
+[Incubating] Problems report is available at: file:///C:/Users/Dekaulitz/Projects/floopel/floopel-mobile-apps/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 14s
+104 actionable tasks: 21 executed, 83 up-to-date
+Configuration cache entry stored.

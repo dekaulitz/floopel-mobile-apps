@@ -2,6 +2,9 @@ package com.floopel.core.designsystem.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+
+object FloopelBrand { val travelerStartup = Color(0xFF3730A3) }
 
 object FloopelSpace {
     val tiny = 4.dp
