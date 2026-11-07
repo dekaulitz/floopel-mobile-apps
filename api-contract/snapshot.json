@@ -1,5 +1,5 @@
 {
-  "snapshot_date": "2026-11-06",
+  "snapshot_date": "2026-11-07",
   "source_repository": "https://github.com/dekaulitz/com.github.floopel.prjct",
   "source_head": "58a570799e47222fb0529c2e5d869bbb152f0390",
   "source_state": "working_tree",
@@ -8,8 +8,8 @@
     {
       "file": "openapi-apps.json",
       "source_path": "application/api-contract/openapi-apps.json",
-      "source_sha256": "f57aceb563d79b27055ff8d427d2d32e5dfac1da3ac7bb94964aa1195364537d",
-      "snapshot_sha256": "c2aec1679b976bcfebeb99a871661f9108bff29a4a507591a4cf84ca92f5a0f7",
+      "source_sha256": "2645bd014067aac16c9c8f6645ee61af8dd3463cf5ab1fb46efc3be3ae92a622",
+      "snapshot_sha256": "6f8d1a4742d99d23817c1a6cbe3b831aa41685bb246e6d88b8fbd83975a26638",
       "source_working_tree_modified": true,
       "path_count": 138,
       "operation_count": 162
@@ -608,6 +608,10 @@
     {
       "scope": "search_error_envelope",
       "description": "Respons422/429 pencarian memakai ProblemEnvelope sesuai response.Error; dokumentasi Retry-After mengikuti limiter."
+    },
+    {
+      "scope": "public_itinerary_zero_duration",
+      "description": "Durasi Stop0 menit valid di privat/publik sesuai keputusan pemilik dan snapshot backend; null tetap tidak ditentukan."
     }
   ],
   "backend_dependencies": [

@@ -25578,7 +25578,8 @@
                   "name": "example"
                 },
                 "day": 1,
-                "position": 0
+                "position": 0,
+                "duration_minutes": 0
               },
               {
                 "id": "99999999-9999-4999-8999-999999999999",
@@ -25589,7 +25590,8 @@
                   "name": "example"
                 },
                 "day": 1,
-                "position": 1
+                "position": 1,
+                "duration_minutes": null
               }
             ],
             "locations": [
@@ -25857,7 +25859,8 @@
               "integer",
               "null"
             ],
-            "minimum": 1
+            "minimum": 0,
+            "description": "Durasi kunjungan dalam menit pada snapshot publikasi. Nilai 0 valid dan dipertahankan dari working plan; null berarti durasi tidak ditentukan."
           },
           "arrive_time": {
             "type": [
