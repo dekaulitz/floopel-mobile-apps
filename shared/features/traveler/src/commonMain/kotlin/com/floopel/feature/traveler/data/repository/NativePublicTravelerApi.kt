@@ -12,7 +12,9 @@ import io.ktor.http.encodeURLQueryComponent
 import kotlinx.serialization.json.*
 
 /** Public-safe reads use optional native identity as declared by the API, with no anonymous retry of private reads. */
-internal class NativePublicTravelerApi(private val rest: FloopelRestClient, private val session: TravelerSession, private val locale: String = "id") : TravelerPublicRepository {
+internal class NativePublicTravelerApi(private val rest: FloopelRestClient, private val session: TravelerSession, locale: String? = null) : TravelerPublicRepository {
+    private val requestedLocale = locale
+    private val locale get() = requestedLocale ?: session.currentLanguage
     private val http = NativeAuthorizedRequests(rest, session)
     private val avatarIdentities = TravelerAvatarIdentities({ http.execute(RestMethod.GET, it) }, rest::resolveMediaUrl)
     private val json = Json { ignoreUnknownKeys = true }

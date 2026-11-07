@@ -96,7 +96,7 @@ class TravelerFigmaDesignTest {
         ui.onNodeWithText("Memeriksa pembaruanmu").assertIsDisplayed(); capture("notifications-opening")
         gate.complete(Unit); ui.waitForIdle(); ui.onNodeWithText("Notifikasi tidak tersedia").assertIsDisplayed(); capture("notifications-unavailable"); assertEquals(0, f.base.ackCalls.get())
     }
-    @Test fun personalProfileHasThe72DpIdentityAndCompactActionsWithItsOwnScrollableHeader() {
+    @Test fun personalProfileHasThe72DpIdentityAndCompactActionsWithItsPinnedHeader() {
         launch(); profile(); val density = ui.activity.resources.displayMetrics.density
         val avatar = ui.onNodeWithTag("profile-avatar").fetchSemanticsNode().boundsInRoot
         assertEquals(72f * density, avatar.width, 1f); assertEquals(72f * density, avatar.height, 1f)
@@ -125,7 +125,7 @@ class TravelerFigmaDesignTest {
     }
     @Test fun spotDetailUsesTheGalleryAndHorizontalRelationsWithAVerticalOpenTripList() {
         val f = launch(); openSpot(); ui.onNodeWithTag("spot-comments-open").performScrollTo(); capture("spot-detail-summary")
-        ui.onNode(hasText("Magelang") and hasAnyAncestor(hasTestTag("spot-location-link")), useUnmergedTree = true).assertExists()
+        ui.onNode(hasText("Magelang · Jawa Tengah") and hasAnyAncestor(hasTestTag("spot-location-link")), useUnmergedTree = true).assertExists()
         scrollSpotTo("Quest dengan Spot ini")
         scrollSpotTo("Ada di Open Trip")
         assertEquals(f.spot.id, f.tripQueries.last().spotId); capture("spot-detail-quest-trips")

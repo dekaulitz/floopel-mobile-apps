@@ -20,6 +20,24 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TravelerLocationDesignTest {
     @get:Rule val ui = createAndroidComposeRule<ComponentActivity>()
+    @Test fun openTripRowsKeepTheSixteenDpGuttersAndLongTitlesInsideTheirTextColumn() {
+        val f = TravelerLocationFixture(); f.tripTitle = "Open Trip Bali 01: Air Terjun Tegenungan, Goa Gajah, Mandala Suci Wenara Wana dan Tampaksiring"
+        launch(f); visible("home-location-${f.magelang.id}"); ui.onNodeWithTag("home-location-${f.magelang.id}").performClick()
+        val id = f.base.openTrip.id
+        ui.onNodeWithTag("location-trip-$id").performScrollTo()
+        val density = ui.activity.resources.displayMetrics.density
+        val viewport = ui.onNodeWithTag("traveler-viewport").fetchSemanticsNode().boundsInRoot
+        val row = ui.onNodeWithTag("location-trip-$id").fetchSemanticsNode().boundsInRoot
+        val photo = ui.onNodeWithTag("location-trip-image-$id", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        val title = ui.onNodeWithTag("location-trip-title-$id", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        assertEquals(16f * density, row.left - viewport.left, 1f); assertEquals(16f * density, viewport.right - row.right, 1f)
+        assertEquals(76f * density, photo.width, 1f); assertEquals(80f * density, photo.height, 1f)
+        assertEquals(12f * density, title.left - photo.right, 1f); assertTrue(title.right <= row.right)
+        val layouts = mutableListOf<androidx.compose.ui.text.TextLayoutResult>()
+        ui.onNodeWithTag("location-trip-title-$id", useUnmergedTree = true).performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.GetTextLayoutResult) { it(layouts) }
+        assertEquals(2, layouts.single().lineCount); assertTrue(layouts.single().isLineEllipsized(1))
+        capture("location-trip-long-title-padding")
+    }
     private fun launch(f: TravelerLocationFixture = TravelerLocationFixture(), scale: Float = 1f): TravelerLocationFixture {
         ui.setContent {
             val density = LocalDensity.current.density

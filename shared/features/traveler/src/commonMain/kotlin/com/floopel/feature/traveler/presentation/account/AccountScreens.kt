@@ -226,19 +226,6 @@ private fun LegalText(document: LegalDocument) {
 }
 
 @Composable
-internal fun LegalScreen(state: TravelerState, model: TravelerViewModel) {
-    val documents = state.legal.value.orEmpty()
-    var agreed by remember(documents.map { it.hash }) { mutableStateOf(false) }
-    FormLayout(footer = {
-        FloopelButton(s(Res.string.accept_continue), model::acceptLegal, Modifier.fillMaxWidth(), enabled = agreed && !state.busy && documents.isNotEmpty())
-    }) {
-        Body(s(Res.string.legal_body))
-        documents.forEach { LegalText(it) }
-        CheckRow(s(Res.string.accept_terms), agreed, { agreed = it })
-    }
-}
-
-@Composable
 internal fun NotificationsScreen(state: TravelerState, model: TravelerViewModel) {
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         state.unread.value?.let { Body("$it " + s(Res.string.unread)) }

@@ -25,6 +25,9 @@ class TravelerRuntime(
     val close: () -> Unit = {},
     val comments: TravelerCommentRepository? = null,
     val settings: TravelerSettingsRepository? = null,
+    val erasure: TravelerErasureRepository? = null,
+    val moderation: TravelerModerationRepository? = null,
+    val legalDocuments: TravelerLegalDocumentRepository? = null,
 )
 
 /** Hosts own platform services and close the runtime once their retained owner is cleared. */
@@ -43,7 +46,7 @@ internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStor
     // the POST so a newly published document fails closed instead of waiting on an unwired dialog.
     val commentConsent = object : TravelerConsentGate {
         override suspend fun ensure(): CatalogResult<Unit> {
-            return when (val result = legal.pending("id")) {
+            return when (val result = legal.pending(session.currentLanguage)) {
                 is CatalogResult.Ready -> if (result.value.isEmpty()) CatalogResult.Ready(Unit) else CatalogResult.HttpError(409, code = "LEGAL_CONSENT_REQUIRED")
                 is CatalogResult.HttpError -> result
                 is CatalogResult.Maintenance -> result
@@ -59,5 +62,6 @@ internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStor
         NativeNotificationApi(rest, session), NativeAccountApi(rest, session), legal,
         NativeRegistrationApi(api), NativePublicTravelerApi(rest, session), NativeSavedSpotApi(rest, session, catalog),
         NativeQuestGroupApi(rest, session, questGroupStore), newOperationKey, startup, api::close,
-        comments = NativeCommentApi(rest, session, commentConsent), settings = NativeSettingsApi(rest, session))
+        comments = NativeCommentApi(rest, session, commentConsent), settings = NativeSettingsApi(rest, session),
+        erasure = NativeErasureApi(rest, session), moderation = NativeModerationApi(rest, session), legalDocuments = legal)
 }

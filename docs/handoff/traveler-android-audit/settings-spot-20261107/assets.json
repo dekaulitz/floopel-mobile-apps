@@ -1,0 +1,160 @@
+[
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_auth.svg",
+    "bytes": 2504,
+    "sha256": "793b2d791f8d7035fc1b07b6435b22c5df2de64188ea49c2a46d9343132d2f42",
+    "figma_asset": "e1247.svg",
+    "figma_frames": [
+      "319:5536",
+      "319:6076",
+      "319:5965"
+    ],
+    "root_width": "160",
+    "root_height": "106.667",
+    "view_box": "0 0 160 106.667",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "160 x 106.667 dp, centered",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_request.svg",
+    "bytes": 1832,
+    "sha256": "a65787a6a68963c3f930965d27dcb472fbc8c9a8a4c7db6ae47ba3722ec2a2f1",
+    "figma_asset": "5455d.svg",
+    "figma_frames": [
+      "132:2209",
+      "132:2297"
+    ],
+    "root_width": "190",
+    "root_height": "140",
+    "view_box": "0 0 190 140",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "190 x 140 dp, review impact card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_blocked.svg",
+    "bytes": 1877,
+    "sha256": "a04b7eda7fafb38c7ea8b86eb0fc75c25edff3f9b382b2ab19df2e349ea98125",
+    "figma_asset": "2a777.svg",
+    "figma_frames": [
+      "132:2121",
+      "132:2649"
+    ],
+    "root_width": "190",
+    "root_height": "140",
+    "view_box": "0 0 190 140",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "190 x 140 dp, blocker impact card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_pending.svg",
+    "bytes": 1664,
+    "sha256": "87c5cd840305c3859bcb6bdfa3b047cc0b9b4eac36c762da19418f57edf8b1ce",
+    "figma_asset": "727f4.svg",
+    "figma_frames": [
+      "132:2385"
+    ],
+    "root_width": "190",
+    "root_height": "140",
+    "view_box": "0 0 190 140",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "190 x 140 dp, known-deadline pending card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_running.svg",
+    "bytes": 2017,
+    "sha256": "e3908f11e213c68ea5a96eb5fb0939e061a11627c9be364d2e6d0ad881fadf4b",
+    "figma_asset": "463dd.svg",
+    "figma_frames": [
+      "132:2561"
+    ],
+    "root_width": "190",
+    "root_height": "140",
+    "view_box": "0 0 190 140",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "190 x 140 dp, erasing impact card",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_success.svg",
+    "bytes": 1737,
+    "sha256": "cd006177b5c6cf30bf417cd5cb8842861a7b6938c18a16396a6680d938043eb9",
+    "figma_asset": "4f742.svg",
+    "figma_frames": [
+      "319:6398",
+      "445:11949"
+    ],
+    "root_width": "160",
+    "root_height": "106.667",
+    "view_box": "0 0 160 106.667",
+    "callsite": "AccountErasureScreen.kt; SpotReportScreen.kt",
+    "effective_geometry": "160 x 106.667 dp, success",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_progress.svg",
+    "bytes": 1864,
+    "sha256": "ab551a4ec228c8aa076a2d8e7c55a24762f8843551ff4f81be2960b65cd91e75",
+    "figma_asset": "91004.svg",
+    "figma_frames": [
+      "319:5867",
+      "319:6202",
+      "319:6300",
+      "319:6498"
+    ],
+    "root_width": "160",
+    "root_height": "106.667",
+    "view_box": "0 0 160 106.667",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "160 x 106.667 dp, mutation/read/cancel verification progress",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/erasure_verify_progress.svg",
+    "bytes": 1864,
+    "sha256": "4515cd9bd799021f842631ed3355da4d47fdc5d135d697479022b08941b808f5",
+    "figma_asset": "1c232.svg",
+    "figma_frames": [
+      "319:5665"
+    ],
+    "root_width": "160",
+    "root_height": "106.667",
+    "view_box": "0 0 160 106.667",
+    "callsite": "AccountErasureScreen.kt",
+    "effective_geometry": "160 x 106.667 dp, request verification progress",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_save.svg",
+    "bytes": 517,
+    "sha256": "17538c177708689b3adfa325e7bfab079d18ed493cdf00c5c395cd56491c0319",
+    "figma_asset": "4ea89.svg",
+    "figma_frames": [
+      "308:7391"
+    ],
+    "root_width": "20",
+    "root_height": "20",
+    "view_box": "0 0 20 20",
+    "callsite": "SpotDetailScreen.kt",
+    "effective_geometry": "20 x 20 dp, Save leading icon",
+    "modified": false
+  },
+  {
+    "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_saved.svg",
+    "bytes": 296,
+    "sha256": "d2c4096f21961eb3acaaababae0f847ceb3891a6f0e9c176b915cf0173e3bf0f",
+    "figma_asset": "ab1db.svg",
+    "figma_frames": [
+      "328:8971"
+    ],
+    "root_width": "24",
+    "root_height": "24",
+    "view_box": "0 0 24 24",
+    "callsite": "SpotDetailScreen.kt",
+    "effective_geometry": "24 x 24 dp at top/start, clipped by 20 x 20 dp slot per design",
+    "modified": false
+  }
+]

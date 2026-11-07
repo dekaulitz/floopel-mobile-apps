@@ -8,13 +8,14 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Instant
 
 /** Synthetic domain data for layout/state regression tests. Never included in a production APK. */
-class TravelerFigmaFixture {
+class TravelerFigmaFixture(photoUrls: List<String>? = null) {
     val base = TravelerFixture()
     val profile = PersonalProfile("Traveler", "Simulasi", "traveler_simulasi", "ID")
     val location = CatalogEntry("00000000-0000-4000-8000-000000000101", "magelang-simulasi", "Magelang", null, CatalogKind.LOCATION, null,
         locationLevel = "city", ancestors = listOf(LocationAncestor("province", "Jawa Tengah", "region"), LocationAncestor("country", "Indonesia", "country")))
     val spot = base.spot.copy(category = "Warisan", aiReference = AiReferenceRating(4.8, false), commentCount = 1_200,
-        locationId = location.id, coverUrl = "file:///floopel-synthetic-fixture/cover.jpg", photos = listOf(CatalogPhoto("file:///floopel-synthetic-fixture/cover.jpg", "Foto simulasi"), CatalogPhoto("file:///floopel-synthetic-fixture/second.jpg", "Foto kedua simulasi")))
+        locationId = location.id, coverUrl = if (photoUrls != null) photoUrls.firstOrNull() else "file:///floopel-synthetic-fixture/cover.jpg",
+        photos = photoUrls?.map { CatalogPhoto(it, "Foto simulasi") } ?: listOf(CatalogPhoto("file:///floopel-synthetic-fixture/cover.jpg", "Foto simulasi"), CatalogPhoto("file:///floopel-synthetic-fixture/second.jpg", "Foto kedua simulasi")))
     val secondSpot = spot.copy(id = "00000000-0000-4000-8000-000000000102", slug = "spot-kedua", title = "Spot kedua simulasi", category = "Alam", commentCount = 1_000)
     val article = CatalogEntry("article", "artikel-simulasi", "Artikel simulasi", "Cerita untuk pengujian UI.", CatalogKind.STORY, null)
     val collection = CatalogEntry("collection", "collection-simulasi", "Collection simulasi", "Magelang", CatalogKind.COLLECTION, null)

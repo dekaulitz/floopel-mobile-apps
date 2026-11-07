@@ -4,6 +4,8 @@
 
 Android Traveler kini memakai runtime API native dan UI Compose di commonMain. Fokus implementasi adalah Quest, itinerary/publikasi dan Trip/admission, dilanjutkan reader publik, Saved Spot, kelompok dan inbox. Ini baseline yang dapat dibangun serta ditinjau, bukan sign-off seluruh desain atau kandidat rilis. Partner dan host iOS masih scaffold; merge/rilis tidak dilakukan.
 
+Follow-up terbaru [Settings, penghapusan akun, dokumen dan Detail Spot](traveler-settings-spot-audit.md) memperbaiki toolbar Profile/Profil publik/itinerary agar pinned dan sejajar sesuai keputusan pemilik, padding Open Trip lokasi, bahasa ID/EN persisten, serta flow erasure dan reader dokumen API. Settings tanpa pending tetap menyediakan dokumen aktif untuk dibaca tanpa persetujuan ulang, sesuai konfirmasi pemilik. Bukti source/APK, suite host/native, screenshot sintetis dan smoke MainActivity nyata ada pada [manifest batch](traveler-android-audit/settings-spot-20261107/results.json). Checkpoint lama di bawah tetap historis; tidak dianggap rerun terbaru.
+
 Hasil follow-up akun fixture lokal, perbaikan recovery/navigasi, 377 host test pada checkpoint sebelumnya, API privat dan fase native nyata tercatat pada [audit integrasi privat](traveler-private-audit.md). Follow-up [Splash dan empat intro](traveler-startup-audit.md) menambahkan progres instalasi persisten serta checkpoint 383 host/24 native test. [Koreksi state Quest](traveler-quest-state-audit.md) mengikat hasil/proof GPS ke target dan memperbaiki Retry reader, dengan 391 host/20 native test pada batch tersendiri. [Rating dan lokasi](traveler-location-rating-audit.md) memperbaiki komponen Home/Spot serta alur negara–provinsi–kota dan detail lokasi, dengan 410 host/33 native test; peta ditunda sesuai keputusan pemilik. [Audit UI](traveler-ui-audit.md) memisahkan koreksi komponen dari gap layout yang masih terbuka. Bukti checkpoint awal tetap dipertahankan.
 
 ## Acuan
@@ -53,9 +55,15 @@ Keputusan pemilik 7 November: durasi Stop 0 menit valid pada working plan dan sn
 
 Sesuai instruksi pemilik, binary backend final handover diaktifkan pada 127.0.0.1:8080 dengan worker background/media dinonaktifkan untuk audit. Source/env backend tidak diubah. Audit awal melakukan public read; follow-up membuat akun fixture lokal dan menjalankan mutasi privat yang diizinkan pemilik. Tidak ada migration/reset. Tunnel existing: https://unawake-moonlit-reckless.ngrok-free.dev. Public read lokal/tunnel mengembalikan 200; URL media payload memakai origin HTTPS yang sama. URL ini sementara, bukan konfigurasi production.
 
-Build audit memakai properti floopelApiOrigin dengan origin tunnel. Debug default memakai emulator loopback. Provider kosong menampilkan keadaan belum tersedia; tidak ada token/proof sintetis di runtime production. Konfigurasi ada di [README](../../README.md#konfigurasi-android-traveler).
+Batch terbaru memakai `FLOOPEL_DEVELOPMENT_API_ORIGIN` dengan origin tunnel pada flavor development. Flavor production memerlukan origin eksplisit dan tidak fallback ke development; lihat [konfigurasi environment](../../config/environments/README.md). Provider kosong menampilkan keadaan belum tersedia; tidak ada token/proof sintetis di runtime production. Konfigurasi ada di [README](../../README.md#konfigurasi-android-traveler).
+
+Setelah Docker direstart pemilik pada 7 November, PostgreSQL/Redis dan backend Go lokal kembali aktif. Health lokal/ngrok serta pembacaan Quest memberi 200. MainActivity memulihkan akun fixture, membaca gambar Spot nyata, Settings dan preflight erasure. Blocker Trip aktif berasal dari backend; tidak ada mutasi hapus/cancel nyata. Status gangguan database pada checkpoint Quest sebelumnya tidak lagi merupakan blocker runtime saat batch Settings ini diuji.
 
 ## Verifikasi yang dijalankan
+
+Batch terbaru: build developmentDebug Traveler/Partner dan APK androidTest Traveler PASS; lint keduanya PASS (0 error/fatal, 45 warning Traveler dan 2 Partner). Host Traveler 476 test PASS, 0 failure/error/skipped. Runner native mencakup 78 test pada emulator 5580, termasuk 16 akun dan 3 dokumen. Detail eksekusi akhir serta fingerprint tersedia pada [audit Settings/Spot](traveler-settings-spot-audit.md). iOS tetap NOT_RUN di Windows. Paket terbaru terpasang sebagai `com.floopel.traveler.dev`; resolusi/density/font asli perangkat dipulihkan.
+
+Tabel berikut menyimpan hasil checkpoint publikasi dan checkpoint sebelumnya, beserta batas aslinya.
 
 | Pemeriksaan | Hasil aktual |
 | --- | --- |
@@ -86,7 +94,7 @@ Bukti: [audit dan screenshot](traveler-android-audit/README.md), [manifest hasil
 | Photo Picker → upload → media READY nyata | Adapter/journal/status/polling terhubung, test deterministik ada. Pipeline upload/processing/publikasi API PASS dengan worker scoped; Photo Picker dan scheduler deployment belum diuji |
 | Maps Explorer dan FCM | Belum dihubungkan; perlu provider/config dan uji izin/delivery/deep link. Inbox in-app sudah tersedia |
 | Kunjungan manual Trip | Kontrak operasi/persistensi belum tersedia; tidak membuat endpoint/status palsu atau menyamakannya dengan proof Quest |
-| Lanjutan UI | Settings/edit akun/security/emergency/interests/avatar, komentar/report, filter tanggal/lokasi Open Trip, advanced day/reorder, serta pagination lanjutan kelompok belum seluruhnya dihubungkan. Adapter bukan bukti UI selesai |
+| Lanjutan UI | Settings dasar, edit profil teks/minat/kontak/security/preferences, pilihan bahasa, erasure dan dokumen API terhubung. Editor foto masih dinonaktifkan. Filter tanggal/lokasi Open Trip, advanced day/reorder, pagination kelompok dan gap reader lain tetap memerlukan iterasi; [batas Spot/laporan](traveler-settings-spot-audit.md) terpisah dari bukti mutasi akun nyata |
 | QA perangkat | TalkBack, keyboard/fokus menyeluruh, tablet/layar kecil, perangkat fisik, process-death platform/storage/provider dan performa belum diaudit lengkap |
 | Rilis | Ikon adaptive, signing, production origin/provider, release build, privacy/store review, CI/branch protection dan gate produk belum dituntaskan |
 | iOS dan Partner | Tahap berikutnya sesuai prioritas pemilik; Android PASS bukan bukti iOS |

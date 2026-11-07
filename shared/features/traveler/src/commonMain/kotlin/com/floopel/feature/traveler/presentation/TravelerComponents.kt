@@ -47,15 +47,20 @@ internal fun Body(text: String, modifier: Modifier = Modifier) {
 @Composable
 internal fun Media(url: String?, modifier: Modifier, description: String? = null,
     placeholderIcon: androidx.compose.ui.graphics.vector.ImageVector = FloopelIcons.CollectionsBookmark,
-    contentScale: ContentScale = ContentScale.Crop) {
+    contentScale: ContentScale = ContentScale.Crop, placeholderLabel: String? = null, placeholderIconSize: androidx.compose.ui.unit.Dp = 24.dp,
+    onImageReady: (Boolean) -> Unit = {}) {
     @Composable fun Placeholder() {
         Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerLow), Alignment.Center) {
-            Icon(placeholderIcon, description, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Icon(placeholderIcon, description, Modifier.size(placeholderIconSize), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (placeholderLabel != null) Body(placeholderLabel)
+            }
         }
     }
     Box(modifier) {
         if (url.isNullOrBlank()) Placeholder() else SubcomposeAsyncImage(url, description,
             modifier = Modifier.fillMaxSize(), contentScale = contentScale,
+            onSuccess = { onImageReady(true) }, onError = { onImageReady(false) },
             loading = { Placeholder() }, error = { Placeholder() })
     }
 }
@@ -159,7 +164,7 @@ internal fun CatalogCard(entry: CatalogEntry, onClick: () -> Unit, modifier: Mod
 }
 
 @Composable
-internal fun Rating(entry: CatalogEntry, detail: Boolean = false, list: Boolean = false, compactComments: Boolean = false) {
+internal fun Rating(entry: CatalogEntry, detail: Boolean = false, list: Boolean = false, compactComments: Boolean = false, inline: Boolean = false) {
     val decimal = s(Res.string.catalog_decimal_separator)
     val score = entry.aiReference?.takeUnless { it.suppressed }?.score
         ?.takeIf { it.isFinite() && it in 0.0..5.0 }?.let { catalogScore(it, decimal) }
@@ -167,5 +172,7 @@ internal fun Rating(entry: CatalogEntry, detail: Boolean = false, list: Boolean 
     val comments = count?.let { if (compactComments) catalogCount(it, decimal) else s(Res.string.catalog_comments_label, catalogCount(it, decimal)) }
     val description = listOfNotNull(score?.let { s(Res.string.reference_rating, it) },
         count?.let { s(Res.string.comments_count, it) }).joinToString(", ")
-    FloopelRatingRow(score, comments, description, modifier = Modifier.fillMaxWidth().testTag("catalog-rating-${entry.id}"), detail = detail, list = list)
+    FloopelRatingRow(score, comments, description.ifBlank { s(Res.string.spot_rating_unavailable) },
+        modifier = Modifier.fillMaxWidth().testTag("catalog-rating-${entry.id}"), detail = detail, list = list,
+        inlineSummary = if (inline) "${score ?: s(Res.string.spot_rating_unknown)} · ${comments ?: s(Res.string.catalog_comments_label, s(Res.string.spot_rating_unknown))}" else null)
 }

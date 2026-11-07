@@ -29,8 +29,10 @@ internal class NativeSavedSpotApi(
     private val session: TravelerSession,
     private val catalog: AppsTravelerCatalog,
     private val consent: com.floopel.feature.traveler.domain.repository.TravelerConsentGate? = null,
-    private val locale: String = "id",
+    locale: String? = null,
 ) : TravelerSavedSpotRepository {
+    private val requestedLocale = locale
+    private val locale get() = requestedLocale ?: session.currentLanguage
     private val json = Json { ignoreUnknownKeys = true }
     private val base = "/api/apps/v1"
     private val authorizedRequests = NativeAuthorizedRequests(rest, session)

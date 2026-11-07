@@ -182,11 +182,12 @@ internal fun LocationDetail(state: TravelerState, model: TravelerViewModel) {
                 if (page.items.isEmpty()) EmptyContent()
                 else page.items.take(3).forEach { trip ->
                     Surface(onClick = { model.open(TravelerRoute(Destination.APPLY, trip.id)) },
-                        modifier = Modifier.testTag("location-trip-${trip.id}"), color = MaterialTheme.colorScheme.surface) {
+                        modifier = Modifier.fillMaxWidth().testTag("location-trip-${trip.id}"), color = MaterialTheme.colorScheme.surface) {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Media(trip.banner?.url ?: trip.previewSpot?.spot?.coverUrl, Modifier.size(76.dp, 80.dp).clip(RoundedCornerShape(8.dp)))
+                            Media(trip.banner?.url ?: trip.previewSpot?.spot?.coverUrl, Modifier.size(76.dp, 80.dp).clip(RoundedCornerShape(8.dp)).testTag("location-trip-image-${trip.id}"))
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(trip.name, style = MaterialTheme.typography.titleMedium)
+                                Text(trip.name, Modifier.testTag("location-trip-title-${trip.id}"), style = MaterialTheme.typography.titleMedium,
+                                    maxLines = 2, overflow = TextOverflow.Ellipsis)
                                 Body(tripCatalogDate(trip.startsOn, trip.endsOn, months, includeYear = false) + " · " +
                                     s(Res.string.location_seats, trip.remainingParticipants))
                                 Text(s(Res.string.location_view_open_trip), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)

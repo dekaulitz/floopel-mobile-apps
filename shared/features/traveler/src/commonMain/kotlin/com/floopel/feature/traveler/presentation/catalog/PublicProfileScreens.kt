@@ -31,15 +31,17 @@ import com.floopel.feature.traveler.resources.*
 internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel, share: (String) -> Unit) {
     val owner = state.ownsPublicProfile
     val selection = state.route.extra.takeUnless { !owner && it in setOf("saved", "private") }.orEmpty()
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.fillMaxSize()) {
+        FloopelTopBar(s(Res.string.public_profile), Modifier.testTag("traveler-top-bar"),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp), spacing = 8.dp, navigationIcon = {
             IconButton(model::back, Modifier.size(48.dp)) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
-            Text(s(Res.string.public_profile), Modifier.weight(1f), style = MaterialTheme.typography.titleLarge)
+        }) {
             val publicProfile = state.publicProfile.value?.takeIf { it.username == state.route.id }
             val sharedIdentity = publicProfile?.let { s(Res.string.profile_share_identity, it.displayName ?: it.username, it.username) }
             IconButton({ sharedIdentity?.let(share) }, Modifier.size(48.dp), enabled = sharedIdentity != null) { Icon(FloopelIcons.Share, s(Res.string.profile_share)) }
         }
+        Column(Modifier.weight(1f).fillMaxWidth().testTag("public-profile-content").verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ReadContent(state.publicProfile, model::refresh) { profile ->
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                 FloopelAvatar(profileInitials(profile.displayName ?: profile.username), 64.dp, Modifier.testTag("public-profile-avatar"),
@@ -107,6 +109,7 @@ internal fun PublicProfileContent(state: TravelerState, model: TravelerViewModel
                     plans.forEach { ProfileItineraryCard(it, model, visitor = !owner) }
                 }
             }
+        }
         }
     }
 }

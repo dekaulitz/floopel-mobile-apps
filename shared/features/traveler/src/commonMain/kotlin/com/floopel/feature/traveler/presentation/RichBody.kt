@@ -10,10 +10,13 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 
 internal data class RichSpan(val text: String, val bold: Boolean, val italic: Boolean, val link: String?)
 internal sealed interface RichBlock {
-    data class Paragraph(val spans: List<RichSpan>) : RichBlock
+    data class Paragraph(val spans: List<RichSpan>, val headingLevel: Int? = null) : RichBlock
     data class Image(val url: String, val alt: String?) : RichBlock
 }
 
@@ -25,7 +28,11 @@ internal fun richBlocks(html: String): List<RichBlock> {
         if (text.isNotEmpty()) spans += RichSpan(text, styles.any { it.first in setOf("b", "strong", "h1", "h2", "h3", "h4") },
             styles.any { it.first in setOf("em", "i") }, styles.lastOrNull { it.first == "a" }?.second)
     }
-    fun flush() { if (spans.any { it.text.isNotBlank() }) blocks += RichBlock.Paragraph(spans.toList()); spans.clear() }
+    fun flush() {
+        if (spans.any { it.text.isNotBlank() }) blocks += RichBlock.Paragraph(spans.toList(),
+            styles.lastOrNull { it.first in setOf("h1", "h2", "h3", "h4") }?.first?.drop(1)?.toIntOrNull())
+        spans.clear()
+    }
     val inert = html.replace(Regex("<(script|style|iframe|object|template)\\b[^>]*>[\\s\\S]*?</\\1\\s*>", RegexOption.IGNORE_CASE), "")
     Regex("<!--[\\s\\S]*?-->|<[^>]*>|[^<]+").findAll(inert).forEach { match ->
         val token = match.value
@@ -75,11 +82,11 @@ private fun decodeEntities(text: String): String = Regex("&(#x[0-9a-fA-F]+|#[0-9
 }
 
 @Composable
-internal fun RichBody(html: String) {
+internal fun RichBody(html: String, textStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyMedium, legalHeadings: Boolean = false) {
     val blocks = remember(html) { richBlocks(html) }; val uri = LocalUriHandler.current
     val linkStyle = SpanStyle(color = MaterialTheme.colorScheme.primary, textDecoration = TextDecoration.Underline)
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        blocks.forEach { block -> when (block) {
+    Column(verticalArrangement = Arrangement.spacedBy(if (legalHeadings) 16.dp else 12.dp)) {
+        blocks.forEachIndexed { index, block -> when (block) {
             is RichBlock.Image -> Media(block.url, Modifier.fillMaxWidth().aspectRatio(1.6f), block.alt)
             is RichBlock.Paragraph -> Text(buildAnnotatedString {
                 block.spans.forEach { span ->
@@ -89,7 +96,10 @@ internal fun RichBody(html: String) {
                         else append(span.text)
                     }
                 }
-            }, style = MaterialTheme.typography.bodyMedium)
+            }, modifier = if (legalHeadings && block.headingLevel != null) Modifier.semantics { heading() } else Modifier,
+                style = if (legalHeadings && block.headingLevel != null) textStyle.copy(
+                    fontSize = if (index == 0 || block.headingLevel == 1) 26.sp else 20.sp,
+                    lineHeight = if (index == 0 || block.headingLevel == 1) 35.1.sp else 27.sp, fontWeight = FontWeight.Bold) else textStyle)
         } }
     }
 }

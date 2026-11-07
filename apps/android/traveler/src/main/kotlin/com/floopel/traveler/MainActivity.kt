@@ -12,8 +12,10 @@ import com.floopel.traveler.platform.location.AndroidQuestLocation
 import com.floopel.traveler.platform.auth.AndroidGoogleSignIn
 import com.floopel.traveler.platform.media.AndroidTravelerPhotoPicker
 import com.floopel.feature.traveler.TravelerApp
+import com.floopel.traveler.platform.storage.TravelerLanguage
 
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) { super.attachBaseContext(TravelerLanguage.wrap(newBase)) }
     private lateinit var owner: TravelerRuntimeOwner
     private lateinit var location: AndroidQuestLocation
     private var brandedStartup = true
@@ -39,6 +41,7 @@ class MainActivity : ComponentActivity() {
             }, googleSignIn = if (BuildConfig.GOOGLE_SERVER_CLIENT_ID.isNotBlank()) ({
                 AndroidGoogleSignIn(this, BuildConfig.GOOGLE_SERVER_CLIENT_ID).token()
             }) else null, photoPicker = photoPicker::select, startupSurface = ::updateSystemBars,
+                language = TravelerLanguage.current(this), selectLanguage = { TravelerLanguage.select(this, it) },
                 backHandler = { enabled, back -> BackHandler(enabled, back) })
         }
     }

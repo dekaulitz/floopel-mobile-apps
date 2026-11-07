@@ -43,9 +43,10 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
     override suspend fun completeGoogle(draft: RegistrationDraft) = session.completeGoogle(draft)
     override suspend fun verifyEmail(email: String, code: String) = session.verifyEmail(email, code)
     override suspend fun logout() = session.logout()
+    override suspend fun setLanguage(language: String) = session.setLanguage(language)
     override suspend fun passport() = session.loadPassport()
     override suspend fun questCatalog(filter: QuestDiscoveryFilter, page: Int): CatalogResult<QuestCatalogPage> = questRead {
-        val result = session.withIdentity(readOnly = true) { api.quests(page, "id", filter, it) }
+        val result = session.withIdentity(readOnly = true) { api.quests(page, session.currentLanguage, filter, it) }
         require(result.pagination.page == page && result.pagination.totalPages >= 0 &&
             (page <= result.pagination.totalPages || result.items.isEmpty()))
         QuestCatalogPage(result.items.map { item -> QuestCatalogItem(
@@ -79,7 +80,7 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
                 }
                 else -> CatalogResult.HttpError(404)
             }
-        } else CatalogResult.Ready(api.quest(slug, "id").reader())
+        } else CatalogResult.Ready(api.quest(slug, session.currentLanguage).reader())
     } catch (cancelled: CancellationException) { throw cancelled }
     catch (failure: ApiFailure) { CatalogResult.HttpError(failure.status, failure.retryAfterSeconds, failure.code) }
     catch (_: Exception) { CatalogResult.NetworkError }

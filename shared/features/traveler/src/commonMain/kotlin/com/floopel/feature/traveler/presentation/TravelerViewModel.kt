@@ -8,6 +8,7 @@ import com.floopel.feature.traveler.domain.repository.TravelerIntroProgress
 import com.floopel.feature.traveler.presentation.catalog.LocationBrowserPage
 import com.floopel.feature.traveler.presentation.catalog.LocationContentState
 import com.floopel.feature.traveler.presentation.catalog.SpotContentState
+import com.floopel.feature.traveler.presentation.catalog.SpotReportState
 import com.floopel.feature.traveler.presentation.quest.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -42,6 +43,9 @@ internal class TravelerViewModel(
     private var startupJob: Job? = null
     private val locationQueries = mutableMapOf<TravelerRoute, String>()
 
+    private var language = "id"
+    private val spotReports = mutableMapOf<Pair<Long, String>, SpotReportState>()
+
     init {
         if (autoStart) {
             viewModelScope.launch {
@@ -50,7 +54,7 @@ internal class TravelerViewModel(
                         reads.values.forEach(Job::cancel); reads.clear()
                         writeJob?.cancel()
                         acknowledgements.clear()
-                        locationQueries.clear()
+                        locationQueries.clear(); spotReports.clear()
                     }
                     mutable.update { current ->
                         if (current.identity.generation != identity.generation) {
@@ -77,6 +81,62 @@ internal class TravelerViewModel(
                 }
                 loadIntro()
             }
+        }
+    }
+
+    suspend fun changeLanguage(value: String) {
+        require(value in setOf("id", "en"))
+        withContext(worker) { runtime.identity.setLanguage(value) }
+        if (language == value) return
+        language = value
+        reads.values.forEach(Job::cancel); reads.clear()
+        mutable.update { it.copy(home = HomeState(), nationalities = ReadState(), interests = ReadState(),
+            catalog = ReadState(), spotScopeLocation = ReadState(), detail = ReadState(), locationBrowser = ReadState(),
+            locationCountries = ReadState(), locationContent = LocationContentState(), spotContent = SpotContentState(),
+            quests = ReadState(), quest = ReadState(), questSpots = emptyMap(), publicBadges = ReadState(),
+            notifications = ReadState(), notification = ReadState(), legal = ReadState(), references = ReadState(),
+            group = ReadState(), groupInvitations = ReadState(), groupInvitation = ReadState()) }
+        refresh()
+    }
+
+    // Report drafts are memory-only and actor-bound. An uncertain catalog POST is never repeated.
+    fun openSpotReport() {
+        val id = state.value.route.id
+        val prior = spotReports[runtime.identity.generation to id] ?: SpotReportState()
+        mutable.update { it.copy(spotContent = it.spotContent.copy(report = prior.copy(open = true))) }
+    }
+    fun closeSpotReport() {
+        if (state.value.spotContent.report.result.loading) return
+        mutable.update { it.copy(spotContent = it.spotContent.copy(report = it.spotContent.report.copy(open = false))) }
+    }
+    fun spotReportReason(value: CatalogReportReason) {
+        val current = state.value.spotContent.report
+        if (!current.uncertain && !current.result.loading && current.result.value == null)
+            mutable.update { it.copy(spotContent = it.spotContent.copy(report = current.copy(reason = value))) }
+    }
+    fun spotReportDetails(value: String) {
+        val current = state.value.spotContent.report
+        if (!current.uncertain && !current.result.loading && current.result.value == null)
+            mutable.update { it.copy(spotContent = it.spotContent.copy(report = current.copy(details = value))) }
+    }
+    fun submitSpotReport() {
+        val current = state.value.spotContent.report
+        val reason = current.reason ?: return
+        if (current.result.loading || current.result.value != null || current.uncertain || visibleCharacterCount(current.details.trim()) !in 3..1000) return
+        val epoch = runtime.identity.generation
+        val id = state.value.route.id
+        val key = runtime.newOperationKey()
+        mutable.update { it.copy(spotContent = it.spotContent.copy(report = current.copy(result = ReadState(loading = true)))) }
+        viewModelScope.launch {
+            val result = try { withContext(worker) { runtime.moderation?.catalogReport(CatalogReportTarget.SPOT, id, reason, current.details, key) ?: CatalogResult.HttpError(503) } }
+                catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { CatalogResult.NetworkError }
+            ensureActive()
+            if (epoch != runtime.identity.generation) return@launch
+            val updated = current.copy(result = ReadState<ReportReceipt>().result(result, now()),
+                uncertain = result is CatalogResult.NetworkError || result is CatalogResult.InvalidResponse || result is CatalogResult.Maintenance || result is CatalogResult.HttpError && result.status >= 500)
+            spotReports[epoch to id] = updated
+            if (state.value.spotContent.id == id) mutable.update { it.copy(spotContent = it.spotContent.copy(report = updated)) }
         }
     }
 
@@ -171,6 +231,7 @@ internal class TravelerViewModel(
         refresh()
     }
     fun back() {
+        if (state.value.spotContent.report.open) { closeSpotReport(); return }
         if (state.value.questBrowse.pickerOpen) { closeQuestLocationPicker(); return }
         if (state.value.spotContent.comments.open && !state.value.busy) { closeSpotComments(); return }
         if (state.value.busy) return
@@ -202,13 +263,13 @@ internal class TravelerViewModel(
             Destination.PROFILE_SETTINGS -> fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             Destination.PROFILE_EDIT -> {
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
-                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities("id") }
+                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities(language) }
             }
-            Destination.PROFILE_INTERESTS -> fetch("interests", { it.interests }, { s, r -> s.copy(interests = r) }) { runtime.account.interests("id") }
+            Destination.PROFILE_INTERESTS -> fetch("interests", { it.interests }, { s, r -> s.copy(interests = r) }) { runtime.account.interests(language) }
             Destination.PROFILE_SECURITY -> fetch("security", { it.security }, { s, r -> s.copy(security = r) }) { runtime.account.security() }
             Destination.PROFILE_EMERGENCY -> {
                 fetch("emergency", { it.emergency }, { s, r -> s.copy(emergency = r) }) { runtime.account.emergencyContact() }
-                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities("id") }
+                fetch("nationalities", { it.nationalities }, { s, r -> s.copy(nationalities = r) }) { runtime.account.nationalities(language) }
             }
             Destination.PROFILE_PREFERENCES -> fetch("preferences", { it.preferences }, { s, r -> s.copy(preferences = r) }) { runtime.settings?.load() ?: CatalogResult.HttpError(503) }
             Destination.COMMUNITY -> when (state.value.communityTab) { 0 -> publicPlans(); 1 -> loadOpenTrips(); else -> catalog() }
@@ -217,14 +278,14 @@ internal class TravelerViewModel(
                 catalog()
                 if (route.extra == CatalogKind.SPOT.name && route.locationContextId.isNotBlank())
                     fetch("spot-scope", { it.spotScopeLocation }, { s, r -> s.copy(spotScopeLocation = r) }) {
-                        runtime.catalog.detail(CatalogEntry(route.locationContextId, route.locationContextId, "", null, CatalogKind.LOCATION, null), "id")
+                        runtime.catalog.detail(CatalogEntry(route.locationContextId, route.locationContextId, "", null, CatalogKind.LOCATION, null), language)
                     }
             }
             Destination.COUNTRIES -> fetch("locationCountries", { it.locationCountries }, { s, r -> s.copy(locationCountries = r) }) { locationCountries() }
             Destination.DETAIL -> {
                 fetch("detail", { it.detail }, { s, r -> s.copy(detail = r) }, ready = { if (it.kind == CatalogKind.SPOT) loadSpotContent(it) }) {
                 runtime.catalog.detail(CatalogEntry(route.id, route.slug.ifBlank { route.id }, "", null,
-                    CatalogKind.entries.firstOrNull { it.name == route.extra } ?: CatalogKind.SPOT, null), "id") }
+                    CatalogKind.entries.firstOrNull { it.name == route.extra } ?: CatalogKind.SPOT, null), language) }
                 if (route.extra == CatalogKind.SPOT.name && state.value.identity.signedIn)
                     fetch("isSaved", { it.isSpotSaved }, { s, r -> s.copy(isSpotSaved = r) }) { runtime.savedSpots.isSaved(route.id) }
                 if (route.extra == CatalogKind.LOCATION.name) loadLocationContent(route.id)
@@ -279,7 +340,7 @@ internal class TravelerViewModel(
                     val result = runtime.itineraries.detail(route.id)
                     val spot = (result as? CatalogResult.Ready)?.value?.stops?.firstOrNull()
                     val detail = spot?.let { runtime.catalog.detail(CatalogEntry(it.spotId, it.spotId, it.label,
-                        null, CatalogKind.SPOT, null), "id") }
+                        null, CatalogKind.SPOT, null), language) }
                     val timezone = (detail as? CatalogResult.Ready)?.value?.timezone
                     if (state.value.route == route) mutable.update { it.copy(tripTimezone = timezone) }
                 }
@@ -314,9 +375,9 @@ internal class TravelerViewModel(
                 // A generic inbox preview is not proof that an authorized destination rendered.
                 else if (notice.targetUrl == null) replace(TravelerRoute(Destination.NOTIFICATION_DETAIL, route.id))
                 else mutable.update { it.copy(notification = ReadState(failure = ReadFailure(404, "TARGET_UNAVAILABLE"))) }
-            }) { runtime.notifications.notification(route.id, "id") }
+            }) { runtime.notifications.notification(route.id, language) }
             Destination.NOTIFICATION_DETAIL -> fetch("notification-detail", { it.notification }, { s, r -> s.copy(notification = r) }) {
-                runtime.notifications.notification(route.id, "id")
+                runtime.notifications.notification(route.id, language)
             }
             Destination.PUBLIC_PLAN -> fetch("publicPlan", { it.publicPlan }, { s, r -> s.copy(publicPlan = r) }) { runtime.publicContent.itinerary(route.id) }
             Destination.PUBLIC_PROFILE -> {
@@ -327,18 +388,18 @@ internal class TravelerViewModel(
             Destination.SAVED_SPOTS -> loadSaved()
             Destination.QUEST_GROUPS -> loadGroups()
             Destination.QUEST_GROUP -> {
-                fetch("group", { it.group }, { s, r -> s.copy(group = r) }) { runtime.questGroups.group(route.id, "id") }
+                fetch("group", { it.group }, { s, r -> s.copy(group = r) }) { runtime.questGroups.group(route.id, language) }
                 fetch("groupMembers", { it.groupMembers }, { s, r -> s.copy(groupMembers = r) }) { runtime.questGroups.members(route.id, 1) }
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             }
             Destination.QUEST_GROUP_INVITATIONS -> fetch("groupInvitations", { it.groupInvitations }, { s, r -> s.copy(groupInvitations = r) }) {
-                runtime.questGroups.invitations(1, "id", route.id.takeIf(String::isNotBlank)) }
+                runtime.questGroups.invitations(1, language, route.id.takeIf(String::isNotBlank)) }
             Destination.QUEST_GROUP_INVITATION -> {
-                fetch("groupInvitation", { it.groupInvitation }, { s, r -> s.copy(groupInvitation = r) }) { runtime.questGroups.invitation(route.id, "id") }
+                fetch("groupInvitation", { it.groupInvitation }, { s, r -> s.copy(groupInvitation = r) }) { runtime.questGroups.invitation(route.id, language) }
                 fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             }
             Destination.REGISTER -> fetch("references", { it.references }, { s, r -> s.copy(references = r) }) {
-                when (val r = runtime.registration.references("id")) {
+                when (val r = runtime.registration.references(language)) {
                     is RegistrationResult.Ready -> CatalogResult.Ready(r.value)
                     is RegistrationResult.Failed -> CatalogResult.HttpError(r.status, r.retryAfterSeconds, r.code)
                 }
@@ -364,7 +425,7 @@ internal class TravelerViewModel(
             stops.distinctBy { it.spotId }.chunked(4).forEach { group ->
                 coroutineScope { group.map { stop -> async {
                     val result = runtime.catalog.detail(CatalogEntry(stop.spotId, stop.spotId, stop.label,
-                        null, CatalogKind.SPOT, null), "id")
+                        null, CatalogKind.SPOT, null), language)
                     if (result is CatalogResult.Ready && state.value.route == route && runtime.identity.generation == epoch)
                         mutable.update { it.copy(stopCards = it.stopCards + (stop.spotId to result.value)) }
                 } }.awaitAll() }
@@ -372,11 +433,11 @@ internal class TravelerViewModel(
         }
     }
     private fun home() {
-        fetch("homeSpots", { it.home.spots }, { s, r -> s.copy(home = s.home.copy(spots = r)) }) { runtime.catalog.discoverySpots("id") }
-        fetch("homeLocations", { it.home.locations }, { s, r -> s.copy(home = s.home.copy(locations = r)) }) { runtime.catalog.topLocations("id") }
-        fetch("homeCollections", { it.home.collections }, { s, r -> s.copy(home = s.home.copy(collections = r)) }) { runtime.catalog.collections("id", 8) }
-        fetch("homeStories", { it.home.stories }, { s, r -> s.copy(home = s.home.copy(stories = r)) }) { runtime.catalog.stories("id", perPage = 8) }
-        fetch("homeQuests", { it.home.quests }, { s, r -> s.copy(home = s.home.copy(quests = r)) }) { runtime.catalog.activeQuests("id", 1) }
+        fetch("homeSpots", { it.home.spots }, { s, r -> s.copy(home = s.home.copy(spots = r)) }) { runtime.catalog.discoverySpots(language) }
+        fetch("homeLocations", { it.home.locations }, { s, r -> s.copy(home = s.home.copy(locations = r)) }) { runtime.catalog.topLocations(language) }
+        fetch("homeCollections", { it.home.collections }, { s, r -> s.copy(home = s.home.copy(collections = r)) }) { runtime.catalog.collections(language, 8) }
+        fetch("homeStories", { it.home.stories }, { s, r -> s.copy(home = s.home.copy(stories = r)) }) { runtime.catalog.stories(language, perPage = 8) }
+        fetch("homeQuests", { it.home.quests }, { s, r -> s.copy(home = s.home.copy(quests = r)) }) { runtime.catalog.activeQuests(language, 1) }
         if (state.value.identity.signedIn) {
             fetch("profile", { it.profile }, { s, r -> s.copy(profile = r) }) { runtime.account.profile() }
             fetch("trips", { it.trips }, { s, r -> s.copy(trips = r) }) { runtime.trips.mine() }
@@ -409,13 +470,13 @@ internal class TravelerViewModel(
         fetch("catalog", { if (page == 1) ReadState() else it.catalog }, { s, r ->
             s.copy(catalog = if (page > 1 && r.value != null && s.catalog.value != null)
                 r.copy(value = r.value.copy(items = (s.catalog.value.items + r.value.items).distinctBy { it.id })) else r) }) {
-            if (kind == CatalogKind.ITINERARY) runtime.catalog.curatedItineraries(query, null, "id", page)
+            if (kind == CatalogKind.ITINERARY) runtime.catalog.curatedItineraries(query, null, language, page)
             else if (query.isNotBlank() && kind == CatalogKind.SPOT && route.destination != Destination.EXPLORER)
-                runtime.catalog.searchSpotPage(query, locationId, "id", page)
-            else if (query.isNotBlank()) when (val r = runtime.catalog.search(query, "id")) {
+                runtime.catalog.searchSpotPage(query, locationId, language, page)
+            else if (query.isNotBlank()) when (val r = runtime.catalog.search(query, language)) {
                 is CatalogResult.Ready -> CatalogResult.Ready(CatalogPage(r.value, 1, 1))
                 else -> r.failure()
-            } else runtime.catalog.browse(kind, "id", page, storyType = if (kind == CatalogKind.STORY && locationId != null) StoryType.ARTICLE else null, locationId = locationId)
+            } else runtime.catalog.browse(kind, language, page, storyType = if (kind == CatalogKind.STORY && locationId != null) StoryType.ARTICLE else null, locationId = locationId)
         }
     }
 
@@ -493,7 +554,7 @@ internal class TravelerViewModel(
             s.route.extra == "badges" -> fetch("public-profile-content", { it.publicBadges }, { old, r ->
                 old.copy(publicBadges = if (page > 1 && r.value != null) r.copy(value = r.value.copy(
                     items = (old.publicBadges.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r)
-            }) { runtime.publicContent.badges(username, "id", page) }
+            }) { runtime.publicContent.badges(username, language, page) }
             s.route.extra == "saved" && s.ownsPublicProfile -> fetch("public-profile-content", { it.savedSpots }, { old, r ->
                 old.copy(savedSpots = if (page > 1 && r.value != null) r.copy(value = r.value.copy(
                     spots = (old.savedSpots.value?.spots.orEmpty() + r.value.spots).distinctBy { it.id })) else r)
@@ -512,7 +573,7 @@ internal class TravelerViewModel(
         val countries = mutableListOf<CatalogEntry>()
         var page = 1
         while (true) {
-            val result = runtime.catalog.countryPage("id", page)
+            val result = runtime.catalog.countryPage(language, page)
             if (result !is CatalogResult.Ready) return result.failure()
             if (result.value.items.any { it.kind != CatalogKind.LOCATION || it.locationLevel != "country" }) return CatalogResult.InvalidResponse
             countries += result.value.items
@@ -532,7 +593,7 @@ internal class TravelerViewModel(
             val choices = locationCountries()
             if (choices !is CatalogResult.Ready) return@fetch choices.failure()
             val region = if (route.id.isNotBlank()) {
-                val result = runtime.catalog.detail(CatalogEntry(route.id, route.id, "", null, CatalogKind.LOCATION, null), "id")
+                val result = runtime.catalog.detail(CatalogEntry(route.id, route.id, "", null, CatalogKind.LOCATION, null), language)
                 if (result !is CatalogResult.Ready) return@fetch result.failure()
                 if (result.value.locationLevel != "region") return@fetch CatalogResult.InvalidResponse
                 result.value
@@ -543,12 +604,12 @@ internal class TravelerViewModel(
             else choices.value.firstOrNull { it.slug == "indonesia" } ?: choices.value.firstOrNull()
             if (region != null && region.parentLocationId != country?.id) return@fetch CatalogResult.InvalidResponse
             val result = when {
-                query.isNotBlank() -> when (val search = runtime.catalog.searchLocations(query, "id")) {
+                query.isNotBlank() -> when (val search = runtime.catalog.searchLocations(query, language)) {
                     is CatalogResult.Ready -> CatalogResult.Ready(CatalogPage(search.value, 1, 1))
                     else -> search.failure()
                 }
                 country == null -> CatalogResult.Ready(CatalogPage(emptyList(), 1, 0))
-                else -> runtime.catalog.browse(CatalogKind.LOCATION, "id", page, parentId = region?.id ?: country.id)
+                else -> runtime.catalog.browse(CatalogKind.LOCATION, language, page, parentId = region?.id ?: country.id)
             }
             if (result !is CatalogResult.Ready) result.failure()
             else if (result.value.items.any { it.kind != CatalogKind.LOCATION }) CatalogResult.InvalidResponse
@@ -601,27 +662,27 @@ internal class TravelerViewModel(
     private fun loadLocationContent(id: String) {
         if (state.value.locationContent.id != id) mutable.update { it.copy(locationContent = LocationContentState(id)) }
         fetch("locationSpots", { it.locationContent.spots }, { s, r -> s.copy(locationContent = s.locationContent.copy(spots = r)) }) {
-            runtime.catalog.browse(CatalogKind.SPOT, "id", 1, locationId = id)
+            runtime.catalog.browse(CatalogKind.SPOT, language, 1, locationId = id)
         }
         fetch("locationQuests", { it.locationContent.quests }, { s, r -> s.copy(locationContent = s.locationContent.copy(quests = r)) }) {
-            runtime.catalog.untakenLocationQuests(id, "id", 1)
+            runtime.catalog.untakenLocationQuests(id, language, 1)
         }
         fetch("locationTrips", { it.locationContent.trips }, { s, r -> s.copy(locationContent = s.locationContent.copy(trips = r)) }) {
             runtime.trips.openTrips(OpenTripQuery(locationId = id, limit = 8))
         }
         fetch("locationArticles", { it.locationContent.articles }, { s, r -> s.copy(locationContent = s.locationContent.copy(articles = r)) }) {
-            runtime.catalog.browse(CatalogKind.STORY, "id", 1, storyType = StoryType.ARTICLE, locationId = id)
+            runtime.catalog.browse(CatalogKind.STORY, language, 1, storyType = StoryType.ARTICLE, locationId = id)
         }
     }
 
     private fun loadSpotContent(entry: CatalogEntry) {
         if (state.value.spotContent.id != entry.id) mutable.update { it.copy(spotContent = SpotContentState(entry.id)) }
         entry.locationId?.let { id -> fetch("spot-location", { it.spotContent.location }, { s, r -> s.copy(spotContent = s.spotContent.copy(location = r)) }) {
-            runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), "id")
+            runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), language)
         } }
-        fetch("spot-quests", { it.spotContent.quests }, { s, r -> s.copy(spotContent = s.spotContent.copy(quests = r)) }) { runtime.catalog.spotQuests(entry.id, "id", 1) }
+        fetch("spot-quests", { it.spotContent.quests }, { s, r -> s.copy(spotContent = s.spotContent.copy(quests = r)) }) { runtime.catalog.spotQuests(entry.id, language, 1) }
         fetch("spot-trips", { it.spotContent.trips }, { s, r -> s.copy(spotContent = s.spotContent.copy(trips = r)) }) { runtime.trips.openTrips(OpenTripQuery(spotId = entry.id)) }
-        fetch("spot-articles", { it.spotContent.articles }, { s, r -> s.copy(spotContent = s.spotContent.copy(articles = r)) }) { runtime.catalog.spotArticles(entry.id, "id", 1) }
+        fetch("spot-articles", { it.spotContent.articles }, { s, r -> s.copy(spotContent = s.spotContent.copy(articles = r)) }) { runtime.catalog.spotArticles(entry.id, language, 1) }
     }
 
     fun moreSpotTrips() {
@@ -747,27 +808,27 @@ internal class TravelerViewModel(
     }
     private fun loadGroups(page: Int = 1) = fetch("groups", { it.groups }, { s, r -> s.copy(groups =
         if (page > 1 && r.value != null) r.copy(value = r.value.copy(items = (s.groups.value?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r) }) {
-        runtime.questGroups.groups(page, "id", state.value.route.id.takeIf(String::isNotBlank)) }
+        runtime.questGroups.groups(page, language, state.value.route.id.takeIf(String::isNotBlank)) }
     fun createGroup() {
         val questId = state.value.route.id
         if (questId.isBlank()) return
         write({
-            when (val current = runtime.questGroups.groups(1, "id", questId)) {
+            when (val current = runtime.questGroups.groups(1, language, questId)) {
                 is CatalogResult.Ready -> current.value.items.firstOrNull { it.questId == questId }?.let { CatalogResult.Ready(it) }
-                    ?: runtime.questGroups.createGroup(questId, "id", runtime.newOperationKey())
+                    ?: runtime.questGroups.createGroup(questId, language, runtime.newOperationKey())
                 else -> current.failure()
             }
         }) { replace(TravelerRoute(Destination.QUEST_GROUP, it.id)) }
     }
-    fun inviteToGroup(username: String) = write({ runtime.questGroups.invite(state.value.route.id, username, "id", runtime.newOperationKey()) }) {
+    fun inviteToGroup(username: String) = write({ runtime.questGroups.invite(state.value.route.id, username, language, runtime.newOperationKey()) }) {
         mutable.update { it.copy(saved = true) }
     }
-    fun decideGroupInvitation(accept: Boolean) = write({ runtime.questGroups.decideInvitation(state.value.route.id, accept, "id", runtime.newOperationKey()) }) {
+    fun decideGroupInvitation(accept: Boolean) = write({ runtime.questGroups.decideInvitation(state.value.route.id, accept, language, runtime.newOperationKey()) }) {
         if (accept) replace(TravelerRoute(Destination.QUEST_GROUP, it.groupId)) else back()
     }
     fun leaveGroup(disband: Boolean) = write({ if (disband) runtime.questGroups.disbandGroup(state.value.route.id, runtime.newOperationKey())
         else runtime.questGroups.leaveGroup(state.value.route.id, runtime.newOperationKey()) }) { back() }
-    fun transferGroup(profileId: String) = write({ runtime.questGroups.transferManager(state.value.route.id, profileId, "id", runtime.newOperationKey()) }) { refresh() }
+    fun transferGroup(profileId: String) = write({ runtime.questGroups.transferManager(state.value.route.id, profileId, language, runtime.newOperationKey()) }) { refresh() }
     private fun loadOpenTrips(cursor: String? = null) {
         val query = state.value.query
         val locationId = state.value.route.takeIf { it.destination == Destination.OPEN_TRIPS }?.id?.takeIf(String::isNotBlank)
@@ -915,7 +976,7 @@ internal class TravelerViewModel(
                     filter = old.questBrowse.filter.copy(locationName = entry.title), draft = old.questBrowse.draft?.let { draft ->
                         if (draft.location?.id == id) draft.copy(location = draft.location.copy(name = entry.title)) else draft }))
             }
-        }) { runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), "id") }
+        }) { runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.LOCATION, null), language) }
     }
     fun openQuestLocationPicker() {
         if (state.value.route.destination != Destination.QUEST_FILTER) return
@@ -937,9 +998,9 @@ internal class TravelerViewModel(
         fetch("quest-picker", { it.questBrowse.pickerRows }, { old, r ->
             if (old.questBrowse.pickerOpen && old.questBrowse.pickerQuery == query) old.copy(questBrowse = old.questBrowse.copy(pickerRows = r)) else old
         }) {
-            if (query.isBlank()) runtime.catalog.topLocations("id", 20)
+            if (query.isBlank()) runtime.catalog.topLocations(language, 20)
             else if (query.trim().length < 3) CatalogResult.Ready(emptyList())
-            else { delay(300); runtime.catalog.searchLocations(query.trim(), "id") }
+            else { delay(300); runtime.catalog.searchLocations(query.trim(), language) }
         }
     }
     fun selectQuestFilterLocation(entry: CatalogEntry?) {
@@ -951,7 +1012,7 @@ internal class TravelerViewModel(
     fun loadQuestSpot(id: String) {
         if (state.value.route.destination != Destination.QUEST || state.value.quest.value?.steps?.none { it.spotId == id } != false) return
         fetch("quest-spot-$id", { it.questSpots[id] ?: ReadState() }, { old, r -> old.copy(questSpots = old.questSpots + (id to r)) }) {
-            when (val result = runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.SPOT, null), "id")) {
+            when (val result = runtime.catalog.detail(CatalogEntry(id, id, "", null, CatalogKind.SPOT, null), language)) {
                 is CatalogResult.Ready -> if (result.value.id == id && result.value.kind == CatalogKind.SPOT) result else CatalogResult.InvalidResponse
                 else -> result
             }
@@ -1147,7 +1208,7 @@ internal class TravelerViewModel(
         mutable.update { it.copy(notificationAppending = page > 1) }
         fetch("notifications", { it.notifications }, { s, r -> s.copy(notifications = if (page > 1 && r.value != null)
             r.copy(value = r.value.copy(items = (previous?.items.orEmpty() + r.value.items).distinctBy { it.id })) else r) }) {
-            runtime.notifications.notifications(page, filter, "id")
+            runtime.notifications.notifications(page, filter, language)
         }
     }
     fun openNotification(id: String) = open(TravelerRoute(Destination.NOTIFICATION_OPEN, id))
@@ -1182,18 +1243,6 @@ internal class TravelerViewModel(
         }
     }
 
-    fun acceptLegal() {
-        val documents = state.value.legal.value ?: return
-        val epoch = runtime.identity.generation
-        write(checkConsent = false, call = {
-            var failure: CatalogResult<Unit> = CatalogResult.Ready(Unit)
-            for (document in documents) {
-                failure = runtime.legal.accept(document, runtime.newOperationKey(), epoch)
-                if (failure !is CatalogResult.Ready) break
-            }
-            failure
-        }) { back() }
-    }
     fun register(draft: RegistrationDraft) {
         if (state.value.identity.googleOnboardingRequired) { auth { runtime.identity.completeGoogle(draft) }; return }
         val key = registrationKey ?: runtime.newOperationKey().also { registrationKey = it }
@@ -1238,7 +1287,7 @@ internal class TravelerViewModel(
         writeJob = viewModelScope.launch {
             try {
                 if (checkConsent) {
-                    val pending = withContext(worker) { runtime.legal.pending("id") }
+                    val pending = withContext(worker) { runtime.legal.pending(language) }
                     if (pending !is CatalogResult.Ready) {
                         mutable.update { it.copy(writeFailure = ReadState<Unit>().result(pending.failure(), now()).failure) }; return@launch
                     }

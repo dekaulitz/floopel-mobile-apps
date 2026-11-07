@@ -13,6 +13,8 @@ interface TravelerIdentity {
     suspend fun verifyEmail(email: String, code: String)
     suspend fun logout()
     suspend fun passport()
+    /** Language affects localized reads, never the account's authentication scope. */
+    suspend fun setLanguage(language: String) = Unit
     /** Personalized catalog filters are applied by the server before pagination. */
     suspend fun questCatalog(filter: QuestDiscoveryFilter, page: Int): CatalogResult<QuestCatalogPage> = CatalogResult.InvalidResponse
     /** Complete owner progress projection; no public reward/Quest IDs are invented for its lean rows. */

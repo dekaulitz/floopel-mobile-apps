@@ -22,7 +22,17 @@ import kotlin.time.Instant
 
 
 
-internal class TravelerSession(private val api: NativeApi, private val store: RefreshCredentialStore, private val locale: String, private val nowMillis: () -> Long = { Clock.System.now().toEpochMilliseconds() }, private val attestation: QuestAttestation? = null, private val locationSource: QuestLocationSource? = null, private val onLogout: () -> Unit = {}, private val beforeLogout: suspend () -> Unit = {}) {
+internal class TravelerSession(private val api: NativeApi, private val store: RefreshCredentialStore, locale: String, private val nowMillis: () -> Long = { Clock.System.now().toEpochMilliseconds() }, private val attestation: QuestAttestation? = null, private val locationSource: QuestLocationSource? = null, private val onLogout: () -> Unit = {}, private val beforeLogout: suspend () -> Unit = {}) {
+    private val language = kotlinx.coroutines.flow.MutableStateFlow(locale)
+    private val locale get() = language.value
+    internal val currentLanguage get() = language.value
+    suspend fun setLanguage(value: String) {
+        require(value in setOf("id", "en"))
+        val changed = guard.withLock {
+            if (language.value == value) false else { language.value = value; api.clearPageReads(); true }
+        }
+        if (changed && view.value.signedIn) loadPassport()
+    }
     private val state = MutableStateFlow(SessionView())
     val view = state.asStateFlow()
     private val guard = Mutex()

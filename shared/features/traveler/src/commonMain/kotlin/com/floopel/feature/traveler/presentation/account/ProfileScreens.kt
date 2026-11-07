@@ -35,12 +35,14 @@ internal fun profileXpProgress(xp: Long, floor: Long?, remaining: Long?): Pair<L
 
 @Composable
 internal fun ProfileOverview(state: TravelerState, model: TravelerViewModel) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(s(Res.string.profile), Modifier.weight(1f).testTag("profile-heading"), style = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp, lineHeight = 35.1.sp, fontWeight = FontWeight.Medium))
+    Column(Modifier.fillMaxSize()) {
+        FloopelTopBar(s(Res.string.profile), Modifier.testTag("traveler-top-bar"), titleModifier = Modifier.testTag("profile-heading"),
+            titleStyle = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp, lineHeight = 35.1.sp, fontWeight = FontWeight.Medium),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
             IconButton({ model.open(TravelerRoute(Destination.PROFILE_SETTINGS)) }, Modifier.size(48.dp)) { Icon(FloopelIcons.Settings, s(Res.string.profile_settings)) }
         }
+        Column(Modifier.weight(1f).fillMaxWidth().testTag("personal-profile-content").verticalScroll(rememberScrollState())
+            .padding(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ReadContent(state.profile, model::refresh) { profile ->
             Column(Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 8.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 FloopelAvatar(profileInitials("${profile.firstName} ${profile.lastName}"), 72.dp, Modifier.testTag("profile-avatar"),
@@ -86,11 +88,13 @@ internal fun ProfileOverview(state: TravelerState, model: TravelerViewModel) {
             FloopelNavigationRow(s(Res.string.profile_security_short), FloopelIcons.Shield, FloopelIcons.ChevronRight, { model.open(TravelerRoute(Destination.PROFILE_SECURITY)) })
             FloopelNavigationRow(s(Res.string.profile_interests_short), FloopelIcons.FavoriteBorder, FloopelIcons.ChevronRight, { model.open(TravelerRoute(Destination.PROFILE_INTERESTS)) })
         }
+        }
     }
 }
 
 @Composable
-internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel) {
+internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel, language: String = "id",
+    selectLanguage: ((String) -> Unit)? = null, erasure: (() -> Unit)? = null) {
     val title = when (state.route.destination) {
         Destination.PROFILE_EDIT -> Res.string.profile_edit
         Destination.PROFILE_INTERESTS -> Res.string.profile_interests
@@ -104,11 +108,9 @@ internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel
         else -> Res.string.profile_settings
     }
     Column(Modifier.fillMaxSize()) {
-        Row(Modifier.fillMaxWidth().padding(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        FloopelTopBar(s(title), Modifier.testTag("traveler-top-bar"), navigationIcon = {
             IconButton(model::back, Modifier.size(48.dp), enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
-            Text(s(title), style = MaterialTheme.typography.titleLarge)
-        }
+        })
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             when (state.route.destination) {
@@ -117,7 +119,7 @@ internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel
                 Destination.PROFILE_SECURITY -> ProfileSecurity(state, model)
                 Destination.PROFILE_EMERGENCY -> ProfileEmergency(state, model)
                 Destination.PROFILE_PREFERENCES -> ProfilePreferences(state, model)
-                else -> ProfileSettings(state, model)
+                else -> ProfileSettings(state, model, language, selectLanguage, erasure)
             }
         }
     }
@@ -244,23 +246,30 @@ private fun ProfilePreferences(state: TravelerState, model: TravelerViewModel) {
 }
 
 @Composable
-private fun ProfileSettings(state: TravelerState, model: TravelerViewModel) {
+private fun ProfileSettings(state: TravelerState, model: TravelerViewModel, language: String,
+    selectLanguage: ((String) -> Unit)?, erasure: (() -> Unit)?) {
+    var languageOpen by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     ReadContent(state.profile, model::refresh) { profile ->
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            FloopelAvatar(profileInitials("${profile.firstName} ${profile.lastName}"), 64.dp, image = profile.avatarUrl?.let { url -> { Media(url, Modifier.fillMaxSize()) } })
-            Column { Text("${profile.firstName} ${profile.lastName}", style = MaterialTheme.typography.titleLarge); Body("@${profile.username}") }
+        Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            FloopelAvatar(profileInitials("${profile.firstName} ${profile.lastName}"), 64.dp,
+                contentColor = MaterialTheme.colorScheme.onSurface, labelStyle = MaterialTheme.typography.bodyLarge,
+                image = profile.avatarUrl?.let { url -> { Media(url, Modifier.fillMaxSize()) } })
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) { Text("${profile.firstName} ${profile.lastName}", style = MaterialTheme.typography.titleLarge); Body("@${profile.username}") }
         }
     }
     Text(s(Res.string.profile_account), style = MaterialTheme.typography.titleLarge)
-    ActionRow(s(Res.string.profile_private_identity), s(Res.string.profile_private_identity_body), { model.open(TravelerRoute(Destination.PROFILE_EDIT)) }, leading = { Icon(FloopelIcons.PersonOutline, null) })
-    ActionRow(s(Res.string.profile_interests), s(Res.string.profile_interests_body), { model.open(TravelerRoute(Destination.PROFILE_INTERESTS)) }, leading = { Icon(FloopelIcons.FavoriteBorder, null) })
-    ActionRow(s(Res.string.profile_emergency), s(Res.string.profile_emergency_subtitle), { model.open(TravelerRoute(Destination.PROFILE_EMERGENCY)) }, leading = { Icon(FloopelIcons.ContactPhone, null) })
-    ActionRow(s(Res.string.profile_security), s(Res.string.profile_security_subtitle), { model.open(TravelerRoute(Destination.PROFILE_SECURITY)) }, leading = { Icon(FloopelIcons.Shield, null) })
+    ActionRow(s(Res.string.profile_private_identity), s(Res.string.profile_private_identity_body), { model.open(TravelerRoute(Destination.PROFILE_EDIT)) }, leading = { Icon(FloopelIcons.PersonOutline, null, tint = MaterialTheme.colorScheme.primary) })
+    ActionRow(s(Res.string.profile_interests), s(Res.string.settings_interests_body), { model.open(TravelerRoute(Destination.PROFILE_INTERESTS)) }, leading = { Icon(FloopelIcons.Explore, null, tint = MaterialTheme.colorScheme.primary) })
+    ActionRow(s(Res.string.profile_emergency), s(Res.string.profile_emergency_subtitle), { model.open(TravelerRoute(Destination.PROFILE_EMERGENCY)) }, leading = { Icon(FloopelIcons.ContactPhone, null, tint = MaterialTheme.colorScheme.primary) })
+    ActionRow(s(Res.string.profile_security), s(Res.string.profile_security_subtitle), { model.open(TravelerRoute(Destination.PROFILE_SECURITY)) }, leading = { Icon(FloopelIcons.Shield, null, tint = MaterialTheme.colorScheme.primary) })
     Text(s(Res.string.profile_preferences_heading), style = MaterialTheme.typography.titleLarge)
-    ActionRow(s(Res.string.profile_preferences), s(Res.string.profile_preferences_subtitle), { model.open(TravelerRoute(Destination.PROFILE_PREFERENCES)) }, leading = { Icon(FloopelIcons.NotificationsNone, null) })
-    ActionRow(s(Res.string.profile_language), s(Res.string.profile_language_id), {}, leading = { Icon(FloopelIcons.Language, null) }, enabled = false)
+    ActionRow(s(Res.string.profile_preferences), s(Res.string.profile_preferences_subtitle), { model.open(TravelerRoute(Destination.PROFILE_PREFERENCES)) }, leading = { Icon(FloopelIcons.NotificationsNone, null, tint = MaterialTheme.colorScheme.primary) })
+    ActionRow(s(Res.string.profile_language), s(if (language == "en") Res.string.language_english else Res.string.profile_language_id),
+        { languageOpen = true }, leading = { Icon(FloopelIcons.Language, null, tint = MaterialTheme.colorScheme.primary) }, enabled = selectLanguage != null && !state.busy)
     Text(s(Res.string.profile_account_data), style = MaterialTheme.typography.titleLarge)
-    ActionRow(s(Res.string.profile_erasure), s(Res.string.profile_erasure_body), {}, leading = { Icon(FloopelIcons.DeleteOutline, null) }, enabled = false)
-    ActionRow(s(Res.string.profile_documents), s(Res.string.profile_documents_body), { model.open(TravelerRoute(Destination.LEGAL)) }, leading = { Icon(FloopelIcons.Description, null) })
+    ActionRow(s(Res.string.profile_erasure), s(Res.string.profile_erasure_body), { erasure?.invoke() },
+        leading = { Icon(FloopelIcons.DeleteOutline, null, tint = MaterialTheme.colorScheme.error) }, enabled = erasure != null && !state.busy)
+    ActionRow(s(Res.string.profile_documents), s(Res.string.profile_documents_body), { model.open(TravelerRoute(Destination.LEGAL, extra = "settings")) }, leading = { Icon(FloopelIcons.Shield, null, tint = MaterialTheme.colorScheme.primary) })
     FloopelButton(s(Res.string.sign_out), model::logout, Modifier.fillMaxWidth(), secondary = true, enabled = !state.busy)
+    if (languageOpen && selectLanguage != null) LanguageDialog(language, selectLanguage) { languageOpen = false }
 }

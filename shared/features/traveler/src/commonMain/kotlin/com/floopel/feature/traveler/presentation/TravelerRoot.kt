@@ -17,6 +17,7 @@ import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.svg.SvgDecoder
 import com.floopel.core.designsystem.component.FloopelButton
+import com.floopel.core.designsystem.component.FloopelTopBar
 import com.floopel.core.designsystem.component.FloopelBottomNavigation
 import com.floopel.core.designsystem.component.FloopelBottomNavigationItem
 import com.floopel.core.designsystem.icons.FloopelIcons
@@ -39,12 +40,19 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     googleSignIn: (suspend () -> String?)?,
     photoPicker: (suspend () -> TravelerImage?)?,
     startupSurface: (Boolean) -> Unit,
+    language: String,
+    selectLanguage: ((String) -> Unit)?,
     backHandler: @Composable (Boolean, () -> Unit) -> Unit) {
     remember(runtime) {
         SingletonImageLoader.setSafe { context -> ImageLoader.Builder(context).components { add(SvgDecoder.Factory()) }.build() }
     }
     var savedStack by rememberSaveable { mutableStateOf("") }
     val model = viewModel { TravelerViewModel(runtime, savedStack) }
+    LaunchedEffect(language) { model.changeLanguage(language) }
+    var erasureOpen by rememberSaveable { mutableStateOf(false) }
+    val erasure = runtime.erasure?.let { repository ->
+        viewModel(key = "account-erasure") { ErasureViewModel(repository, runtime.identity, runtime.newOperationKey) }
+    }
     val platformScope = rememberCoroutineScope()
     var googleBusy by remember { mutableStateOf(false) }
     val state by model.state.collectAsStateWithLifecycle()
@@ -82,6 +90,25 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     }
     backHandler(state.canGoBack || state.busy, model::back)
     val route = state.route
+    LaunchedEffect(state.identity.accountRecoveryRequired) {
+        if (state.identity.accountRecoveryRequired) erasureOpen = true
+    }
+    if (erasure != null && (erasureOpen || state.identity.accountRecoveryRequired) && route.destination != Destination.FORGOT) {
+        val closeErasure: () -> Unit = {
+            erasure.close()
+            erasureOpen = false
+            if (state.identity.accountRecoveryRequired) model.logout()
+        }
+        Surface(color = MaterialTheme.colorScheme.surface) {
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).imePadding()) {
+                AccountErasureScreen(erasure, state.identity.signedIn, state.identity.accountRecoveryRequired,
+                    close = closeErasure, forgot = {
+                        erasure.close(); erasureOpen = false; model.open(TravelerRoute(Destination.FORGOT))
+                    }, backHandler = backHandler)
+            }
+        }
+        return
+    }
     val locationScreen = route.destination == Destination.COUNTRIES ||
         route.destination in setOf(Destination.CATALOG, Destination.DETAIL) && route.extra == "LOCATION"
     val spotArchive = route.destination == Destination.CATALOG && route.extra == CatalogKind.SPOT.name
@@ -100,16 +127,18 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
             if (!spotArchive && !spotDetail && (route.destination !in setOf(Destination.HOME, Destination.COMMUNITY, Destination.OPEN_TRIPS, Destination.LOGIN,
                 Destination.NOTIFICATIONS, Destination.NOTIFICATION_DEVICE, Destination.NOTIFICATION_OPEN, Destination.NOTIFICATION_DETAIL,
                 Destination.QUESTS, Destination.QUEST_FILTER, Destination.QUEST,
-                Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
+                Destination.PUBLIC_PROFILE, Destination.PROFILE, Destination.LEGAL, Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT,
                 Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY, Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES) ||
                 route.destination == Destination.OPEN_TRIPS && route.id.isNotBlank()))
-            Row(Modifier.fillMaxWidth().heightIn(min = if (locationScreen) 48.dp else 56.dp).padding(horizontal = 8.dp),
-                verticalAlignment = if (locationScreen) Alignment.CenterVertically else Alignment.Top) {
-                if (state.stack.size > 1) IconButton(model::back, enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
-                Text(s(if (locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank())
-                    Res.string.location_search_title else route.title()),
-                    Modifier.weight(1f).padding(vertical = if (locationScreen) 0.dp else 14.dp, horizontal = 8.dp),
-                    style = if (locationScreen) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge)
+            FloopelTopBar(s(if (locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank())
+                    Res.string.location_search_title else route.title()), Modifier.testTag("traveler-top-bar"),
+                titleStyle = if (locationScreen) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
+                minimumHeight = if (locationScreen) 48.dp else 56.dp,
+                contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
+                spacing = if (locationScreen) 8.dp else 12.dp,
+                navigationIcon = if (state.stack.size > 1) { {
+                    IconButton(model::back, Modifier.size(48.dp), enabled = !state.busy) { Icon(FloopelIcons.ArrowBack, s(Res.string.back)) }
+                } } else null) {
                 if (route.destination == Destination.DETAIL && route.extra == "SPOT" && state.identity.signedIn) {
                     val saved = state.isSpotSaved.value
                     IconToggleButton(saved == true, { model.setSaved() }, enabled = saved != null && !state.isSpotSaved.loading && !state.busy) {
@@ -140,7 +169,8 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.APPLY -> OpenTripDetail(state, model)
                     Destination.PROFILE -> ProfileOverview(state, model)
                     Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT, Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY,
-                    Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES -> ProfileAccountScreen(state, model)
+                    Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES -> ProfileAccountScreen(state, model,
+                        language, selectLanguage, erasure?.let { { erasureOpen = true } })
                     Destination.LOGIN -> LoginScreen(state, model, googleSignIn?.let { provider -> {
                         if (!googleBusy) platformScope.launch {
                             googleBusy = true
@@ -153,7 +183,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.REGISTER -> RegistrationScreen(state, model)
                     Destination.VERIFY -> VerificationScreen(state, model)
                     Destination.FORGOT -> ForgotScreen(state, model)
-                    Destination.LEGAL -> LegalScreen(state, model)
+                    Destination.LEGAL -> LegalReviewScreen(runtime, language, route.extra == "settings", model::back, model::logout, backHandler)
                     Destination.QUESTS -> QuestList(state, model)
                     Destination.QUEST_FILTER -> QuestFilterScreen(state, model)
                     Destination.QUEST -> QuestDetail(state, model, share)

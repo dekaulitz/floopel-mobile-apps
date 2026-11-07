@@ -127,7 +127,9 @@ class TravelerQuestDesignTest {
         assertEquals(64f * density, stars.width, 1f); assertEquals(12f * density, stars.height, 1f)
         (0..4).forEach { index -> assertEquals(12f * density, ui.onNodeWithTag("checkpoint-star-$index", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.width, 1f) }
         ui.onNodeWithContentDescription("Referensi AI: 4,8, 1200 komentar").assertExists(); capture("detail-ready-checkpoints")
-        assertEquals(0, f.activityCalls.get()); ui.onNodeWithTag("quest-checkpoint-spot-${f.spot.id}").performClick(); ui.onNodeWithText("Spot detail").assertExists()
+        assertEquals(0, f.activityCalls.get()); ui.onNodeWithTag("quest-checkpoint-spot-${f.spot.id}").performClick()
+        ui.onNodeWithTag("traveler-top-bar").assert(hasAnyDescendant(hasText(f.spot.title)))
+        ui.onNodeWithTag("spot-detail-content").assertExists()
     }
     @Test fun activeDetailUsesBoundProgressAndVerifiedActivityStatusesWithAReadOnlyContinue() {
         val f = launch(); ui.onNodeWithText(f.activeCard.title).performScrollTo().performClick()
