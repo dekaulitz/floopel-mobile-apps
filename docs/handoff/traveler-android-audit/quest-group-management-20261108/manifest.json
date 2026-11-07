@@ -1,0 +1,113 @@
+{
+  "finding": "VD-QG-MGMT-01",
+  "dedup": "quest-group-overview-management-composition-20261108-0513",
+  "client_date": "2026-11-08",
+  "base_commit": "cdc9de40bf745c6d2d2c9dcee2c316ca9b1fecd8",
+  "host": {
+    "tests": 518,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_actual_adapter_vm_cases": 4,
+  "android_build": {
+    "application_and_test_apk": "PASS",
+    "lint": "PASS",
+    "seconds": 39
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 46,
+    "new_overview_management": 10,
+    "invitation_reader_decision": 9,
+    "previous_quest_group_recovery_pagination": 7,
+    "itinerary_recovery": 4,
+    "trip_recovery": 3,
+    "journey": 13,
+    "runner_seconds": 85.086,
+    "source_apk_freeze": "PASS",
+    "source_apk_entries": 414,
+    "package": "com.floopel.traveler.dev",
+    "emulator": "5580",
+    "viewport_dp": "400x900",
+    "locales_font_scale": [
+      {
+        "locale": "id",
+        "scale": 1
+      },
+      {
+        "locale": "en",
+        "scale": 1.3
+      },
+      {
+        "locale": "en",
+        "scale": 2,
+        "scope": "management only, scale applied after entry"
+      }
+    ],
+    "fixture_pngs_inspected": 13,
+    "input_capture_qualification": "The native IME toolbar can overlay input captures; it is not app chrome."
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: core/Partner unchanged",
+  "figma": {
+    "manager_overview": "397:8120",
+    "member_overview": "397:8222",
+    "management": "397:8429",
+    "member_card": "397:8211",
+    "member_card_dp": "360x84 minimum at a 400dp viewport",
+    "mapped_assets": "Existing shared/native ArrowBack, form and buttons; platform status/gesture bars. No new static illustration.",
+    "data_qualification": "Quest context/locations, memberCount, sizeLimit, role and nullable individual progress use current API projections; no sample fallback."
+  },
+  "safety": {
+    "live_quest_group_mutations": 0,
+    "other_live_mutations": 0,
+    "test_transport": "MockEngine production adapter/VM; native domain fixtures",
+    "unknown_invite": "one fixture request; Back preserves the journal/draft with no replay",
+    "acknowledged_disband": "one fixture DELETE 204; exits both local group surfaces",
+    "database_or_app_data_cleared": false,
+    "device_clock_changed": false,
+    "api_policy_provider_credential_merge_deploy_change": false
+  },
+  "restored_ui": "Collection reader, existing session, read-only ngrok navigation with five-second manual pauses",
+  "limits": {
+    "ios": "NOT_RUN: Mac/Xcode required",
+    "talkback_voiceover": "NOT_RUN",
+    "dark_mode_physical_device_release_acceptance": "NOT_RUN",
+    "live_private_group_mutations": "NOT_RUN: fixture-only",
+    "direct_quest_gameplay_cta": "Existing Detail Quest entry retained; roster does not supply owner participation ID or complete execution eligibility.",
+    "visual_scope": "Overview/management composition and state/navigation; not whole Quest Group/gameplay parity.",
+    "shared_mapped_components": "Existing focus/disabled form/button styling retained.",
+    "other_qualifications": "No review-before-send frames, cancellation-of-invitation UI or new append-error presentation in this finding.",
+    "source_fingerprints": "Raw local execution bytes, including excluded styles.xml; not portable checkout line endings."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "build.log": "68d2746b833b32b7f82c1545189617d3902bdc7d8091fc210fe28009421a0025",
+    "cancelled-to-overview.png": "9db17136525a9fd7f899de24f11561a62918de21f1ad5f4618bf53890afc5afb",
+    "error.png": "6e91f359f1db8819d7e2913aab0a8a0dd997d8a24c7e645800782e8bd7823350",
+    "loading.png": "dd7ec97fce45775ad7a8bb82c7984789caaaa2b436b8e6a0f5c593519c5a846b",
+    "local-source-freeze.json": "71b6f55b192c83ddb0479dfa09ead9ff5716b06e698dd6166dd85ccd3335776b",
+    "management-empty.png": "19c48bd8229242aa6182a2727118644c9a36b157f36fc1475fb0673466bf151b",
+    "management-en-font200.png": "ff4477966a4846cac1a77fc4e5bdd3cad1114bf23fa8bf59a85d8ded06a3b313",
+    "management-input.png": "7f6c818e9f55856e536f6e7a8e19ccc5feee3676d673508fe694a5e7ea5d6631",
+    "manager-overview.png": "9db17136525a9fd7f899de24f11561a62918de21f1ad5f4618bf53890afc5afb",
+    "member-overview.png": "c56bf582cfe45b1e9097003f8dbda66bc453816bcb49d1026281e54a213f6bb6",
+    "native.log": "a8231c3f3fa13b8a5cfb0f9d8fe39a2f76cf2ffb684995ef9258ff0b819de17d",
+    "null-progress-capacity.png": "42273060b535d76aea03616d7dcf30abb0d5d4562656bdda9f32152e96d5ad73",
+    "overview-en-font130.png": "b301b546d22d81c636e1281e2eade27266eb1f242fceacebd5331f6792083cda",
+    "restored-collection-api.png": "f6cf9cbcb90ec298ccdc6761cf1fce938444d054941f8c43f5af365491631fce",
+    "role-changed-readonly.png": "9506cf2a758bf1ea069ae5a32304b557534a96aa9d38780debe06ae3ec53dcc7",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest.xml": "b26c60982107be3f71780324bbbde81c0bde7328c6779e68c5254c668103d711",
+    "unavailable.png": "17922c0c6f7c1cdded2dbdb99dee58e7b0bb3734f5a52f057783158118147d90",
+    "unknown-invite.png": "5e01f97aaf7ccb60b4bda8fc4bf5a575a91f7f71ac735f5f10ffc72d43bbfc6b"
+  }
+}

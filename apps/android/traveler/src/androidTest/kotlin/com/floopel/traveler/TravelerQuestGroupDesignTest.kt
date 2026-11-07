@@ -132,6 +132,7 @@ class TravelerQuestGroupDesignTest {
         ui.onNodeWithTag("quest-group-recovery-continue").assertDoesNotExist(); assertTrue(pending)
         back(); ui.onNodeWithTag("quest-group-recovery-open").assertExists()
         ui.onNodeWithText("Group fixture").performScrollTo().performClick()
+        ui.onNodeWithTag("quest-group-manage").performScrollTo().performClick()
         ui.onNode(hasSetTextAction()).performTextInput("guest_b")
         ui.onNodeWithText("Undang traveler").performScrollTo().performClick()
         ui.waitUntil(5_000) { ui.onAllNodesWithTag("quest-group-mutation-recovery").fetchSemanticsNodes().isNotEmpty() }
@@ -145,8 +146,11 @@ class TravelerQuestGroupDesignTest {
     }
     private fun list(manager:Boolean) {
         created=true; launch()
-        if(manager) ui.onNodeWithText("Group fixture").performScrollTo().performClick()
-        ui.onNodeWithText("Undangan kelompok").performScrollTo().performClick()
+        if(manager) {
+            ui.onNodeWithText("Group fixture").performScrollTo().performClick()
+            ui.onNodeWithTag("quest-group-manage").performScrollTo().performClick()
+            ui.onNodeWithTag("quest-group-sent-invitations").performScrollTo().performClick()
+        } else ui.onNodeWithText("Undangan kelompok").performScrollTo().performClick()
         ui.waitUntil(5_000) { ui.onAllNodesWithTag("quest-group-invitations-list").fetchSemanticsNodes().isNotEmpty() }
     }
     private fun pageTwoAndBack(manager:Boolean) {

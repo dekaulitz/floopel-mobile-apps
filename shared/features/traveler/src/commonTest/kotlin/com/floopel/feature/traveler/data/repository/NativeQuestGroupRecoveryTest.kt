@@ -114,6 +114,9 @@ internal class QuestGroupRecoveryFixture {
     var loseDecisionReply = false
     var beforeDecision: suspend () -> Unit = {}
     var groupReads = 0
+    var managerProfileId: String? = null
+    var groupAvailable = true
+    var loseInviteReply = false
     val decisionBodies = mutableListOf<String>()
     private val invitationStatuses = mutableMapOf<Int,String>()
     var beforeGroups: suspend () -> Unit = {}
@@ -121,7 +124,11 @@ internal class QuestGroupRecoveryFixture {
     val writeKeys = mutableListOf<String?>()
     val invitationReads = mutableListOf<Triple<String?, Int, String>>()
     fun invitationId(n: Int) = "33333333-3333-4333-8333-${n.toString().padStart(12, '0')}"
-    private fun group() = """{"id":"$groupId","quest_id":"$questId","quest_title":"Quest fixture","quest_slug":"quest-fixture","manager_profile_id":"$actor","status":"active","member_count":1,"group_size_limit":4,"created_at":"2026-11-08T00:00:00Z"}"""
+    private fun group(): String {
+        val title=if(groupAvailable) "\"Quest fixture\"" else "null"
+        val slug=if(groupAvailable) "\"quest-fixture\"" else "null"
+        return """{"id":"$groupId","quest_id":"$questId","quest_title":$title,"quest_slug":$slug,"manager_profile_id":"${managerProfileId ?: actor}","status":"${if(groupAvailable) "active" else "unavailable"}","member_count":1,"group_size_limit":4,"created_at":"2026-11-08T00:00:00Z"}"""
+    }
     private fun invitation(n: Int): String {
         val status = invitationStatuses[n] ?: "pending"
         val decided = if (status=="pending") "null" else "\"2026-11-08T00:10:00Z\""
@@ -138,6 +145,7 @@ internal class QuestGroupRecoveryFixture {
             request.method != HttpMethod.Get -> {
                 writeKeys += request.headers["Idempotency-Key"]
                 if (conflictWrite) return@MockEngine respond("""{"meta":{"code":"CONFLICT"},"error":{"code":"CONFLICT"},"data":null}""", HttpStatusCode.Conflict, headersOf(HttpHeaders.ContentType,"application/json"))
+                if(request.method==HttpMethod.Delete) return@MockEngine respond("",HttpStatusCode.NoContent)
                 if (request.method==HttpMethod.Put && path.contains("/quest-group-invitations/")) {
                     val body = (request.body as TextContent).text
                     decisionBodies += body; beforeDecision()
@@ -151,7 +159,7 @@ internal class QuestGroupRecoveryFixture {
                     if (!created) { created = true; createdCount++ }
                     if (loseCreateReply) { loseCreateReply = false; error("fixture accepted response lost") }
                     group()
-                } else { status = HttpStatusCode.Created; invitation(1) }
+                } else { status = HttpStatusCode.Created; if(loseInviteReply) error("fixture invite response lost"); invitation(1) }
             }
             else -> {
                 if (failReads) error("fixture offline")

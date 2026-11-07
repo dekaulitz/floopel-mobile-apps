@@ -38,6 +38,9 @@ internal data class SpotAdded(val itineraryId: String, val title: String, val da
 internal data class TripCreationRecovery(val draft: TripDraft?, val trip: TravelerTrip?)
 internal data class TripMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<TravelerTrip>> = ReadState())
 internal data class ItineraryMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<OwnedItinerary>> = ReadState())
+internal const val QuestGroupManagementMode = "manage"
+internal val TravelerRoute.isQuestGroupManagement get() = destination == Destination.QUEST_GROUP && extra == QuestGroupManagementMode
+internal data class QuestGroupManagementDraft(val groupId: String = "", val username: String = "")
 internal data class QuestGroupMutationRecoveryState(val required: Boolean = false, val title: String? = null,
     val review: ReadState<QuestGroupRecoveryReview> = ReadState())
 internal enum class MutationJournal { TRIP, ITINERARY, QUEST_GROUP }
@@ -126,6 +129,7 @@ internal data class TravelerState(
     val publicCanRequestNext: Boolean = true,
     val groups: ReadState<QuestGroupBatch<QuestGroup>> = ReadState(),
     val group: ReadState<QuestGroup> = ReadState(),
+    val groupManagementDraft: QuestGroupManagementDraft = QuestGroupManagementDraft(),
     val groupMembers: ReadState<QuestGroupBatch<QuestGroupMember>> = ReadState(),
     val groupInvitations: ReadState<QuestGroupBatch<QuestGroupInvitation>> = ReadState(),
     val groupInvitationsAppending: Boolean = false,
@@ -135,6 +139,9 @@ internal data class TravelerState(
     val groupInvitation: ReadState<QuestGroupInvitation> = ReadState(),
 ) {
     val route get() = stack.last()
+    val managesCurrentQuestGroup get() = identity.signedIn && route.destination == Destination.QUEST_GROUP &&
+        group.value?.let { it.id == route.id && it.available && !group.loading && group.failure == null &&
+            !profile.loading && profile.failure == null && profile.value?.profileId == it.managerProfileId } == true
     val showIntro get() = identityRestored && intro?.completed == false && !identity.signedIn
     val canGoBack get() = stack.size > 1 || identity.signedIn && tab != Destination.HOME
     val ownsPublicProfile get() = route.destination == Destination.PUBLIC_PROFILE && identity.signedIn &&

@@ -140,7 +140,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     locationScreen && route.destination == Destination.CATALOG && state.query.isNotBlank() -> Res.string.location_search_title
                     else -> route.title()
                 }), Modifier.testTag("traveler-top-bar"),
-                titleStyle = if (locationScreen || route.destination in setOf(Destination.QUEST_GROUP_RECOVERY, Destination.QUEST_GROUP_INVITATION)) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
+                titleStyle = if (locationScreen || route.destination in setOf(Destination.QUEST_GROUP, Destination.QUEST_GROUP_RECOVERY, Destination.QUEST_GROUP_INVITATION)) FloopelCatalogTypography.toolbar else MaterialTheme.typography.titleLarge,
                 minimumHeight = if (locationScreen) 48.dp else 56.dp,
                 contentPadding = if (locationScreen) PaddingValues(horizontal = 8.dp) else PaddingValues(start = 12.dp, end = 20.dp, top = 4.dp, bottom = 4.dp),
                 spacing = if (locationScreen) 8.dp else 12.dp,
@@ -231,7 +231,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.PUBLIC_PROFILE -> PublicProfileContent(state, model, share)
                     Destination.SAVED_SPOTS -> SavedSpotScreen(state, model)
                     Destination.QUEST_GROUPS -> QuestGroupList(state, model)
-                    Destination.QUEST_GROUP -> QuestGroupReader(state, model)
+                    Destination.QUEST_GROUP -> if (route.isQuestGroupManagement) QuestGroupManagementScreen(state, model) else QuestGroupReader(state, model)
                     Destination.QUEST_GROUP_INVITATIONS -> QuestGroupInvitations(state, model)
                     Destination.QUEST_GROUP_INVITATION -> QuestGroupInvitationReader(state, model)
                     Destination.QUEST_GROUP_RECOVERY -> QuestGroupRecoveryScreen(state, model)
@@ -321,7 +321,8 @@ private fun TravelerRoute.title() = when (destination) {
     Destination.PUBLIC_PLAN -> Res.string.public_itinerary
     Destination.PUBLIC_PROFILE -> Res.string.public_profile
     Destination.SAVED_SPOTS -> Res.string.saved_spots
-    Destination.QUEST_GROUPS, Destination.QUEST_GROUP -> Res.string.quest_groups
+    Destination.QUEST_GROUPS -> Res.string.quest_groups
+    Destination.QUEST_GROUP -> if (isQuestGroupManagement) Res.string.quest_group_manage else Res.string.quest_groups
     Destination.QUEST_GROUP_INVITATIONS, Destination.QUEST_GROUP_INVITATION -> Res.string.quest_group_invitations
     Destination.QUEST_GROUP_RECOVERY -> Res.string.trip
 }

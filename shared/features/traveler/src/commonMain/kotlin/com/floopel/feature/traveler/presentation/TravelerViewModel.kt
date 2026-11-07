@@ -229,6 +229,7 @@ internal class TravelerViewModel(
             publicProgress = ReadState(), publicPlans = if (route.destination == Destination.PUBLIC_PROFILE) ReadState() else it.publicPlans,
             publicBadges = ReadState(), publicPrivatePlans = ReadState(),
             group = ReadState(), groupMembers = ReadState(), groupInvitation = ReadState(),
+            groupManagementDraft = if (route.isQuestGroupManagement && it.groupManagementDraft.groupId != route.id) QuestGroupManagementDraft(route.id) else it.groupManagementDraft,
             groupInvitations = if (route.destination in setOf(Destination.QUEST_GROUP_INVITATION, Destination.QUEST_GROUP_RECOVERY)) it.groupInvitations else ReadState(),
             groupInvitationsAppending = false, groupInvitationsAppendFailure = null,
             locationBrowser = ReadState(), locationContent = LocationContentState()) }
@@ -853,7 +854,16 @@ internal class TravelerViewModel(
         groupWrite({ runtime.questGroups.createGroup(questId, language, runtime.newOperationKey()) }) { replace(TravelerRoute(Destination.QUEST_GROUP, it.id)) }
     }
     fun inviteToGroup(username: String) = groupWrite({ runtime.questGroups.invite(state.value.route.id, username, language, runtime.newOperationKey()) }) {
-        mutable.update { it.copy(saved = true) }
+        mutable.update { it.copy(saved = true, groupManagementDraft = it.groupManagementDraft.copy(username = "")) }
+    }
+    fun manageQuestGroup() {
+        val s = state.value
+        if (s.managesCurrentQuestGroup && s.identity.generation == runtime.identity.generation)
+            open(s.route.copy(extra = QuestGroupManagementMode, inboxId = null))
+    }
+    fun groupInviteUsername(value: String) {
+        if (state.value.route.isQuestGroupManagement && !state.value.busy)
+            mutable.update { it.copy(groupManagementDraft = QuestGroupManagementDraft(it.route.id, value)) }
     }
     fun decideGroupInvitation(accept: Boolean) = groupWrite({ runtime.questGroups.decideInvitation(state.value.route.id, accept, language, runtime.newOperationKey()) }) {
         reconcileGroupInvitation(it)
@@ -866,10 +876,17 @@ internal class TravelerViewModel(
         })) }
     }
     fun leaveGroup(disband: Boolean) = groupWrite({ if (disband) runtime.questGroups.disbandGroup(state.value.route.id, runtime.newOperationKey())
-        else runtime.questGroups.leaveGroup(state.value.route.id, runtime.newOperationKey()) }) { back() }
+        else runtime.questGroups.leaveGroup(state.value.route.id, runtime.newOperationKey()) }) {
+        val id = state.value.route.id
+        mutable.update { s -> s.copy(stack = s.stack.dropLastWhile { it.destination == Destination.QUEST_GROUP && it.id == id }
+            .ifEmpty { listOf(TravelerRoute(Destination.QUEST_GROUPS)) }, groupManagementDraft = QuestGroupManagementDraft(), saved = true) }
+        refresh()
+    }
     fun transferGroup(profileId: String) = groupWrite({ runtime.questGroups.transferManager(state.value.route.id, profileId, language, runtime.newOperationKey()) }) { refresh() }
-    private fun <T> groupWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) =
+    private fun <T> groupWrite(call: suspend () -> CatalogResult<T>, success: suspend (T) -> Unit) {
+        if (state.value.identity.generation != runtime.identity.generation) return
         write(call, journal = MutationJournal.QUEST_GROUP, success = success)
+    }
 
     private fun loadGroupInvitations(page: Int = 1) {
         val route = state.value.route
