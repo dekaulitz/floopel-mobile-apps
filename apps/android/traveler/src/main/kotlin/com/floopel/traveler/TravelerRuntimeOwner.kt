@@ -29,7 +29,8 @@ class TravelerRuntimeOwner(context: Context) : ViewModel() {
         AndroidTripRecoveryStore(context.applicationContext, "quest_group_$scope"),
         ::newItineraryOperationKey,
         AndroidQuestAttestation(context.applicationContext, BuildConfig.PLAY_CLOUD_PROJECT_NUMBER), location,
-        AndroidTripRecoveryStore(context.applicationContext, "media_$scope"))
+        AndroidTripRecoveryStore(context.applicationContext, "media_$scope"),
+        AndroidTripRecoveryStore(context.applicationContext, "trip_creation_routes_$scope"))
     override fun onCleared() { location.delegate = null; runtime.close() }
 
     class Factory(private val context: Context) : ViewModelProvider.Factory {

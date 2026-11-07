@@ -514,6 +514,47 @@ class NativeTripApiTest {
         }
     }
 
+    @Test fun acknowledgedCreationCanStillBeRecoveredByItsSavedRouteKeyWithoutAnotherWrite() = runTest {
+        val fixture = TripFixture()
+        try {
+            fixture.login(); fixture.commitCreations = true
+            val trip = assertIs<CatalogResult.Ready<TravelerTrip>>(fixture.repository.create("plan", draft, firstKey)).value
+            fixture.repository.completeTripCreation(trip.id)
+            assertNull(fixture.recovery.record)
+            val recreated = fixture.newRepository()
+            assertEquals(trip.id, assertIs<CatalogResult.Ready<TravelerTrip?>>(recreated.createdTripForOperation(firstKey)).value?.id)
+            assertEquals(CatalogResult.Ready(null), recreated.createdTripForOperation(nextKey))
+            assertEquals(1, fixture.writes)
+        } finally { fixture.client.close() }
+    }
+
+    @Test fun reenteredAndLegacyRoutesKeepTheOriginalCreationAfterAcknowledgement() = runTest {
+        for (routeKey in listOf(nextKey, "restored-trip-create:plan")) {
+            val fixture = TripFixture()
+            try {
+                fixture.login(); fixture.commitCreations = true; fixture.networkFailure = true
+                fixture.repository.create("plan", draft, firstKey)
+                fixture.networkFailure = false
+                val reentered = fixture.newRepository()
+                val confirmed = assertIs<CatalogResult.Ready<TravelerTrip?>>(reentered.pendingCreatedTrip("plan")).value!!
+                fixture.creationRoutes.failWrites = true
+                assertEquals(CatalogResult.InvalidResponse, reentered.rememberTripCreationRoute(routeKey, confirmed.id))
+                assertNotNull(fixture.recovery.record)
+                fixture.creationRoutes.failWrites = false
+                assertEquals(CatalogResult.Ready(Unit), reentered.rememberTripCreationRoute(routeKey, confirmed.id))
+                reentered.completeTripCreation(confirmed.id)
+                assertNull(fixture.recovery.record)
+                assertEquals(confirmed.id, assertIs<CatalogResult.Ready<TravelerTrip?>>(fixture.newRepository().createdTripForOperation(routeKey)).value?.id)
+                assertEquals(1, fixture.writes)
+                fixture.committedCreationKeys.clear() // The owned operation reader is now unavailable.
+                assertEquals(404, assertIs<CatalogResult.HttpError>(fixture.newRepository().createdTripForOperation(routeKey)).status)
+                assertEquals(1, fixture.writes)
+                fixture.owner = "another-profile"
+                assertEquals(CatalogResult.Ready(null), fixture.newRepository().createdTripForOperation(routeKey))
+            } finally { fixture.client.close() }
+        }
+    }
+
     @Test
     fun confirmedCreationStaysConfirmedWhenIntentCleanupFails() = runTest {
         val fixture = TripFixture()
@@ -837,6 +878,7 @@ internal class TripFixture {
     var time = 1_000L
     var owner = "trip-fixture-owner"
     val recovery = TripTestRecoveryStore()
+    val creationRoutes = TripTestRecoveryStore()
     val keys = mutableListOf<String>()
     var commitCreations = false
     val committedCreationKeys = mutableSetOf<String>()
@@ -974,7 +1016,7 @@ internal class TripFixture {
             "en",
         )
 
-    fun newRepository() = NativeTripApi(api.catalogTransport(), session, recovery, nowMillis = { time })
+    fun newRepository() = NativeTripApi(api.catalogTransport(), session, recovery, nowMillis = { time }, creationRoutes = creationRoutes)
 
     val repository = newRepository()
 

@@ -63,9 +63,19 @@ compose.resources { packageOfResClass = "com.floopel.feature.traveler.resources"
 tasks.withType<org.gradle.api.tasks.testing.Test>().configureEach {
     if (name == "testAndroidHostTest") {
         val live = providers.gradleProperty("floopelLiveSmoke").orElse("false").get().toBooleanStrict()
-        if (live) {
+        val privateLive = providers.gradleProperty("floopelPrivateSmoke").orElse("false").get().toBooleanStrict()
+        require(!live || !privateLive) { "Choose public or private live smoke, not both" }
+        if (live || privateLive) outputs.upToDateWhen { false }
+        if (privateLive) {
+            filter.includeTestsMatching("*.LivePrivateTravelerTest")
+            systemProperty("floopel.test.origin", providers.gradleProperty("floopelApiOrigin").get())
+            systemProperty("floopel.test.fixture", providers.gradleProperty("floopelPrivateFixtureFile").get())
+        } else if (live) {
             filter.includeTestsMatching("*.LiveCatalogSmokeTest")
             systemProperty("floopel.test.origin", providers.gradleProperty("floopelApiOrigin").get())
-        } else filter.excludeTestsMatching("*.LiveCatalogSmokeTest")
+        } else {
+            filter.excludeTestsMatching("*.LiveCatalogSmokeTest")
+            filter.excludeTestsMatching("*.LivePrivateTravelerTest")
+        }
     }
 }

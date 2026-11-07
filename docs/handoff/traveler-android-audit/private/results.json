@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "baseline": "b45d6ceeb346ee91c1221d955af83e0f3cb8bf07",
+  "host": {
+    "status": "PASS",
+    "counts": {
+      "tests": 366,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "96be9af3f34957ff00207d32c441de7faad512f3353fe20f0a6697b1488693da"
+  },
+  "host_live_private": {
+    "status": "PASS",
+    "counts": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "ec1f3d34dd760ac314353a46232798e534f6b18bd64851447ddfbf4cb6953ddd"
+  },
+  "native_domain_fixture": {
+    "status": "PASS",
+    "tests": 9,
+    "raw_log_sha256": "2f4e36c0517a70001806f7ca7735b420b8da4fe1d73f92b2767b691fa6f5408a"
+  },
+  "native_live_journey": {
+    "status": "PASS",
+    "tests": 1,
+    "raw_log_sha256": "d21ff2281b4445a7e6e282594850fe1a9def7a7e3214fb1fcb177da84701d30f"
+  },
+  "native_live_restore_after_force_stop": {
+    "status": "PASS",
+    "tests": 1,
+    "raw_log_sha256": "5bc54b21816f4385144a4ef36f7bc86a646e185c9eb39f1f9ef3ffeefb04c111"
+  },
+  "build_lint": {
+    "status": "PASS",
+    "applications": [
+      "traveler"
+    ],
+    "lint_errors": 0,
+    "lint_fatal": 0,
+    "lint_warnings": 38,
+    "raw_log_sha256": "1c78f926071febe100b84ca3cedb0a397c68be72472fe51cb00b70a03527136b"
+  },
+  "fixture": {
+    "accounts": 8,
+    "database_scope": "loopback local existing",
+    "schema": 163,
+    "migration_reset": false,
+    "credentials_in_git": false
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "resolution": "1080x2400",
+    "density": 420
+  },
+  "not_run": [
+    "real media pipeline/publication",
+    "real private notice/inbox materialization/ack",
+    "Google/Integrity/GPS provider",
+    "FCM",
+    "iOS",
+    "Android process loss during banner upload"
+  ],
+  "screenshots": {
+    "live-private-itinerary.png": "dd7e6cebf7766bb5c99bde428157b82fb5cc3748b4b1ff753cafbefeb2409ae9",
+    "public-trip-recovery.png": "b78f8f56260077b3bef357e118fee65b47c1677d10dcde809f5f212fb452c08e"
+  },
+  "native_live_process_evidence": {
+    "journey": {
+      "phase": "journey",
+      "pid": 5779,
+      "started_elapsed": 1253587
+    },
+    "restore": {
+      "phase": "restore",
+      "pid": 5916,
+      "started_elapsed": 1262028
+    },
+    "different_processes": true
+  }
+}

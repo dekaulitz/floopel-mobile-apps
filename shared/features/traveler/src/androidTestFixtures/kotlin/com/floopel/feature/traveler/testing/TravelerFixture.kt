@@ -23,6 +23,8 @@ class TravelerFixture {
     val tripCreateCalls = AtomicInteger()
     val bannerCalls = AtomicInteger()
     @Volatile var pendingCreatedTrip: TravelerTrip? = null
+    @Volatile var routeCreatedTrip: TravelerTrip? = null
+    @Volatile var pendingTripDraft: TripDraft? = null
     @Volatile var bannerResult: CatalogResult<TripBannerStatus> = CatalogResult.Ready(TripBannerStatus("banner", CoverProcessing.READY, false))
     @Volatile var coverProcessing = CoverProcessing.READY
     @Volatile var activityKind = QuestActivityKind.QUESTION
@@ -30,7 +32,7 @@ class TravelerFixture {
     @Volatile var lastAcknowledged: String? = null
     @Volatile var plan = OwnedItineraryDetail(OwnedItinerary(planId, "Rencana budaya simulasi", 1, 1, emptyList(),
         "Rencana untuk pengujian UI", isOwner = true, visibility = "private"),
-        listOf(OwnedStop("00000000-0000-4000-8000-000000000071", spotId, "Spot simulasi", 1, 1)))
+        listOf(OwnedStop("00000000-0000-4000-8000-000000000071", spotId, "Spot simulasi", 1, 0)))
     val spot = CatalogEntry(spotId, "spot-simulasi", "Spot simulasi", "Magelang", CatalogKind.SPOT, null,
         detailLoaded = true, locationName = "Magelang", timezone = "Asia/Jakarta")
     val notice = TripOutcomeNotice(noticeId, tripId, TripNoticeOutcome.MEMBER_REMOVED, "Trip simulasi",
@@ -83,6 +85,7 @@ class TravelerFixture {
             ItineraryWriteResult.Completed(plan)
         }
         "updateStop" -> { val stop = args[1] as OwnedStop; plan = plan.copy(stops = plan.stops.map { if (it.id == stop.id) stop else it }); CatalogResult.Ready(plan) }
+        "removeStop" -> { plan = plan.copy(stops = plan.stops.filterNot { it.id == args[1] }); CatalogResult.Ready(Unit) }
         "update" -> { val draft = args[1] as ItineraryDraft; plan = plan.copy(itinerary = plan.itinerary.copy(title = draft.title, description = draft.description)); CatalogResult.Ready(plan) }
         "titleDay" -> { plan = plan.copy(dayTitles = plan.dayTitles + ((args[1] as Int) to (args[2] as String))); CatalogResult.Ready(plan) }
         "pendingDraft", "pendingStop" -> CatalogResult.Ready(null)
@@ -100,8 +103,10 @@ class TravelerFixture {
         "mine" -> CatalogResult.Ready(listOf(trip))
         "detail" -> CatalogResult.Ready(trip)
         "workingPlan" -> { workingPlanCalls.incrementAndGet(); CatalogResult.Ready(TripWorkingPlan(plan.itinerary.title, plan.stops)) }
-        "pendingDraft" -> CatalogResult.Ready(null)
+        "pendingDraft" -> CatalogResult.Ready(pendingTripDraft)
         "pendingCreatedTrip" -> CatalogResult.Ready(pendingCreatedTrip)
+        "createdTripForOperation" -> CatalogResult.Ready(routeCreatedTrip)
+        "rememberTripCreationRoute" -> CatalogResult.Ready(Unit)
         "create" -> { tripCreateCalls.incrementAndGet(); CatalogResult.Ready(trip) }
         "completeTripCreation" -> { pendingCreatedTrip = null; CatalogResult.Ready(Unit) }
         "uploadBanner" -> { bannerCalls.incrementAndGet(); bannerResult }

@@ -74,7 +74,8 @@ internal class NativeItineraryApi(
     override suspend fun delete(id: String) = emptyWrite(RestMethod.DELETE, path(id))
     override suspend fun removeStop(id: String, stopId: String) = emptyWrite(RestMethod.DELETE, path(id) + "/stops/" + stopId.encodeURLPathPart())
     override suspend fun updateStop(id: String, stop: OwnedStop): CatalogResult<OwnedItineraryDetail> {
-        if (stop.day < 1 || stop.position < 1 || (stop.durationMinutes != null && stop.durationMinutes < 0)) return CatalogResult.HttpError(422)
+        // The server appends the first Stop at position 0; preserve its ordering on edits.
+        if (stop.day < 1 || stop.position < 0 || (stop.durationMinutes != null && stop.durationMinutes < 0)) return CatalogResult.HttpError(422)
         val body = buildJsonObject {
             put("day", stop.day); put("position", stop.position)
             put("override_note", stop.note.ifEmpty { null }?.let(::JsonPrimitive) ?: JsonNull)

@@ -488,7 +488,11 @@ internal class TravelerSession(private val api: NativeApi, private val store: Re
     suspend fun continueTakenQuest(id: String) = continueOwnedQuest(id, true)
 
     private suspend fun continueOwnedQuest(id: String, returnToTaken: Boolean) {
-        if (state.value.progress?.activeParticipations?.none { it.id == id } != false) return
+        val current = state.value
+        // A newly started participation can predate the cached Passport list. Its current/read intent
+        // still needs a server-authorized retry; the cache is not the ownership authority.
+        val knownCurrent = current.participation?.id == id || current.questOwner?.activeParticipation?.id == id || current.passportParticipationId == id
+        if (!knownCurrent && current.progress?.activeParticipations?.none { it.id == id } != false) return
         read(
             prepare = { it.copy(screen = TravelerScreen.QUEST_PLAY, passportParticipationId = id, returnToTakenQuests = returnToTaken,
                 participation = null, questDetail = null, questOwner = null, requestedSlug = null,

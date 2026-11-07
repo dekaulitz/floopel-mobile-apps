@@ -27,16 +27,17 @@ class TravelerRuntime(
 internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStore,
     itineraryStore: ItineraryRecoveryStore, tripStore: TripRecoveryStore, distributionStore: TripRecoveryStore, questGroupStore: TripRecoveryStore,
     newOperationKey: () -> String, attestation: QuestAttestation? = null,
-    location: QuestLocationSource? = null, mediaStore: TripRecoveryStore): TravelerRuntime {
+    location: QuestLocationSource? = null, mediaStore: TripRecoveryStore, creationRouteStore: TripRecoveryStore): TravelerRuntime {
     val session = TravelerSession(api, refreshStore, "id", attestation = attestation, locationSource = location,
-        onLogout = { itineraryStore.clear(); tripStore.clear(); distributionStore.clear(); questGroupStore.clear(); mediaStore.clear() })
+        onLogout = { itineraryStore.clear(); tripStore.clear(); distributionStore.clear(); questGroupStore.clear(); mediaStore.clear(); creationRouteStore.clear() })
     val rest = api.catalogTransport()
     val legal = NativeLegalApi(rest, session)
     val catalog = AppsTravelerCatalog(rest)
     val media = NativeMediaUploads(rest, session, mediaStore)
     return TravelerRuntime(NativeTravelerIdentity(session, api), NativeTravelerCatalog(catalog, rest, session),
         NativeItineraryApi(rest, session, itineraryStore, newOperationKey),
-        NativeItineraryDistributionApi(rest, session, distributionStore, mediaUploads = media), NativeTripApi(rest, session, tripStore, mediaUploads = media),
+        NativeItineraryDistributionApi(rest, session, distributionStore, mediaUploads = media),
+        NativeTripApi(rest, session, tripStore, mediaUploads = media, creationRoutes = creationRouteStore),
         NativeNotificationApi(rest, session), NativeAccountApi(rest, session), legal,
         NativeRegistrationApi(api), NativePublicTravelerApi(rest, session), NativeSavedSpotApi(rest, session, catalog),
         NativeQuestGroupApi(rest, session, questGroupStore), newOperationKey, api::close)

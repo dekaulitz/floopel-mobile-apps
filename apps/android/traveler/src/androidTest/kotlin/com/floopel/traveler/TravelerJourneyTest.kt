@@ -11,6 +11,9 @@ import com.floopel.feature.traveler.TravelerApp
 import com.floopel.feature.traveler.domain.model.CatalogResult
 import com.floopel.feature.traveler.domain.model.CoverProcessing
 import com.floopel.feature.traveler.domain.model.QuestActivityKind
+import com.floopel.feature.traveler.domain.model.TripMemberCapabilities
+import com.floopel.feature.traveler.domain.model.TripVisibility
+import kotlin.time.Instant
 import com.floopel.feature.traveler.testing.TravelerFixture
 import org.junit.Assert.*
 import org.junit.Before
@@ -58,6 +61,21 @@ class TravelerJourneyTest {
         ui.onNodeWithText("Tinjau publikasi").performScrollTo().assertIsNotEnabled()
         assertEquals(0, fixture.publicationCalls.get())
         capture("empty-plan-guard")
+    }
+
+    @Test fun confirmedPublicTripRecoveryKeepsItsTypeAndRegistrationWindow() {
+        val opens = Instant.parse("2026-11-07T01:00:00Z")
+        val closes = Instant.parse("2026-11-13T01:00:00Z")
+        fixture.trip = fixture.trip.copy(capabilities = TripMemberCapabilities(TripVisibility.PUBLIC, opens, closes, 5, 5, true, null, true))
+        fixture.pendingCreatedTrip = fixture.trip
+        openPlan()
+        ui.onNodeWithText("Buat Trip dari itinerary").performScrollTo().performClick()
+        ui.waitUntil(5_000) { ui.onAllNodesWithText("Trip ini sudah dibuat. Lanjutkan tanpa membuat Trip kedua.").fetchSemanticsNodes().isNotEmpty() }
+        ui.onNodeWithText("Open Trip publik").performScrollTo().assertIsOn().assertIsNotEnabled()
+        ui.onNode(hasText("Pendaftaran dibuka (ISO 8601 dengan zona)")).performScrollTo().assertTextContains(opens.toString())
+        ui.onNode(hasText("Pendaftaran ditutup (ISO 8601 dengan zona)")).performScrollTo().assertTextContains(closes.toString())
+        assertEquals(0, fixture.tripCreateCalls.get())
+        capture("public-trip-recovery")
     }
 
     @Test fun processingCoverBlocksPublishEvenAfterBothAcknowledgements() {

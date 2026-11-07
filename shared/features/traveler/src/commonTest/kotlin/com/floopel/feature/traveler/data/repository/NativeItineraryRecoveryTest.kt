@@ -151,10 +151,11 @@ class NativeItineraryRecoveryTest {
         val fixture = ItineraryFixture()
         try {
             fixture.login()
-            val stop = OwnedStop("stop", "spot", "Spot", 1, 1, "Note", 45, "Tips", "09:30", "Walk")
+            val stop = OwnedStop("stop", "spot", "Spot", 1, 0, "Note", 45, "Tips", "09:30", "Walk")
             assertIs<CatalogResult.Ready<*>>(fixture.repository.update("plan", ItineraryDraft("My plan", "Description")))
             assertEquals(HttpMethod.Put, fixture.method)
             assertIs<CatalogResult.Ready<*>>(fixture.repository.updateStop("plan", stop))
+            assertTrue(fixture.bodies.last().contains("\"position\":0"))
             assertTrue(fixture.bodies.last().contains("\"arrive_time\":\"09:30\""))
             assertIs<CatalogResult.Ready<*>>(fixture.repository.updateStop("plan", stop.copy(note = "", tips = "", durationMinutes = null, arriveTime = "", travelNote = "")))
             assertTrue(fixture.bodies.last().contains("\"override_note\":null"))
@@ -174,6 +175,7 @@ class NativeItineraryRecoveryTest {
             fixture.status = HttpStatusCode.Conflict
             assertEquals(CatalogResult.HttpError(409), fixture.repository.removeStop("plan", "stop"))
             assertEquals(CatalogResult.HttpError(422), fixture.repository.updateStop("plan", stop.copy(day = 0)))
+            assertEquals(CatalogResult.HttpError(422), fixture.repository.updateStop("plan", stop.copy(position = -1)))
             assertEquals(CatalogResult.HttpError(422), fixture.repository.titleDay("plan", 0, ""))
             assertEquals(CatalogResult.HttpError(422), fixture.repository.duplicateDay("plan", 0))
             assertIs<ItineraryWriteResult.Failed>(fixture.repository.create(ItineraryDraft("", "")))

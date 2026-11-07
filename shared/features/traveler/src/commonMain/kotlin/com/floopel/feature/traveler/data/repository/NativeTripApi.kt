@@ -20,6 +20,7 @@ internal class NativeTripApi(private val rest: FloopelRestClient, private val se
     private val recovery: TripRecoveryStore = MemoryTripRecoveryStore(),
     private val nowMillis: () -> Long = { Clock.System.now().toEpochMilliseconds() },
     private val mediaUploads: NativeMediaUploads? = null,
+    private val creationRoutes: TripRecoveryStore = MemoryTripRecoveryStore(),
 ) : TravelerTripRepository {
     private val http = NativeAuthorizedRequests(rest, session)
     private val json = Json { ignoreUnknownKeys = true }
@@ -83,6 +84,47 @@ internal class NativeTripApi(private val rest: FloopelRestClient, private val se
             if (saved != null && saved.text("profile_id") == actor.value && saved.optional("confirmed_trip_id") == id) recovery.clear()
             CatalogResult.Ready(Unit)
         } catch (_: Exception) { CatalogResult.InvalidResponse } finally { mutation.unlock() }
+    }
+    override suspend fun createdTripForOperation(key: String): CatalogResult<TravelerTrip?> {
+        if (key.isBlank() || key.length > 128) return CatalogResult.HttpError(422)
+        val epoch = session.identityGeneration
+        val actor = actor(epoch)
+        if (actor !is CatalogResult.Ready) return actor.tripFailure()
+        val canonical = try { creationAliases(actor.value).optional(key).ifBlank { key } }
+            catch (_: Exception) { return CatalogResult.InvalidResponse }
+        val result = read(RestMethod.GET, "/me/trip-creation-operations/${canonical.encodeURLPathPart()}", expectedGeneration = epoch,
+            expectedCode = "TRIP", decode = ::trip)
+        // A known alias already identifies a committed create. Lost access cannot turn it into a fresh action.
+        return if (canonical == key && result is CatalogResult.HttpError && result.status == 404) CatalogResult.Ready(null) else result
+    }
+    override suspend fun rememberTripCreationRoute(routeKey: String, tripId: String): CatalogResult<Unit> {
+        if (routeKey.isBlank() || routeKey.length > 128 || tripId.isBlank()) return CatalogResult.HttpError(422)
+        if (!mutation.tryLock()) return CatalogResult.HttpError(409)
+        return try {
+            val epoch = session.identityGeneration
+            val actor = actor(epoch)
+            if (actor !is CatalogResult.Ready) return actor.tripFailure()
+            val saved = recovery.read()?.let { json.parseToJsonElement(it).jsonObject }
+            if (saved != null && saved.text("profile_id") == actor.value && saved.optional("confirmed_trip_id") == tripId) {
+                val canonical = saved.text("key")
+                if (canonical != routeKey) {
+                    val aliases = creationAliases(actor.value)
+                    val previous = aliases.optional(routeKey)
+                    if (previous.isNotBlank() && previous != canonical) return CatalogResult.HttpError(409, code = "CREATION_ROUTE_CONFLICT")
+                    // Never silently evict an alias still referenced by an OS-saved route.
+                    if (aliases.size >= 256 && routeKey !in aliases) return CatalogResult.HttpError(409, code = "CREATION_RECOVERY_LIMIT")
+                    creationRoutes.write(buildJsonObject {
+                        put("profile_id", actor.value)
+                        put("aliases", JsonObject(aliases + (routeKey to JsonPrimitive(canonical))))
+                    }.toString())
+                }
+            }
+            CatalogResult.Ready(Unit)
+        } catch (_: Exception) { CatalogResult.InvalidResponse } finally { mutation.unlock() }
+    }
+    private fun creationAliases(profileId: String): JsonObject {
+        val saved = creationRoutes.read()?.let { json.parseToJsonElement(it).jsonObject } ?: return buildJsonObject {}
+        return if (saved.text("profile_id") == profileId) saved.getValue("aliases").jsonObject else buildJsonObject {}
     }
     override suspend fun reviewPendingMutation(): CatalogResult<List<TravelerTrip>> {
         if (!mutation.tryLock()) return CatalogResult.HttpError(409)

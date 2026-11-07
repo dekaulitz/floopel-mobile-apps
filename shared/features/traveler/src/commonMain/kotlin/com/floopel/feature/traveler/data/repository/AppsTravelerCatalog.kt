@@ -362,7 +362,7 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
     /** Resolve each distinct public Location once per result, never render UUIDs as place labels. */
     internal suspend fun withSpotLocations(entries: List<CatalogEntry>, locale: String): List<CatalogEntry> {
         val resolved = mutableMapOf<String, JsonObject?>()
-        val names = entries.filter { it.kind == CatalogKind.SPOT && it.locationName == null }
+        val names = entries.filter { it.kind == CatalogKind.SPOT && (it.locationName == null || it.detailLoaded && it.timezone == null) }
             .mapNotNull { it.locationId }.distinct().associateWith { id ->
                 val trail = mutableListOf<String>()
                 val visited = mutableSetOf<String>()
@@ -372,7 +372,17 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
                     if (!resolved.containsKey(key)) {
                         resolved[key] = when (val location = decode("/locations/" + key.encodeURLParameter() +
                             "?locale=" + localeParam(locale)) { it.obj() }) {
-                            is CatalogResult.Ready -> location.value
+                            is CatalogResult.Ready -> {
+                                // The UUID aggregate omits timezone; the by-slug public detail owns that field.
+                                val slug = location.value.string("slug")
+                                if ("timezone" !in location.value && !slug.isNullOrBlank() && slug != key &&
+                                    entries.any { it.kind == CatalogKind.SPOT && it.detailLoaded && it.locationId == key }) {
+                                    when (val detail = decode("/locations/" + slug.encodeURLParameter() + "?locale=" + localeParam(locale)) { it.obj() }) {
+                                        is CatalogResult.Ready -> if (detail.value.string("id") == key) detail.value else location.value
+                                        else -> location.value
+                                    }
+                                } else location.value
+                            }
                             else -> null
                         }
                     }
@@ -383,7 +393,12 @@ internal class AppsTravelerCatalog(private val rest: FloopelRestClient) : Travel
                 }
                 trail.takeIf { it.isNotEmpty() }?.joinToString(" · ")
             }
-        return withCommentTotals(entries.map { entry -> entry.copy(locationName = entry.locationName ?: names[entry.locationId]) })
+        return withCommentTotals(entries.map { entry -> entry.copy(
+            locationName = entry.locationName ?: names[entry.locationId],
+            // Trip creation asserts the first Spot's own Location, never an ancestor or device zone.
+            timezone = entry.timezone ?: if (entry.kind == CatalogKind.SPOT) resolved[entry.locationId]?.string("timezone")
+                ?.takeUnless { it.isBlank() || it == "null" } else null,
+        ) })
     }
 
     /** Only distinct public stops are hydrated, with four requests at most in flight. */

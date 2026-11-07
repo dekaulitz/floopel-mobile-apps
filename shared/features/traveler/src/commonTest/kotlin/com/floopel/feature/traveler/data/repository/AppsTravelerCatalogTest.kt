@@ -19,6 +19,27 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class AppsTravelerCatalogTest {
+    @Test fun spotDetailUsesItsImmediateLocationZoneEvenWithAnExistingPlaceLabel() = runBlocking {
+        for (zone in listOf("\"Asia/Makassar\"", "null")) {
+            val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine { request ->
+                val data = when (request.url.encodedPath) {
+                    "/api/apps/v1/locations/location" -> """{"id":"location","slug":"city-slug","name":"City","level":"city","parent_id":"country"}"""
+                    "/api/apps/v1/locations/city-slug" -> """{"id":"location","name":"City","level":"city","parent_id":"country","timezone":$zone}"""
+                    "/api/apps/v1/locations/country" -> """{"id":"country","name":"Country","level":"country","timezone":"Asia/Jakarta"}"""
+                    else -> """{"items":[]}"""
+                }
+                respond(envelope(data))
+            }))
+            try {
+                val spot = CatalogEntry("spot", "spot", "Spot", null, CatalogKind.SPOT, null,
+                    locationId = "location", locationName = "City", detailLoaded = true)
+                val enriched = AppsTravelerCatalog(client).withSpotLocations(listOf(spot), "id").single()
+                assertEquals(if (zone == "null") null else "Asia/Makassar", enriched.timezone)
+                assertEquals("City", enriched.locationName)
+            } finally { client.close() }
+        }
+    }
+
     @Test fun attachedArticlesRejectAnUnfilteredOlderResponse() = runBlocking {
         val client = FloopelRestClient("https://fixture.invalid", HttpClient(MockEngine { request ->
             if (request.url.encodedPath.contains("/comment-totals/")) return@MockEngine respond(envelope("""{"comment_count":0}"""))

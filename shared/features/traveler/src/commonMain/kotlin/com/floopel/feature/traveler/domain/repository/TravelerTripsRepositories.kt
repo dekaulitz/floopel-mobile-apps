@@ -28,6 +28,10 @@ interface TravelerTripRepository {
     suspend fun ownedTripNotice(id: String): CatalogResult<TripOutcomeNotice> = CatalogResult.InvalidResponse
     suspend fun createWithBanner(itineraryId: String, draft: TripDraft, key: String): CatalogResult<TravelerTrip> = create(itineraryId, draft, key)
     suspend fun pendingCreatedTrip(itineraryId: String): CatalogResult<TravelerTrip?> = CatalogResult.Ready(null)
+    /** Reconciles a saved creation route after its local journal was acknowledged; never sends a write. */
+    suspend fun createdTripForOperation(key: String): CatalogResult<TravelerTrip?> = CatalogResult.Ready(null)
+    /** Durably binds a re-entered route to the original confirmed operation before clearing its journal. */
+    suspend fun rememberTripCreationRoute(routeKey: String, tripId: String): CatalogResult<Unit> = CatalogResult.Ready(Unit)
     suspend fun completeTripCreation(id: String): CatalogResult<Unit> = CatalogResult.Ready(Unit)
     suspend fun bannerStatus(id: String): CatalogResult<TripBannerStatus> = CatalogResult.HttpError(404)
     suspend fun uploadBanner(id: String, bytes: ByteArray, mimeType: String, key: String): CatalogResult<TripBannerStatus> = CatalogResult.InvalidResponse

@@ -21,11 +21,13 @@ class QuestGpsTest {
     private val activity = "00000000-0000-4000-8000-000000000003"
     private val proof = "00000000-0000-4000-8000-000000000004"
     private fun participation(done: Boolean) = """{"id":"$participation","status":"${if(done) "completed" else "active"}","quest_title":"GPS","quest_revision_id":"revision","quest_execution_status":"available","completed_activity_count":${if(done) 1 else 0},"total_activity_count":1,"activities":[{"activity_id":"$activity","status":"${if(done) "completed" else "available"}"}]}"""
-    private inner class Fixture(scope: TestScope, val failSubmit: Boolean = false) {
+    private inner class Fixture(scope: TestScope, val failSubmit: Boolean = false, val alreadyTaken: Boolean = true) {
         var locationAvailable = true
         var samples = 0
         var starts = 0
         var submits = 0
+        var questStarts = 0
+        var participationReads = 0
         var key: String? = null
         val api = NativeApi(HttpClient(MockEngine(MockEngineConfig().apply {
             dispatcher = StandardTestDispatcher(scope.testScheduler)
@@ -35,9 +37,10 @@ class QuestGpsTest {
             when {
                 request.url.encodedPath.endsWith("/login") -> ok("""{"tokens":{"token_type":"Bearer","access_token":"identity","access_expires_at":"2099-01-01T00:00:00Z","refresh_token":"refresh","refresh_expires_at":"2099-02-01T00:00:00Z"}}""")
                 request.url.encodedPath.endsWith("/progress") -> ok("""{"xp_total":0,"level":{"level":1,"code":"explorer","name":"Explorer","xp_floor":0,"xp_to_next_level":1000,"policy_revision":1},"badges":[]}""")
-                request.url.encodedPath.endsWith("/gps/me") -> ok("""{"quest_id":"$quest","locations":[],"quest_slug":"gps","status":"active","active_participation":${participation(false)}}""")
+                request.url.encodedPath.endsWith("/gps/me") -> ok("""{"quest_id":"$quest","locations":[],"quest_slug":"gps","status":"${if (alreadyTaken) "active" else "not_completed"}","active_participation":${if (alreadyTaken) participation(false) else "null"}}""")
                 request.url.encodedPath.endsWith("/gps") -> ok("""{"id":"$quest","slug":"gps","locations":[],"title":"GPS","description":"Story","availability":"active","execution_status":"available","proof_summary":"GPS","reward_preview":{"xp":100,"badge":null},"quota":null,"activities":[]}""")
-                request.url.encodedPath.endsWith("/participations/$participation") -> ok(participation(false))
+                request.url.encodedPath.endsWith("/participations/$participation") -> { participationReads++; ok(participation(false)) }
+                request.url.encodedPath.endsWith("/start") -> { questStarts++; ok(participation(false)) }
                 request.url.encodedPath.endsWith("/activities/$activity") -> ok("""{"activity":{"id":"$activity","title":"Visit","type":"gps","ordinal":1},"instructions":"Stay here","options":[],"answer_type":null,"explanation":null}""")
                 request.url.encodedPath.endsWith("/challenges") -> ok("""{"challenge_id":"challenge","platform":"android","challenge":"challenge","expires_at":"2099-01-01T00:00:00Z"}""")
                 request.url.encodedPath.endsWith("/credentials") -> ok("""{"access_token":"execution","token_type":"Bearer","expires_in":600}""")
@@ -68,7 +71,7 @@ class QuestGpsTest {
         suspend fun prepare() {
             session.login("fixture@example.invalid", "password")
             session.openQuest("gps")
-            session.continueQuest()
+            if (alreadyTaken) session.continueQuest() else session.takeQuest()
             session.openActivity(activity)
         }
     }
@@ -126,8 +129,10 @@ class QuestGpsTest {
     }
 
     @Test fun failedSubmitRequiresExplicitRetryWithSameKey() = runTest {
-        val fixture = Fixture(this, failSubmit = true)
+        val fixture = Fixture(this, failSubmit = true, alreadyTaken = false)
         fixture.prepare()
+        assertEquals(1, fixture.questStarts)
+        assertTrue(fixture.session.view.value.progress!!.activeParticipations.isEmpty())
         val collecting = launch { fixture.session.collectGps() }
         runCurrent()
         fixture.session.submitGps()
@@ -135,6 +140,18 @@ class QuestGpsTest {
         assertTrue(fixture.session.view.value.gpsSubmissionPending)
         assertEquals(1, fixture.submits)
         advanceTimeBy(60001)
+        val frozenProof = fixture.session.view.value.gpsProof
+        val frozenKey = fixture.key
+        val reads = fixture.participationReads
+        fixture.session.continuePassportQuest(participation)
+        assertEquals(reads + 1, fixture.participationReads)
+        assertNull(fixture.session.view.value.failure)
+        assertEquals(1, fixture.questStarts)
+        fixture.session.openActivity(activity)
+        assertEquals(frozenProof, fixture.session.view.value.gpsProof)
+        assertTrue(fixture.session.view.value.gpsSubmissionPending)
+        assertEquals(frozenKey, fixture.key)
+        assertEquals(1, fixture.submits) // Reconcile the reader, without replaying GPS submit.
         fixture.session.collectGps()
         assertEquals(1, fixture.starts)
         fixture.session.submitGps()

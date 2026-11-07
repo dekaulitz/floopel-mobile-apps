@@ -2,6 +2,8 @@
 
 Audit lokal 7 November 2026 memakai emulator Android 15/API 35, 1080×2400, density 420. [Catatan implementasi dan gap](../traveler-android.md) membedakan kode yang tersedia, fixture, integrasi nyata dan gate rilis. [Manifest hasil](results.json) mencatat jumlah test dan hash bukti.
 
+Follow-up: [audit privat](../traveler-private-audit.md) memuat hasil login/itinerary/admission lokal nyata, recovery dan sesi native. [Manifest follow-up](private/results.json) memisahkan 366 host, 3 host live, 9 native fixture dan 2 fase native live. Tabel di bawah adalah bukti baseline sebelumnya.
+
 ## Screenshot runtime dengan API nyata
 
 - [Home](screenshots/home-real-api.png): guest, public discovery/media melalui ngrok, hero memakai aset Figma lokal.
@@ -49,4 +51,4 @@ Gunakan Gradle Wrapper dan konfigurasi Java/SDK di README root:
 
 Probe live hanya melakukan public read. Arsipkan XML sebelum run berikutnya karena probe dan suite host memakai direktori report yang sama. Gradle membersihkan APK test setelah connected run; untuk menyimpan PNG di luar run, pasang APK debug + androidTest dan jalankan AndroidJUnitRunner melalui adb, lalu pull direktori external-files/audit sebelum uninstall. Test tidak mengubah backend atau membutuhkan akun.
 
-Raw XML/log lokal tersimpan pada .gradle/audit/traveler-android dan output build. iOS, provider native serta transaksi backend privat berstatus NOT_RUN, bukan PASS dari fixture.
+Raw XML/log lokal tersimpan pada .gradle/audit/traveler-android dan output build. iOS dan provider native tetap NOT_RUN. Status transaksi backend privat yang telah diuji diperbarui pada audit follow-up, bukan disimpulkan dari fixture baseline.

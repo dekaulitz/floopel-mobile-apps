@@ -17,7 +17,7 @@ internal enum class Destination {
 /** Only identifiers and non-sensitive navigation context are persisted. */
 @Serializable
 internal data class TravelerRoute(val destination: Destination, val id: String = "", val extra: String = "",
-    val day: Int = 1, val inboxId: String? = null, val slug: String = "")
+    val day: Int = 1, val inboxId: String? = null, val slug: String = "", val operationKey: String = "")
 
 internal data class ReadState<T>(val value: T? = null, val loading: Boolean = false, val failure: ReadFailure? = null)
 internal data class ReadFailure(val status: Int = 0, val code: String? = null, val retryAtMillis: Long = 0,

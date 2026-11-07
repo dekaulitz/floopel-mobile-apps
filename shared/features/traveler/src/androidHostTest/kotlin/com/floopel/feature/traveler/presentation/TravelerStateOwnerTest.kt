@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModelStore
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.TravelerCatalog
+import com.floopel.feature.traveler.domain.repository.TravelerTripRepository
+import com.floopel.feature.traveler.domain.repository.TravelerIdentity
 import com.floopel.feature.traveler.testing.TravelerFixture
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -15,8 +17,8 @@ class TravelerStateOwnerTest {
     private val owners = mutableListOf<ViewModelStore>()
     @BeforeTest fun setUp() { Dispatchers.setMain(dispatcher) }
     @AfterTest fun tearDown() { owners.forEach(ViewModelStore::clear); Dispatchers.resetMain() }
-    private fun model(fixture: TravelerFixture, runtime: TravelerRuntime = fixture.runtime): TravelerViewModel =
-        TravelerViewModel(runtime, worker = dispatcher).also { model -> owners += ViewModelStore().apply { put("test", model) } }
+    private fun model(fixture: TravelerFixture, runtime: TravelerRuntime = fixture.runtime, restoredStack: String = ""): TravelerViewModel =
+        TravelerViewModel(runtime, restoredStack, worker = dispatcher).also { model -> owners += ViewModelStore().apply { put("test", model) } }
 
     @Test fun emptyPlanIsRejectedAgainAtPublicationConfirmation() = runTest {
         val f = TravelerFixture(); f.plan = f.plan.copy(stops = emptyList(), itinerary = f.plan.itinerary.copy(stops = 0))
@@ -45,6 +47,38 @@ class TravelerStateOwnerTest {
         assertEquals(0, f.tripCreateCalls.get()); assertEquals(1, f.bannerCalls.get())
         assertEquals(Destination.TRIP, model.state.value.route.destination); assertEquals(f.tripId, model.state.value.route.id)
         assertTrue(model.state.value.mediaPartial)
+    }
+
+    @Test fun processLossDuringBannerAfterJournalClearRecoversSavedCreationWithoutAnotherPost() = runTest {
+        val f = TravelerFixture()
+        val committed = mutableMapOf<String, TravelerTrip>()
+        val bannerStarted = CompletableDeferred<Unit>()
+        val trips = object : TravelerTripRepository by f.trips {
+            override suspend fun create(itineraryId: String, draft: TripDraft, key: String): CatalogResult<TravelerTrip> =
+                f.trips.create(itineraryId, draft, key).also { if (it is CatalogResult.Ready) committed[key] = it.value }
+            override suspend fun createdTripForOperation(key: String) = CatalogResult.Ready(committed[key])
+            override suspend fun uploadBanner(id: String, bytes: ByteArray, mimeType: String, key: String): CatalogResult<TripBannerStatus> {
+                bannerStarted.complete(Unit); awaitCancellation()
+            }
+        }
+        val base = f.runtime
+        val runtime = TravelerRuntime(base.identity, base.catalog, base.itineraries, base.distribution, trips,
+            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+        val first = model(f, runtime); advanceUntilIdle()
+        first.open(TravelerRoute(Destination.TRIP_FORM, f.planId)); advanceUntilIdle()
+        val savedBeforeSubmit = first.savedStack()
+        val routeKey = first.state.value.route.operationKey
+        assertTrue(routeKey.isNotBlank())
+        val draft = TripDraft("Trip simulasi", "2026-11-14", "2026-11-15", "Asia/Jakarta")
+        first.createTrip(draft, TravelerImage(byteArrayOf(1), "image/png")); runCurrent(); bannerStarted.await()
+        assertNull(f.pendingCreatedTrip)
+        owners.last().clear(); runCurrent()
+        val restored = model(f, runtime, savedBeforeSubmit); advanceUntilIdle()
+        assertEquals(routeKey, restored.state.value.route.operationKey)
+        assertEquals(f.tripId, restored.state.value.tripRecovery.value?.trip?.id)
+        restored.createTrip(draft); advanceUntilIdle()
+        assertEquals(1, f.tripCreateCalls.get())
+        assertEquals(Destination.TRIP, restored.state.value.route.destination)
     }
 
     @Test fun tripDateValidationRejectsInvalidCalendarAndReversedIntervals() {
@@ -109,6 +143,53 @@ class TravelerStateOwnerTest {
         assertEquals(1, f.publicationCalls.get())
     }
 
+    @Test fun builderOpenedFromSpotFeedbackReturnsToThatSpot() = runTest {
+        val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
+        model.openEntry(f.spot); advanceUntilIdle()
+        val origin = model.state.value.route
+        model.open(TravelerRoute(Destination.PICK_PLAN, extra = f.spotId)); advanceUntilIdle()
+        model.addSpot(f.planId, f.spotId, 3); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.ITINERARY, f.planId, day = 3)); advanceUntilIdle()
+        model.back(); advanceUntilIdle()
+        assertEquals(origin, model.state.value.route)
+        assertEquals(1, f.stopCalls.get())
+    }
+
+    @Test fun deletingTheEditedStopReturnsToItsBuilder() = runTest {
+        val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.ITINERARY, f.planId)); advanceUntilIdle()
+        val stop = f.plan.stops.single()
+        model.open(TravelerRoute(Destination.STOP_FORM, f.planId, stop.id)); advanceUntilIdle()
+        model.removeStop(stop.id); advanceUntilIdle()
+        assertEquals(Destination.ITINERARY, model.state.value.route.destination)
+        assertEquals(f.planId, model.state.value.route.id)
+        assertTrue(model.state.value.itinerary.value!!.stops.isEmpty())
+    }
+
+    @Test fun refreshReconcilesAnAlreadyLoadedQuestReaderWithoutSubmittingProofOrAnswer() = runTest {
+        val f = TravelerFixture(); var activityReads = 0; var progressReads = 0
+        val identity = object : TravelerIdentity by f.identity {
+            override suspend fun activity(id: String) { activityReads++; f.identity.activity(id) }
+            override suspend fun continueQuest(id: String) { progressReads++; f.identity.continueQuest(id) }
+            override suspend fun submitGps() { fail("Reader retry must not submit proof") }
+            override suspend fun answer(value: String) { fail("Reader retry must not answer") }
+        }
+        val base = f.runtime
+        val runtime = TravelerRuntime(identity, base.catalog, base.itineraries, base.distribution, base.trips,
+            base.notifications, base.account, base.legal, base.registration, base.publicContent, base.savedSpots, base.questGroups, base.newOperationKey)
+        val model = model(f, runtime); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.QUEST_PROGRESS, "participation")); advanceUntilIdle()
+        val beforeProgress = progressReads
+        model.refresh(); advanceUntilIdle()
+        assertEquals(beforeProgress + 1, progressReads)
+        f.gpsSubmissionPending = true; f.activityKind = QuestActivityKind.GPS
+        model.activity("activity"); advanceUntilIdle()
+        val beforeActivity = activityReads
+        model.refresh(); advanceUntilIdle()
+        assertEquals(beforeActivity + 1, activityReads)
+        assertTrue(model.state.value.identity.gpsSubmissionPending)
+    }
+
     @Test fun addSpotFeedbackRetainsTheSelectedPlanAndDay() = runTest {
         val f = TravelerFixture(); val model = model(f); advanceUntilIdle()
         model.openEntry(f.spot); advanceUntilIdle()
@@ -127,6 +208,30 @@ class TravelerStateOwnerTest {
         assertEquals(Destination.PROFILE, model.state.value.tab)
         assertFalse(model.savedStack().contains("Traveler Simulasi"))
         assertFalse(model.savedStack().contains("passport"))
+    }
+
+    @Test fun legacyCreationRouteGetsAStableIdentityAcrossRepeatedRestoration() {
+        val f = TravelerFixture()
+        val oldStack = """[{"destination":"HOME"},{"destination":"TRIP_FORM","id":"${f.planId}"}]"""
+        val first = TravelerViewModel(f.runtime, oldStack, dispatcher, autoStart = false)
+        val second = TravelerViewModel(f.runtime, oldStack, dispatcher, autoStart = false)
+        owners += ViewModelStore().apply { put("first", first); put("second", second) }
+        assertEquals(first.state.value.route.operationKey, second.state.value.route.operationKey)
+        assertTrue(first.state.value.route.operationKey.isNotBlank())
+    }
+
+    @Test fun savedOperationResultTakesPrecedenceOverAnotherPendingCreateForTheSamePlan() = runTest {
+        val f = TravelerFixture()
+        f.routeCreatedTrip = f.trip
+        f.pendingCreatedTrip = f.trip.copy(id = "another-trip")
+        f.pendingTripDraft = TripDraft("Another pending Trip", "2026-12-01", "2026-12-02", "Asia/Jakarta")
+        val model = model(f); advanceUntilIdle()
+        model.open(TravelerRoute(Destination.TRIP_FORM, f.planId)); advanceUntilIdle()
+        assertEquals(f.trip.id, model.state.value.tripRecovery.value?.trip?.id)
+        assertNull(model.state.value.tripRecovery.value?.draft)
+        model.createTrip(TripDraft("Ignored", "2026-11-14", "2026-11-15", "Asia/Jakarta")); advanceUntilIdle()
+        assertEquals(f.trip.id, model.state.value.route.id)
+        assertEquals(0, f.tripCreateCalls.get())
     }
 
     @Test fun aCancelledDetailCannotReplaceANewerDestination() = runTest {

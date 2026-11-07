@@ -19,7 +19,13 @@ internal class TravelerViewModel(
     autoStart: Boolean = true,
 ) : ViewModel() {
     private val restored = runCatching { Json.decodeFromString<List<TravelerRoute>>(restoredStack) }
-        .getOrNull()?.takeIf { routes -> routes.isNotEmpty() && routes.size <= 40 && routes.all { it.id.length <= 200 && it.extra.length <= 200 } }
+        .getOrNull()?.takeIf { routes -> routes.isNotEmpty() && routes.size <= 40 && routes.all {
+            it.id.length <= 200 && it.extra.length <= 200 && it.operationKey.length <= 128
+        } }?.map { route ->
+            // A pre-key saved route must recover to the same identity on every restoration.
+            if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank())
+                route.copy(operationKey = "restored-trip-create:${route.id}") else route
+        }
     private val mutable = MutableStateFlow(TravelerState(tab = restored?.firstOrNull()?.destination?.takeIf { it in rootTabs } ?: Destination.HOME,
         stack = restored ?: listOf(TravelerRoute(Destination.HOME))))
     val state = mutable.asStateFlow()
@@ -52,8 +58,12 @@ internal class TravelerViewModel(
 
     fun savedStack(): String = Json.encodeToString(state.value.stack)
     fun openEntry(entry: CatalogEntry) = open(TravelerRoute(Destination.DETAIL, entry.id, entry.kind.name, slug = entry.slug))
-    fun open(route: TravelerRoute) {
-        if (state.value.busy || state.value.route == route) return
+    private fun creationRoute(route: TravelerRoute): TravelerRoute =
+        if (route.destination == Destination.TRIP_FORM && route.operationKey.isBlank()) route.copy(operationKey = runtime.newOperationKey()) else route
+    fun open(requested: TravelerRoute) {
+        if (state.value.busy || state.value.route == requested ||
+            requested.destination == Destination.TRIP_FORM && state.value.route.destination == Destination.TRIP_FORM && state.value.route.id == requested.id) return
+        val route = creationRoute(requested)
         if (route.destination in rootTabs && route.id.isEmpty() && route.extra.isEmpty()) { tab(route.destination); return }
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(stack = it.stack + route, writeFailure = null, saved = false,
@@ -80,7 +90,8 @@ internal class TravelerViewModel(
         if (current.route.destination == Destination.REGISTER && current.registrationStep > 1) {
             mutable.update { it.copy(registrationStep = it.registrationStep - 1) }; return
         }
-        if (current.route.destination == Destination.ITINERARY) {
+        val previous = current.stack.dropLast(1).lastOrNull()
+        if (current.route.destination == Destination.ITINERARY && !(previous?.destination == Destination.DETAIL && previous.extra == CatalogKind.SPOT.name)) {
             mutable.update { it.copy(stack = listOf(TravelerRoute(it.tab), TravelerRoute(Destination.ITINERARIES)),
                 writeFailure = null, saved = false, feedback = null) }
         } else if (current.stack.size > 1) mutable.update { it.copy(stack = it.stack.dropLast(1), writeFailure = null, saved = false, feedback = null) }
@@ -107,10 +118,11 @@ internal class TravelerViewModel(
             Destination.QUESTS -> fetch("quests", { it.quests }, { s, r -> s.copy(quests = r) }) { runtime.catalog.activeQuests("id", 1) }
             Destination.QUEST -> fetch("quest", { it.quest }, { s, r -> s.copy(quest = r) }) { runtime.identity.quest(route.id) }
             Destination.PASSPORT -> viewModelScope.launch(worker) { runtime.identity.passport() }
-            Destination.QUEST_PROGRESS -> if (state.value.identity.running?.id != route.id)
-                viewModelScope.launch(worker) { runtime.identity.continueQuest(route.id) }
-            Destination.QUEST_ACTIVITY -> if (state.value.identity.question?.id != route.id && route.extra.isNotBlank())
-                viewModelScope.launch(worker) { runtime.identity.continueQuest(route.extra); runtime.identity.activity(route.id) }
+            Destination.QUEST_PROGRESS -> identityAction { runtime.identity.continueQuest(route.id) }
+            Destination.QUEST_ACTIVITY -> if (route.extra.isNotBlank()) identityAction {
+                if (state.value.identity.running?.id != route.extra) runtime.identity.continueQuest(route.extra)
+                runtime.identity.activity(route.id)
+            }
             Destination.ITINERARIES, Destination.PICK_PLAN -> {
                 fetch("itineraries", { it.itineraries }, { s, r -> s.copy(itineraries = r) }) { runtime.itineraries.mine() }
                 fetch("pendingStop", { it.pendingStop }, { s, r -> s.copy(pendingStop = r) }) { runtime.itineraries.pendingStop() }
@@ -141,8 +153,8 @@ internal class TravelerViewModel(
                 fetch("tripRecovery", { it.tripRecovery }, { s, r -> s.copy(tripRecovery = r) }) {
                     val draft = runtime.trips.pendingDraft(route.id, true)
                     if (draft !is CatalogResult.Ready) draft.failure()
-                    else when (val trip = runtime.trips.pendingCreatedTrip(route.id)) {
-                        is CatalogResult.Ready -> CatalogResult.Ready(TripCreationRecovery(draft.value, trip.value))
+                    else when (val trip = createdTrip(route)) {
+                        is CatalogResult.Ready -> CatalogResult.Ready(TripCreationRecovery(draft.value.takeIf { trip.value == null }, trip.value))
                         else -> trip.failure()
                     }
                 }
@@ -396,7 +408,6 @@ internal class TravelerViewModel(
     }
     fun activity(id: String) {
         open(TravelerRoute(Destination.QUEST_ACTIVITY, id, state.value.identity.running?.id.orEmpty()))
-        identityAction { runtime.identity.activity(id) }
     }
     fun answer(value: String) = identityAction { runtime.identity.answer(value) }
     fun gps(submit: Boolean = false) = identityAction { if (submit) runtime.identity.submitGps() else runtime.identity.collectGps() }
@@ -417,7 +428,12 @@ internal class TravelerViewModel(
     }
     fun saveStop(stop: OwnedStop) = write({ runtime.itineraries.updateStop(state.value.route.id, stop) }) { back() }
     fun dayTitle(day: Int, title: String) = write({ runtime.itineraries.titleDay(state.value.route.id, day, title) }) { refresh() }
-    fun removeStop(stopId: String) = write({ runtime.itineraries.removeStop(state.value.route.id, stopId) }) { refresh() }
+    fun removeStop(stopId: String) {
+        val route = state.value.route
+        write({ runtime.itineraries.removeStop(route.id, stopId) }) {
+            if (route.destination == Destination.STOP_FORM && route.extra == stopId) back() else refresh()
+        }
+    }
 
     fun publish(allowClone: Boolean, notes: Boolean, pii: Boolean) {
         val id = state.value.route.id
@@ -440,16 +456,19 @@ internal class TravelerViewModel(
     }
     fun revokeLink() = write({ runtime.distribution.revokeShareLink(state.value.route.id, runtime.newOperationKey()) }) { refresh() }
     fun createTrip(draft: TripDraft, image: TravelerImage? = null) {
-        val source = state.value.route.id
+        val route = state.value.route
+        if (route.destination != Destination.TRIP_FORM || route.operationKey.isBlank()) return
         write({
-            val recovered = runtime.trips.pendingCreatedTrip(source)
+            val recovered = createdTrip(route)
             val result = when (recovered) {
                 is CatalogResult.Ready -> recovered.value?.let { CatalogResult.Ready(it) }
-                    ?: runtime.trips.create(source, draft, runtime.newOperationKey())
+                    ?: runtime.trips.create(route.id, draft, route.operationKey)
                 else -> recovered.failure()
             }
             if (result !is CatalogResult.Ready) result.failure()
             else {
+                val binding = runtime.trips.rememberTripCreationRoute(route.operationKey, result.value.id)
+                if (binding !is CatalogResult.Ready) return@write binding.failure()
                 // Once confirmed, a banner failure is a partial result, never a failed Trip create.
                 runtime.trips.completeTripCreation(result.value.id)
                 val banner = image?.let { runtime.trips.uploadBanner(result.value.id, it.bytes(), it.mimeType, runtime.newOperationKey()) }
@@ -463,6 +482,11 @@ internal class TravelerViewModel(
             }
         }
     }
+    private suspend fun createdTrip(route: TravelerRoute): CatalogResult<TravelerTrip?> =
+        when (val exact = runtime.trips.createdTripForOperation(route.operationKey)) {
+            is CatalogResult.Ready -> if (exact.value != null) exact else runtime.trips.pendingCreatedTrip(route.id)
+            else -> exact
+        }
     fun uploadImage(image: TravelerImage, banner: Boolean = false) {
         val id = state.value.route.id
         write({

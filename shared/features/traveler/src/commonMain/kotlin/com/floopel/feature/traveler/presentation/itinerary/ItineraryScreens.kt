@@ -80,6 +80,7 @@ internal fun ItineraryScreen(state: TravelerState, model: TravelerViewModel) {
                 })
                 var titleDay by remember { mutableStateOf<Int?>(null) }
                 val days = (detail.stops.map { it.day } + detail.dayTitles.keys + (1..maxOf(1, itinerary.days))).distinct().sorted()
+                val singleSpotPlan = detail.stopsLoaded && detail.stops.size == 1 && days.size == 1
                 days.forEach { day ->
                     SectionTitle(detail.dayTitles[day]?.takeIf { it.isNotBlank() } ?: s(Res.string.day, day),
                         if (itinerary.isOwner) s(Res.string.edit) else null) { titleDay = day }
@@ -89,22 +90,22 @@ internal fun ItineraryScreen(state: TravelerState, model: TravelerViewModel) {
                         CatalogCard(card, {
                             if (itinerary.isOwner) model.open(TravelerRoute(Destination.STOP_FORM, itinerary.id, stop.id))
                             else model.openEntry(card)
-                        })
+                        }, modifier = Modifier.testTag("itinerary-stop"))
                         val metadata = listOfNotNull(stop.arriveTime.takeIf(String::isNotBlank),
                             stop.durationMinutes?.let { s(Res.string.duration) + ": $it" },
-                            s(Res.string.stop_order) + ": ${stop.position}").joinToString(" · ")
+                            s(Res.string.stop_order) + ": ${stop.position + 1}").joinToString(" · ")
                         Body(metadata)
                         if (stop.note.isNotBlank()) Body(stop.note)
                     }
                     if (itinerary.isOwner) FloopelButton(s(Res.string.add_spot), {
                         model.open(TravelerRoute(Destination.ADD_SPOT, itinerary.id, CatalogKind.SPOT.name, day))
-                    }, Modifier.fillMaxWidth(), secondary = true)
+                    }, Modifier.fillMaxWidth(), secondary = !singleSpotPlan)
                 }
                 if (itinerary.isOwner) {
                     FloopelButton(s(Res.string.manage_days), { titleDay = (days.maxOrNull() ?: 0) + 1 }, Modifier.fillMaxWidth(), secondary = true)
                     if (detail.stops.isEmpty()) InfoCard(s(Res.string.itinerary_empty_body))
                     FloopelButton(s(Res.string.create_trip), { model.open(TravelerRoute(Destination.TRIP_FORM, itinerary.id)) },
-                        Modifier.fillMaxWidth(), enabled = detail.stopsLoaded && detail.stops.isNotEmpty())
+                        Modifier.fillMaxWidth(), secondary = singleSpotPlan, enabled = detail.stopsLoaded && detail.stops.isNotEmpty())
                     FloopelButton(s(Res.string.review_publication), { model.open(TravelerRoute(Destination.PUBLICATION, itinerary.id)) },
                         Modifier.fillMaxWidth(), secondary = true, enabled = detail.stopsLoaded && detail.stops.isNotEmpty())
                     FloopelButton(s(Res.string.share_plan), { model.open(TravelerRoute(Destination.SHARE, itinerary.id)) }, Modifier.fillMaxWidth(), secondary = true)
@@ -155,7 +156,7 @@ internal fun StopForm(state: TravelerState, model: TravelerViewModel) {
     val stop = state.itinerary.value?.stops?.firstOrNull { it.id == state.route.extra }
     if (stop == null) { ReadContent(state.itinerary, model::refresh) {}; return }
     var day by rememberSaveable(stop.id) { mutableStateOf(stop.day.toString()) }
-    var order by rememberSaveable(stop.id) { mutableStateOf(stop.position.toString()) }
+    var order by rememberSaveable(stop.id) { mutableStateOf((stop.position + 1).toString()) }
     var arrival by rememberSaveable(stop.id) { mutableStateOf(stop.arriveTime) }
     var duration by rememberSaveable(stop.id) { mutableStateOf(stop.durationMinutes?.toString().orEmpty()) }
     var note by rememberSaveable(stop.id) { mutableStateOf(stop.note) }
@@ -169,7 +170,7 @@ internal fun StopForm(state: TravelerState, model: TravelerViewModel) {
             invalid = day.toIntOrNull()?.let { it >= 1 } != true || order.toIntOrNull()?.let { it >= 1 } != true ||
                 time.isNotEmpty() && !Regex("(?:[01][0-9]|2[0-3]):[0-5][0-9]").matches(time) ||
                 minutes.isNotEmpty() && minutes.toIntOrNull()?.let { it >= 0 } != true
-            if (!invalid) model.saveStop(stop.copy(day = day.toInt(), position = order.toInt(),
+            if (!invalid) model.saveStop(stop.copy(day = day.toInt(), position = order.toInt() - 1,
                 arriveTime = time, durationMinutes = minutes.toIntOrNull(), note = note, tips = tips, travelNote = travel))
         }, Modifier.fillMaxWidth(), enabled = !state.busy)
     }) {

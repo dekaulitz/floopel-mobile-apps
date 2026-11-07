@@ -52,14 +52,14 @@ internal fun OpenTripDetail(state: TravelerState, model: TravelerViewModel) {
         var message by rememberSaveable(trip.id, pending) { mutableStateOf(pending.orEmpty()) }
         FormLayout(footer = {
             FloopelButton(s(Res.string.trip_apply), { model.apply(message) }, Modifier.fillMaxWidth(),
-                enabled = trip.canApply && !state.busy && message.length <= 2000 && !state.applicationDraft.loading && state.applicationDraft.failure == null)
+                enabled = trip.canApply && !state.busy && visibleCharacterCount(message) <= 500 && !state.applicationDraft.loading && state.applicationDraft.failure == null)
         }) {
             Text(trip.name, style = MaterialTheme.typography.headlineMedium)
             InfoCard(s(Res.string.trip_admission_body))
             if (pending != null) InfoCard(s(Res.string.trip_frozen_draft))
             state.applicationDraft.failure?.let { ErrorPanel(it, model::refresh) }
             FloopelFormTextField(message, { message = it }, Modifier.fillMaxWidth(), label = { Text(s(Res.string.trip_apply_message)) },
-                minLines = 4, isError = message.length > 2000, enabled = !state.busy && pending == null)
+                minLines = 4, isError = visibleCharacterCount(message) > 500, enabled = !state.busy && pending == null)
             if (!trip.canApply) InfoCard(s(Res.string.trip_apply_unavailable))
         }
         return
@@ -154,8 +154,10 @@ internal fun TripDetail(state: TravelerState, model: TravelerViewModel, selectPh
 
 @Composable
 internal fun TripForm(state: TravelerState, model: TravelerViewModel, selectPhoto: TravelerImageSelection? = null) {
-    val pending = state.tripRecovery.value?.draft
     val confirmed = state.tripRecovery.value?.trip
+    val pending = state.tripRecovery.value?.draft ?: confirmed?.let { TripDraft(it.name, it.startsOn, it.endsOn, it.timezone,
+        it.capabilities?.visibility ?: TripVisibility.UNKNOWN,
+        it.capabilities?.registrationOpensAt?.toString(), it.capabilities?.registrationClosesAt?.toString()) }
     var name by rememberSaveable(state.route.id, pending) { mutableStateOf(pending?.name.orEmpty()) }
     var start by rememberSaveable(state.route.id, pending) { mutableStateOf(pending?.startsOn.orEmpty()) }
     var end by rememberSaveable(state.route.id, pending) { mutableStateOf(pending?.endsOn.orEmpty()) }
@@ -185,7 +187,7 @@ internal fun TripForm(state: TravelerState, model: TravelerViewModel, selectPhot
         Body(s(Res.string.trip_date_format))
         if (start.isNotBlank() && end.isNotBlank() && !validDates) InfoCard(s(Res.string.trip_dates_invalid))
         if (zone != null) Body(s(Res.string.trip_timezone, zone)) else InfoCard(s(Res.string.trip_timezone_missing))
-        CheckRow(s(Res.string.trip_public), public, { public = it }, editable)
+        if (pending?.visibility != TripVisibility.UNKNOWN) CheckRow(s(Res.string.trip_public), public, { public = it }, editable)
         if (public) {
             FloopelFormTextField(opens, { opens = it }, Modifier.fillMaxWidth(), label = { Text(s(Res.string.registration_open)) }, enabled = editable)
             FloopelFormTextField(closes, { closes = it }, Modifier.fillMaxWidth(), label = { Text(s(Res.string.registration_close)) }, enabled = editable)
