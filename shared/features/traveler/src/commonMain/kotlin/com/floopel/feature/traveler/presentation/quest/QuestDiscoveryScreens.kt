@@ -130,7 +130,7 @@ private fun QuestAvailableCard(entry: QuestCatalogItem, open: () -> Unit) {
             }
             QuestModeLabel(card.mode)
             QuestCardTitle(card.title)
-            if (card.locations.isNotEmpty()) Text(card.locations.joinToString(" Â· ") { it.name }, style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.9.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (card.locations.isNotEmpty()) Text(card.locations.joinToString(" \u00B7 ") { it.name }, style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.9.sp), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Row(horizontalArrangement = Arrangement.spacedBy(if (card.badgeUrl == null) 8.dp else 12.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (card.badgeUrl != null) Media(card.badgeUrl, Modifier.size(48.dp, 56.dp), card.badgeName, FloopelIcons.EmojiEvents, ContentScale.Fit)
                 else Icon(FloopelIcons.EmojiEvents, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
@@ -201,7 +201,7 @@ internal fun QuestFilterScreen(state: TravelerState, model: TravelerViewModel) {
             FloopelSearchField(state.questBrowse.pickerQuery, model::questLocationQuery, s(Res.string.quest_filter_search_location), Modifier.fillMaxWidth())
             ReadContent(state.questBrowse.pickerRows, model::loadQuestPickerLocations) { rows ->
                 LazyColumn(Modifier.weight(1f, fill = false)) {
-                    items(rows, key = { it.id }) { location -> ActionRow(location.title, location.ancestors.joinToString(" Â· ") { it.name }, { model.selectQuestFilterLocation(location) }) }
+                    items(rows, key = { it.id }) { location -> ActionRow(location.title, location.ancestors.joinToString(" \u00B7 ") { it.name }, { model.selectQuestFilterLocation(location) }) }
                     if (rows.isEmpty()) item { EmptyContent() }
                 }
             }

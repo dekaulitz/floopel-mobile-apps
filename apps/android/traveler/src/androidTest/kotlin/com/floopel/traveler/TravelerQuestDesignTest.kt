@@ -15,6 +15,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.floopel.feature.traveler.TravelerApp
 import com.floopel.feature.traveler.domain.model.CatalogResult
 import com.floopel.feature.traveler.domain.model.QuestCatalogItem
+import com.floopel.feature.traveler.domain.model.LocationReference
+import com.floopel.feature.traveler.domain.model.LocationAncestor
 import com.floopel.feature.traveler.testing.TravelerQuestDesignFixture
 import org.junit.Assert.*
 import org.junit.Rule
@@ -25,12 +27,13 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TravelerQuestDesignTest {
     @get:Rule val ui = createAndroidComposeRule<ComponentActivity>()
-    private fun launch(f: TravelerQuestDesignFixture = TravelerQuestDesignFixture(), scale: Float = 1f): TravelerQuestDesignFixture {
+    private fun launch(f: TravelerQuestDesignFixture = TravelerQuestDesignFixture(), scale: Float = 1f,
+        share: (String) -> Unit = {}): TravelerQuestDesignFixture {
         ui.runOnUiThread { WindowCompat.enableEdgeToEdge(ui.activity.window) }
         ui.setContent {
             val density = LocalDensity.current.density
             CompositionLocalProvider(LocalDensity provides Density(density, scale)) {
-                TravelerApp(f.runtime, {}, backHandler = { enabled, back -> BackHandler(enabled, back) })
+                TravelerApp(f.runtime, share, backHandler = { enabled, back -> BackHandler(enabled, back) })
             }
         }
         ui.waitUntil(5_000) { ui.onAllNodesWithContentDescription("Notifikasi").fetchSemanticsNodes().isNotEmpty() }
@@ -44,6 +47,36 @@ class TravelerQuestDesignTest {
         ui.waitForIdle(); val folder = requireNotNull(InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir("quest-design-audit"))
         folder.mkdirs(); val bitmap = requireNotNull(InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot())
         folder.resolve("$name.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
+    }
+    @Test fun sharingForZeroOneAndMultipleLocationsForwardsTheExactLocalizedPayload() {
+        val f = TravelerQuestDesignFixture()
+        val locations = listOf(LocationReference("location-bandung", "Bandung", "bandung", "city"),
+            LocationReference("location-jakarta", "Jakarta", "jakarta", "city"))
+        val payloads = mutableListOf<String>()
+        f.readyReader = f.readyReader.copy(card = f.card.copy(locations = emptyList()))
+        f.extraCards = listOf(QuestCatalogItem(f.card.copy(id = "multiple-locations", slug = "multiple-locations",
+            title = "Quest beberapa lokasi", locations = locations), "active", "available", false))
+        f.pickerRows = listOf(f.location.copy(ancestors = listOf(LocationAncestor("region", "Jawa Barat", "region"),
+            LocationAncestor("country", "Indonesia", "country"))))
+        launch(f, share = { payloads += it })
+        ui.onNodeWithTag("quest-catalog").performScrollToNode(hasText("Bandung \u00B7 Jakarta"))
+        ui.onNodeWithText("Bandung \u00B7 Jakarta").assertExists()
+        ui.onNodeWithTag("quest-catalog").performScrollToNode(hasTestTag("quest-filter-open"))
+        ui.onNodeWithTag("quest-filter-open").performClick()
+        ui.onNodeWithTag("quest-filter-location").performScrollTo().performClick()
+        ui.onNodeWithText("Jawa Barat \u00B7 Indonesia").assertExists()
+        back(); back()
+        val expected = listOf(f.card.title + "\n", f.card.title + "\nBandung", f.card.title + "\nBandung \u00B7 Jakarta")
+        expected.forEachIndexed { count, text ->
+            if (count > 0) {
+                back()
+                f.readyReader = f.readyReader.copy(card = f.card.copy(locations = locations.take(count)))
+            }
+            ready(f)
+            ui.onNodeWithContentDescription("Bagikan Quest").performClick()
+            ui.runOnIdle { assertEquals(text, payloads.last()); assertEquals(count + 1, payloads.size) }
+        }
+        assertEquals(0, f.startCalls.get())
     }
     @Test fun availableTabsModeChipsAndRewardCardsFollowTheCatalogAndGroupEmptyState() {
         val f = launch(); val density = ui.activity.resources.displayMetrics.density

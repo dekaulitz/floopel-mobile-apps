@@ -35,6 +35,7 @@ class TravelerQuestDesignFixture {
     @Volatile var totalPages = 1
     @Volatile var takenRows = listOf(running)
     @Volatile var extraCards: List<QuestCatalogItem> = emptyList()
+    @Volatile var pickerRows = listOf(location)
     var beforeCatalog: suspend (QuestDiscoveryFilter, Int) -> Unit = { _, _ -> }
     var beforeReader: suspend (String) -> Unit = {}
     var beforeSpot: suspend () -> Unit = {}
@@ -82,8 +83,8 @@ class TravelerQuestDesignFixture {
             beforeSpot(); spotFailure?.let { return it }
             return CatalogResult.Ready(spot.copy(id = item.id))
         }
-        override suspend fun topLocations(locale: String, perPage: Int) = CatalogResult.Ready(listOf(location))
-        override suspend fun searchLocations(query: String, locale: String) = CatalogResult.Ready(listOf(location).filter { it.title.contains(query, true) })
+        override suspend fun topLocations(locale: String, perPage: Int) = CatalogResult.Ready(pickerRows)
+        override suspend fun searchLocations(query: String, locale: String) = CatalogResult.Ready(pickerRows.filter { it.title.contains(query, true) })
     }
     val runtime = base.runtime.let { r -> TravelerRuntime(identity, catalog, r.itineraries, r.distribution, r.trips, r.notifications,
         r.account, r.legal, r.registration, r.publicContent, r.savedSpots, r.questGroups, r.newOperationKey, r.startup) }

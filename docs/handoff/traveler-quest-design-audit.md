@@ -4,6 +4,8 @@
 
 Batch ini menyamakan katalog dan detail Quest dengan Figma yang diminta pemilik. Ini verifikasi bagian Quest yang berubah; gameplay, GPS/provider, Partner dan parity seluruh aplikasi memiliki cakupan berbeda.
 
+Follow-up separator memperbaiki tiga literal `Â·` menjadi middle dot U+00B7 pada payload Share, geografi kartu katalog dan ancestors picker lokasi. Native regression menguji payload persis untuk 0/1/2 lokasi melalui callback `TravelerApp`, label kartu multi-lokasi dan label ancestors picker. **459 host/58 native test PASS**, build/APK androidTest/lint Traveler PASS (0 error/42 warning). Core/Partner tidak berubah pada follow-up; bukti build/lint Partner tetap pada checkpoint layout. Hash source/APK dan log terbaru berada pada [manifest koreksi separator](traveler-android-audit/quest-share-20261107/results.json); tabel dan 23 PNG di bawah adalah checkpoint layout `19c4b2f`. iOS/live API tetap memiliki batas yang sama.
+
 ## Acuan visual dan implementasi
 
 | Area | Frame Figma | Implementasi |
@@ -29,7 +31,7 @@ Badge, foto checkpoint, nama traveler dan nilai hadiah adalah data API. Artwork 
 
 ## Verifikasi
 
-Perintah final menggunakan Gradle Wrapper, temporary Java Windows sesuai README, origin development eksplisit, dan `--no-parallel --max-workers=2`. Cache resource generator sempat tidak konsisten; `:shared:features:traveler:clean` lalu build tanpa build/configuration cache dan `-Pkotlin.incremental=false` menyelesaikannya tanpa perubahan toolchain.
+Perintah batch layout menggunakan Gradle Wrapper, temporary Java Windows sesuai README, origin development eksplisit, dan `--no-parallel --max-workers=2`. Cache resource generator sempat tidak konsisten; `:shared:features:traveler:clean` lalu build tanpa build/configuration cache dan `-Pkotlin.incremental=false` menyelesaikannya tanpa perubahan toolchain.
 
 ```powershell
 .\gradlew.bat :shared:features:traveler:testAndroidHostTest :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug :apps:android:traveler:assembleDevelopmentDebugAndroidTest :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug '-Pkotlin.incremental=false' --no-configuration-cache --no-build-cache --no-parallel --max-workers=2
@@ -40,7 +42,7 @@ Hasil aktual, hash source/APK, log, ringkasan host dan PNG tersimpan pada [manif
 | Pemeriksaan | Hasil |
 | --- | --- |
 | Host Traveler | **PASS: 459 test**, 0 failure/error/skipped; termasuk 15 state test Quest baru dan 3 test native identity/session/API projection |
-| Native Android final | **PASS: 57 test** dalam satu eksekusi: 10 Quest design, 4 Quest state, 13 Figma/navbar, 13 journey, 13 lokasi, 2 publikasi, 1 font dan 1 autentikasi |
+| Native Android checkpoint layout `19c4b2f` | **PASS: 57 test** dalam satu eksekusi: 10 Quest design, 4 Quest state, 13 Figma/navbar, 13 journey, 13 lokasi, 2 publikasi, 1 font dan 1 autentikasi |
 | Build | **PASS** developmentDebug Traveler, Partner dan APK androidTest Traveler |
 | Lint | **PASS**, Traveler 0 error/42 warning; Partner 0 error/2 warning |
 | Visual/interaksi Quest | 23 capture fixture native pada emulator 5580/API 35, viewport 400×900 dp; mode terpilih pada font 100/130/200, filter/draft, quota-full, taken/active progress, checkpoint/rating, empty/error dan refresh/append retry |

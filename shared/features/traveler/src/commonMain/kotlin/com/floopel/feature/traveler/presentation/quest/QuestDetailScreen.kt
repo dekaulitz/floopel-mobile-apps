@@ -31,7 +31,7 @@ import com.floopel.feature.traveler.resources.*
 @Composable
 internal fun QuestDetail(state: TravelerState, model: TravelerViewModel, share: (String) -> Unit) {
     val quest = state.quest.value
-    val sharedText = quest?.let { s(Res.string.quest_share_text, it.card.title, it.card.locations.joinToString(" Â· ") { location -> location.name }) }
+    val sharedText = quest?.let { s(Res.string.quest_share_text, it.card.title, it.card.locations.joinToString(" \u00B7 ") { location -> location.name }) }
     Column(Modifier.fillMaxSize()) {
         QuestToolbar(s(Res.string.quest_detail_title), model, sharedText?.let { text -> { share(text) } })
         LazyColumn(Modifier.fillMaxSize().testTag("quest-detail"), contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 28.dp),
