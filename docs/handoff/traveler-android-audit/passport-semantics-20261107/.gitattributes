@@ -1,0 +1,3 @@
+*.json text eol=lf
+# Preserve captured console bytes; whitespace belongs to the evidence.
+*.log -text -whitespace

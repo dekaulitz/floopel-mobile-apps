@@ -93,6 +93,11 @@
   "logs": {
     "gradle-verification.log": "41f0f9bb2b7f5a434747c777016c6a8eda62d71b249d78a4aa0959fd84655feb",
     "native-instrumentation.log": "9b97898dafdd0361b032151b11d2319d0fb0819cca7e0494336c2acff1c549e0",
-    "source-apk-sha256.json": "7e40c8551ab28b4bca0a94aedc5b220f86887dd690e0f8c52bf18bab22cd7fa9"
+    "source-apk-sha256.json": "7d730b6e29f530d2a1119c0fa420b5c339f96b2ac3b4e7039a827a700f129325"
+  },
+  "evidence_storage": {
+    "json": "UTF-8 with LF; enforced by folder .gitattributes",
+    "logs": "raw command output; Git text conversion disabled",
+    "source_fingerprint": "raw local source/APK bytes during runner"
   }
 }
