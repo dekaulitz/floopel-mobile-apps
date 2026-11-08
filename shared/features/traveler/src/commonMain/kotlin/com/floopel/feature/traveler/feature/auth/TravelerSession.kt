@@ -498,16 +498,21 @@ internal class TravelerSession(private val api: NativeApi, private val store: Re
     suspend fun continueTakenQuest(id: String) = continueOwnedQuest(id, true)
 
     private suspend fun continueOwnedQuest(id: String, returnToTaken: Boolean) {
-        val current = state.value
-        // A newly started participation can predate the cached Passport list. Its current/read intent
-        // still needs a server-authorized retry; the cache is not the ownership authority.
-        val knownCurrent = current.participation?.id == id || current.questOwner?.activeParticipation?.id == id || current.passportParticipationId == id
-        if (!knownCurrent && current.progress?.activeParticipations?.none { it.id == id } != false) return
+        if (returnToTaken) {
+            val current = state.value
+            val knownCurrent = current.participation?.id == id || current.questOwner?.activeParticipation?.id == id ||
+                current.passportParticipationId == id
+            if (!knownCurrent && current.progress?.activeParticipations?.none { it.id == id } != false) return
+        }
+        // Completed owner routes can survive process death while the active Passport cache cannot.
+        // Resource validation and the authorized GET decide access; a saved ID is only a read intent.
         read(
             prepare = { it.copy(screen = TravelerScreen.QUEST_PLAY, passportParticipationId = id, returnToTakenQuests = returnToTaken,
                 participation = null, questDetail = null, questOwner = null, requestedSlug = null,
                 activity = null, answerResult = null) },
-            fetch = { api.participation(id, it, locale) },
+            fetch = { api.participation(id, it, locale).also { result ->
+                if (result.id != id) throw ApiFailure(502, null, null)
+            } },
             apply = { current, participation -> current.copy(participation = participation) },
         )
     }

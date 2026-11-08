@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-08T05:17:03.230Z" hostname="DSKTP-ZYAN" time="0.04">
+  <properties/>
+  <testcase name="newerPassportNavigationDiscardsThePendingCompletedResponse" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.016"/>
+  <testcase name="aDifferentResponseIdCannotPopulateTheRestoredParticipation" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.002"/>
+  <testcase name="failedPassportRefreshDoesNotSuppressTheIndependentOwnerRead" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.003"/>
+  <testcase name="foreignOrMissingParticipationIsDeniedByTheServerAndCannotProduceCompletion" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.003"/>
+  <testcase name="logoutDiscardsAnUncooperativeOldOwnerResponse" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.004"/>
+  <testcase name="sameSessionPassportRoundTripStillReopensTheSameSnapshotWithoutMutation" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.002"/>
+  <testcase name="unauthorizedOwnerReadRenewsOnceThenReturnsToLoginWithoutPrivateState" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.002"/>
+  <testcase name="activeParticipationStillReadsItsOwnerProjection" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.003"/>
+  <testcase name="freshSessionRestoresPassportThenBackReadsTheCompletedOwnerOutsideTheActiveCache" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.002"/>
+  <testcase name="malformedSavedIdNeverBecomesAnHttpPathOrAnOwnershipProof" classname="com.floopel.feature.traveler.presentation.QuestCompletionRestoreTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
