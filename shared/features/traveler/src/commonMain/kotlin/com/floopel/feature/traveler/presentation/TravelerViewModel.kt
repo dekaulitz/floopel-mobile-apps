@@ -49,6 +49,7 @@ internal class TravelerViewModel(
     private val locationQueries = mutableMapOf<TravelerRoute, String>()
     private val spotQueries = mutableMapOf<TravelerRoute, String>()
     private val discoveryQueries = mutableMapOf<DiscoverySearchOrigin, String>()
+    private val dayTitleValues = mutableMapOf<Pair<String, Int>, String>()
     private var groupInvitationsRoute: TravelerRoute? = null
 
     private var language = "id"
@@ -62,7 +63,7 @@ internal class TravelerViewModel(
                         reads.values.forEach(Job::cancel); reads.clear()
                         writeJob?.cancel()
                         acknowledgements.clear()
-                        locationQueries.clear(); spotQueries.clear(); discoveryQueries.clear(); spotReports.clear()
+                        locationQueries.clear(); spotQueries.clear(); discoveryQueries.clear(); dayTitleValues.clear(); spotReports.clear()
                         groupInvitationsRoute = null
                     }
                     mutable.update { current ->
@@ -1168,7 +1169,36 @@ internal class TravelerViewModel(
         mutable.update { it.copy(feedback = SpotAdded(itineraryId, result.itinerary.title, day)) }
     }
     fun saveStop(stop: OwnedStop) = write({ runtime.itineraries.updateStop(state.value.route.id, stop) }) { back() }
-    fun dayTitle(day: Int, title: String) = write({ runtime.itineraries.titleDay(state.value.route.id, day, title) }) { refresh() }
+    fun editDayTitle(day: Int) {
+        val current = state.value
+        val detail = current.itinerary.value ?: return
+        if (current.busy || current.route.destination != Destination.ITINERARY || detail.itinerary.id != current.route.id || !detail.itinerary.isOwner || day < 1) return
+        val key = current.route.id to day
+        val value = dayTitleValues.getOrPut(key) { detail.dayTitles[day].orEmpty() }
+        mutable.update { it.copy(dayTitleDraft = ItineraryDayTitleDraft(key.first, day, value), writeFailure = null) }
+    }
+    fun dayTitleValue(value: String) {
+        val draft = state.value.dayTitleDraft ?: return
+        if (state.value.busy || state.value.route.destination != Destination.ITINERARY || state.value.route.id != draft.itineraryId) return
+        dayTitleValues[draft.itineraryId to draft.day] = value
+        mutable.update { it.copy(dayTitleDraft = draft.copy(value = value)) }
+    }
+    fun cancelDayTitle() {
+        val draft = state.value.dayTitleDraft ?: return
+        if (state.value.busy) return
+        dayTitleValues.remove(draft.itineraryId to draft.day)
+        mutable.update { it.copy(dayTitleDraft = null, writeFailure = null) }
+    }
+    fun saveDayTitle() {
+        val current = state.value
+        val draft = current.dayTitleDraft ?: return
+        if (current.route.destination != Destination.ITINERARY || current.route.id != draft.itineraryId || current.itinerary.value?.itinerary?.isOwner != true) return
+        write({ runtime.itineraries.titleDay(draft.itineraryId, draft.day, draft.value) }) {
+            if (dayTitleValues[draft.itineraryId to draft.day] == draft.value) dayTitleValues.remove(draft.itineraryId to draft.day)
+            mutable.update { if (it.dayTitleDraft == draft) it.copy(dayTitleDraft = null) else it }
+            if (state.value.route.destination == Destination.ITINERARY && state.value.route.id == draft.itineraryId) refresh()
+        }
+    }
     fun removeStop(stopId: String) {
         val route = state.value.route
         write({ runtime.itineraries.removeStop(route.id, stopId) }) {

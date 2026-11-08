@@ -78,12 +78,11 @@ internal fun ItineraryScreen(state: TravelerState, model: TravelerViewModel) {
                 if (itinerary.isOwner) ActionRow(s(Res.string.edit_info), s(Res.string.edit_info_body), {
                     model.open(TravelerRoute(Destination.ITINERARY_FORM, itinerary.id))
                 })
-                var titleDay by remember { mutableStateOf<Int?>(null) }
                 val days = (detail.stops.map { it.day } + detail.dayTitles.keys + (1..maxOf(1, itinerary.days))).distinct().sorted()
                 val singleSpotPlan = detail.stopsLoaded && detail.stops.size == 1 && days.size == 1
                 days.forEach { day ->
                     SectionTitle(detail.dayTitles[day]?.takeIf { it.isNotBlank() } ?: s(Res.string.day, day),
-                        if (itinerary.isOwner) s(Res.string.edit) else null) { titleDay = day }
+                        if (itinerary.isOwner) s(Res.string.edit) else null) { model.editDayTitle(day) }
                     detail.stops.filter { it.day == day }.sortedBy { it.position }.forEach { stop ->
                         val card = state.stopCards[stop.spotId] ?: CatalogEntry(stop.spotId, stop.spotId,
                             stop.label, null, CatalogKind.SPOT, null)
@@ -102,7 +101,7 @@ internal fun ItineraryScreen(state: TravelerState, model: TravelerViewModel) {
                     }, Modifier.fillMaxWidth(), secondary = !singleSpotPlan)
                 }
                 if (itinerary.isOwner) {
-                    FloopelButton(s(Res.string.manage_days), { titleDay = (days.maxOrNull() ?: 0) + 1 }, Modifier.fillMaxWidth(), secondary = true)
+                    FloopelButton(s(Res.string.manage_days), { model.editDayTitle((days.maxOrNull() ?: 0) + 1) }, Modifier.fillMaxWidth(), secondary = true)
                     if (detail.stops.isEmpty()) InfoCard(s(Res.string.itinerary_empty_body))
                     FloopelButton(s(Res.string.create_trip), { model.open(TravelerRoute(Destination.TRIP_FORM, itinerary.id)) },
                         Modifier.fillMaxWidth(), secondary = singleSpotPlan, enabled = detail.stopsLoaded && detail.stops.isNotEmpty())
@@ -110,12 +109,23 @@ internal fun ItineraryScreen(state: TravelerState, model: TravelerViewModel) {
                         Modifier.fillMaxWidth(), secondary = true, enabled = detail.stopsLoaded && detail.stops.isNotEmpty())
                     FloopelButton(s(Res.string.share_plan), { model.open(TravelerRoute(Destination.SHARE, itinerary.id)) }, Modifier.fillMaxWidth(), secondary = true)
                 }
-                titleDay?.let { day ->
-                    var value by remember(day) { mutableStateOf(detail.dayTitles[day].orEmpty()) }
-                    AlertDialog({ titleDay = null }, title = { Text(s(Res.string.day_title)) }, text = {
-                        FloopelFormTextField(value, { value = it }, label = { Text(s(Res.string.day, day)) }, singleLine = true)
-                    }, confirmButton = { TextButton({ model.dayTitle(day, value); titleDay = null }) { Text(s(Res.string.save)) } },
-                        dismissButton = { TextButton({ titleDay = null }) { Text(s(Res.string.cancel)) } })
+                state.dayTitleDraft?.takeIf { it.itineraryId == itinerary.id && itinerary.isOwner }?.let { draft ->
+                    val retryAt = state.writeFailure?.retryAtMillis ?: 0
+                    var retryAllowed by remember(retryAt) { mutableStateOf(retryAt <= kotlin.time.Clock.System.now().toEpochMilliseconds()) }
+                    LaunchedEffect(retryAt) {
+                        val remaining = (retryAt - kotlin.time.Clock.System.now().toEpochMilliseconds()).coerceAtLeast(0)
+                        if (remaining > 0) kotlinx.coroutines.delay(remaining)
+                        retryAllowed = true
+                    }
+                    AlertDialog(model::cancelDayTitle, modifier = Modifier.testTag("day-title-editor"), title = { Text(s(Res.string.day_title)) }, text = {
+                        Column(Modifier.verticalScroll(rememberScrollState())) {
+                            FloopelFormTextField(draft.value, model::dayTitleValue, Modifier.testTag("day-title-input"),
+                                enabled = !state.busy, label = { Text(s(Res.string.day, draft.day)) }, singleLine = true)
+                            if (state.unknownOutcome) InfoCard(s(Res.string.unknown_outcome))
+                            state.writeFailure?.let { ErrorPanel(it, model::saveDayTitle) }
+                        }
+                    }, confirmButton = { TextButton(model::saveDayTitle, Modifier.testTag("day-title-save"), enabled = !state.busy && retryAllowed) { Text(s(Res.string.save)) } },
+                        dismissButton = { TextButton(model::cancelDayTitle, Modifier.testTag("day-title-cancel"), enabled = !state.busy) { Text(s(Res.string.cancel)) } })
                 }
             }
         }

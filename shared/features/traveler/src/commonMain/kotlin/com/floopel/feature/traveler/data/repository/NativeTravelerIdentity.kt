@@ -20,6 +20,12 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
         val gpsProof = v.gpsProof?.takeIf {
             it.participationId == v.participation?.id && it.activityId == v.activity?.activity?.id
         }
+        val submittedAnswer = v.submittedAnswer?.takeIf {
+            it.participationId == v.participation?.id && it.activityId == v.activity?.activity?.id
+        }
+        val answerResult = v.answerResult?.takeIf {
+            submittedAnswer != null && it.participation.id == submittedAnswer.participationId
+        }
         TravelerIdentityView(
         v.signedIn, generation, v.busy,
         v.progress?.let { p -> TravelerPassport(p.xpTotal, p.level.level, p.level.name,
@@ -29,14 +35,14 @@ internal class NativeTravelerIdentity(private val session: TravelerSession, priv
         v.activity?.let { QuestQuestion(it.activity.id, it.activity.title, when (it.activity.type) {
             "gps" -> QuestActivityKind.GPS; "question" -> QuestActivityKind.QUESTION; else -> QuestActivityKind.UNSUPPORTED },
             it.instructions, it.options.map { option -> option.id to option.text }, it.answerType) },
-        v.questOwner?.status, v.answerResult?.outcome, v.answerResult?.explanation,
+        v.questOwner?.status, answerResult?.outcome, answerResult?.explanation,
         v.failure?.let { IdentityFailure(it.status, it.code, it.retryAfterSeconds) },
         v.retryAtMillis, session.executionAvailable, v.gpsCollecting && gpsProof != null,
         gpsProof?.status == "active" && !v.gpsCollecting && !v.gpsSubmissionPending && gpsResult == null,
         v.participation?.status == "completed" || v.questOwner?.status == "completed",
         v.accountRecoveryRequired, v.googleOnboardingRequired,
         v.locationUnavailable && gpsProof != null, v.gpsSubmissionPending && gpsProof != null, gpsResult?.attempt?.status,
-        gpsCollectionBlocked = v.gpsSubmissionPending && gpsProof == null)
+        gpsCollectionBlocked = v.gpsSubmissionPending && gpsProof == null, submittedAnswer = submittedAnswer?.value)
     }
     override suspend fun restore() = session.restore()
     override suspend fun login(email: String, password: String) = session.login(email, password)

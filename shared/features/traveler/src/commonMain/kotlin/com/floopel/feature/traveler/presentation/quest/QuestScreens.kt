@@ -44,6 +44,14 @@ internal fun QuestProgress(state: TravelerState, model: TravelerViewModel) {
 @Composable
 internal fun QuestActivity(state: TravelerState, model: TravelerViewModel) {
     val question = state.identity.question?.takeIf { it.id == state.route.id }
+    val submittedAnswer = state.identity.submittedAnswer
+    var answer by rememberSaveable(state.identity.generation, state.identity.running?.id, question?.id) {
+        mutableStateOf(submittedAnswer.orEmpty())
+    }
+    LaunchedEffect(submittedAnswer) {
+        if (submittedAnswer != null) answer = submittedAnswer
+    }
+    val shownAnswer = if (state.identity.busy) submittedAnswer ?: answer else answer
     var retryAllowed by remember(state.identity.retryAtMillis) { mutableStateOf(state.identity.retryAtMillis <= kotlin.time.Clock.System.now().toEpochMilliseconds()) }
     LaunchedEffect(state.identity.retryAtMillis) {
         val remaining = (state.identity.retryAtMillis - kotlin.time.Clock.System.now().toEpochMilliseconds()).coerceAtLeast(0)
@@ -77,18 +85,22 @@ internal fun QuestActivity(state: TravelerState, model: TravelerViewModel) {
                 FloopelButton(s(if (state.identity.gpsSubmissionPending) Res.string.retry else Res.string.quest_submit_gps),
                     { model.gps(true) }, Modifier.fillMaxWidth().testTag("quest-gps-submit"), enabled = !state.identity.busy && retryAllowed)
         } else if (question.kind == QuestActivityKind.QUESTION) {
-            var answer by rememberSaveable(question.id) { mutableStateOf("") }
             if (question.options.isNotEmpty()) question.options.forEach { (id, label) ->
-                Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).selectable(answer == id, role = Role.RadioButton, onClick = { answer = id }),
+                Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("quest-answer-option-$id")
+                    .selectable(shownAnswer == id, enabled = !state.identity.busy, role = Role.RadioButton,
+                        onClick = { if (!state.identity.busy) answer = id }),
                     verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(answer == id, null)
+                    RadioButton(shownAnswer == id, null, enabled = !state.identity.busy)
                     Text(label, Modifier.padding(start = 12.dp))
                 }
-            } else FloopelFormTextField(answer, { answer = it }, Modifier.fillMaxWidth(), label = { Text(s(Res.string.quest_answer)) })
-            FloopelButton(s(Res.string.quest_submit), { model.answer(answer) }, Modifier.fillMaxWidth(),
+            } else FloopelFormTextField(shownAnswer, { if (!state.identity.busy) answer = it },
+                Modifier.fillMaxWidth().testTag("quest-answer-input"), enabled = !state.identity.busy, label = { Text(s(Res.string.quest_answer)) })
+            FloopelButton(s(Res.string.quest_submit), { model.answer(answer) }, Modifier.fillMaxWidth().testTag("quest-answer-submit"),
                 enabled = answer.isNotBlank() && !state.identity.busy && state.identity.executionConfigured)
         } else InfoCard(s(Res.string.error_unavailable))
-        state.identity.answerOutcome?.let { outcome ->
+        state.identity.answerOutcome?.takeIf {
+            !state.identity.busy && (submittedAnswer == null || answer == submittedAnswer)
+        }?.let { outcome ->
             InfoCard(s(if (outcome == "correct" || outcome == "accepted") Res.string.quest_result_correct else Res.string.quest_result_incorrect))
             state.identity.explanation?.let { Text(it) }
             FloopelButton(s(Res.string.quest_progress), model::back, Modifier.fillMaxWidth(), secondary = true)

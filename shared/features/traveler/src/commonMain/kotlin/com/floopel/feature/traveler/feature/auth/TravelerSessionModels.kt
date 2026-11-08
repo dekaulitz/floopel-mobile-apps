@@ -10,6 +10,9 @@ internal enum class TravelerScreen { PASSPORT, QUEST_LIST, QUEST_DETAIL, QUEST_P
 /** Catalog discovery and the owner's running participations remain distinct read sources. */
 internal enum class QuestCollection { AVAILABLE, TAKEN }
 
+/** Session-only attribution; never serialized or included in generated diagnostics. */
+internal class SubmittedQuestAnswer(val participationId: String, val activityId: String, val value: String)
+
 /** One in-memory projection read; credentials never participate in generated diagnostic strings. */
 internal class PassportProgressReadContext(
     val generation: Long,
@@ -54,4 +57,5 @@ internal data class SessionView(
     val retryAtMillis: Long = 0,
     val hiddenRevealOffered: Boolean = false,
     val ownerSnapshotOnly: Boolean = false,
+    val submittedAnswer: SubmittedQuestAnswer? = null,
 )

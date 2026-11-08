@@ -544,7 +544,8 @@ internal class TravelerSession(private val api: NativeApi, private val store: Re
             if (participation.status != "active" || participation.executionStatus != "available") return
             val input = listOf(participation.id, activity.activity.id, type, answer)
             val key = startKeys.getOrPut(input.joinToString("\u0000")) { kotlin.uuid.Uuid.random().toString() }
-            state.value = state.value.copy(busy = true, failure = null, answerResult = null)
+            state.value = state.value.copy(busy = true, failure = null, answerResult = null,
+                submittedAnswer = SubmittedQuestAnswer(participation.id, activity.activity.id, answer))
             mutationInFlight = true
             Triple(generation, identity, input to key)
         }

@@ -38,6 +38,7 @@ internal data class SpotAdded(val itineraryId: String, val title: String, val da
 internal data class TripCreationRecovery(val draft: TripDraft?, val trip: TravelerTrip?)
 internal data class TripMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<TravelerTrip>> = ReadState())
 internal data class ItineraryMutationRecoveryState(val required: Boolean = false, val review: ReadState<List<OwnedItinerary>> = ReadState())
+internal data class ItineraryDayTitleDraft(val itineraryId: String, val day: Int, val value: String)
 internal const val QuestGroupManagementMode = "manage"
 internal val TravelerRoute.isQuestGroupManagement get() = destination == Destination.QUEST_GROUP && extra == QuestGroupManagementMode
 internal data class QuestGroupManagementDraft(val groupId: String = "", val username: String = "")
@@ -76,6 +77,7 @@ internal data class TravelerState(
     val itineraries: ReadState<List<OwnedItinerary>> = ReadState(),
     val itinerary: ReadState<OwnedItineraryDetail> = ReadState(),
     val itineraryDraft: ReadState<ItineraryDraft?> = ReadState(),
+    val dayTitleDraft: ItineraryDayTitleDraft? = null,
     val pendingStop: ReadState<PendingItineraryStop?> = ReadState(),
     val distribution: ReadState<ItineraryDistribution> = ReadState(),
     val shareLink: ReadState<ItineraryShareLink> = ReadState(),
