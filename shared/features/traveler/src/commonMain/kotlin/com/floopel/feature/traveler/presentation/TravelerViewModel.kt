@@ -226,7 +226,9 @@ internal class TravelerViewModel(
             query = spotQueries[route].orEmpty(), feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest,
             questSpots = if (route.destination == Destination.QUEST) emptyMap() else it.questSpots, itinerary = ReadState(),
             distribution = ReadState(), shareLink = ReadState(), trip = ReadState(), plan = ReadState(),
-            openTrip = ReadState(), openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), ownerModeration = ReadState(), tripTimezone = null,
+            openTrip = it.openTrip.takeIf { previous -> route.destination == Destination.APPLICATION &&
+                it.route.destination == Destination.APPLY && previous.value?.applicationId == route.id } ?: ReadState(),
+            openTripStops = ReadState(), application = ReadState(), notice = ReadState(), notification = ReadState(), ownerModeration = ReadState(), tripTimezone = null,
             tripRecovery = ReadState(), media = ReadState(), mediaPartial = false,
             itineraryDraft = ReadState(), pendingStop = ReadState(), applicationDraft = ReadState(),
             pendingPublication = ReadState(), isSpotSaved = ReadState(), publicPlan = ReadState(), publicProfile = ReadState(),
@@ -404,8 +406,8 @@ internal class TravelerViewModel(
                 fetch("trip", { it.trip }, { s, r -> s.copy(trip = r) }) { runtime.trips.detail(route.id) }
             }
             Destination.INVITATIONS -> {
-                fetch("invitations", { it.invitations }, { s, r -> s.copy(invitations = r) }) {
-                    if (route.id.isBlank()) runtime.trips.myInvitations() else runtime.trips.invitations(route.id) }
+                if (route.id.isBlank()) loadRecipientInvitations()
+                else fetch("invitations", { it.invitations }, { s, r -> s.copy(invitations = r) }) { runtime.trips.invitations(route.id) }
                 if (route.id.isNotBlank()) fetch("trip", { it.trip }, { s, r -> s.copy(trip = r) }) { runtime.trips.detail(route.id) }
             }
             Destination.OPEN_TRIPS -> loadOpenTrips()
@@ -966,9 +968,44 @@ internal class TravelerViewModel(
             else runtime.trips.tripApplications(route.id, cursor)
         }
     }
+    private fun loadRecipientInvitations(cursor: String? = null) {
+        if (state.value.route.destination != Destination.INVITATIONS || state.value.route.id.isNotBlank()) return
+        fetch("recipient-invitations", { s -> if (cursor == null) s.recipientInvitations else
+            ReadState(s.recipientInvitations.value, s.recipientInvitationsAppending, s.recipientInvitationsAppendFailure) }, { s, r ->
+            when {
+                cursor == null -> s.copy(recipientInvitations = r, recipientInvitationsRetryCursor = null,
+                    recipientInvitationsAppending = false, recipientInvitationsAppendFailure = null)
+                r.loading -> s.copy(recipientInvitationsAppending = true, recipientInvitationsAppendFailure = null,
+                    recipientInvitationsRetryCursor = cursor)
+                r.failure != null -> s.copy(recipientInvitationsAppending = false, recipientInvitationsAppendFailure = r.failure,
+                    recipientInvitationsRetryCursor = cursor, recipientInvitations = if (r.failure.status in setOf(401, 403, 404)) ReadState(failure = r.failure) else s.recipientInvitations)
+                else -> s.copy(recipientInvitations = r.copy(value = r.value?.copy(items =
+                    (s.recipientInvitations.value?.items.orEmpty() + r.value.items).distinctBy { it.id })),
+                    recipientInvitationsAppending = false, recipientInvitationsAppendFailure = null, recipientInvitationsRetryCursor = null)
+            }
+        }) { runtime.trips.myInvitations(cursor) }
+    }
+    fun retryRecipientInvitations() {
+        if (!state.value.recipientInvitations.loading && !state.value.recipientInvitationsAppending)
+            loadRecipientInvitations(state.value.recipientInvitationsRetryCursor.takeIf { state.value.recipientInvitations.value != null })
+    }
+    /** Return only to an existing catalog origin, preserving that origin's filter/query. */
+    fun returnApplicationCatalog() {
+        val current = state.value; val index = current.applicationCatalogIndex ?: return
+        if (current.busy || current.application.loading) return
+        reads.values.forEach(Job::cancel); reads.clear()
+        mutable.update { s ->
+            val restored = s.copy(stack = s.stack.take(index + 1), writeFailure = null, saved = false, feedback = null)
+            restored.copy(query = discoveryQueries[restored.discoverySearchOrigin].orEmpty())
+        }
+        refresh()
+    }
     fun more() {
         val s = state.value
         when (s.route.destination) {
+            Destination.INVITATIONS -> if (s.route.id.isBlank() && !s.recipientInvitations.loading &&
+                !s.recipientInvitationsAppending && s.recipientInvitationsAppendFailure == null)
+                s.recipientInvitations.value?.nextCursor?.let(::loadRecipientInvitations)
             Destination.QUEST_GROUPS -> s.groups.value?.takeIf { it.page < it.totalPages }?.let { loadGroups(it.page + 1) }
             Destination.QUEST_GROUP_INVITATIONS -> s.groupInvitations.value?.takeIf { !s.groupInvitations.loading && !s.groupInvitationsAppending && it.page < it.totalPages }?.let { loadGroupInvitations(it.page + 1) }
             Destination.APPLICATIONS, Destination.TRIP_APPLICATIONS -> if (!s.applications.loading) s.applications.value?.nextCursor?.let(::moreApplications)

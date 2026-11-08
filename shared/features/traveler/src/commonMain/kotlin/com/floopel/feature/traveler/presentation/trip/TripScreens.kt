@@ -1,6 +1,8 @@
 package com.floopel.feature.traveler.presentation.trip
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -76,7 +78,7 @@ internal fun OpenTripDetail(state: TravelerState, model: TravelerViewModel) {
         val pending = state.applicationDraft.value
         var message by rememberSaveable(trip.id, pending) { mutableStateOf(pending.orEmpty()) }
         FormLayout(footer = {
-            FloopelButton(s(Res.string.trip_apply), { model.apply(message) }, Modifier.fillMaxWidth(),
+            FloopelButton(s(Res.string.trip_apply), { model.apply(message) }, Modifier.fillMaxWidth().testTag("trip-application-send"),
                 enabled = trip.canApply && !state.busy && visibleCharacterCount(message) <= 500 && !state.applicationDraft.loading && state.applicationDraft.failure == null)
         }) {
             Text(trip.name, style = MaterialTheme.typography.headlineMedium)
@@ -113,9 +115,9 @@ internal fun OpenTripDetail(state: TravelerState, model: TravelerViewModel) {
                     FloopelButton(s(Res.string.trip_open), { model.open(TravelerRoute(Destination.TRIP, trip.id)) }, Modifier.fillMaxWidth())
                 trip.applicationId != null -> FloopelButton(s(Res.string.trip_application), {
                     model.open(TravelerRoute(Destination.APPLICATION, trip.applicationId))
-                }, Modifier.fillMaxWidth())
+                }, Modifier.fillMaxWidth().testTag("open-trip-application-status"))
                 else -> FloopelButton(s(Res.string.trip_apply), { model.open(TravelerRoute(Destination.APPLY, trip.id, "form")) },
-                    Modifier.fillMaxWidth(), enabled = trip.canApply && !state.busy)
+                    Modifier.fillMaxWidth().testTag("trip-application-open-form"), enabled = trip.canApply && !state.busy)
             }
             if (!trip.canApply && trip.applicationId == null && trip.viewer == OpenTripViewer.VISITOR) InfoCard(s(Res.string.trip_apply_unavailable))
         }
@@ -252,6 +254,10 @@ internal fun Applications(state: TravelerState, model: TravelerViewModel) {
 
 @Composable
 internal fun ApplicationReader(state: TravelerState, model: TravelerViewModel) {
+    if (state.pendingOwnApplication) {
+        PendingTripApplication(state, model, requireNotNull(state.application.value))
+        return
+    }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ReadContent(state.application, model::refresh) { item ->
             Text(item.tripName, style = MaterialTheme.typography.headlineMedium)
@@ -311,6 +317,10 @@ internal fun Members(state: TravelerState, model: TravelerViewModel) {
 
 @Composable
 internal fun Invitations(state: TravelerState, model: TravelerViewModel) {
+    if (state.route.id.isBlank()) {
+        RecipientInvitations(state, model)
+        return
+    }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         if (state.route.id.isNotBlank()) {
             var recipient by remember { mutableStateOf("") }
@@ -321,16 +331,45 @@ internal fun Invitations(state: TravelerState, model: TravelerViewModel) {
         ReadContent(state.invitations, model::refresh) { items ->
             if (items.isEmpty()) EmptyContent()
             items.forEach { invitation ->
-                Text(invitation.tripName, style = MaterialTheme.typography.titleMedium)
-                Body(invitation.targetLabel)
-                Body(invitation.status)
-                if (state.route.id.isBlank() && invitation.status == "pending") {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        FloopelButton(s(Res.string.invitation_accept), { model.invitationDecision(invitation.id, InvitationDecision.ACCEPT) }, enabled = !state.busy)
-                        FloopelButton(s(Res.string.invitation_decline), { model.invitationDecision(invitation.id, InvitationDecision.DECLINE) }, secondary = true, enabled = !state.busy)
-                    }
-                }
+                TripInvitationItem(invitation, state.busy, false) { model.invitationDecision(invitation.id, it) }
             }
+        }
+    }
+}
+
+@Composable
+private fun RecipientInvitations(state: TravelerState, model: TravelerViewModel) {
+    val page = state.recipientInvitations
+    val appendFailure = state.recipientInvitationsAppendFailure.takeIf { page.failure == null }
+    LazyColumn(Modifier.fillMaxSize().testTag("trip-invitation-list"), contentPadding = PaddingValues(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (page.loading) item("loading") { LinearProgressIndicator(Modifier.fillMaxWidth()) }
+        page.failure?.let { failure -> item("failure") { ErrorPanel(failure, model::retryRecipientInvitations) } }
+        page.value?.let { data ->
+            if (data.items.isEmpty()) item("empty") { EmptyContent() }
+            items(data.items, key = { it.id }) { invitation ->
+                TripInvitationItem(invitation, state.busy, true) { model.invitationDecision(invitation.id, it) }
+            }
+        }
+        if (appendFailure != null || page.value?.nextCursor != null) item("continuation") {
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                appendFailure?.let { ErrorPanel(it, model::retryRecipientInvitations) }
+                if (page.value?.nextCursor != null) FloopelButton(s(Res.string.more), model::more,
+                    Modifier.fillMaxWidth().testTag("trip-invitations-more"), secondary = true,
+                    enabled = !state.busy && !page.loading && page.failure == null && !state.recipientInvitationsAppending && appendFailure == null)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TripInvitationItem(invitation: TripInvitation, busy: Boolean, recipient: Boolean, decide: (InvitationDecision) -> Unit) {
+    Column(Modifier.fillMaxWidth().testTag("trip-invitation-${invitation.id}"), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(invitation.tripName, style = MaterialTheme.typography.titleMedium)
+        Body(invitation.targetLabel); Body(invitation.status)
+        if (recipient && invitation.status == "pending") Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FloopelButton(s(Res.string.invitation_accept), { decide(InvitationDecision.ACCEPT) }, enabled = !busy)
+            FloopelButton(s(Res.string.invitation_decline), { decide(InvitationDecision.DECLINE) }, secondary = true, enabled = !busy)
         }
     }
 }

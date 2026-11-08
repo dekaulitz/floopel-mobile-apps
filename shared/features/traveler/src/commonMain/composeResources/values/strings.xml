@@ -867,4 +867,14 @@
     <string name="photo_pan_right">Geser foto ke kanan</string>
     <string name="photo_pan_up">Geser foto ke atas</string>
     <string name="photo_pan_down">Geser foto ke bawah</string>
+    <string name="trip_application_waiting">Menunggu jawaban</string>
+    <string name="trip_application_waiting_body">Pengajuanmu sudah terkirim dan menunggu tinjauan pengelola. Kamu belum menjadi peserta.</string>
+    <string name="trip_application_check">Periksa status</string>
+    <string name="trip_application_withdraw">Batalkan pengajuan</string>
+    <string name="trip_application_catalog">Kembali ke katalog</string>
+    <string name="trip_application_organizer">%1$s · Pengelola</string>
+    <string-array name="trip_application_months">
+        <item>Januari</item><item>Februari</item><item>Maret</item><item>April</item><item>Mei</item><item>Juni</item>
+        <item>Juli</item><item>Agustus</item><item>September</item><item>Oktober</item><item>November</item><item>Desember</item>
+    </string-array>
 </resources>

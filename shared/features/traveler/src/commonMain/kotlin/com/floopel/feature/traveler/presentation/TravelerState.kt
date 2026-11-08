@@ -86,6 +86,10 @@ internal data class TravelerState(
     val plan: ReadState<TripWorkingPlan> = ReadState(),
     val members: ReadState<List<TripMember>> = ReadState(),
     val invitations: ReadState<List<TripInvitation>> = ReadState(),
+    val recipientInvitations: ReadState<TripInvitationPage> = ReadState(),
+    val recipientInvitationsRetryCursor: String? = null,
+    val recipientInvitationsAppending: Boolean = false,
+    val recipientInvitationsAppendFailure: ReadFailure? = null,
     val openTrips: ReadState<OpenTripPage> = ReadState(),
     val openTrip: ReadState<OpenTrip> = ReadState(),
     val openTripStops: ReadState<OpenTripStopPage> = ReadState(),
@@ -142,6 +146,19 @@ internal data class TravelerState(
     val groupInvitation: ReadState<QuestGroupInvitation> = ReadState(),
 ) {
     val route get() = stack.last()
+    val pendingOwnApplication get() = route.destination == Destination.APPLICATION && application.value?.let {
+        it.id == route.id && it.viewer == TripApplicationViewer.APPLICANT && it.status == TripApplicationStatus.PENDING && !it.currentMember
+    } == true
+    val applicationCatalogIndex: Int? get() {
+        if (!pendingOwnApplication) return null
+        val tripId = application.value?.tripId ?: return null
+        val previous = stack.dropLast(1)
+        val origin = previous.dropLastWhile { it.destination == Destination.APPLY && it.id == tripId }
+        if (origin.size == previous.size) return null
+        val catalog = origin.lastOrNull() ?: return null
+        return origin.lastIndex.takeIf { catalog.destination == Destination.OPEN_TRIPS ||
+            catalog.destination == Destination.COMMUNITY && communityTab == 1 }
+    }
     val ownerModerationVisible get() = route.destination == Destination.OWNER_MODERATION &&
         ownerModeration.value?.isNotEmpty() == true && !ownerModeration.loading && ownerModeration.failure == null
     val managesCurrentQuestGroup get() = identity.signedIn && route.destination == Destination.QUEST_GROUP &&

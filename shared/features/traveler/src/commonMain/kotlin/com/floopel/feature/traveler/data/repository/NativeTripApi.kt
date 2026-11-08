@@ -10,6 +10,7 @@ import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.domain.repository.*
 import com.floopel.feature.traveler.feature.auth.TravelerSession
 import io.ktor.http.encodeURLPathPart
+import io.ktor.http.encodeURLQueryComponent
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import kotlinx.coroutines.sync.Mutex
@@ -358,14 +359,23 @@ internal class NativeTripApi(private val rest: FloopelRestClient, private val se
         buildJsonObject { put("new_organizer_profile_id", profileId) }.toString())
     override suspend fun invitations(id: String) = read(RestMethod.GET, path(id) + "/invitations") { it.jsonArray.map(::invitation) }
     /** Inviter identity metadata is batched once and discarded when the recipient account changes. */
-    override suspend fun myInvitations(): CatalogResult<List<TripInvitation>> {
+    override suspend fun myInvitations(cursor: String?, limit: Int): CatalogResult<TripInvitationPage> {
+        if (cursor != null && !validNotificationId(cursor)) return CatalogResult.HttpError(422)
+        val pageSize = limit.takeIf { it in 1..100 } ?: 20
         val generation = session.identityGeneration
-        val result = read(RestMethod.GET, "/me/trip-invitations") { it.jsonArray.map(::invitation) }
+        val target = "/me/trip-invitations?limit=$pageSize" + (cursor?.let { "&cursor=${it.encodeURLQueryComponent()}" } ?: "")
+        val result = read(RestMethod.GET, target) { data ->
+            val items = data.jsonArray.map(::invitation)
+            require(items.size <= pageSize && items.all { it.id.isNotBlank() } && items.map { it.id }.distinct().size == items.size)
+            val next = items.lastOrNull()?.id?.takeIf { items.size == pageSize }
+            require(next == null || validNotificationId(next) && next != cursor)
+            TripInvitationPage(items, next)
+        }
         if (result !is CatalogResult.Ready) return result
-        val identities = TravelerAvatarIdentities({ http.execute(RestMethod.GET, it) }, rest::resolveMediaUrl).read(result.value.map { it.inviterUsername })
+        val identities = TravelerAvatarIdentities({ http.execute(RestMethod.GET, it) }, rest::resolveMediaUrl).read(result.value.items.map { it.inviterUsername })
         if (generation != session.identityGeneration) return CatalogResult.HttpError(401)
-        return CatalogResult.Ready(result.value.map { it.copy(inviterLevel = identities[it.inviterUsername]?.level,
-            inviterAvatarUrl = identities[it.inviterUsername]?.avatarUrl) })
+        return CatalogResult.Ready(result.value.copy(items = result.value.items.map { it.copy(inviterLevel = identities[it.inviterUsername]?.level,
+            inviterAvatarUrl = identities[it.inviterUsername]?.avatarUrl) }))
     }
     override suspend fun invite(id: String, recipient: String, key: String): CatalogResult<Unit> {
         val value = recipient.trim()

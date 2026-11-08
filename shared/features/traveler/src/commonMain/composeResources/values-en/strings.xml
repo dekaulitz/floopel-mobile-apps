@@ -877,4 +877,14 @@
     <string name="photo_pan_right">Pan photo right</string>
     <string name="photo_pan_up">Pan photo up</string>
     <string name="photo_pan_down">Pan photo down</string>
+    <string name="trip_application_waiting">Waiting for a response</string>
+    <string name="trip_application_waiting_body">Your application has been sent and is waiting for the organizer’s review. You are not a participant yet.</string>
+    <string name="trip_application_check">Check status</string>
+    <string name="trip_application_withdraw">Withdraw application</string>
+    <string name="trip_application_catalog">Back to catalog</string>
+    <string name="trip_application_organizer">%1$s · Organizer</string>
+    <string-array name="trip_application_months">
+        <item>January</item><item>February</item><item>March</item><item>April</item><item>May</item><item>June</item>
+        <item>July</item><item>August</item><item>September</item><item>October</item><item>November</item><item>December</item>
+    </string-array>
 </resources>

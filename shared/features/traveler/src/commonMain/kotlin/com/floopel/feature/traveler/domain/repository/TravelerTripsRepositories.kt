@@ -53,7 +53,7 @@ interface TravelerTripRepository {
     suspend fun removeMember(id: String, profileId: String, key: String): CatalogResult<Unit>
     suspend fun transferOrganizer(id: String, profileId: String, key: String): CatalogResult<Unit>
     suspend fun invitations(id: String): CatalogResult<List<TripInvitation>>
-    suspend fun myInvitations(): CatalogResult<List<TripInvitation>>
+    suspend fun myInvitations(cursor: String? = null, limit: Int = 20): CatalogResult<TripInvitationPage>
     suspend fun invite(id: String, recipient: String, key: String): CatalogResult<Unit>
     suspend fun resend(id: String, invitationId: String, key: String): CatalogResult<Unit>
     suspend fun revoke(id: String, invitationId: String, key: String): CatalogResult<Unit>

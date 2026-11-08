@@ -23,6 +23,8 @@ data class InvitationItinerarySummary(val id: String, val title: String, val day
 data class TripInvitation(val id: String, val tripId: String, val targetLabel: String, val status: String, val expiresAt: String,
     val tripName: String, val inviterUsername: String, val startsOn: String, val endsOn: String, val itinerary: InvitationItinerarySummary? = null, val inviterLevel: Int? = null,
     val inviterAvatarUrl: String? = null)
+/** Recipient cursor is derived from the last row of a full server page; exact-size pages need an end read. */
+data class TripInvitationPage(val items: List<TripInvitation>, val nextCursor: String?)
 /** Authorized live plan with geography from its current working stops. */
 data class TripWorkingPlan(val title: String, val stops: List<OwnedStop>, val coverPhoto: CatalogPhoto? = null,
     val locations: List<LocationReference> = emptyList())

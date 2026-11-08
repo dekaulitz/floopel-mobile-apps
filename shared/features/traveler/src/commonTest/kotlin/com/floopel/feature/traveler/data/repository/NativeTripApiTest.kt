@@ -147,7 +147,7 @@ class NativeTripApiTest {
             fixture.login()
             fun response(days: Int, stops: Int) = """{"meta":{"code":"OK"},"error":null,"data":[{"id":"invitation","trip_id":"trip","target_label":"traveler","status":"pending","expires_at":"2099-01-01T00:00:00Z","itinerary_summary":{"id":"plan","title":"Plan","day_count":$days,"stop_count":$stops}}]}"""
             fixture.overrideBody = response(0, 0)
-            val invitation = assertIs<CatalogResult.Ready<List<TripInvitation>>>(fixture.repository.myInvitations()).value.single()
+            val invitation = assertIs<CatalogResult.Ready<TripInvitationPage>>(fixture.repository.myInvitations()).value.items.single()
             assertEquals(0, invitation.itinerary?.days)
             assertEquals(0, invitation.itinerary?.stops)
             listOf(-1 to 0, 0 to -1).forEach { (days, stops) ->
@@ -187,7 +187,7 @@ class NativeTripApiTest {
             assertEquals("https://fixture.invalid/media/traveler.webp", member.avatarUrl)
             assertEquals(1, fixture.identityReads)
             fixture.overrideBody = null
-            val invitation = assertIs<CatalogResult.Ready<List<TripInvitation>>>(fixture.repository.myInvitations()).value.single()
+            val invitation = assertIs<CatalogResult.Ready<TripInvitationPage>>(fixture.repository.myInvitations()).value.items.single()
             assertEquals("https://fixture.invalid/media/organizer.webp", invitation.inviterAvatarUrl)
             assertEquals(2, fixture.identityReads)
         } finally { fixture.client.close() }
@@ -668,10 +668,11 @@ class NativeTripApiTest {
             assertIs<CatalogResult.Ready<*>>(fixture.repository.invitations("trip"))
             assertEquals(
                 "Plan",
-                assertIs<CatalogResult.Ready<List<TripInvitation>>>(
+                assertIs<CatalogResult.Ready<TripInvitationPage>>(
                         fixture.repository.myInvitations()
                     )
                     .value
+                    .items
                     .single()
                     .itinerary
                     ?.title,
