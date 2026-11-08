@@ -57,7 +57,7 @@ private fun PublicPlanList(state: TravelerState, model: TravelerViewModel) {
         Text(s(Res.string.community_inspiration), style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp))
         ReadContent(state.publicPlans, model::refresh) { plans ->
             if (plans.isEmpty()) EmptyContent()
-            plans.forEach { plan -> PublicPlanCard(plan, model, state.busy) }
+            plans.forEach { plan -> PublicPlanCard(plan, model, state.busy, state.profile.value?.username) }
             if (state.publicCanRequestNext) FloopelButton(s(Res.string.more), model::more, Modifier.fillMaxWidth(), secondary = true, enabled = !state.publicPlans.loading)
         }
     }
@@ -171,7 +171,7 @@ private fun PublicationIdentity(name: String, avatarUrl: String?, openProfile: (
 }
 
 @Composable
-private fun PublicPlanCard(plan: PublicItinerarySummary, model: TravelerViewModel, busy: Boolean) {
+private fun PublicPlanCard(plan: PublicItinerarySummary, model: TravelerViewModel, busy: Boolean, currentUsername: String?) {
     val owner = plan.ownerDisplayName?.takeIf(String::isNotBlank) ?: plan.ownerUsername
     Column(Modifier.fillMaxWidth().padding(bottom = FloopelSpace.gutter), verticalArrangement = Arrangement.spacedBy(FloopelSpace.medium)) {
         PublicationIdentity(owner, plan.ownerAvatarUrl) { model.open(TravelerRoute(Destination.PUBLIC_PROFILE, plan.ownerUsername)) }
@@ -192,7 +192,7 @@ private fun PublicPlanCard(plan: PublicItinerarySummary, model: TravelerViewMode
         Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(FloopelSpace.medium)) {
             FloopelButton(s(Res.string.view_public_itinerary), { model.open(TravelerRoute(Destination.PUBLIC_PLAN, plan.slug)) },
                 Modifier.weight(1.326f).fillMaxHeight().testTag("public-plan-action"))
-            if (plan.allowClone == true) FloopelButton(s(Res.string.save_copy), { model.clonePublicPlan(plan) },
+            if (plan.allowClone == true && currentUsername != plan.ownerUsername) FloopelButton(s(Res.string.save_copy), { model.clonePublicPlan(plan) },
                 Modifier.weight(1f).fillMaxHeight().testTag("public-plan-copy"), enabled = !busy, secondary = true)
         }
     }
@@ -216,7 +216,8 @@ internal fun PublicPlanScreen(state: TravelerState, model: TravelerViewModel) {
                         stop.tips?.let { Body(it) }
                     }
                 }
-                if (plan.allowClone) FloopelButton(s(Res.string.save_copy), model::clonePlan, Modifier.fillMaxWidth(), enabled = !state.busy)
+                if (plan.allowClone && state.profile.value?.username != plan.ownerUsername)
+                    FloopelButton(s(Res.string.save_copy), model::clonePlan, Modifier.fillMaxWidth(), enabled = !state.busy)
                 if (state.profile.value?.username == plan.ownerUsername)
                     FloopelButton(s(Res.string.manage_publication), { model.open(TravelerRoute(Destination.SHARE, plan.id)) }, Modifier.fillMaxWidth(), secondary = true)
             }

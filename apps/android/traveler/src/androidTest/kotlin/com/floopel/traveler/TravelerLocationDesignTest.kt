@@ -20,6 +20,26 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TravelerLocationDesignTest {
     @get:Rule val ui = createAndroidComposeRule<ComponentActivity>()
+    @Test fun threeLongOpenTripRowsKeepTheirGuttersAtLargerFontSize() {
+        val f = TravelerLocationFixture()
+        f.visibleTrips = (1..3).map { index -> f.base.openTrip.copy(id = "padding-trip-$index", name =
+            "Open Trip Banten 0$index: Pantai Tanjung Kait & Pantai Tanjung Pasir dan Pulau Cangkir") }
+        launch(f, 1.3f); visible("home-location-${f.magelang.id}"); ui.onNodeWithTag("home-location-${f.magelang.id}").performClick()
+        val density = ui.activity.resources.displayMetrics.density
+        for (trip in requireNotNull(f.visibleTrips)) {
+            ui.onNodeWithTag("location-trip-${trip.id}").performScrollTo()
+            val row = ui.onNodeWithTag("location-trip-${trip.id}").fetchSemanticsNode().boundsInRoot
+            val viewport = ui.onNodeWithTag("traveler-viewport").fetchSemanticsNode().boundsInRoot
+            val photo = ui.onNodeWithTag("location-trip-image-${trip.id}", true).fetchSemanticsNode().boundsInRoot
+            val title = ui.onNodeWithTag("location-trip-title-${trip.id}", true).fetchSemanticsNode().boundsInRoot
+            assertEquals(16f * density, row.left - viewport.left, 1f); assertEquals(16f * density, viewport.right - row.right, 1f)
+            assertEquals(76f * density, photo.width, 1f); assertEquals(80f * density, photo.height, 1f)
+            assertEquals(12f * density, title.left - photo.right, 1f); assertTrue(title.right <= row.right)
+        }
+        ui.onNodeWithTag("location-trip-padding-trip-1").performScrollTo()
+        capture("location-three-trips-font130-padding")
+        assertEquals(0, f.base.tripCreateCalls.get())
+    }
     @Test fun openTripRowsKeepTheSixteenDpGuttersAndLongTitlesInsideTheirTextColumn() {
         val f = TravelerLocationFixture(); f.tripTitle = "Open Trip Bali 01: Air Terjun Tegenungan, Goa Gajah, Mandala Suci Wenara Wana dan Tampaksiring"
         launch(f); visible("home-location-${f.magelang.id}"); ui.onNodeWithTag("home-location-${f.magelang.id}").performClick()

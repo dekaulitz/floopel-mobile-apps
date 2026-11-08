@@ -280,6 +280,14 @@ internal class TravelerViewModel(
     }
     fun background() { viewModelScope.launch(worker) { runtime.identity.background() } }
     fun clearFeedback() { mutable.update { it.copy(feedback = null, saved = false) } }
+    fun refreshAfterWriteFailure() {
+        val current = state.value
+        if (current.busy || (current.writeFailure?.retryAtMillis ?: 0) > now()) return
+        if (!current.unknownOutcome && !current.itineraryMutationRecovery.required &&
+            !current.tripMutationRecovery.required && !current.questGroupMutationRecovery.required)
+            mutable.update { it.copy(writeFailure = null, writeFailureJournal = null) }
+        refresh()
+    }
 
     fun passportTab(tab: PassportTab) { mutable.update { it.copy(passportContent = it.passportContent.copy(tab = tab, expandedQr = false, badgeId = null)) } }
     fun passportCompleted(value: Boolean) { mutable.update { it.copy(passportContent = it.passportContent.copy(completed = value)) } }
@@ -850,15 +858,28 @@ internal class TravelerViewModel(
     }
     fun clonePlan() {
         val plan = state.value.publicPlan.value ?: return
-        copyPublishedPlan(plan.id, plan.allowClone)
+        copyPublishedPlan(plan.id, plan.allowClone, plan.ownerUsername)
     }
-    fun clonePublicPlan(plan: PublicItinerarySummary) = copyPublishedPlan(plan.id, plan.allowClone == true)
+    fun clonePublicPlan(plan: PublicItinerarySummary) = copyPublishedPlan(plan.id, plan.allowClone == true, plan.ownerUsername)
     fun cloneCuratedPlan(plan: CatalogEntry) {
         if (plan.kind == CatalogKind.ITINERARY) copyPublishedPlan(plan.id, plan.allowClone == true)
     }
-    private fun copyPublishedPlan(id: String, allowed: Boolean) {
-        if (!allowed) return
+    private fun copyPublishedPlan(id: String, allowed: Boolean, ownerUsername: String? = null) {
+        if (!allowed || state.value.busy) return
         if (!state.value.identity.signedIn) { open(TravelerRoute(Destination.LOGIN)); return }
+        if (ownerUsername != null) {
+            val profile = state.value.profile.value
+            if (profile == null) {
+                fetch("clone-profile", { it.profile }, { s, r -> s.copy(profile = r, writeFailure = r.failure ?: s.writeFailure) }, ready = {
+                    copyPublishedPlan(id, allowed, ownerUsername)
+                }) { runtime.account.profile() }
+                return
+            }
+            if (profile.username == ownerUsername) {
+                mutable.update { it.copy(writeFailure = ReadFailure(409, "OWN_PUBLICATION"), writeFailureJournal = null) }
+                return
+            }
+        }
         itineraryWrite({ runtime.itineraries.clone(id).catalog() }) { replace(TravelerRoute(Destination.ITINERARY, it.itinerary.id)) }
     }
     private fun loadGroups(page: Int = 1) = fetch("groups", { it.groups }, { s, r -> s.copy(groups =

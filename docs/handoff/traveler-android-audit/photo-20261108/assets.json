@@ -1,0 +1,29 @@
+[
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/files/profile_photo_progress.svg",
+    "figmaNode": "134:2405",
+    "width": 176,
+    "height": 117.333,
+    "bytes": 1965,
+    "sha256": "3ae374e0de9d94f168f3a8bb9d24244b3bda6cc1e988514e5448e48c1352d842",
+    "nativeLoadAndGeometry": "PASS"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/files/profile_photo_check.svg",
+    "figmaNode": "320:5608",
+    "width": 148,
+    "height": 98.6667,
+    "bytes": 1987,
+    "sha256": "67ec515cd686ca4081a5b91df701cd4426d6f2a4b464b951f617a942a3d43560",
+    "nativeLoadAndGeometry": "PASS"
+  },
+  {
+    "path": "shared/features/traveler/src/commonMain/composeResources/files/profile_photo_auth.svg",
+    "figmaNode": "134:2493",
+    "width": 176,
+    "height": 117.333,
+    "bytes": 2614,
+    "sha256": "644a4ebede924688f0ca8ea0b3d22fe0b41691baeb35a65d426844d0c7c080b1",
+    "nativeLoadAndGeometry": "PASS"
+  }
+]

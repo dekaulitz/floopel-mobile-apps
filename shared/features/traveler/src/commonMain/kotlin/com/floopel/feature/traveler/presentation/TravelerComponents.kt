@@ -103,6 +103,7 @@ internal fun ErrorPanel(failure: ReadFailure, retry: () -> Unit) {
         failure.code == "PENDING_OPERATION" -> s(Res.string.pending_operation)
         failure.code == "EXPIRED_OPERATION" -> s(Res.string.expired_operation)
         failure.code == "GOOGLE_UNAVAILABLE" -> s(Res.string.google_unavailable)
+        failure.code == "OWN_PUBLICATION" -> s(Res.string.publication_copy_own)
         failure.status == 401 -> s(Res.string.error_session)
         failure.status == 403 || failure.status == 404 -> s(Res.string.error_unavailable)
         failure.status == 409 -> s(Res.string.error_conflict)

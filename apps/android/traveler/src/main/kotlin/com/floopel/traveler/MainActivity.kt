@@ -11,6 +11,8 @@ import android.content.Intent
 import com.floopel.traveler.platform.location.AndroidQuestLocation
 import com.floopel.traveler.platform.auth.AndroidGoogleSignIn
 import com.floopel.traveler.platform.media.AndroidTravelerPhotoPicker
+import com.floopel.traveler.platform.media.AndroidProfilePhotoCropper
+import com.floopel.traveler.platform.media.PhotoWindowStyle
 import com.floopel.feature.traveler.TravelerApp
 import com.floopel.traveler.platform.storage.TravelerLanguage
 
@@ -41,6 +43,8 @@ class MainActivity : ComponentActivity() {
             }, googleSignIn = if (BuildConfig.GOOGLE_SERVER_CLIENT_ID.isNotBlank()) ({
                 AndroidGoogleSignIn(this, BuildConfig.GOOGLE_SERVER_CLIENT_ID).token()
             }) else null, photoPicker = photoPicker::select, startupSurface = ::updateSystemBars,
+                profilePhotoPicker = photoPicker::selectProfile, profilePhotoCropper = AndroidProfilePhotoCropper,
+                photoWindowStyle = { dark -> PhotoWindowStyle(dark) },
                 language = TravelerLanguage.current(this), selectLanguage = { TravelerLanguage.select(this, it) },
                 backHandler = { enabled, back -> BackHandler(enabled, back) })
         }

@@ -25,6 +25,8 @@ import com.floopel.core.designsystem.theme.FloopelCatalogTypography
 import com.floopel.feature.traveler.TravelerRuntime
 import com.floopel.feature.traveler.domain.model.TravelerImage
 import com.floopel.feature.traveler.domain.model.CatalogKind
+import com.floopel.feature.traveler.domain.model.ProfilePhotoSelection
+import com.floopel.feature.traveler.domain.repository.ProfilePhotoCropper
 import com.floopel.feature.traveler.presentation.account.*
 import com.floopel.feature.traveler.presentation.catalog.*
 import com.floopel.feature.traveler.presentation.home.TravelerHomeContent
@@ -34,6 +36,8 @@ import com.floopel.feature.traveler.presentation.passport.*
 import com.floopel.feature.traveler.presentation.trip.*
 import com.floopel.feature.traveler.resources.*
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,6 +47,9 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     startupSurface: (Boolean) -> Unit,
     language: String,
     selectLanguage: ((String) -> Unit)?,
+    profilePhotoPicker: (suspend () -> ProfilePhotoSelection?)?,
+    profilePhotoCropper: ProfilePhotoCropper?,
+    photoWindowStyle: @Composable (Boolean) -> Unit,
     backHandler: @Composable (Boolean, () -> Unit) -> Unit) {
     remember(runtime) {
         SingletonImageLoader.setSafe { context -> ImageLoader.Builder(context).components { add(SvgDecoder.Factory()) }.build() }
@@ -57,6 +64,14 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
     val platformScope = rememberCoroutineScope()
     var googleBusy by remember { mutableStateOf(false) }
     val state by model.state.collectAsStateWithLifecycle()
+    var photoOpen by rememberSaveable { mutableStateOf(false) }
+    var photoOwner by rememberSaveable { mutableLongStateOf(state.identity.generation) }
+    val photoModel = runtime.profilePhotos?.let { repository -> profilePhotoCropper?.let { cropper ->
+        viewModel(key = "profile-photo") { ProfilePhotoViewModel(repository, runtime.account, runtime.legal, runtime.identity, cropper) }
+    } }
+    LaunchedEffect(state.identity.generation, state.identity.signedIn, state.route.destination) {
+        if (!state.identity.signedIn || state.identity.generation != photoOwner || state.route.destination != Destination.PROFILE_EDIT) photoOpen = false
+    }
     val brandedStartup = !state.identityRestored || state.intro == null
     LaunchedEffect(brandedStartup) { startupSurface(brandedStartup) }
     if (brandedStartup) {
@@ -76,9 +91,13 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
             pickerBusy = true
             try {
                 val image = picker()
+                currentCoroutineContext().ensureActive()
                 if (image != null && model.state.value.route == requestedRoute && runtime.identity.generation == epoch) selected(image)
             } catch (cancelled: CancellationException) { throw cancelled }
-            catch (_: Exception) { model.imageUnavailable() }
+            catch (_: Exception) {
+                currentCoroutineContext().ensureActive()
+                if (model.state.value.route == requestedRoute && runtime.identity.generation == epoch) model.imageUnavailable()
+            }
             finally { pickerBusy = false }
         }
     } }
@@ -163,7 +182,7 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 MutationJournal.QUEST_GROUP -> state.questGroupMutationRecovery.required
                 null -> false
             }
-            if (!coveredFailure) state.writeFailure?.let { ErrorPanel(it, model::refresh) }
+            if (!coveredFailure) state.writeFailure?.let { ErrorPanel(it, model::refreshAfterWriteFailure) }
             state.startupFailure?.let { ErrorPanel(it, model::retryStartup) }
             if (state.tripMutationRecovery.required) TripMutationRecoveryPanel(state, model)
             if (state.itineraryMutationRecovery.required) ItineraryMutationRecoveryPanel(state, model)
@@ -192,7 +211,10 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                     Destination.PROFILE -> ProfileOverview(state, model)
                     Destination.PROFILE_SETTINGS, Destination.PROFILE_EDIT, Destination.PROFILE_INTERESTS, Destination.PROFILE_SECURITY,
                     Destination.PROFILE_EMERGENCY, Destination.PROFILE_PREFERENCES -> ProfileAccountScreen(state, model,
-                        language, selectLanguage, erasure?.let { { erasureOpen = true } })
+                        language, selectLanguage, erasure?.let { { erasureOpen = true } },
+                        photo = if (photoModel != null && profilePhotoPicker != null) ({
+                            photoOwner = state.identity.generation; photoModel.open(state.profile.value, language); photoOpen = true
+                        }) else null)
                     Destination.LOGIN -> LoginScreen(state, model, googleSignIn?.let { provider -> {
                         if (!googleBusy) platformScope.launch {
                             googleBusy = true
@@ -262,6 +284,12 @@ internal fun TravelerRoot(runtime: TravelerRuntime, share: (String) -> Unit,
                 }
             }
         }
+    }
+    if (photoOpen && photoModel != null && profilePhotoPicker != null && state.identity.signedIn &&
+        state.identity.generation == photoOwner && state.route.destination == Destination.PROFILE_EDIT) {
+        ProfilePhotoFlow(runtime, photoModel, state.profile.value, language, profilePhotoPicker,
+            close = { photoOpen = false }, profile = { photoOpen = false; model.tab(Destination.PROFILE) },
+            updated = model::refreshPassportIdentity, logout = model::logout, windowStyle = photoWindowStyle, backHandler = backHandler)
     }
 }
 

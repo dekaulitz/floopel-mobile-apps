@@ -26,9 +26,10 @@ internal class NativeProfilePhotoApi(private val rest: FloopelRestClient, sessio
 
     /** Performs one admission; HTTP202 must still report processing. */
     override suspend fun uploadProfilePhoto(image: ProfilePhotoImage): CatalogResult<ProfilePhotoUpload> {
-        if (image.bytes.size > ProfilePhotoPolicy.MaxBytes) return CatalogResult.HttpError(413, code = ProfilePhotoCodes.PayloadTooLarge)
-        if (image.bytes.isEmpty() || image.mimeType !in ProfilePhotoPolicy.MimeTypes) return CatalogResult.HttpError(422, code = ProfilePhotoCodes.Validation)
-        return decode(requests.upload(UploadsPath, image.bytes, image.mimeType), Accepted)
+        val bytes = image.bytes
+        if (bytes.size > ProfilePhotoPolicy.MaxBytes) return CatalogResult.HttpError(413, code = ProfilePhotoCodes.PayloadTooLarge)
+        if (bytes.isEmpty() || image.mimeType !in ProfilePhotoPolicy.MimeTypes) return CatalogResult.HttpError(422, code = ProfilePhotoCodes.Validation)
+        return decode(requests.upload(UploadsPath, bytes, image.mimeType), Accepted)
     }
 
     /** A status read has no upload side effects and accepts only the returned resource ID. */

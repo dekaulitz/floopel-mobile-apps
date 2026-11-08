@@ -20,6 +20,7 @@ class TravelerLocationFixture(score: Double? = 4.8, suppressed: Boolean = false,
     @Volatile var tripNextCursor: String? = null
     val tripQueries = CopyOnWriteArrayList<OpenTripQuery>()
     var tripTitle: String? = null
+    var visibleTrips: List<OpenTrip>? = null
     var beforeBrowse: suspend (String?) -> Unit = {}
     val indonesia = CatalogEntry("country-id", "indonesia", "Indonesia", null, CatalogKind.LOCATION, null, locationLevel = "country")
     val malaysia = indonesia.copy(id = "country-my", slug = "malaysia", title = "Malaysia")
@@ -76,7 +77,7 @@ class TravelerLocationFixture(score: Double? = 4.8, suppressed: Boolean = false,
         override suspend fun openTrips(query: OpenTripQuery): CatalogResult<OpenTripPage> {
             reads += "trips:${query.locationId.orEmpty()}"
             tripQueries += query
-            return if (failTrips) CatalogResult.NetworkError else CatalogResult.Ready(OpenTripPage(listOf(base.openTrip.let { if (tripTitle != null) it.copy(name = tripTitle!!) else it }), if (query.cursor == null) tripNextCursor else null))
+            return if (failTrips) CatalogResult.NetworkError else CatalogResult.Ready(OpenTripPage(visibleTrips ?: listOf(base.openTrip.let { if (tripTitle != null) it.copy(name = tripTitle!!) else it }), if (query.cursor == null) tripNextCursor else null))
         }
     }
     val identity = object : TravelerIdentity by base.identity {

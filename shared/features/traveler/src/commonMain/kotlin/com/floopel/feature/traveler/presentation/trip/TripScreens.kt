@@ -143,9 +143,9 @@ internal fun TripDetail(state: TravelerState, model: TravelerViewModel, selectPh
                 Text(trip.name, style = MaterialTheme.typography.headlineMedium)
                 Body("${trip.startsOn} – ${trip.endsOn} · ${trip.timezone}")
                 if (trip.role == TripCallerRole.ORGANIZER && trip.status == TripStatus.ACTIVE) {
-                    var editBanner by remember(trip.id) { mutableStateOf(false) }
-                    TextButton({ editBanner = !editBanner }) { Text(s(Res.string.choose_trip_banner)) }
-                    if (editBanner || state.mediaPartial) ImageEditor(state, selectPhoto, model::refresh) { model.uploadImage(it, banner = true) }
+                    ImageEditor(state, selectPhoto, model::refresh, chooseLabel = Res.string.choose_trip_banner) {
+                        model.uploadImage(it, banner = true)
+                    }
                 }
                 Body(s(when (trip.role) { TripCallerRole.ORGANIZER -> Res.string.trip_organizer; TripCallerRole.PARTICIPANT -> Res.string.trip_participant; TripCallerRole.INVITEE -> Res.string.trip_invitee }))
                 if (trip.role != TripCallerRole.INVITEE) {

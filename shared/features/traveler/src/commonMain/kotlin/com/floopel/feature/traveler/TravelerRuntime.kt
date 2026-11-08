@@ -28,6 +28,7 @@ class TravelerRuntime(
     val erasure: TravelerErasureRepository? = null,
     val moderation: TravelerModerationRepository? = null,
     val legalDocuments: TravelerLegalDocumentRepository? = null,
+    val profilePhotos: TravelerProfilePhotoRepository? = null,
 )
 
 /** Hosts own platform services and close the runtime once their retained owner is cleared. */
@@ -63,5 +64,6 @@ internal fun travelerRuntime(api: NativeApi, refreshStore: RefreshCredentialStor
         NativeRegistrationApi(api), NativePublicTravelerApi(rest, session), NativeSavedSpotApi(rest, session, catalog),
         NativeQuestGroupApi(rest, session, questGroupStore), newOperationKey, startup, api::close,
         comments = NativeCommentApi(rest, session, commentConsent), settings = NativeSettingsApi(rest, session),
-        erasure = NativeErasureApi(rest, session), moderation = NativeModerationApi(rest, session), legalDocuments = legal)
+        erasure = NativeErasureApi(rest, session), moderation = NativeModerationApi(rest, session), legalDocuments = legal,
+        profilePhotos = NativeProfilePhotoApi(rest, session))
 }

@@ -4,6 +4,7 @@ kotlin = "2.4.0"
 compose = "1.11.0"
 material3 = "1.9.0"
 activity-compose = "1.12.4"
+exifinterface = "1.4.2"
 androidx-core = "1.17.0"
 splashscreen = "1.2.0"
 android-compileSdk = "36"
@@ -25,6 +26,7 @@ zxing = "3.5.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 androidx-core = { module = "androidx.core:core", version.ref = "androidx-core" }
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }

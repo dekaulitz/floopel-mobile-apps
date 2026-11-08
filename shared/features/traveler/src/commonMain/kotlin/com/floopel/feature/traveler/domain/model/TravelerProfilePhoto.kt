@@ -7,8 +7,16 @@ enum class ProfilePhotoStatus { PROCESSING, READY, FAILED }
 data class ProfilePhotoUpload(val id: String, val status: ProfilePhotoStatus)
 
 /** One in-memory native selection; original paths and image bytes are never logged. */
-class ProfilePhotoImage(val bytes: ByteArray, val mimeType: String) {
+class ProfilePhotoImage(bytes: ByteArray, val mimeType: String) {
+    private val content = bytes.copyOf()
+    val byteCount get() = content.size
+    val bytes get() = content.copyOf()
     override fun toString(): String = "ProfilePhotoImage([REDACTED])"
+}
+
+/** Pan is expressed in crop-viewport widths/heights, after clockwise quarter-turn rotation. */
+data class ProfilePhotoCrop(val zoom: Float = 1f, val panX: Float = 0f, val panY: Float = 0f, val quarterTurns: Int = 0) {
+    init { require(zoom.isFinite() && zoom in 1f..8f && panX.isFinite() && panY.isFinite() && quarterTurns in 0..3) }
 }
 
 /** Platform selection is resolved before upload without exposing platform paths to the server. */

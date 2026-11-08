@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-08T03:20:59.464Z" hostname="DSKTP-ZYAN" time="0.045">
+  <properties/>
+  <testcase name="canonicalCodesAndNullableDetailsSurviveNativeThrottleWithoutReplay" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.013"/>
+  <testcase name="cancellationPropagatesWithoutAnotherUpload" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.003"/>
+  <testcase name="malformedErrorCannotSupplyBranchCodeAndMaintenanceKeepsCredential" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.003"/>
+  <testcase name="invalidSelectionAndPathAreRejectedBeforeNetwork" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.006"/>
+  <testcase name="malformedSuccessCannotBecomeCompletedPhoto" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.009"/>
+  <testcase name="unrelatedReadyRequestAndNetworkFailureCannotReplaceSelectedPhoto" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.003"/>
+  <testcase name="optimizedWebpUsesTheMatchingMultipartMimeAndExtension" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.002"/>
+  <testcase name="meAvatarProjectionSupportsLegacyAndRejectsInvalidWireType" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.002"/>
+  <testcase name="oneNativeMultipartAdmissionIsSeparateFromReadOnlyStatus" classname="com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

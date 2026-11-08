@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-08T03:21:00.967Z" hostname="DSKTP-ZYAN" time="0.011">
+  <properties/>
+  <testcase name="switchingAccountsWhileCheckingOwnershipDiscardsTheOldIntent" classname="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" time="0.003"/>
+  <testcase name="failedOwnerLookupDoesNotSubmitAndIsVisibleForReadOnlyRetry" classname="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" time="0.001"/>
+  <testcase name="ownPublicationIsRejectedBeforeCloneAndRefreshClearsOnlyTheDefiniteMessage" classname="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" time="0.002"/>
+  <testcase name="anotherOwnersCloneStillCreatesExactlyOneOwnedPlan" classname="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" time="0.002"/>
+  <testcase name="leavingWhileCheckingOwnershipCannotCloneAStaleCard" classname="com.floopel.feature.traveler.presentation.TravelerPublicationCopyGuardTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

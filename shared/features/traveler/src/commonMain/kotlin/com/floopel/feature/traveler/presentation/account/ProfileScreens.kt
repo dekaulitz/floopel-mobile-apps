@@ -94,7 +94,7 @@ internal fun ProfileOverview(state: TravelerState, model: TravelerViewModel) {
 
 @Composable
 internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel, language: String = "id",
-    selectLanguage: ((String) -> Unit)? = null, erasure: (() -> Unit)? = null) {
+    selectLanguage: ((String) -> Unit)? = null, erasure: (() -> Unit)? = null, photo: (() -> Unit)? = null) {
     val title = when (state.route.destination) {
         Destination.PROFILE_EDIT -> Res.string.profile_edit
         Destination.PROFILE_INTERESTS -> Res.string.profile_interests
@@ -114,7 +114,7 @@ internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 28.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             when (state.route.destination) {
-                Destination.PROFILE_EDIT -> ProfileEditor(state, model)
+                Destination.PROFILE_EDIT -> ProfileEditor(state, model, photo)
                 Destination.PROFILE_INTERESTS -> ProfileInterests(state, model)
                 Destination.PROFILE_SECURITY -> ProfileSecurity(state, model)
                 Destination.PROFILE_EMERGENCY -> ProfileEmergency(state, model)
@@ -126,16 +126,16 @@ internal fun ProfileAccountScreen(state: TravelerState, model: TravelerViewModel
 }
 
 @Composable
-private fun ProfileEditor(state: TravelerState, model: TravelerViewModel) {
+private fun ProfileEditor(state: TravelerState, model: TravelerViewModel, photo: (() -> Unit)?) {
     ReadContent(state.profile, model::refresh) { profile ->
-        var first by remember(profile) { mutableStateOf(profile.firstName) }
-        var last by remember(profile) { mutableStateOf(profile.lastName) }
-        var username by remember(profile) { mutableStateOf(profile.username) }
-        var nationality by remember(profile) { mutableStateOf(profile.nationalityCode) }
+        var first by remember(profile.profileId, profile.firstName) { mutableStateOf(profile.firstName) }
+        var last by remember(profile.profileId, profile.lastName) { mutableStateOf(profile.lastName) }
+        var username by remember(profile.profileId, profile.username) { mutableStateOf(profile.username) }
+        var nationality by remember(profile.profileId, profile.nationalityCode) { mutableStateOf(profile.nationalityCode) }
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             FloopelAvatar(profileInitials("${profile.firstName} ${profile.lastName}"), 64.dp,
                 image = profile.avatarUrl?.let { url -> { Media(url, Modifier.fillMaxSize()) } })
-            TextButton({}, enabled = false) { Text(s(Res.string.profile_photo_change)) }
+            TextButton({ photo?.invoke() }, Modifier.testTag("profile-edit-photo"), enabled = photo != null && !state.busy) { Text(s(Res.string.profile_photo_change)) }
         }
         Body(s(Res.string.profile_photo_hint))
         FloopelFormTextField(first, { first = it }, Modifier.fillMaxWidth(), enabled = !state.busy, label = { Text(s(Res.string.first_name)) })

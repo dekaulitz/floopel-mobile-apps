@@ -8,11 +8,13 @@ import androidx.compose.ui.unit.dp
 import com.floopel.core.designsystem.component.FloopelButton
 import com.floopel.feature.traveler.domain.model.*
 import com.floopel.feature.traveler.resources.*
+import org.jetbrains.compose.resources.StringResource
 
 internal typealias TravelerImageSelection = ((TravelerImage) -> Unit) -> Unit
 
 @Composable
 internal fun ImageEditor(state: TravelerState, select: TravelerImageSelection?, retry: () -> Unit,
+    chooseLabel: StringResource = Res.string.choose_image,
     upload: (TravelerImage) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         state.media.value?.let { status ->
@@ -24,7 +26,7 @@ internal fun ImageEditor(state: TravelerState, select: TravelerImageSelection?, 
         }
         if (state.mediaPartial) InfoCard(s(Res.string.trip_banner_partial))
         state.media.failure?.let { ErrorPanel(it, retry) }
-        if (select != null) FloopelButton(s(Res.string.choose_image), { select(upload) }, Modifier.fillMaxWidth(), secondary = true,
+        if (select != null) FloopelButton(s(chooseLabel), { select(upload) }, Modifier.fillMaxWidth(), secondary = true,
             enabled = !state.busy && !state.media.loading && state.media.value !in setOf(CoverProcessing.UPLOADED, CoverProcessing.PROCESSING))
         if (state.media.value in setOf(CoverProcessing.UPLOADED, CoverProcessing.PROCESSING))
             FloopelButton(s(Res.string.check_image), retry, secondary = true, enabled = !state.busy && !state.media.loading)
