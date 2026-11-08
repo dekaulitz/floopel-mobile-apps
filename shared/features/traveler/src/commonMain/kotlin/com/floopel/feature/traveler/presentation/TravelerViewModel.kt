@@ -48,6 +48,7 @@ internal class TravelerViewModel(
     private var startupJob: Job? = null
     private val locationQueries = mutableMapOf<TravelerRoute, String>()
     private val spotQueries = mutableMapOf<TravelerRoute, String>()
+    private val discoveryQueries = mutableMapOf<DiscoverySearchOrigin, String>()
     private var groupInvitationsRoute: TravelerRoute? = null
 
     private var language = "id"
@@ -61,7 +62,7 @@ internal class TravelerViewModel(
                         reads.values.forEach(Job::cancel); reads.clear()
                         writeJob?.cancel()
                         acknowledgements.clear()
-                        locationQueries.clear(); spotQueries.clear(); spotReports.clear()
+                        locationQueries.clear(); spotQueries.clear(); discoveryQueries.clear(); spotReports.clear()
                         groupInvitationsRoute = null
                     }
                     mutable.update { current ->
@@ -218,6 +219,7 @@ internal class TravelerViewModel(
         val route = creationRoute(if (requested.destination == Destination.CATALOG && requested.extra == CatalogKind.SPOT.name &&
             requested.id.isNotBlank() && requested.locationContextId.isBlank()) requested.copy(locationContextId = requested.id) else requested)
         if (route.destination in rootTabs && route.id.isEmpty() && route.extra.isEmpty()) { tab(route.destination); return }
+        state.value.discoverySearchOrigin?.let { discoveryQueries[it] = state.value.query }
         reads.values.forEach(Job::cancel); reads.clear()
         mutable.update { it.copy(stack = it.stack + route, writeFailure = null, saved = false,
             query = spotQueries[route].orEmpty(), feedback = null, detail = ReadState(), spotScopeLocation = ReadState(), quest = if (route.destination == Destination.QUEST) ReadState() else it.quest,
@@ -265,6 +267,8 @@ internal class TravelerViewModel(
         } else if (current.stack.size > 1) mutable.update { it.copy(stack = it.stack.dropLast(1), writeFailure = null, saved = false, feedback = null) }
         else if (current.tab != Destination.HOME) tab(Destination.HOME)
         if (state.value.route.retainsSpotQuery) mutable.update { it.copy(query = spotQueries[it.route].orEmpty()) }
+        else if (state.value.discoverySearchOrigin != null)
+            mutable.update { it.copy(query = discoveryQueries[it.discoverySearchOrigin].orEmpty()) }
         else if (state.value.route.destination == Destination.COUNTRIES ||
             state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
             mutable.update { it.copy(query = locationQueries[it.route].orEmpty()) }
@@ -489,6 +493,7 @@ internal class TravelerViewModel(
     fun query(value: String) {
         mutable.update { it.copy(query = value) }
         if (state.value.route.retainsSpotQuery) spotQueries[state.value.route] = value
+        state.value.discoverySearchOrigin?.let { discoveryQueries[it] = value }
         if (state.value.route.destination == Destination.COUNTRIES ||
             state.value.route.destination == Destination.CATALOG && state.value.route.extra == CatalogKind.LOCATION.name)
             locationQueries[state.value.route] = value
@@ -820,7 +825,10 @@ internal class TravelerViewModel(
         }) { repository.page(CommentTarget.SPOT, s.route.id, cursor, parentId) }
     }
     fun communityTab(index: Int) {
-        mutable.update { it.copy(communityTab = index.coerceIn(0, 2), query = "", publicPlans = ReadState(), publicPage = 1, publicCanRequestNext = true) }
+        val selected = index.coerceIn(0, 2)
+        listOf("searchDelay", "publicPlans", "openTrips", "catalog").forEach { reads.remove(it)?.cancel() }
+        discoveryQueries.remove(DiscoverySearchOrigin(state.value.route, selected))
+        mutable.update { it.copy(communityTab = selected, query = "", publicPlans = ReadState(), publicPage = 1, publicCanRequestNext = true) }
         refresh()
     }
     private fun publicPlans(page: Int = 1) {
@@ -1613,6 +1621,13 @@ internal fun Destination.isAuthenticationScreen() = this in setOf(Destination.LO
 private fun rootTab(stack: List<TravelerRoute>) = stack.first().destination.takeIf { it in rootTabs } ?: Destination.HOME
 private val TravelerRoute.retainsSpotQuery get() = destination == Destination.EXPLORER ||
     destination == Destination.CATALOG && extra == CatalogKind.SPOT.name
+
+private data class DiscoverySearchOrigin(val route: TravelerRoute, val communityTab: Int? = null)
+private val TravelerState.discoverySearchOrigin get() = when {
+    route.destination == Destination.OPEN_TRIPS -> DiscoverySearchOrigin(route)
+    route.destination == Destination.COMMUNITY && communityTab in 0..1 -> DiscoverySearchOrigin(route, communityTab)
+    else -> null
+}
 
 private fun signedInStack(stack: List<TravelerRoute>) = stack.dropLastWhile { it.destination.isAuthenticationScreen() }
     .ifEmpty { listOf(TravelerRoute(Destination.HOME)) }

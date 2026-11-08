@@ -1,0 +1,178 @@
+{
+  "finding": "COMMUNITY-SEARCH-BACK-01",
+  "deduplicationKey": "trip-public-plan-search-back-query-loss-20261108-0713",
+  "reportedAtSource": "fb3fc9b2c4efe298f28f7aa377b5339f4848de7a",
+  "originalEvidence": "Read-only source finding; no baseline native/API reproduction",
+  "scope": [
+    "Open Trip global",
+    "Open Trip scoped by location",
+    "Community public plans tab 0",
+    "Community Open Trip tab 1"
+  ],
+  "change": "Session memory query per complete origin route and Community tab; restore before Back refresh; clear on actor/generation reset; cancel outgoing Community reads/debounce on explicit tab reset",
+  "verification": {
+    "travelerApkAndTestApk": "PASS",
+    "travelerLint": {
+      "status": "PASS",
+      "errors": 0,
+      "fatal": 0,
+      "warnings": 45
+    },
+    "host": {
+      "status": "PASS",
+      "tests": 537,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "newCases": 6,
+      "provenance": "Full host execution in host-build.log; subsequent changes were Android instrumentation test selectors only. Final build.log invokes the unchanged host task as UP-TO-DATE."
+    },
+    "native": {
+      "status": "PASS",
+      "serial": "emulator-5580",
+      "tests": 30,
+      "newCommunitySearchCases": 8,
+      "previousNavigationCases": 12,
+      "collectionRegressionCases": 10,
+      "failures": 0,
+      "instrumentationSeconds": 68.389,
+      "runnerSeconds": 70.641,
+      "viewportDp": "400x900",
+      "density": 432,
+      "fontScale": 1
+    },
+    "sourceApkFreeze": {
+      "status": "PASS",
+      "entries": 422,
+      "purpose": "Execution provenance of local source/APK bytes, including the excluded styles.xml edit; not a portable Git byte equivalence claim"
+    },
+    "inspectedScreenshots": {
+      "fixture": 8,
+      "restoredPublicCollection": 1
+    }
+  },
+  "resetSemantics": [
+    "Explicit Community tab selection clears the selected tab search",
+    "Main navigation to Open Trip/Community retains its existing empty-query reset",
+    "Explicit text clear remains empty after reader Back",
+    "Actor/generation invalidates retained searches"
+  ],
+  "coverage": [
+    "Exact editable field text, including empty",
+    "Filtered repository q/location/page arguments and results on reader Back",
+    "Independent origins and tabs",
+    "Failed read/explicit retry",
+    "Late cancelled public/trip reads and pending debounce",
+    "Actor reset and query absent from serialized navigation"
+  ],
+  "liveBusinessWrites": 0,
+  "productionApiContractChanges": 0,
+  "newStaticAssets": 0,
+  "emulatorRestoration": "Existing real session, read-only ngrok Home to Collection archive to public Collection reader; five-second manual pauses; no app/database reset or clock change; size/density/font overrides restored",
+  "foreignFilesExcludedAndUnchanged": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "limitations": {
+    "apiIntegrationForNewSearchCases": "NOT_RUN; isolated repository fixtures, not live search API requests",
+    "ios": "NOT_RUN; Mac/Xcode runner required",
+    "assistiveTechnology": "NOT_RUN",
+    "physicalDeviceAndRelease": "NOT_RUN",
+    "partner": "NOT_APPLICABLE; no Partner/core/build/provider changes",
+    "searchPersistence": "Session memory only; no process-death persistence claim",
+    "visualAcceptance": "Existing shared UI reused; these captures verify bound state, not new whole-app/Figma parity",
+    "historicalCheckpoint": "531 host / 68 native at fb3fc9b remains historical and is not counted as new coverage"
+  },
+  "artifacts": [
+    {
+      "path": ".gitattributes",
+      "bytes": 88,
+      "sha256": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763"
+    },
+    {
+      "path": "actor-reset.png",
+      "bytes": 109080,
+      "sha256": "3745a63b99f94cd9663bd1ae067f3ddfbe4020a141ba8f794485fa763bf40ec4"
+    },
+    {
+      "path": "build.log",
+      "bytes": 33900,
+      "sha256": "beb6ca1f527607ad0046790f0d98e261449fb1e064ca83e5811784fcfcb57969"
+    },
+    {
+      "path": "community-open-trip-back.png",
+      "bytes": 133722,
+      "sha256": "95c0c6b590737440598a38dfb4da769c205807fdc102148b9170085973c01abe"
+    },
+    {
+      "path": "community-public-plan-back.png",
+      "bytes": 139299,
+      "sha256": "f9143266cbb3266615479a844da993a2d5eead0708d948e38950ed74ad791684"
+    },
+    {
+      "path": "community-search-host.xml",
+      "bytes": 1481,
+      "sha256": "3783069344c7730639ad9422afe92ef7b0df7f2966fc89c47b798403b044fa46"
+    },
+    {
+      "path": "explicit-clear-and-reset.png",
+      "bytes": 109418,
+      "sha256": "0ca871930c5e55eaa91958b368c91f31cf0d99148ba11141f0e1cb73595471bb"
+    },
+    {
+      "path": "global-open-trip-back.png",
+      "bytes": 108453,
+      "sha256": "73e421717f761d806953dd229a5bc257462a046dda75eec59638e7a9f37ddd45"
+    },
+    {
+      "path": "host-build.log",
+      "bytes": 34381,
+      "sha256": "c7e1133683538ce35fe6b1e81d565c58b5ceee76609a2d757fdaf2d0554a3267"
+    },
+    {
+      "path": "host-summary.json",
+      "bytes": 15347,
+      "sha256": "e41d60077995150b2ba2d60f0a76bd320f8881ed85eca4e8feb7c8a6c868341b"
+    },
+    {
+      "path": "lint.xml",
+      "bytes": 54630,
+      "sha256": "b6511a90174d320b3bacfa1256d326fc251867c77b9edcd729863b6f918b47ad"
+    },
+    {
+      "path": "location-open-trip-back.png",
+      "bytes": 90785,
+      "sha256": "83161a5b214835ea84285b532e531c14800857a00ebc25bf3e3448285187bc18"
+    },
+    {
+      "path": "native.log",
+      "bytes": 21423,
+      "sha256": "c15cf795f4c9deb8e6ac035d9a11cf9415689d55c90dfc3e34baedaf7c23c6a6"
+    },
+    {
+      "path": "open-trip-back-error.png",
+      "bytes": 85192,
+      "sha256": "ca3347ec4f742e785da8371ee9aab3da0d049d1fb54843c12d204761fd3b6c5c"
+    },
+    {
+      "path": "public-plan-back-error.png",
+      "bytes": 105061,
+      "sha256": "7485a5ed693c44eeae8845c43531a1b8b85e7bce6b684e64d1965c8334fb8266"
+    },
+    {
+      "path": "restored-collection-api.png",
+      "bytes": 992796,
+      "sha256": "7bc4f7bb3bbd40bbf787ab1556f2d156e86a311b48eb5eb888cce4d00903c0f4"
+    },
+    {
+      "path": "runner.log",
+      "bytes": 1928,
+      "sha256": "919b71d8f2a37ab25f8d9029f202b97aba03e802c8b90b72769f3b8ff45d164c"
+    },
+    {
+      "path": "source-apk-freeze.json",
+      "bytes": 75811,
+      "sha256": "252fbb994a7cc8e96d2a186b5ed0ab28d855ee2ba3637b4cde196fef477cbef8"
+    }
+  ]
+}
