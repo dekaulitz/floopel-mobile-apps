@@ -1,0 +1,114 @@
+{
+  "date": "2026-11-14",
+  "parent_commit": "c89da38a70f5960633819424e09588846a9ad83b",
+  "native": {
+    "device": "emulator-5580",
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "tests": 51,
+    "failures": 0,
+    "seconds": 227.297,
+    "classes": {
+      "TravelerLoginFocusTest": 4,
+      "TravelerAuthenticationJourneyTest": 1,
+      "TravelerFigmaDesignTest": 14,
+      "TravelerAccountDesignTest": 16,
+      "TravelerLocationDesignTest": 16
+    },
+    "new_cases": 5,
+    "frozen_inputs": 456,
+    "fixtures": "production Compose/components/VM, synthetic domain repositories; no live business writes"
+  },
+  "login_focus_metrics": {
+    "1.3": {
+      "field_height_range_dp": 0.0,
+      "following_field_position_range_dp": 0.0
+    },
+    "2.0": {
+      "field_height_range_dp": 0.0,
+      "following_field_position_range_dp": 0.0
+    },
+    "1.0": {
+      "field_height_range_dp": 0.0,
+      "following_field_position_range_dp": 0.0
+    }
+  },
+  "font_scale_limit": "100/130/200 are Compose LocalDensity overrides; the real Android IME check runs at OS font scale 1.0",
+  "main_activity_manual": {
+    "application": "com.floopel.traveler.dev",
+    "device_px": [
+      1080,
+      2400
+    ],
+    "density_dpi": 420,
+    "flow": "open installed app; focus empty Email; focus empty Password; >=5 seconds between actions; no submit",
+    "email_field_bounds_px_before_and_after": [
+      53,
+      643,
+      1027,
+      802
+    ],
+    "password_field_bounds_px_before_and_after": [
+      53,
+      844,
+      1027,
+      1003
+    ]
+  },
+  "login_baseline": {
+    "field_height_dp": [
+      57.037033,
+      60.37037,
+      57.037033
+    ],
+    "range_dp": 3.3333359
+  },
+  "location_baseline_line_heights_dp": [
+    43.333313,
+    15.555542,
+    16.296265
+  ],
+  "location_target_line_heights_dp": [
+    46,
+    18,
+    19
+  ],
+  "location_gutters_dp": 16,
+  "image_text_gap_dp": 12,
+  "between_rows_dp": 8,
+  "between_text_rows_dp": 4,
+  "build": {
+    "traveler_development_app": "PASS",
+    "partner_development_app": "PASS",
+    "traveler_instrumentation": "PASS"
+  },
+  "lint": {
+    "traveler": {
+      "errors": 0,
+      "warnings": 45
+    },
+    "partner": {
+      "errors": 0,
+      "warnings": 2
+    }
+  },
+  "launcher": {
+    "application": "com.floopel.traveler.dev",
+    "color": "#3730A3",
+    "geometry": "unchanged from existing brand vector; native purple tint",
+    "adaptive_foreground_mark_dp": 48,
+    "adaptive_canvas_dp": 108,
+    "manual_preview": "Android 15 launcher, full-color mode; circular mask",
+    "legacy_api24_25": "resources supplied; device verification NOT_RUN",
+    "production_flavor_apk": "NOT_RUN; resources inherited from main"
+  },
+  "limits": [
+    "Mac/Xcode/iOS NOT_RUN",
+    "TalkBack/VoiceOver NOT_RUN",
+    "physical/release/performance NOT_RUN",
+    "MainActivity process death NOT_RUN"
+  ],
+  "provenance": "raw executed source/APK fingerprints; not equivalence to every Git-normalized source blob"
+}

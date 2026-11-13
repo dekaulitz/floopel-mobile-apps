@@ -1,0 +1,17 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="192" height="128" viewBox="0 0 192 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="SVG / search">
+<path id="Vector" d="M96 118.4C132.23 118.4 161.6 115.535 161.6 112C161.6 108.465 132.23 105.6 96 105.6C59.7701 105.6 30.4 108.465 30.4 112C30.4 115.535 59.7701 118.4 96 118.4Z" fill="#EEF0FF"/>
+<path id="Vector_2" d="M129.6 28H42.4C36.2144 28 31.2 33.0144 31.2 39.2V93.6C31.2 99.7856 36.2144 104.8 42.4 104.8H129.6C135.786 104.8 140.8 99.7856 140.8 93.6V39.2C140.8 33.0144 135.786 28 129.6 28Z" fill="#EEF0FF"/>
+<path id="Vector_3" d="M38.4 89.6L62.4 64L81.6 80.8L102.4 51.2L136 89.6" fill="white"/>
+<path id="Vector_4" d="M57.6 55.2C61.5765 55.2 64.8 51.9764 64.8 48C64.8 44.0235 61.5765 40.8 57.6 40.8C53.6236 40.8 50.4 44.0235 50.4 48C50.4 51.9764 53.6236 55.2 57.6 55.2Z" fill="#FFE4A8"/>
+<path id="Vector_5" d="M128 82.4C143.906 82.4 156.8 69.5058 156.8 53.6C156.8 37.6942 143.906 24.8 128 24.8C112.094 24.8 99.2 37.6942 99.2 53.6C99.2 69.5058 112.094 82.4 128 82.4Z" fill="white" stroke-width="5.6" stroke="#3730A3"/>
+<g id="Vector_6">
+<path d="M148.8 75.2L168 94.4Z" fill="#3730A3"/>
+<path d="M148.8 75.2L168 94.4" stroke-width="8.8" stroke-linecap="round" stroke="#3730A3"/>
+</g>
+<g id="Vector_7">
+<path d="M117.6 53.6H138.4ZM128 43.2V64Z" fill="#3730A3"/>
+<path d="M117.6 53.6H138.4M128 43.2V64" stroke-width="3.2" stroke-linecap="round" stroke="#EEF0FF"/>
+</g>
+</g>
+</svg>

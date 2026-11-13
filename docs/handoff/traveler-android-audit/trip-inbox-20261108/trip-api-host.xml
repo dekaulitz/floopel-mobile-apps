@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.data.repository.NativeTripApiTest" tests="29" skipped="0" failures="0" errors="0" timestamp="2026-11-08T04:22:21.703Z" hostname="DSKTP-ZYAN" time="0.148">
+  <properties/>
+  <testcase name="completedTripsStillUseLiveWorkingCoverageAndEmptyCoverageDoesNotAddAGate" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.011"/>
+  <testcase name="confirmedCreationWithoutBannerSurvivesRepositoryRecreationUntilAcknowledged" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.006"/>
+  <testcase name="invalidReadModelsAndUnavailableWritesFailWithoutRetriesOrSessionLoss" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.006"/>
+  <testcase name="publicCreationRestoresExactAdmissionFieldsAndKeyWithoutAnotherPost" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="legacyPatchOmissionDoesNotInventPrivateTypeAndItsReplayKeepsTheOriginalBody" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="tripFailuresPreserveCanonicalKnownAndUnknownCodes" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="malformedOrMissingMemberCapabilitiesAreNotInferredAsPermission" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="uncertainCreationRestoresExactIntentAndKeyAcrossRepositoryRecreation" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="ownedNoticeRejectsMissingNullableFieldsInvalidEpisodesAndMalformedAuthority" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.006"/>
+  <testcase name="durableCreationKeepsItsOriginalKeyAfterTheLegacyWindow" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="missingSourceTimezoneAndPrivateRegistrationNeverSendAWrite" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.001"/>
+  <testcase name="acknowledgedCreationCanStillBeRecoveredByItsSavedRouteKeyWithoutAnotherWrite" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.005"/>
+  <testcase name="invalidBannerIsRejectedBeforeTransportAndReadStatusKeepsProcessingState" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="uncertainBannerRetryUsesIdenticalMultipartBytesBoundaryAndKey" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="ownedNoticeHandlesApplicantAndUnknownOutcomesWithoutInventingMembership" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="tripNameLimitCountsUnicodeScalarsInsteadOfRejectingValidSupplementaryCharacters" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="reenteredAndLegacyRoutesKeepTheOriginalCreationAfterAcknowledgement" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.012"/>
+  <testcase name="memberAffordancesUseServerFlagsWithoutRecomputingFromTheDeviceCalendar" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="pendingIntentCannotBeReplacedWithoutSuccessfulAuthoritativeReview" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.005"/>
+  <testcase name="interruptedCreationRecoversByReadAndRetainsAnAbsentOperationIntent" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.006"/>
+  <testcase name="ownedNoticeKeepsTheHistoricalEpisodeSeparateFromCurrentMembership" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.002"/>
+  <testcase name="invitationSummaryAllowsEmptyWorkingPlansButRejectsNegativeCounts" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.005"/>
+  <testcase name="expiredLegacyUpdateNeverResendsOutsideTheIdempotencyWindow" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.003"/>
+  <testcase name="storageFailureStopsTheMutationAndAccountChangesDoNotReuseAnotherOwnersKey" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.006"/>
+  <testcase name="publicWindowPatchRestoresExactFieldsWithoutChangingVisibility" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="pendingInviteeIsCallerAccessOnlyAndCannotAppearAsAMemberRole" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.005"/>
+  <testcase name="tripsAndInvitationsUseMembershipProjectionAndExactExistingMutations" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.016"/>
+  <testcase name="memberAndInviterPhotosComeFromOneIdentityBatchPerRead" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <testcase name="confirmedCreationStaysConfirmedWhenIntentCleanupFails" classname="com.floopel.feature.traveler.data.repository.NativeTripApiTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

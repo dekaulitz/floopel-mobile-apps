@@ -1,0 +1,144 @@
+{
+  "date": "2026-11-07",
+  "product": "Android Traveler",
+  "package": "com.floopel.traveler",
+  "branch": "feature/mobile-openapi-contracts",
+  "issues": [
+    "QUEST-STATE-01",
+    "QUEST-STATE-02"
+  ],
+  "host": {
+    "tests": 391,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "host_cases": "host-results.json",
+  "native": [
+    {
+      "log": "quest-state-native.log",
+      "tests": 4,
+      "status": "PASS",
+      "sha256": "68eab8ccea520bd89e6ccdd974644f2d300da017f73fc184c5f856f4657a5d9b"
+    },
+    {
+      "log": "quest-state-native-regressions.log",
+      "tests": 16,
+      "status": "PASS",
+      "sha256": "5d56f1cd99ea227ae82c317ea94e9e4b073d7f275f10ee3ee3a9baf6cfee538b"
+    }
+  ],
+  "native_total": 20,
+  "build": {
+    "tasks": [
+      ":shared:features:traveler:testAndroidHostTest",
+      ":apps:android:traveler:assembleDebug",
+      ":apps:android:traveler:assembleDebugAndroidTest",
+      ":apps:android:traveler:lintDebug"
+    ],
+    "status": "PASS",
+    "log": "quest-state-checks.log"
+  },
+  "lint": {
+    "Error": 0,
+    "Fatal": 0,
+    "Warning": 42
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "pixels": [
+      1080,
+      2430
+    ],
+    "density": 432,
+    "font": 1.0,
+    "locale": "en-US",
+    "resources": "default Indonesian",
+    "theme": "light",
+    "capture": "Compose root; no full visual-parity claim"
+  },
+  "layer_evidence": {
+    "host": "Production Session/NativeTravelerIdentity with transport/attestation/location doubles",
+    "native": "Production VM/Compose with domain doubles; 4 Quest cases + 16 regression cases"
+  },
+  "pending": "Outcome/proof-derived UI flags scoped to participation/activity; unresolved submission keeps its original proof/key and blocks collection on another target. No automatic GPS/answer replay",
+  "figures": [
+    {
+      "file": "quest-activity-read-failed.png",
+      "sha256": "6c80ae7219559e9b63a56e8ed728714f31a3d224748f21b36de1d0970cfae3b4",
+      "bytes": 48248,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-activity-read-recovered.png",
+      "sha256": "a4e44bd7af490ce668c929c4309f405471c6d2a2f4aad4f1389915a7a672d6f1",
+      "bytes": 70295,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-gps-a-own-retry.png",
+      "sha256": "054e64024ccf30c7e5ddd8c721e8d3341858d718a809fe7617d8cb3e3fe70c38",
+      "bytes": 91520,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-gps-a-verified.png",
+      "sha256": "120141512500637a8d3114680f5df2053d8a7243898a8da9b3601fbd1e95e9b1",
+      "bytes": 76193,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-gps-b-active-a.png",
+      "sha256": "788bf272325f1c7517fda91e6c8becfa15321e6b49e3722857d49104fc7a81c8",
+      "bytes": 69870,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-gps-b-collect.png",
+      "sha256": "788bf272325f1c7517fda91e6c8becfa15321e6b49e3722857d49104fc7a81c8",
+      "bytes": 69870,
+      "pixels": [
+        1080,
+        2430
+      ]
+    },
+    {
+      "file": "quest-gps-b-pending-a.png",
+      "sha256": "1de088397f607e42a4af9241584c5e06fe94479b6f770f893ed088e7a7a6604c",
+      "bytes": 68260,
+      "pixels": [
+        1080,
+        2430
+      ]
+    }
+  ],
+  "source_manifest": "source-manifest.json",
+  "not_run": [
+    "iOS framework/host/tests: Windows; requires Mac/Xcode",
+    "GPS/Integrity/location permission providers on a real device",
+    "live Quest backend E2E",
+    "manual TalkBack",
+    "full Quest Figma parity"
+  ],
+  "prior_evidence": "Startup 383 host/24 native at 7553dbd, plus earlier private/media/5+1 proofs remain separate immutable checkpoints; not relabeled as reruns"
+}

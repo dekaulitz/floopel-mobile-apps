@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-11-07T20:59:29.279Z" hostname="DSKTP-ZYAN" time="0.065">
+  <properties/>
+  <testcase name="failedAndStaleReviewDoNotReleaseOrReplayAndActorChangeResetsUiPermission" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.01"/>
+  <testcase name="restoringTheRecoveryRouteStillRequiresAuthorizedReviewAndAnExplicitDecision" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.003"/>
+  <testcase name="ordinaryServerConflictDoesNotEnableArbitraryJournalRelease" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.005"/>
+  <testcase name="latePageTwoAfterRouteOrActorChangeIsDiscarded" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.011"/>
+  <testcase name="visibleCreatedGroupAndBlockedInviteRecoverWithoutAnAutomaticPost" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.01"/>
+  <testcase name="aForbiddenAppendDoesNotKeepThePreviouslyAuthorizedPrivateListVisible" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.004"/>
+  <testcase name="sameCreateRetryUsesTheFrozenKeyInsteadOfReturningPreflightReadyAndLeavingTheJournal" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.005"/>
+  <testcase name="emptyAndEndListsDoNotRequestAnotherPage" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.003"/>
+  <testcase name="appendFailureKeepsItemsAndRetriesTheSameNextPageWithoutWrites" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.003"/>
+  <testcase name="recipientAndManagerAppendInOrderDeduplicateAndKeepPageAndPositionAfterReaderBack" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

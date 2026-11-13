@@ -1,0 +1,58 @@
+{
+  "counts": {
+    "tests": 391,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_regressions": [
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "backgroundedActiveProofCannotOfferSubmitForAnotherParticipation",
+      "seconds": "0.019",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "backgroundedActiveProofCannotOfferSubmitForAnotherTarget",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "verifiedResultIsBoundToItsActivity",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "reusedActivityIdInAnotherParticipationDoesNotInheritTheResult",
+      "seconds": "0.006",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "expiredResultIsBoundToItsActivity",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "rejectedResultIsBoundToItsActivity",
+      "seconds": "0.004",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+      "case": "unknownSubmitSurvivesReaderNavigationAndOnlyExplicitRetryReusesItsKey",
+      "seconds": "0.007",
+      "status": "PASS"
+    },
+    {
+      "suite": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+      "case": "failedQuestActivityReadRetriesTheSameTargetWithoutExtendingNavigation",
+      "seconds": "0.005",
+      "status": "PASS"
+    }
+  ]
+}

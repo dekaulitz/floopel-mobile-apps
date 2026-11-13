@@ -1,0 +1,18 @@
+package main
+
+type fixtureAccount struct {
+	Role       string `json:"role"`
+	AccountID  string `json:"account_id"`
+	ProfileID  string `json:"profile_id"`
+	IdentityID string `json:"identity_id"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+}
+
+type fixtureFile struct {
+	Version  int              `json:"version"`
+	RunID    string           `json:"run_id"`
+	Database string           `json:"database"`
+	Accounts []fixtureAccount `json:"accounts"`
+}

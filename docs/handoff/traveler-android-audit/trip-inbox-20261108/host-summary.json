@@ -1,0 +1,28 @@
+{
+  "total": {
+    "tests": 577,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "selected": {
+    "TravelerTripInboxStateTest": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "NativeTripInvitationPaginationTest": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "NativeTripApiTest": {
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

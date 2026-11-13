@@ -1,0 +1,109 @@
+{
+  "findings": {
+    "QUEST-GROUP-DECISION-STATE-01": "quest-group-decline-back-stale-pending-20261108-0428",
+    "VD-QG-INV-01": "quest-group-pending-recipient-invitation-composition-20261108-0428"
+  },
+  "client_date": "2026-11-08",
+  "base_commit": "6de7d74a70f4e047c592f2ae1fed06c8c892da0f",
+  "host": {
+    "tests": 514,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_actual_adapter_vm_cases": 5,
+  "native": {
+    "status": "PASS",
+    "tests": 36,
+    "new_invitation_reader_and_decision": 9,
+    "previous_quest_group_recovery_pagination": 7,
+    "itinerary_recovery": 4,
+    "trip_recovery": 3,
+    "journey": 13,
+    "runner_seconds": 66.085,
+    "source_apk_freeze": "PASS",
+    "source_apk_entries": 411,
+    "package": "com.floopel.traveler.dev",
+    "emulator": "5580",
+    "viewport_dp": "400x900",
+    "locales_font_scale": [
+      {
+        "locale": "id",
+        "scale": 1
+      },
+      {
+        "locale": "en",
+        "scale": 1.3
+      },
+      {
+        "locale": "en",
+        "scale": 2,
+        "scope": "requested reader only, scale applied after entry"
+      }
+    ],
+    "fixture_pngs_inspected": 10
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: core/Partner unchanged",
+  "figma": {
+    "frame": "397:8840",
+    "mail_slot": "397:8929",
+    "svg_node": "397:8930",
+    "asset": {
+      "path": "shared/features/traveler/src/commonMain/composeResources/files/quest_group_mail.svg",
+      "sha256": "10c94cfe5920e1a1f7da888f7161abe5f071896d3f00994dde22f8e669e7b32b",
+      "bytes": 1792,
+      "root_width": 144,
+      "root_height": 96,
+      "rendered_dp": "144x96",
+      "slot_dp_at_400_viewport": "360x96",
+      "decoder_readiness_and_geometry": "PASS"
+    },
+    "qualification": "Location, current membership count and group capacity are absent from the invitation projection. No sample values or pre-membership group GET."
+  },
+  "safety": {
+    "live_invitation_decisions": 0,
+    "other_live_mutations": 0,
+    "test_transport": "MockEngine production adapter/VM; native domain fixtures",
+    "successful_fixture_decline": "exactly one PUT; no POST or extra page-one read",
+    "database_app_data_clock_reset": false,
+    "api_policy_provider_credential_merge_deploy_change": false
+  },
+  "restored_ui": "Collection reader, existing real session, read-only ngrok navigation, five-second manual pauses",
+  "limits": {
+    "ios": "NOT_RUN: Mac/Xcode required",
+    "talkback_voiceover": "NOT_RUN",
+    "dark_mode_physical_device_acceptance": "NOT_RUN",
+    "real_invitation_decision": "NOT_RUN: fixture-only",
+    "visual_scope": "Pending recipient consumer plus terminal/readonly regressions, not whole Quest Group or app parity.",
+    "host_provenance": "Full host suite preceded the final native test-entry-scale edit; production/shared and host-test inputs were unchanged.",
+    "source_fingerprints": "Local execution bytes including excluded styles.xml; not portable checkout line endings."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "accepted.png": "dcc07a2faca36310a9d35989509070925c526cf54143d3540973b8c1ee7ec399",
+    "declined-list-en.png": "f48acacb1447469a2ed534730e5bd2ab7e45804f983fafaaecf562fc15d8ac48",
+    "declined-list-id.png": "b2bc0369f7631c5533ebfa7cca1874fb1c65722194e2a506085d3f582b8b7520",
+    "declined.png": "04f40b1706e4f1f15247bc1ae9d7aa512d615634dcbc8ceb98a919b23e19c6bf",
+    "error.png": "2a255075e0e22df960cd4d180cc569f9e0ae21c6b7e94f33dacb06c74ac2a04e",
+    "host-app-build.log": "f624cf2605a549913b350a8b6e1228e0b32714bfd842742cde07544d6edf9d9b",
+    "loading.png": "c05f128d71ae6781a25ef638b65caa0ec6e456b765c6042951cb009d2a243fe7",
+    "local-source-freeze.json": "7500f5d4116b7a0f52c2c5b17ca81b395da4480e2d75f3618a8a4f6d38315066",
+    "manager-readonly.png": "7e82666799c99c6e5f127680e4772fe4052d8b8ec989ff46d81ef685a68edd10",
+    "missing-inviter-en-font200.png": "9147847c846f69dd5e8f50f63383aaf35fe366641535b9e16ea15094439fb40a",
+    "native.log": "4aa69118290a7c02669a7d6e2f97096193b7ddf5f8cc4e9c0ba2f1a2fdab029e",
+    "pending-en-font130.png": "1facf90074e5b24cd39aa7aa4a5af3933d18e8bda6fd42af470020ec24650e77",
+    "pending-id.png": "993144240bb93a58aaf3a024f90a6359e6f6095f3e48bfe23622273481781518",
+    "restored-collection-api.png": "f08205434150b363f57bf0694f0566fea9e63f7ce7715efa25242a7d4ab3da43",
+    "test-apk-lint-build.log": "aaf2137db1c9a809aa6ce292366ff1cc927bea23b1920ea4e0328c3fce5e7d1d",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerQuestGroupDecisionStateTest.xml": "a3332650fa7c41220f11f16611b4d10db054b0aa2b680fc04777221d4b6b2d2f"
+  }
+}

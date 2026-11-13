@@ -1,0 +1,23 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="190" height="140" viewBox="0 0 190 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="SVG / blocked">
+<path id="Vector" d="M94 135C140.392 135 178 108.137 178 75C178 41.8629 140.392 15 94 15C47.6081 15 10 41.8629 10 75C10 108.137 47.6081 135 94 135Z" fill="white"/>
+<path id="Vector_2" d="M21 38C23.2091 38 25 36.2091 25 34C25 31.7909 23.2091 30 21 30C18.7909 30 17 31.7909 17 34C17 36.2091 18.7909 38 21 38Z" fill="#93000A"/>
+<g id="Vector_3">
+<path d="M163 29H175ZM169 23V35Z" fill="#93000A"/>
+<path d="M163 29H175M169 23V35" stroke-width="3" stroke-linecap="round" stroke="#93000A"/>
+</g>
+<path id="Vector_4" d="M132 18H52C44.8203 18 39 23.8203 39 31V101C39 108.18 44.8203 114 52 114H132C139.18 114 145 108.18 145 101V31C145 23.8203 139.18 18 132 18Z" fill="white" stroke-width="3" stroke="#93000A"/>
+<path id="Vector_5" d="M92 60C98.6274 60 104 54.6274 104 48C104 41.3726 98.6274 36 92 36C85.3726 36 80 41.3726 80 48C80 54.6274 85.3726 60 92 60Z" fill="white" stroke-width="3" stroke="#93000A"/>
+<path id="Vector_6" d="M69 83C69 66 115 66 115 83V89H69V83Z" fill="white" stroke-width="3" stroke="#93000A"/>
+<g id="Vector_7">
+<path d="M75 103H109Z" fill="#93000A"/>
+<path d="M75 103H109" stroke-width="3" stroke-linecap="round" stroke="#93000A"/>
+</g>
+<path id="Vector_8" d="M143 126C157.359 126 169 114.359 169 100C169 85.6406 157.359 74 143 74C128.641 74 117 85.6406 117 100C117 114.359 128.641 126 143 126Z" fill="#93000A"/>
+<path id="Vector_9" d="M158 100C158 108.284 151.284 115 143 115C134.716 115 128 108.284 128 100C128 91.7157 134.716 85 143 85C151.284 85 158 91.7157 158 100Z" stroke-width="3" stroke="white"/>
+<g id="Vector_10">
+<path d="M132 89L154 111Z" fill="#93000A"/>
+<path d="M132 89L154 111" stroke-width="3" stroke-linecap="round" stroke="white"/>
+</g>
+</g>
+</svg>

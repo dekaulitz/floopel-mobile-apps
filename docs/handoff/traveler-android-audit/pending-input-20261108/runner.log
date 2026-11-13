@@ -1,0 +1,92 @@
+Window
+
+INSTRUMENTATION_STATUS_CODE: 1
+
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerJourneyTest
+
+INSTRUMENTATION_STATUS: current=56
+
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+
+INSTRUMENTATION_STATUS: numtests=58
+
+INSTRUMENTATION_STATUS: stream=.
+
+INSTRUMENTATION_STATUS: test=confirmedPublicTripRecoveryKeepsItsTypeAndRegistrationWindow
+
+INSTRUMENTATION_STATUS_CODE: 0
+
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerJourneyTest
+
+INSTRUMENTATION_STATUS: current=57
+
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+
+INSTRUMENTATION_STATUS: numtests=58
+
+INSTRUMENTATION_STATUS: stream=
+
+INSTRUMENTATION_STATUS: test=forbiddenTargetRemainsUnread
+
+INSTRUMENTATION_STATUS_CODE: 1
+
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerJourneyTest
+
+INSTRUMENTATION_STATUS: current=57
+
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+
+INSTRUMENTATION_STATUS: numtests=58
+
+INSTRUMENTATION_STATUS: stream=.
+
+INSTRUMENTATION_STATUS: test=forbiddenTargetRemainsUnread
+
+INSTRUMENTATION_STATUS_CODE: 0
+
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerJourneyTest
+
+INSTRUMENTATION_STATUS: current=58
+
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+
+INSTRUMENTATION_STATUS: numtests=58
+
+INSTRUMENTATION_STATUS: stream=
+
+INSTRUMENTATION_STATUS: test=invalidArrivalIsRetainedAndZeroMinutesAreSavedAsZero
+
+INSTRUMENTATION_STATUS_CODE: 1
+
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerJourneyTest
+
+INSTRUMENTATION_STATUS: current=58
+
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+
+INSTRUMENTATION_STATUS: numtests=58
+
+INSTRUMENTATION_STATUS: stream=.
+
+INSTRUMENTATION_STATUS: test=invalidArrivalIsRetainedAndZeroMinutesAreSavedAsZero
+
+INSTRUMENTATION_STATUS_CODE: 0
+
+INSTRUMENTATION_RESULT: stream=
+
+
+
+Time: 134.019
+
+
+
+OK (58 tests)
+
+
+
+
+
+INSTRUMENTATION_CODE: -1
+
+
+Source/APK freeze PASS; elapsed 137.109

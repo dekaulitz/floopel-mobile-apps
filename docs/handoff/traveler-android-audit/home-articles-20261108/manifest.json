@@ -1,0 +1,66 @@
+{
+  "scope": "Home article slider only",
+  "base_commit": "92e6ed31368c3b57376503031d8373e99c09dbaa",
+  "native": {
+    "status": "PASS",
+    "tests": 12,
+    "runner_seconds": 13.322,
+    "source_and_apk_freeze": "PASS"
+  },
+  "host": {
+    "tests": 477,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "traveler": {
+      "Error": 0,
+      "Warning": 45
+    },
+    "partner": {
+      "Error": 0,
+      "Warning": 2
+    }
+  },
+  "emulator": "5580",
+  "package": "com.floopel.traveler.dev",
+  "viewport": {
+    "dp": "400x900",
+    "pixels": "1080x2430",
+    "density": 432,
+    "font_scale": [
+      1,
+      1.3,
+      2
+    ],
+    "locales": [
+      "id",
+      "en"
+    ]
+  },
+  "data": "Synthetic domain repositories. Green image generated in test cache; no production fixture data.",
+  "ios": "NOT_RUN: Windows, requires Mac/Xcode",
+  "talkback": "NOT_RUN",
+  "location_policy": "Existing global Home content preserved. PersonalProfile and TravelerCatalog.stories in this branch have no profile-location input; no invented location fallback.",
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "e13600160c6767d3d5408e170c5d4fe7f512514c01f611470f9990d5d23a2a89",
+    "core-both-build.log": "f489e2263b178c99118f196d88540ff2ff4825f3ddfa6277c4bc9253e233da4e",
+    "home-articles-empty.png": "ed784068aa993fcd7ddd4faca400d8636e5981603fb16b0830d8360378cbbeba",
+    "home-articles-en-profile-failed.png": "0a82c7c9deae6f063e6942c1b0fc6a5a44f437db451cdaab116c9f67673f5152",
+    "home-articles-error.png": "71f42a9f92c18047736af70c77cbf6ce1b4fab70936c6ca4bb9d0dfa2a09b1c4",
+    "home-articles-font130.png": "6b3c588cb163e7ad2a6361cbaa8f0bfc200ad1ad40ac4486e122fa76eeb54d79",
+    "home-articles-font200.png": "1479b67b1d04f476f9c27da98b1fb7bd3868b25305dc38777256b1572695d299",
+    "home-articles-last.png": "dd53cb0d1ace9c21d7ff101b94ba573964604481dfea0f68ca3705fd4f5c0e1a",
+    "home-articles-loading.png": "e8f3e1981c904bbd2d88f0e2c36132ac30da547c317b08da7c158df7d9351808",
+    "home-articles-one.png": "6727aa2781ae4ec8b5aa3770f44dbe21a0be270165ce9315483a5be8e6efea04",
+    "home-articles-two.png": "4f7d016edf69f17074e4d2edc7826703e138ea052089298442c0d60792cbe75c",
+    "local-source-freeze.json": "fb92a6cbb751e7b8c4c66788957d2095d8498169c41fbf38d7a3f18a6e07e971",
+    "native.log": "76b10c404d28229fd92ee6c10691697e81404538be238213f9fda3c28fb5b441",
+    "traveler-final-build.log": "935e6bf6ba3798b96980775aec5023f2a4782ca64961950c08633f5f7ebd943e"
+  }
+}

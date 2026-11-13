@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The system pre-renders at its adaptive viewport size, so use proportional insets.
+     The original vector stays unchanged; the final unmasked mark occupies 96dp. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="33.333333%"
+    android:drawable="@drawable/floopel_startup_mark" />

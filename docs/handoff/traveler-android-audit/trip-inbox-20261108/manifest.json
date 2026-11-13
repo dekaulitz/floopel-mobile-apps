@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-08",
+  "findings": [
+    "TRIP-INVITATIONS-PAGE-01",
+    "VD-TRIP-APP-01"
+  ],
+  "sourceBase": "94a890461b49d533815066fde153a8bddab84248",
+  "device": "emulator-5580",
+  "api": 35,
+  "viewportDp": [
+    400,
+    900
+  ],
+  "host": {
+    "tests": 577,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 51,
+    "newCases": 15,
+    "regressions": 36,
+    "seconds": 131.722,
+    "classes": {
+      "TravelerTripInboxDesignTest": 15,
+      "TravelerJourneyTest": 13,
+      "TravelerCommunitySearchBackTest": 8,
+      "TravelerNavigationRegressionTest": 12,
+      "TravelerTripRecoveryDesignTest": 3
+    }
+  },
+  "frozenSourceAndApk": true,
+  "frozenEntries": 447,
+  "limitations": [
+    "No live invitation/application/decision",
+    "No iOS Mac/Xcode build or native UI",
+    "No delivery/expiry integration claim",
+    "No TalkBack/VoiceOver, physical/release or benchmark"
+  ],
+  "excludedWorkingChanges": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "asset.json": "e43f5567c33eade50139b3a2cb35ffeb7e3752938d9c3e2192212e9437ebe88a",
+    "build.log": "72d4a2e62633328fa2a12f9d09338bacb7034a66227f08cd1487fdb092b64ced",
+    "host-summary.json": "6fdaf4c3d3604709a16bc2f6dcac61c2f98e18fe93e0f362b780945f0cfe62b6",
+    "invitations-append-error.png": "36d6df764092e7765e84946d761ae4bc4bc409d7c0212666643186328b44794b",
+    "invitations-page-two.png": "52269e0df1c13dde3c6c47301f029d00176733e6cf22c24e5d3a384b1894067e",
+    "lint.xml": "76c9fff9b6f7ddfb129534a5795dd0362f24a44b498e5cb0085fdb292e5dc39b",
+    "native.log": "0b75ccf1c151041782c7218a889cb4527f95c23c6523cf823734eaf49136f341",
+    "pagination-host.xml": "53bef38ca27c9da930dff8e5b5636ae85251e178f022da172c2893315665bcae",
+    "pending-application.png": "b5b92b380b1359f9b21031a97835a49330e4af5dbe04c45d44820753a7a6e5af",
+    "pending-en-font200.png": "911fdd5f4173519cebc2f4450ed7d429093761b15e4e012a9a11af91d57d8626",
+    "pending-font130-long-title.png": "f6a61b7464ffd626c192c9049e9d1dbc4795f6c4a859852d099ed285b383990d",
+    "resources.json": "4b75b38307ca9ee1c14ad222887b6c02e71ca5fe112926ad6526a07644b27195",
+    "source-freeze.json": "8f831961470b8bce1b198acfc0ae717ffbb3c6a212cfb4f01b245c08710e32d4",
+    "state-host.xml": "04aa78988132c52f8ff7db70bb586ddc9339c8b0b0d2c69d8ee18275b02bec1e",
+    "trip-api-host.xml": "77c3f7dfa5803321c7e44e751d730d6c4a7e7ac4dffded65b9b8f644979d3af4"
+  }
+}

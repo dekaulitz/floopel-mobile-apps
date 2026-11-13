@@ -1,0 +1,993 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "source_base_commit": "68acdaf60df9ec1f490642fdf270d291a230a5cf",
+  "source_and_apk_unchanged_during_runner": true,
+  "application_id": "com.floopel.traveler.dev",
+  "build": {
+    "status": "PASS",
+    "log": "gradle-verification.log",
+    "tasks": [
+      ":apps:android:traveler:assembleDevelopmentDebug",
+      ":apps:android:partner:assembleDevelopmentDebug",
+      ":shared:features:traveler:testAndroidHostTest",
+      ":apps:android:traveler:assembleDevelopmentDebugAndroidTest",
+      ":apps:android:traveler:lintDevelopmentDebug",
+      ":apps:android:partner:lintDevelopmentDebug"
+    ],
+    "flags": [
+      "-Pkotlin.incremental=false",
+      "--no-configuration-cache",
+      "--no-build-cache",
+      "--no-parallel",
+      "--max-workers=2"
+    ]
+  },
+  "host": {
+    "tests": 476,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.floopel.feature.traveler.core.network.AppRequestMetadataTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.332"
+      },
+      {
+        "name": "com.floopel.feature.traveler.core.network.FloopelRestClientTest",
+        "tests": "9",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.039"
+      },
+      {
+        "name": "com.floopel.feature.traveler.core.network.SystemMaintenanceTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.015"
+      },
+      {
+        "name": "com.floopel.feature.traveler.core.network.TravelerReadCacheTest",
+        "tests": "15",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.105"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.dto.PassportSummaryTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.001"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.DiscoveryCriteriaTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.041"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.GoogleAuthenticationTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.08"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.NativeApiTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.052"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.QuestBadgeMediaTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.012"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.QuestCompletionReceiptTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.017"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.QuestLocationCoverageTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.016"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.QuestProofApiTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.019"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.QuestTravelerProjectionTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.026"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.remote.VerifiedAccountRecoveryTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.014"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.AppsCommentTotalsTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.016"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.AppsTravelerCatalogTest",
+        "tests": "26",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.142"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.AppsTravelerStoryAvatarsTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.006"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.CatalogLocationCoverageTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.021"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.CatalogPaginationTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.023"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.CuratedCopyTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.006"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.DistributionRecoveryTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.053"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.ExplorerMarkersTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.004"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.IntegratedOwnerApiTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.013"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.LocationDiscoveryTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.LocationParentTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.018"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.MediaUrlTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.001"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeAccountApiTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.028"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeCommunityApiTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.042"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeErasureApiTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.039"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeItineraryDistributionApiTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.025"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeItineraryRecoveryTest",
+        "tests": "8",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.052"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeLegalApiTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeNotificationApiTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.029"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeProfilePhotoApiTest",
+        "tests": "9",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.058"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativePublicTravelerApiTest",
+        "tests": "11",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.099"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeQuestFeaturesApiTest",
+        "tests": "11",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.059"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeRecommendationApiTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.012"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeRegistrationApiTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.018"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeSettingsApiTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeTripApiTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.149"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.NativeTripReportRecoveryTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.054"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.OpenTripNativeApiTest",
+        "tests": "21",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.118"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.QuestGroupMapperTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.001"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.QuestSharingMapperTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.001"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.StoryDetailProjectionTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.009"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.TravelerAvatarIdentitiesTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.011"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.TripCommandRecoveryRejectionTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.TripMemberScheduleTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.data.repository.TripTransferPrivacyTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.007"
+      },
+      {
+        "name": "com.floopel.feature.traveler.domain.model.CatalogPhotoTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.005"
+      },
+      {
+        "name": "com.floopel.feature.traveler.domain.model.TravelerAgeTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.0"
+      },
+      {
+        "name": "com.floopel.feature.traveler.domain.model.TripCommandRejectionTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.002"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.HiddenQuestLifecycleTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.047"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.LinkedHiddenQuestTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.069"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.PassportProgressNavigationTest",
+        "tests": "12",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.076"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.QuestCollectionsReadTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.025"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.QuestCompletionProgressTest",
+        "tests": "9",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.049"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.QuestExecutionTest",
+        "tests": "1",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.008"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.QuestGpsScopeTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.054"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.QuestGpsTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.039"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.TravelerSessionLogoutTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.018"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.TravelerSessionRestoreTest",
+        "tests": "9",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.021"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.auth.TravelerSessionTest",
+        "tests": "18",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.055"
+      },
+      {
+        "name": "com.floopel.feature.traveler.feature.legal.TravelerConsentCoordinatorTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.01"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.CatalogMetadataFormatTest",
+        "tests": "3",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.002"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.ErasureViewModelTest",
+        "tests": "7",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.02"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.LegalReviewViewModelTest",
+        "tests": "5",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.014"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.NotificationRouteTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.001"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.RichBodyTest",
+        "tests": "4",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.005"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TravelerFigmaStateTest",
+        "tests": "21",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.13"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TravelerLocationStateTest",
+        "tests": "10",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.036"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TravelerPublicationStateTest",
+        "tests": "6",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.028"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TravelerQuestDesignStateTest",
+        "tests": "15",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.041"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TravelerStateOwnerTest",
+        "tests": "29",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.067"
+      },
+      {
+        "name": "com.floopel.feature.traveler.presentation.TripCatalogDateTest",
+        "tests": "2",
+        "failures": "0",
+        "errors": "0",
+        "skipped": "0",
+        "time": "0.0"
+      }
+    ]
+  },
+  "lint": {
+    "traveler": {
+      "status": "PASS",
+      "severities": {
+        "Warning": 45
+      },
+      "issue_ids": {
+        "OldTargetApi": 2,
+        "UnusedAttribute": 1,
+        "AppBundleLocaleChanges": 1,
+        "AndroidGradlePluginVersion": 4,
+        "GradleDependency": 7,
+        "NewerVersionAvailable": 21,
+        "VectorPath": 1,
+        "MissingApplicationIcon": 1,
+        "UseKtx": 7
+      }
+    },
+    "partner": {
+      "status": "PASS",
+      "severities": {
+        "Warning": 2
+      },
+      "issue_ids": {
+        "OldTargetApi": 1,
+        "MissingApplicationIcon": 1
+      }
+    }
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 78,
+    "failures": 0,
+    "classes": [
+      "TravelerFigmaDesignTest",
+      "TravelerJourneyTest",
+      "TravelerLocationDesignTest",
+      "TravelerPublicationStateTest",
+      "TravelerCatalogFontScaleTest",
+      "TravelerAuthenticationJourneyTest",
+      "TravelerQuestStateTest",
+      "TravelerQuestDesignTest",
+      "TravelerAccountDesignTest",
+      "TravelerLegalDesignTest"
+    ],
+    "log": "native-instrumentation.log",
+    "serial": "emulator-5580",
+    "api": 35,
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "resolution_px": [
+      1080,
+      2430
+    ],
+    "density": 432,
+    "system_font_scale": 1.0,
+    "time_seconds": 126.315
+  },
+  "restored_device": {
+    "resolution_px": [
+      1080,
+      2400
+    ],
+    "density": 420,
+    "font_scale": 1.0
+  },
+  "resources": {
+    "shared/features/traveler": {
+      "entries_per_language": 693,
+      "key_format_unicode_parity": "PASS"
+    },
+    "shared/core/designsystem": {
+      "entries_per_language": 1,
+      "key_format_unicode_parity": "PASS"
+    }
+  },
+  "local_foreign_inputs": [
+    {
+      "path": "apps/android/traveler/src/main/res/values/styles.xml",
+      "sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0",
+      "included_in_apk": true,
+      "included_in_commit": false
+    },
+    {
+      "path": ".gitignore",
+      "included_in_apk": false,
+      "included_in_commit": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "account-audit/erasure-blocked-profile.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "363047d3240a0ca795f0cf7778865bffadc157d296f647672129226131e9f3a8",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-blocked-trip.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "2ada6405268fdb50f9d6f9091c7fe55a2a6781e3af8d2c59f7d7c1794f693a5a",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-cancel-failed.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "25182a8aabd901310d3b27fe63c41e5420a6a560e1224f7a9195725b20b2f3ec",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-cancel-verification.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "1580daab43b4435f6452bdb3aca1428b4e31f1927ba34fe3403244b4715e0e10",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-cancel-verifying.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "efbb5060758fb80fec99e0e8c13329ca1e0cd8da192becb7bb034e462f498fce",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-cancelled.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "e55d22b8f21a171b359ad3cab952e3248204b019cff7e7f7ff6f785dc39660df",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-cancelling.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "f5c52968a6f7191d6a245c0f06208c5fd4e7f258ba2174537c5855a93233cb49",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-font-200.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "bf8ecbc965dd9de40bd54a2918320c7d49c560aed680a5b77db3d6b2628de566",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-pending-known-deadline.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "7a8e580fc1a5ac495f69d4dfa2cc5e9394a47ffdcc8750ab88f96e09eb84a00f",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-pending-no-deadline.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "c889d16e7cc716fe816c28a57e1d96e80925578fec14970caba4bf3418e59bb4",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-proof-expired.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "33c333ba94a1200deac65e33b8cbcd0a4ea1bca1acd1322a4427d293f9fa0a75",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-requesting.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "17882f35f001678c5f2e17a572a8e1afa00da4490a0ad1ef65e4e79b68180ffa",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-review-checked.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "26c4fe057dcfd69f328a3818bafcfcd37c9a088bec7ae324fd964a978cad7c39",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-review-unchecked.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "e84e0de2ea0af7516762ee18d5ae3e6265867d358292b7d1f67809159e8fd9ec",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-running.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "2f3e32e738be72c553cf9e7076fbf25db5234ada4f20914a4c997ba7f69f05d0",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-unknown-request.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "a2d717e5cbff882ab91c338d3c331cf263a9ed0cc7ff92b7a9de8ee4d43d1715",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-verification-empty.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "f6e7aa00681ccf80b9d0640b409edae000b35feeaf93d98f5b7bdadfbab510a7",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-verification-failed.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "ff4550ab0a4550ba9f628ddbd3231c15980bb3314f50fc2c233308ae28c3f243",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/erasure-verifying.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "83c4e6c6f7450fe0c1d1ea2ca233f61a97b3121471e858416be6ac94bed6684d",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/itinerary-aligned-toolbar.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "d9fe1b3ba85104b4d0f373a0e2903e0b475a5d55b7328c014f357822a07a5549",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/language-id.png",
+      "width_px": 950,
+      "height_px": 782,
+      "sha256": "953b0fb457a4dbc327ae0eb27fc144a00a14b79de87a6896ea8bf67bd77c7c33",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/spot-gallery-absent.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "58103d87bc650c12962ba4b1cfd511b9c424b2f2797bf23d7d32f1d205761779",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/spot-gallery-error.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "297143871bbe3c35211314cc4b2ed323ee9ef19f40fedc256e9c6732499d8080",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/spot-gallery-loaded.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "5874b257c91ce5fbc3a777b947b7546f874edea84da74be15aea501b0b9310eb",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/spot-new-gallery-actions.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "8338643f37edb34b0a1d8210c7ea31cc3819b71490d0b59de20a80b9ef052b30",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "account-audit/spot-saved-actions.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "5afcdac809326eb36c7062157eb2bfab098d35d1a08e746d30780e19324a4b55",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-current-read-only.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "e905f9243d505a1017d98f0e9a970c47ec2e5e5e6b50ed32040cf38cb442be14",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-loading.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "7bdbbbaa4b47b87b89f7cfd90da83ea203f1358776cdacd5611e8a65556ae0a5",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-pending-checked.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "d226fc5f7f71f4e2290e6d3b0fced26835a77fbd908e197dad4f84a9e8fd56ae",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-pending-unchecked.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "2fc381296531858849658b8c122b460609efa174ee788b6cc49e7cf54f753d02",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-privacy-reader.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "a23cfb7a2af01cde4648d6ff8682cdb83e85dabbf039ebdc1d4c32e151e15cf2",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-read-failed.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "f192c00b15a6070954cbf8d2f66bdee26824ed8a94101e4cc2db1c94d6b6191e",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-saving.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "bc9b80abd64c9a41ad4fe533de4abe02a1787c8dc354f4a751576f8ec83817c3",
+      "kind": "synthetic-domain-fixture"
+    },
+    {
+      "file": "legal-audit/legal-terms-reader.png",
+      "width_px": 1080,
+      "height_px": 2430,
+      "sha256": "a63cb53ca95ce384f0abc98df13ed8bb4a6bfcc3f0562c95252834ec7cc53c69",
+      "kind": "synthetic-domain-fixture"
+    }
+  ],
+  "assets_manifest": "assets.json",
+  "fingerprints": "source-apk-sha256.json",
+  "live_smoke": {
+    "status": "PASS_SCOPED",
+    "source": "MainActivity, actual local backend and ngrok; five-second delays",
+    "checks": [
+      "Restored organizer fixture session and Home public/private reads",
+      "All Settings destination menus open; forms not saved",
+      "EN selection persists after force-stop/reopen, then restored to ID",
+      "Erasure reauthentication plus GET preflight returns active-trip blocker, no deletion/cancellation POST",
+      "Spot Museum Gedung Sate loads actual API image, gallery, rating and action layout",
+      "Final APK Settings loads active terms/privacy with served version/locale; terms reader displays actual server body without acknowledgement or consent submission"
+    ],
+    "real_deletion_or_cancellation": false,
+    "real_consent_submission": false,
+    "raw_private_artifacts_published": false
+  },
+  "ios": {
+    "status": "NOT_RUN",
+    "reason": "Windows host; Mac/Xcode framework, host and shared tests still required; native iOS locale selection not wired"
+  },
+  "limits": [
+    "Maps deferred by owner",
+    "FCM/provider delivery, production signing/provider and physical-device accessibility not verified",
+    "Spot report unknown outcome is held in actor-bound memory; no catalog receipt reader contract",
+    "No real account deletion/cancellation or legal consent write in this batch",
+    "No claim of full-app Figma parity or release readiness"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "date": "2026-11-07",
+  "baseline_commit": "c85046bc5bd389d406d8b22cc0f82c6f600adec1",
+  "branch": "feature/mobile-openapi-contracts",
+  "build": "PASS",
+  "lint": {
+    "traveler": {
+      "Warning": 45
+    },
+    "partner": {
+      "Warning": 2
+    }
+  },
+  "host": {
+    "status": "PASS",
+    "tests": 477,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native": {
+    "status": "PASS",
+    "class": "TravelerPassportDesignTest",
+    "tests": 14,
+    "failures": 0,
+    "duration_seconds": 29.307,
+    "emulator": "emulator-5580",
+    "api_level": 35,
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "density": 432,
+    "source_apk_unchanged": true,
+    "device_defaults_restored": true,
+    "languages": [
+      "id",
+      "en"
+    ],
+    "font_scale_cases": [
+      1,
+      1.3,
+      2
+    ]
+  },
+  "semantics": [
+    {
+      "scenario": "selection-id",
+      "file": "passport-semantics-audit/selection-id.json",
+      "group_checks": 10,
+      "sha256": "db418a26b953784341138a2e41ea5e3e788dfc54af3cca0154abfd31f7c63521"
+    },
+    {
+      "scenario": "selection-en",
+      "file": "passport-semantics-audit/selection-en.json",
+      "group_checks": 7,
+      "sha256": "db535f29198bb8703d2457bc54415a12a762234aa84ec3ca9a7c468c1275f6e4"
+    },
+    {
+      "scenario": "font-130",
+      "file": "passport-semantics-audit/font-130.json",
+      "group_checks": 1,
+      "sha256": "45877977aac31f757205d38ee73718763e7a1f6b7bfe40f76aa30cc7b6ea11c4"
+    },
+    {
+      "scenario": "font-200",
+      "file": "passport-semantics-audit/font-200.json",
+      "group_checks": 1,
+      "sha256": "f7568ff13a2e669a3ef83cfc1bd449ec01d1c738cbcbb0434922d00280533127"
+    }
+  ],
+  "limits": {
+    "real_talkback_speech": "NOT_RUN",
+    "ios_framework_host_tests_voiceover": "NOT_RUN; Windows"
+  },
+  "foreign_inputs": {
+    "excluded_from_commit": [
+      ".gitignore",
+      "apps/android/traveler/src/main/res/values/styles.xml"
+    ],
+    "styles_in_tested_apk_sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "live_restore": {
+    "status": "PASS",
+    "application_id": "com.floopel.traveler.dev",
+    "main_activity_session_restored": true,
+    "final_screen": "Profil publik / Itinerary",
+    "language": "id",
+    "delay_seconds_per_flow": 5,
+    "data_mutations_sent": [],
+    "private_captures_published": false
+  },
+  "logs": {
+    "gradle-verification.log": "41f0f9bb2b7f5a434747c777016c6a8eda62d71b249d78a4aa0959fd84655feb",
+    "native-instrumentation.log": "9b97898dafdd0361b032151b11d2319d0fb0819cca7e0494336c2acff1c549e0",
+    "source-apk-sha256.json": "7d730b6e29f530d2a1119c0fa420b5c339f96b2ac3b4e7039a827a700f129325"
+  },
+  "evidence_storage": {
+    "json": "UTF-8 with LF; enforced by folder .gitattributes",
+    "logs": "raw command output; Git text conversion disabled",
+    "source_fingerprint": "raw local source/APK bytes during runner"
+  }
+}

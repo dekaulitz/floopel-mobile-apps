@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-08T03:21:00.593Z" hostname="DSKTP-ZYAN" time="0.042">
+  <properties/>
+  <testcase name="invalidNativeSelectionAndFailedEncodingNeverReachTheNetwork" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.025"/>
+  <testcase name="inputAndReturnedBytesCannotBeMutatedByTheCaller" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="foregroundPollingIsBoundedAndPausesWithoutReplaying" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.005"/>
+  <testcase name="consentPreflightFailsClosedAndReturningFromLegalDoesNotPostAutomatically" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="throttlingBlocksNewSelectionUntilTheServerDeadline" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="doubleDoneSendsOnePreparedImageAndOnlyCorrelatedReadyRefreshesTheAvatar" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.002"/>
+  <testcase name="mismatchedStatusIdentityAndFailedCanonicalReadCannotComplete" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="unknownPostAndStatusChecksNeverReplayUploadOrClaimSuccessFromMeAlone" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="closingDuringStatusReadDiscardsItsLateResultAndReopeningOnlyReads" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.002"/>
+  <testcase name="failedProcessingRetainsOldAvatarAndRequiresANewSelection" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="cancellationAndCropEditsNeverUploadUntilExplicitDone" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <testcase name="accountChangeDropsBytesAndDiscardsAnUncooperativeUploadResponse" classname="com.floopel.feature.traveler.presentation.ProfilePhotoViewModelTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,138 @@
+{
+  "findings": {
+    "CATALOG-SEARCH-BACK-01": "catalog-search-back-query-loss-20261108-0558",
+    "NOTIF-MODERATION-TARGET-01": "notification-canonical-moderation-target-20261108-0558"
+  },
+  "client_date": "2026-11-08",
+  "base_commit": "1fbaa17d6c396958b926d94e2e8a1f546cd3352a",
+  "host": {
+    "tests": 531,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_cases": {
+    "search_state": 4,
+    "actual_adapter_vm_moderation": 8,
+    "route_allowlist": 1
+  },
+  "android_build": {
+    "application_and_test_apk": "PASS",
+    "lint": "PASS",
+    "full_build_seconds": 30
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 68,
+    "new_navigation": 12,
+    "collection": 10,
+    "quest_group_management": 10,
+    "invitation_reader_decision": 9,
+    "quest_group_recovery_pagination": 7,
+    "itinerary_recovery": 4,
+    "trip_recovery": 3,
+    "journey": 13,
+    "runner_seconds": 126.113,
+    "source_apk_freeze": "PASS",
+    "source_apk_entries": 419,
+    "package": "com.floopel.traveler.dev",
+    "emulator": "5580",
+    "viewport_dp": "400x900",
+    "locales_font_scale": [
+      {
+        "locale": "id",
+        "scale": 1
+      },
+      {
+        "locale": "en",
+        "scale": 1.3,
+        "scope": "moderation reader after entry"
+      },
+      {
+        "locale": "en",
+        "scale": 2,
+        "scope": "moderation reader after entry"
+      }
+    ],
+    "new_fixture_pngs_inspected": 12,
+    "diagnostic_pngs_not_published": 1
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: core/Partner unchanged",
+  "figma": {
+    "file": "ifQcOxbjGTXw9aNH2JGl9g",
+    "owner_status_frames": [
+      "445:12674",
+      "445:12771",
+      "445:12868",
+      "445:12962",
+      "445:13058",
+      "445:13154",
+      "445:13250"
+    ],
+    "assets": "No new static artwork; shared mapped ArrowBack/buttons/surface and native system bars. Existing unavailable-notification illustration is unchanged.",
+    "geometry": "20dp gutters, 16dp content gap, 24sp title; status 16dp radius/padding, 12dp gaps, 22sp heading/13sp body; shared >=48dp controls.",
+    "qualification": "Read-only owner status composition, not the appeal submission flow or whole-app parity."
+  },
+  "contract": {
+    "path": "api-contract/openapi-apps.json",
+    "local_sha256": "9d22d5284fc6e66fd1d70cad1259cdfa80c9a8d870205bfbadad0f28629331bf",
+    "target": "/me/itinerary-moderation",
+    "existing_get": "/me/itinerary-moderation-actions",
+    "contract_changed": false,
+    "source_reauthorization": "Every notification-backed owner load rechecks the exact notification GET and canonical target before the owner GET; null/unsafe/removed sources cannot acknowledge."
+  },
+  "safety": {
+    "live_notification_acknowledgements": 0,
+    "live_appeal_or_other_private_mutations": 0,
+    "test_transport": "MockEngine production notification/moderation adapters + VM; native domain fixtures",
+    "ack": "Exact fixture inbox notification_id, once per ViewModel actor/generation after successful nonempty owner projection is rendered.",
+    "database_or_app_data_cleared": false,
+    "device_clock_changed": false,
+    "api_policy_provider_credential_merge_deploy_change": false
+  },
+  "restored_ui": "Public Collection reader, existing session, read-only ngrok navigation with five-second manual pauses",
+  "limits": {
+    "ios": "NOT_RUN: Mac/Xcode required",
+    "talkback_voiceover": "NOT_RUN",
+    "dark_mode_physical_device_release_acceptance": "NOT_RUN",
+    "live_private_moderation": "NOT_RUN: fixture-only",
+    "appeal_submission": "NOT_IMPLEMENTED by this read-only consumer, including appeal_available=true; no dead submission button or automatic POST.",
+    "moderation_cursor_continuation": "NOT_IMPLEMENTED: uses the existing adapter default batch, no all-history acceptance claim.",
+    "ack_across_process_recreation": "No durable cross-process exactly-once claim; restoration reauthorizes the original notification and owner status before a visible-frame acknowledgement.",
+    "host_provenance": "Full host, application/test APK and lint final invocation includes the source reauthorization and shared fake-clock pacing cases.",
+    "entry_transition_capture": "The additional diagnostic can precede the committed location frame; excluded from visual acceptance and published artifacts.",
+    "source_fingerprints": "Raw local execution bytes including excluded styles.xml; not portable checkout line endings."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "appeal-status.png": "3e7df903878d5295fcf7051148c0ac67671948000ac8c142f079aa57153b493a",
+    "build.log": "7d5c750a668012cfe6e548be44023e9c316f279109265b2e752babd9dd8f87c6",
+    "explorer-back.png": "a8c957525ed15cb801939e4e4e163c9cd5d9848f5dbdebcb0733f0cb86346c72",
+    "global-back.png": "d03f57dddee18267ae7accc28cf89be530f779b6aba99dabac22b05600c81fec",
+    "local-source-freeze.json": "f90b34250164ece49e338b7dc6dbc899177fd45a0cd509b97229020bfbd2f1eb",
+    "moderation-denied.png": "79d5a3a66cef05f32483e3a93e4ee959ad0a07d58840beb5edd122ce8af87f12",
+    "moderation-en-font130.png": "bd90dffe3f3a6ea25a8975b08f5eb299d95d9bfc7f02e27e2b21a73a4dc4f432",
+    "moderation-en-font200.png": "f44b8324113292386facc3143e19db69a0b5c116418ca792342346790b7bb3b2",
+    "moderation-error.png": "9f2b8c2e6c3ca67bc9c9b3992f0619fff877de7e13bdcdb83a5f52ef0729aba7",
+    "moderation-loading.png": "8cdf1b32097f6594b9093e2d9e0ffb3031e491f6b122ac5402608af0261b7aa7",
+    "moderation-status.png": "d39130d70f1f013f697788bb83d45f34fc6d8a36de22f37306456a4f0be1747d",
+    "native.log": "e21f5f3732e718c1b03d74a42283883f4fda9d2dfba1632aadb3dc28762e4321",
+    "resource-validation.json": "ef79b8212651b93d0e398dbe1130bfa67bca13d459294b044ce621d9f45868ec",
+    "restored-collection-api.png": "7d45719c33cad54b9fa89a20079ed36f9aa9b581a93a9f7c61d0377ebd3309e0",
+    "scoped-back.png": "b7127c77d303fe7c278a95e2858bed10ffc751c89d4d4b6862801a573f0947b6",
+    "search-error.png": "ab552965957fc067f841c50d6b5b09acf4cbf67289ea8911557bd0f1bb4d9ae1",
+    "TEST-com.floopel.feature.traveler.presentation.NotificationRouteTest.xml": "a21be6ca55c2a2fc5e3b802db6ec3dc75e1aeb48fd740512d36dec818cf509f1",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerCatalogSearchBackTest.xml": "6825e4b4c9d49ddb74cccf0f947ffb28710c4d8ee30233bbfc16cde5e2e7f170",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerModerationNotificationTest.xml": "a463ccaf089c85c8df66478d9c9996e1982153e29a1135a5c12da6b1c22dc78a",
+    "unsafe-target.png": "9ff68d85e1bccfc4b19d9f8bad71a7bea01b8693594267a7534f4fc09c27464b"
+  }
+}

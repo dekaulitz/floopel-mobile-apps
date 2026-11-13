@@ -1,0 +1,193 @@
+{
+  "findings": [
+    {
+      "id": "QUEST-ANSWER-PENDING-01",
+      "deduplicationKey": "quest-question-pending-input-result-attribution-20261108-0813"
+    },
+    {
+      "id": "ITINERARY-DAY-TITLE-STATE-01",
+      "deduplicationKey": "itinerary-day-title-save-draft-loss-before-ack-20261108-0813"
+    }
+  ],
+  "reportedAtSource": "21e5610cab7f07b9f7cfe39513a40396d7948a37",
+  "originalEvidence": "Read-only source findings; no native/API baseline reproduction",
+  "changes": [
+    "Session-only answer attribution binds participation/activity/input before the existing request; projection rejects other activity results; radio/text disabled during busy and old feedback hidden for a changed draft",
+    "Day title drafts retained per itinerary/day in the ViewModel through preflight errors and Legal review; captured target/value on explicit save; clear only acknowledged or explicitly dismissed draft; actor reset and late callback guards"
+  ],
+  "verification": {
+    "travelerApkAndTestApk": "PASS",
+    "lint": {
+      "status": "PASS",
+      "errors": 0,
+      "fatal": 0,
+      "warnings": 45
+    },
+    "host": {
+      "status": "PASS",
+      "tests": 547,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "newCases": 10,
+      "dayTitleCases": 7,
+      "productionSessionAnswerCases": 3,
+      "provenance": "Full host execution in host-build.log. Only Android instrumentation waits/selectors changed afterwards; final build.log invokes unchanged host task UP-TO-DATE."
+    },
+    "native": {
+      "status": "PASS",
+      "serial": "emulator-5580",
+      "tests": 58,
+      "newPendingInputCases": 11,
+      "previousCommunityCases": 8,
+      "previousNavigationCases": 12,
+      "collectionCases": 10,
+      "itineraryRecoveryCases": 4,
+      "journeyCases": 13,
+      "instrumentationSeconds": 134.019,
+      "runnerSeconds": 137.109,
+      "viewportDp": "400x900",
+      "density": 432,
+      "fontScale": 1
+    },
+    "sourceApkFreeze": {
+      "status": "PASS",
+      "entries": 426,
+      "purpose": "Local execution provenance; excluded styles.xml bytes were compiled. Not portable Git byte equivalence."
+    },
+    "inspectedPublishedScreenshots": {
+      "fixture": 8,
+      "restoredPublicCollection": 1
+    }
+  },
+  "coverage": [
+    "Production Compose/ViewModel radio/text gated A, attempted B, response A, changed draft B and explicit B submission",
+    "Fixture-only correct final activity acknowledgement; Back/revisit and actor-late response",
+    "Production Session/NativeIdentity MockEngine input/outcome attribution and execution authorization; explicit retry retains existing key",
+    "Consent preflight NetworkError/503 yields zero title repository writes and retains draft; GET/read/Legal Back never replays",
+    "Title 422/429/unknown retains input and truthful state, existing Retry-After deadline, acknowledgement closes and refreshes exact day",
+    "Cancel, independent itinerary/day origins, pending duplicate-submit guard and stale actor callback"
+  ],
+  "liveBusinessWrites": 0,
+  "apiContractChanges": 0,
+  "newPersistenceOrJournals": 0,
+  "newStaticAssets": 0,
+  "emulatorRestoration": "Existing real session through read-only ngrok Home/Collection archive/Collection reader, five-second manual pauses; size/density/font overrides restored; no app/DB reset or device clock change",
+  "foreignFilesExcludedAndUnchanged": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "limitations": {
+    "newNativeWrites": "Synthetic identity/repository fixtures only; no real Quest answer, itinerary edit or consent acceptance",
+    "productionAnswerProof": "MockEngine host tests exercise production Session/NativeIdentity, not provider attestation or live rewards",
+    "titleApiIntegration": "NOT_RUN for new cases; assertions are at the repository boundary, with no new transport contract",
+    "visualAcceptance": "State behavior only; unchanged pending page artwork/layout and original full-page day design are not newly accepted",
+    "ios": "NOT_RUN; Mac/Xcode required",
+    "assistiveTechnology": "NOT_RUN",
+    "physicalDeviceAndRelease": "NOT_RUN",
+    "partner": "NOT_APPLICABLE; no core/Partner/build changes",
+    "history": "537 host / 30 native at 21e5610 is historical; not new coverage for these findings"
+  },
+  "artifacts": [
+    {
+      "path": ".gitattributes",
+      "bytes": 88,
+      "sha256": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763"
+    },
+    {
+      "path": "answer-attribution-host.xml",
+      "bytes": 939,
+      "sha256": "987375b27a345c064bb979af860998c7bf48fb48cf9582d5e71b193bfe322522"
+    },
+    {
+      "path": "build.log",
+      "bytes": 34626,
+      "sha256": "eedb1c7b2fdcaf4c1b0432266232ad3a690987b3149552554923691e2961dca8"
+    },
+    {
+      "path": "day-legal-back.png",
+      "bytes": 95718,
+      "sha256": "2f1b720e72e3525ccb10398bac8a09fc8d15ebccd94dffe136779b6bd5f7b416"
+    },
+    {
+      "path": "day-preflight-network.png",
+      "bytes": 133893,
+      "sha256": "26a8fc3c8f85864883236d79881ee9e539d0e971cafdaebb8219bb1a4099aace"
+    },
+    {
+      "path": "day-throttled.png",
+      "bytes": 133798,
+      "sha256": "c8bf5b03dc262a1db8328be6f3d50294dd7169add1df8db2d3d3f83de72f40f7"
+    },
+    {
+      "path": "day-title-host.xml",
+      "bytes": 1644,
+      "sha256": "5768e71a03746fb6a27d40d8995c9886995b560b409082fd17135b3af38e01f5"
+    },
+    {
+      "path": "day-unknown.png",
+      "bytes": 166457,
+      "sha256": "24bbbe6a2fa2fa3b079fb6c4857b92a48588924cecdfbe5b42218dbc564a8d7f"
+    },
+    {
+      "path": "figma-references.json",
+      "bytes": 706,
+      "sha256": "b3f1c3a1518bcbbc2def513767ad70030f97745ae5f618810d17e3c85c57d5a0"
+    },
+    {
+      "path": "host-build.log",
+      "bytes": 36930,
+      "sha256": "38fb5ba18ad355d1e160f0c2fdcb5597a82cbf21f6d3bd29b7960076b2589c39"
+    },
+    {
+      "path": "host-summary.json",
+      "bytes": 15698,
+      "sha256": "fe2bd4cc0e6087d2be117ace44d7b46ee12ff23f3f037a38aa7f5e546bbf248c"
+    },
+    {
+      "path": "last-activity-acknowledged.png",
+      "bytes": 89777,
+      "sha256": "e9b0c779f12bcd6568538b18436c20429c3fbd2ebc312de6781721cfb593e666"
+    },
+    {
+      "path": "lint.xml",
+      "bytes": 54630,
+      "sha256": "b6511a90174d320b3bacfa1256d326fc251867c77b9edcd729863b6f918b47ad"
+    },
+    {
+      "path": "native.log",
+      "bytes": 41260,
+      "sha256": "f3c4acf8a085a4e84970f6e15ad0c3bcf08bb67c6ed58062ffe42dbd55a2ad91"
+    },
+    {
+      "path": "radio-pending-a.png",
+      "bytes": 59480,
+      "sha256": "2777ffb757d6b87c1a3aed61c112e65cb2a6523b018ef7d43642966f41da6051"
+    },
+    {
+      "path": "restored-collection-api.png",
+      "bytes": 993146,
+      "sha256": "c892afb993cadec4288a4b80a19504422cea2131de100102cca4f7cb1947cef0"
+    },
+    {
+      "path": "runner.log",
+      "bytes": 1933,
+      "sha256": "4a1655aafd94a616dfc767a21691321282e92a502724c685efdc3e3809ff4607"
+    },
+    {
+      "path": "source-apk-freeze.json",
+      "bytes": 76569,
+      "sha256": "71e417bd147bbc26a19d9f956fb77cc6cfc8618fe01b8ff34d82b1dd9fa557a8"
+    },
+    {
+      "path": "text-pending-a.png",
+      "bytes": 54301,
+      "sha256": "2c08d51430d155f82db403580ed2306184f10b05495e7ae9bcf0fffa9a41b391"
+    },
+    {
+      "path": "text-result-b.png",
+      "bytes": 101716,
+      "sha256": "368724d2544321150edec8e7714133e59ee8c3c3e4744e3b80198df341fceff5"
+    }
+  ]
+}

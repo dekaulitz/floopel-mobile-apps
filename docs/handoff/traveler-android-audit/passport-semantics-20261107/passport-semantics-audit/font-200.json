@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "group": "passport-tabs",
+      "active": "passport-tab-badges",
+      "items": [
+        {
+          "tag": "passport-tab-overview",
+          "selected": false,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-badges",
+          "selected": true,
+          "role": "Tab"
+        },
+        {
+          "tag": "passport-tab-stats",
+          "selected": false,
+          "role": "Tab"
+        }
+      ]
+    }
+  ],
+  "passport_reads": 1,
+  "admissions": 0
+}

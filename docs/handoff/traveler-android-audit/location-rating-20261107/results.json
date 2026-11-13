@@ -1,0 +1,273 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "host": {
+    "tests": 410,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "android_build": "PASS: Traveler, Partner and Traveler androidTest APK; Gradle Wrapper",
+  "lint": {
+    "traveler": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 42
+    },
+    "partner": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 2
+    }
+  },
+  "native": [
+    {
+      "className": "TravelerLocationDesignTest",
+      "tests": 13,
+      "status": "PASS",
+      "layer": "Production ViewModel/Compose with explicit domain doubles"
+    },
+    {
+      "className": "TravelerQuestStateTest,TravelerJourneyTest,TravelerAuthenticationJourneyTest,TravelerCatalogFontScaleTest,TravelerStartupSmallWindowTest",
+      "tests": 20,
+      "status": "PASS",
+      "layer": "Production ViewModel/Compose with explicit domain doubles"
+    }
+  ],
+  "native_total": 33,
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "pixels": "1080x2430",
+    "density": 432,
+    "viewport_dp": "400x900",
+    "system_locale": "en-US",
+    "resources": "default Indonesian",
+    "font_scale": 1.0,
+    "compose_font_scales": [
+      1.0,
+      1.3,
+      2.0
+    ],
+    "theme": "light"
+  },
+  "figma": {
+    "file_key": "ifQcOxbjGTXw9aNH2JGl9g",
+    "rating_nodes": [
+      "36:805",
+      "302:4856"
+    ],
+    "location_nodes": [
+      "797:11125",
+      "81:993",
+      "81:1151",
+      "81:1291",
+      "81:1446",
+      "53:945",
+      "53:1149",
+      "53:1096"
+    ]
+  },
+  "map": {
+    "status": "DEFERRED_BY_OWNER",
+    "decision": "petanya nanti dulu. komponen yang lain saja di perbaiki",
+    "implementation": "Map section omitted; no provider, dependency or illustrative map added"
+  },
+  "static_asset_bindings": {
+    "reused": "FloopelIcons mapped through Figma Code Connect; installed Material rounded glyphs",
+    "slots": [
+      {
+        "icon": "Star",
+        "dp": 16
+      },
+      {
+        "icon": "ChatBubbleOutline",
+        "dp": 16
+      },
+      {
+        "icon": "Map",
+        "dp": 24
+      },
+      {
+        "icon": "LocationCity",
+        "dp": 24
+      },
+      {
+        "icon": "ChevronRight",
+        "dp": [
+          16,
+          20
+        ]
+      },
+      {
+        "icon": "EmojiEvents",
+        "dp": 24
+      },
+      {
+        "icon": "Search",
+        "dp": 24
+      },
+      {
+        "icon": "ArrowBack",
+        "dp": 24
+      }
+    ],
+    "new_static_files": [],
+    "imagery": "API/consumer supplied; fixture photographs intentionally absent"
+  },
+  "source_manifest": "source-manifest.json",
+  "figures": [
+    {
+      "file": "home-location-parent.png",
+      "sha256": "f32873a7e13ed896540ff3197c497ec066e87051d7a0c311f91c436136503795",
+      "bytes": 135109
+    },
+    {
+      "file": "home-rating-compact.png",
+      "sha256": "7b4ebea7e5d7a0ae00394ec5567f9b4a7e1c4c5b1c8b0b9507d0adc7556e09d1",
+      "bytes": 192813
+    },
+    {
+      "file": "location-article-rail.png",
+      "sha256": "77346f39e53e8a1ae5292adee8f0ce75532ffa09b485bd0d53a5419359b19dbc",
+      "bytes": 139510
+    },
+    {
+      "file": "location-detail-identity-and-spots.png",
+      "sha256": "dd83c19bb4422e199f40096418e3e028781dbf250d9f80aa6d77be4477598681",
+      "bytes": 161495
+    },
+    {
+      "file": "location-long-name-font-200.png",
+      "sha256": "1ee50ba760755c87ca2cfcaa4687af165e0fe05803eae4af5cdb2c169867440e",
+      "bytes": 185794
+    },
+    {
+      "file": "location-quest-rail-font-130.png",
+      "sha256": "8de75e6b3f1df7c0fad0bfdea4faad620583db8a442038bfcf2028d6b7548671",
+      "bytes": 182191
+    },
+    {
+      "file": "location-spot-rail-error.png",
+      "sha256": "cd59c69ffabba6985e30aa96e3f158d95924ab1a0d02d18b45cb907a78796a7b",
+      "bytes": 152291
+    },
+    {
+      "file": "location-spot-rail-recovered.png",
+      "sha256": "dd83c19bb4422e199f40096418e3e028781dbf250d9f80aa6d77be4477598681",
+      "bytes": 161495
+    },
+    {
+      "file": "location-trip-rail.png",
+      "sha256": "dd83c19bb4422e199f40096418e3e028781dbf250d9f80aa6d77be4477598681",
+      "bytes": 161495
+    },
+    {
+      "file": "locations-cities.png",
+      "sha256": "1087d20f9056849bb271b5bbb5685bb040ed11e4f2d60e7894f8139f81aa07b3",
+      "bytes": 94566
+    },
+    {
+      "file": "locations-country-error.png",
+      "sha256": "4532460cc9d37edb96c686ddb383e0d63a74ac3a8b48067efda3e54038661661",
+      "bytes": 51420
+    },
+    {
+      "file": "locations-country-picker.png",
+      "sha256": "d6765a849d16ea601b071d4c6f187a34ae051a81a3692e1b1b47fb053e357684",
+      "bytes": 51552
+    },
+    {
+      "file": "locations-country-recovered.png",
+      "sha256": "25a244a2af2a2478683b6e47b558e110f9efd0b3443f770d6d471f0336de78c5",
+      "bytes": 109248
+    },
+    {
+      "file": "locations-cross-country-breadcrumb.png",
+      "sha256": "2d8411173649b87e5681c8451fc3cfe43edfbc52546faceb24b2b2ac3bb1002e",
+      "bytes": 87099
+    },
+    {
+      "file": "locations-empty.png",
+      "sha256": "411eab71edb77056e1e2d946ecf6546d41ef35324b9875740f7a848f90de7fc4",
+      "bytes": 84106
+    },
+    {
+      "file": "locations-regions.png",
+      "sha256": "25a244a2af2a2478683b6e47b558e110f9efd0b3443f770d6d471f0336de78c5",
+      "bytes": 109248
+    },
+    {
+      "file": "locations-search.png",
+      "sha256": "a9cf7f67658029d902e061b8718ba33fe5df7be9cb2f0c015537d5dec80774d2",
+      "bytes": 77838
+    },
+    {
+      "file": "locations-selected-malaysia.png",
+      "sha256": "2d8411173649b87e5681c8451fc3cfe43edfbc52546faceb24b2b2ac3bb1002e",
+      "bytes": 87099
+    },
+    {
+      "file": "rating-comments-without-score.png",
+      "sha256": "ac6918ac797b0dc085000df521d16de07175165d9f4cb086694b267fa133bc26",
+      "bytes": 189624
+    },
+    {
+      "file": "spot-detail-rating-font-130.png",
+      "sha256": "636ffbb44e6fb81e0be6eb5ad30be08d25cd3f6aefd438ed4fa7df43c3eff87f",
+      "bytes": 72926
+    },
+    {
+      "file": "spot-detail-rating.png",
+      "sha256": "41558861be26507cb058edbf2fd49823d591802c15757d59e2a91be10b2f6aeb",
+      "bytes": 64968
+    }
+  ],
+  "limits": [
+    "iOS framework/host/test NOT_RUN: Windows; requires Mac/Xcode",
+    "TalkBack, physical device and whole-app font/layout parity NOT_RUN",
+    "Domain doubles do not prove backend, image provider, GPS/Integrity or all Figma states",
+    "Existing unrelated gaps and earlier immutable evidence are retained"
+  ],
+  "manual_main_activity_smoke": {
+    "status": "PASS_SCOPED_VISUAL_NAVIGATION",
+    "layer": "Installed MainActivity; existing synthetic local account; live API via ngrok",
+    "device": {
+      "serial": "emulator-5580",
+      "pixels": "1080x2400",
+      "density": 420,
+      "font_scale": 1.0,
+      "theme": "light"
+    },
+    "scenarios": [
+      "Home rating -> Spot detail rating -> owning Location detail",
+      "Location Spot/untaken Quest/Open Trip/article rails",
+      "Home -> all locations -> approved country picker -> province list"
+    ],
+    "actions": "Read/navigation only in this smoke; five-second pause after each transition; no database reset or account reinstallation",
+    "limitations": "Manual smoke is not an additional automated test or full-state parity; photos/content are API data",
+    "figures": [
+      {
+        "file": "live-spot-rating.png",
+        "sha256": "05595012939eceb311ef2e5659915854ac31cf579927873ccb2c63be7d303a89",
+        "bytes": 1433158
+      },
+      {
+        "file": "live-location-detail.png",
+        "sha256": "8e6c36405a3d98f06307b3513efe353a3eb9073c3eb60f83c04b8484977dbf9c",
+        "bytes": 648437
+      },
+      {
+        "file": "live-location-articles.png",
+        "sha256": "aae907b6730dd4d2f77fd4d832f4682937ec2e53bbf125e5b657c2283511a9b3",
+        "bytes": 1062331
+      },
+      {
+        "file": "live-location-regions.png",
+        "sha256": "cd30ef037634c5613f5b78cb330a6720e03fc499f9b9b2e50c1315575249d959",
+        "bytes": 150338
+      }
+    ],
+    "apk_sha256": "f0dd9e3c652cb0ddc7b186ac072e0d4ee1db7dc9b6592fc5adf181807468e295"
+  }
+}

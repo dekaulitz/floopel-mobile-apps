@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-08",
+  "branch": "feature/mobile-openapi-contracts",
+  "parent_commit": "4b54437751d60ba7bd0a42070801749e2d142b22",
+  "finding": "QUEST-COMPLETION-RESTORE-01",
+  "original_report": "source-confirmed; no original native or live API reproduction",
+  "host": {
+    "tests": 587,
+    "new_session_identity_vm_cases": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "native": {
+    "device": "emulator-5580",
+    "runner": "androidx.test.runner.AndroidJUnitRunner",
+    "classes": {
+      "TravelerQuestCompletionRestoreTest": 4,
+      "TravelerQuestDesignTest": 11,
+      "TravelerPassportDesignTest": 14,
+      "TravelerNavigationRegressionTest": 12
+    },
+    "tests": 41,
+    "time_seconds": 112.834,
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "font_scale": 1.0,
+    "frozen_inputs": 449,
+    "restoration_model": "StateRestorationTester + real Root rememberSaveable + new test-owned ViewModelStore/runtime; domain fixtures"
+  },
+  "gates": {
+    "assembleDevelopmentDebug": "PASS",
+    "assembleDevelopmentDebugAndroidTest": "PASS",
+    "lintDevelopmentDebug": "PASS",
+    "lint_errors": 0,
+    "lint_warnings": 45
+  },
+  "limits": [
+    "MainActivity process death NOT_RUN",
+    "live Quest or account/provider integration NOT_RUN",
+    "Mac/Xcode/iOS NOT_RUN",
+    "completion visual CORE-V07 outside scope; no Figma parity claim",
+    "TalkBack/VoiceOver NOT_RUN",
+    "physical/release/performance NOT_RUN"
+  ],
+  "execution_provenance": "source/APK fingerprints are local raw input bytes; foreign styles.xml compiled but excluded from commit; not Git-normalized source equivalence",
+  "business_writes": "new host restoration scenarios and fresh native runtime issue zero business writes; first native runtime uses one synthetic takeQuest only to produce the saved stack; no real answer, claim or admission",
+  "source_freeze": "verified unchanged across native run and evidence packaging"
+}

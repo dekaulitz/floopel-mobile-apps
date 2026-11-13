@@ -25,8 +25,8 @@ Dari root repo menggunakan PowerShell:
 
 ```powershell
 .\gradlew.bat projects
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
-.\gradlew.bat :apps:android:traveler:lintDebug :apps:android:partner:lintDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
+.\gradlew.bat :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug
 ```
 
 Untuk fitur satu produk, batasi perintah ke produk tersebut bila tidak ada dependency bersama yang berubah. Untuk menemukan task test dan compile yang tersedia:
@@ -81,4 +81,4 @@ Bukti minimal menyertakan perintah/skenario, modul/platform, hasil, dan batas ya
 
 Gate rilis yang relevan harus memiliki bukti lulus atau keputusan risiko dari proses tim yang berlaku. Ketiadaan Mac di mesin pengembangan ditangani melalui runner Mac atau pemeriksaan Mac berikutnya; pekerjaan yang bisa dilakukan tetap dilanjutkan, sementara gate iOS dicatat belum selesai. Penerbitan store/deployment mengikuti permintaan dan otorisasi tersendiri.
 
-Repo saat standar ini dibuat berisi scaffold, konfigurasi build, dan layar sambutan. Belum ada suite test bisnis, integrasi backend/sesi/transaksi, pengujian performa, atau pipeline CI yang membuktikan seluruh gate di atas. Tulis kontrol yang ditambahkan pada perubahan nyata; jangan menyimpulkan production readiness dari struktur folder atau dokumen ini.
+Repo saat standar ini dibuat berisi scaffold. Implementasi Android Traveler berikutnya menambahkan runtime, suite host dan pengujian Compose di emulator; bukti aktual ada pada handoff Android. Pengujian tersebut tidak membuktikan provider native, transaksi backend privat, iOS atau pipeline CI yang belum dijalankan. Tulis kontrol yang ditambahkan pada perubahan nyata; jangan menyimpulkan production readiness dari struktur folder atau dokumen ini.

@@ -1,0 +1,28 @@
+{
+  "total": {
+    "tests": 564,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "selected": {
+    "ProfilePhotoViewModelTest": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "TravelerPublicationCopyGuardTest": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "NativeProfilePhotoApiTest": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

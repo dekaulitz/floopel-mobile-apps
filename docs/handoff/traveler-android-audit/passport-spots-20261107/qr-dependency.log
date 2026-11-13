@@ -1,0 +1,44 @@
+Picked up JAVA_TOOL_OPTIONS:  -Djava.io.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp -Djdk.net.unixdomain.tmpdir=C:\Users\Dekaulitz\.gradle\floopel-java-tmp
+
+> Task :apps:android:traveler:dependencyInsight
+io.github.g0dkar:qrcode-kotlin:4.5.0
+  Variant releaseRuntimeElements-published:
+    | Attribute Name                                             | Provided     | Requested    |
+    |------------------------------------------------------------|--------------|--------------|
+    | org.gradle.status                                          | release      |              |
+    | org.gradle.category                                        | library      | library      |
+    | org.gradle.jvm.environment                                 | android      | android      |
+    | org.gradle.usage                                           | java-runtime | java-runtime |
+    | org.jetbrains.kotlin.platform.type                         | androidJvm   | androidJvm   |
+    | com.android.build.api.attributes.AgpVersionAttr            |              | 9.1.0        |
+    | com.android.build.api.attributes.BuildTypeAttr             |              | debug        |
+    | com.android.build.api.attributes.ProductFlavor:environment |              | development  |
+
+io.github.g0dkar:qrcode-kotlin:4.5.0
+\--- project :shared:core:designsystem
+     \--- project :shared:features:traveler
+          \--- developmentDebugRuntimeClasspath
+
+io.github.g0dkar:qrcode-kotlin-android:4.5.0
+  Variant releaseRuntimeElements-published:
+    | Attribute Name                                             | Provided     | Requested    |
+    |------------------------------------------------------------|--------------|--------------|
+    | org.gradle.status                                          | release      |              |
+    | org.gradle.category                                        | library      | library      |
+    | org.gradle.jvm.environment                                 | android      | android      |
+    | org.gradle.usage                                           | java-runtime | java-runtime |
+    | org.jetbrains.kotlin.platform.type                         | androidJvm   | androidJvm   |
+    | com.android.build.api.attributes.AgpVersionAttr            |              | 9.1.0        |
+    | com.android.build.api.attributes.BuildTypeAttr             |              | debug        |
+    | com.android.build.api.attributes.ProductFlavor:environment |              | development  |
+
+io.github.g0dkar:qrcode-kotlin-android:4.5.0
+\--- io.github.g0dkar:qrcode-kotlin:4.5.0
+     \--- project :shared:core:designsystem
+          \--- project :shared:features:traveler
+               \--- developmentDebugRuntimeClasspath
+
+A web-based, searchable dependency report is available by adding the --scan option.
+
+BUILD SUCCESSFUL in 3s
+1 actionable task: 1 executed

@@ -1,6 +1,10 @@
 # Floopel Mobile Apps
 
-Struktur awal aplikasi menggunakan **Kotlin Multiplatform (KMP)** dan **Compose Multiplatform**. Traveler berbagi UI dan logika antara Android dan iOS. Partner menggunakan Compose untuk Android dan memakai kembali modul core yang sama.
+Monorepo **Kotlin Multiplatform (KMP)** dan **Compose Multiplatform**. Android Traveler memakai runtime native dan UI/logika `commonMain`. Partner tetap host Android terpisah. Host iOS Traveler masih memakai layar scaffold; wiring layanan native dan verifikasi Mac merupakan tahap berikutnya.
+
+## Kontrak API backend
+
+[Paket OpenAPI Mobile Traveler](api-contract/README.md) menyediakan kontrak identitas native dan API produk untuk Android/iOS Traveler, beserta panduan URL, autentikasi/header dan provenance dari branch backend lokal. Kontrak menjadi acuan adapter di layer data Traveler. Status implementasi, bukti Android, dan bagian yang masih tertunda tercatat pada [handoff Android](docs/handoff/traveler-android.md).
 
 ## Skill, rules, dan desain arsitektur
 
@@ -21,7 +25,7 @@ Skill berada di `.agents/skills/floopel-mobile-engineering` untuk penemuan dalam
 Gunakan $floopel-mobile-engineering untuk menambahkan pencarian destinasi Traveler.
 ```
 
-Standar ini menjadi panduan implementasi dan review. Scaffold belum membuktikan semua syarat rilis; CI, guard arsitektur, backend, serta suite pengujian production perlu diimplementasikan dan diverifikasi sesuai perubahan nyata.
+Standar ini menjadi panduan implementasi dan review. Build/test Android tidak membuktikan kesiapan provider, transaksi backend privat, iOS, signing, atau rilis. CI dan branch protection perlu konfigurasi tersendiri.
 
 | Aplikasi | Platform | Application / bundle ID | Entry point |
 | --- | --- | --- | --- |
@@ -72,11 +76,15 @@ floopel-mobile-apps/
 │       │   └── src/
 │       │       ├── commonMain/kotlin/com/floopel/feature/traveler/
 │       │       │   ├── TravelerApp.kt
+│       │       │   ├── core/network/    # Transport internal milik Traveler
+│       │       │   ├── feature/auth/    # Pemilik sesi internal
 │       │       │   ├── data/
 │       │       │   ├── domain/
 │       │       │   └── presentation/
-│       │       │       ├── home/TravelerHomeScreen.kt
-│       │       │       └── navigation/
+│       │       │       ├── TravelerRoot.kt
+│       │       │       ├── TravelerState.kt
+│       │       │       ├── TravelerViewModel.kt
+│       │       │       └── home/, catalog/, quest/, itinerary/, trip/, account/
 │       │       ├── androidMain/kotlin/com/floopel/feature/traveler/
 │       │       └── iosMain/kotlin/com/floopel/feature/traveler/
 │       │           └── MainViewController.kt
@@ -99,7 +107,7 @@ floopel-mobile-apps/
 └── gradlew.bat
 ```
 
-Folder `data`, `domain`, dan `navigation` disiapkan dengan `.gitkeep` untuk pengembangan berikutnya. Implementasi saat ini berupa layar sambutan Traveler dan Partner; belum ada integrasi backend, autentikasi, atau alur pemesanan.
+Traveler kini memiliki kontrak domain, adapter API/session, state holder dan UI untuk katalog, Quest, itinerary, publikasi, Trip/admission serta inbox. Host Android menangani Android Keystore, lokasi, Photo Picker, Credential Manager dan Back. Fixture hanya berada pada source test. Partner dan host iOS masih scaffold; booking/payment belum diimplementasikan. Lihat [ADR runtime](docs/adr/0001-traveler-android-runtime.md) dan [provenance source](docs/handoff/traveler-source-provenance.json).
 
 ## Batas tanggung jawab modul
 
@@ -148,15 +156,32 @@ AGP 9 menggunakan Kotlin bawaan untuk modul Android biasa. Modul KMP menggunakan
 
 1. Buka root repositori melalui Android Studio yang mendukung AGP 9.1, lalu lakukan Gradle Sync.
 2. Siapkan JDK, Android SDK Platform 36, dan Build Tools 36.0.0. Tentukan `JAVA_HOME` serta `ANDROID_HOME`, atau isi lokasi Android SDK melalui `local.properties` (tidak di-commit).
-3. Pilih modul `apps.android.traveler` atau `apps.android.partner` dan jalankan di emulator/perangkat.
+3. Pilih modul `apps.android.traveler` atau `apps.android.partner`, pilih variant `developmentDebug`, lalu jalankan di emulator/perangkat.
 
 Build kedua APK debug dari PowerShell:
 
 ```powershell
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
 ```
 
-APK dihasilkan di `apps/android/<traveler|partner>/build/outputs/apk/debug/`. Untuk memasang pada perangkat yang terhubung, gunakan task `:apps:android:traveler:installDebug` atau `:apps:android:partner:installDebug`.
+APK dihasilkan di `apps/android/<traveler|partner>/build/outputs/apk/development/debug/`. Gunakan task `:apps:android:traveler:installDevelopmentDebug` atau `:apps:android:partner:installDevelopmentDebug`. Development memakai package `.dev`; production mempertahankan ID utama. Rincian, signing, provider dan template environment ada pada [konfigurasi environment](config/environments/README.md).
+
+### Konfigurasi Android Traveler
+
+Traveler wajib login sebelum Home dan fitur aplikasi. Aplikasi menunggu pemulihan sesi; sesi valid dapat dilanjutkan, sedangkan logout atau sesi tidak valid kembali ke login. Registrasi, verifikasi dan pemulihan sandi tetap tersedia dari login. Figma final adalah sumber kebenaran visual; bukti koreksi komponen dan gap tersisa ada pada [audit UI](docs/handoff/traveler-ui-audit.md).
+
+Debug default memakai backend lokal `http://10.0.2.2:8080` untuk emulator. Untuk tunnel ngrok yang aktif, ambil origin HTTPS dari ngrok lalu bangun ulang APK:
+
+```powershell
+$env:FLOOPEL_DEVELOPMENT_API_ORIGIN = 'https://your-tunnel.ngrok-free.dev'
+.\gradlew.bat :apps:android:traveler:installDevelopmentDebug
+```
+
+Jangan menambahkan path `/api/apps/v1` pada origin. Production memerlukan `FLOOPEL_PRODUCTION_API_ORIGIN` atau `floopelProductionApiOrigin` berupa HTTPS; tidak mengambil fallback development. Production release juga memerlukan signing environment produknya. Cleartext debug dibatasi ke loopback/emulator; tidak ada trust-all certificate. Backend dan tunnel tetap memiliki environment tersendiri.
+
+Identifier publik provider dipisahkan melalui `FLOOPEL_<ENV>_GOOGLE_SERVER_CLIENT_ID` dan `FLOOPEL_<ENV>_PLAY_CLOUD_PROJECT_NUMBER`, dengan `<ENV>` = `DEVELOPMENT`/`PRODUCTION`. Google Sign-In/Quest execution memerlukan registrasi untuk package flavor (`com.floopel.traveler.dev` atau `com.floopel.traveler`), signature/distribusi dan backend yang sesuai. Nilai kosong/0 menampilkan kondisi belum tersedia. Properti lama tetap menjadi fallback development saja; lihat matriks environment untuk nama lengkap dan integrasi yang masih disiapkan.
+
+Refresh credential dan intent recovery disimpan terenkripsi dengan Android Keystore, dipisahkan menurut origin API, dikecualikan dari backup, dan dibersihkan ketika logout. Intent yang hasilnya belum diketahui tidak ditulis ulang otomatis. Untuk memulihkan unggahan setelah proses hilang, pilih kembali foto yang sama; journal mencocokkan SHA-256 dan memakai key lama, tanpa menyimpan foto/URI pada saved state.
 
 ### Kendala direktori temporary Java di Windows
 
@@ -172,7 +197,7 @@ Konfigurasi ini berlaku untuk sesi terminal tersebut. Jika `JAVA_TOOL_OPTIONS` s
 
 ## Menjalankan iOS Traveler
 
-Build iOS membutuhkan **macOS, Xcode yang kompatibel dengan Kotlin 2.4.0 (26.4 pada matriks kompatibilitas), dan JDK**. Simulator menggunakan Mac Apple Silicon; target simulator Intel tidak disediakan.
+Host iOS belum menerima wiring runtime Android pada perubahan ini. Kompilasi dan pengujian iOS berstatus `NOT_RUN` di Windows. Build iOS membutuhkan **macOS, Xcode yang kompatibel dengan Kotlin 2.4.0 (26.4 pada matriks kompatibilitas), dan JDK**. Simulator menggunakan Mac Apple Silicon; target simulator Intel tidak disediakan.
 
 ```sh
 open apps/ios/traveler/FloopelTraveler.xcodeproj
@@ -195,8 +220,25 @@ xcodebuild -project apps/ios/traveler/FloopelTraveler.xcodeproj \
 
 ```powershell
 .\gradlew.bat projects
-.\gradlew.bat :apps:android:traveler:assembleDebug :apps:android:partner:assembleDebug
-.\gradlew.bat :apps:android:traveler:lintDebug :apps:android:partner:lintDebug
+.\gradlew.bat :apps:android:traveler:assembleDevelopmentDebug :apps:android:partner:assembleDevelopmentDebug
+.\gradlew.bat :apps:android:traveler:lintDevelopmentDebug :apps:android:partner:lintDevelopmentDebug
 ```
+
+Suite host memuat test bisnis/kontrak deterministik, sedangkan instrumentation memakai fixture domain dan tidak membuktikan provider/backend privat:
+
+```powershell
+.\gradlew.bat :shared:features:traveler:testAndroidHostTest
+.\gradlew.bat :apps:android:traveler:connectedDevelopmentDebugAndroidTest
+```
+
+Probe publik nyata bersifat opt-in dan hanya melakukan public read:
+
+```powershell
+.\gradlew.bat :shared:features:traveler:testAndroidHostTest -PfloopelLiveSmoke=true -PfloopelApiOrigin=https://your-tunnel.ngrok-free.dev
+node api-contract/check-examples.mjs
+node --test api-contract/check-examples.test.mjs
+```
+
+Run probe memakai direktori report Gradle yang sama dengan run host; arsipkan report sebelum run berikutnya. Tidak ada fixture credential yang otomatis membuat akun backend.
 
 Pada macOS/Linux, ganti `.\gradlew.bat` dengan `sh ./gradlew`. Build iOS harus diperiksa melalui Xcode pada Mac.

@@ -1,0 +1,20 @@
+{
+  "fileKey": "ifQcOxbjGTXw9aNH2JGl9g",
+  "sessionId": "ab7e8be7-e33e-4a70-b70b-c053176c4c6e",
+  "nodes": [
+    {
+      "id": "218:4714",
+      "observed": "Submitted answer is frozen while sending; no completion before acknowledgement"
+    },
+    {
+      "id": "113:1794",
+      "observed": "Day name edit and explicit save journey"
+    },
+    {
+      "id": "113:2274",
+      "observed": "Code Connect Compose mapping: FloopelFormTextField; reused from existing core:designsystem"
+    }
+  ],
+  "scope": "Behavior and component ownership only. The existing dialog is retained; pending page/illustration redesign and whole-screen Figma acceptance are not part of these findings.",
+  "newStaticAssets": 0
+}

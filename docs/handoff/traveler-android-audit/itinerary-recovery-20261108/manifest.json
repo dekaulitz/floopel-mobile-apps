@@ -1,0 +1,86 @@
+{
+  "finding": "ITINERARY-RECOVERY-01",
+  "dedup": "itinerary-expired-journal-in-session-recovery-20261108-0227",
+  "client_date": "2026-11-08",
+  "base_commit": "0f80f81909f8b8539454d951d32881c9b9b67bfb",
+  "scope": "Traveler create/clone/add-stop journal recovery; metadata/delete/reorder remain independent",
+  "host": {
+    "tests": 494,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_cases": {
+    "actual_adapter_mock_transport": 5,
+    "actual_adapter_with_viewmodel": 4
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 20,
+    "new_itinerary_recovery": 4,
+    "trip_recovery_regression": 3,
+    "existing_journey_regression": 13,
+    "runner_seconds": 35.716,
+    "local_source_apk_freeze": "PASS",
+    "local_source_apk_entries": 402,
+    "package": "com.floopel.traveler.dev",
+    "emulator": "5580",
+    "viewport_dp": "400x900",
+    "locales_font_scale": [
+      {
+        "locale": "id",
+        "scale": 1
+      },
+      {
+        "locale": "en",
+        "scale": 1.3
+      }
+    ]
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: no core/Partner changes",
+  "figma_context": [
+    "290:4906",
+    "276:4661"
+  ],
+  "safety": {
+    "live_itinerary_mutations": 0,
+    "live_trip_mutations": 0,
+    "device_clock_changed": false,
+    "backend_or_contract_changes": false,
+    "database_or_app_data_reset": false,
+    "providers_credentials_merge_deploy": false,
+    "test_transport": "MockEngine + synthetic repositories only"
+  },
+  "restored_ui": "Collection reader on emulator 5580, real API read-only, 5 seconds per manual flow",
+  "limits": {
+    "ios": "NOT_RUN: requires Mac/Xcode",
+    "talkback_voiceover": "NOT_RUN",
+    "real_response_loss_mutations": "NOT_RUN: fixture-only recovery proof",
+    "figma_layout": "Existing recovery components reused; context nodes do not define a full expiry screen. No full clone/loading or expiry visual reconciliation claim.",
+    "font_scale": "Recovery decision only; no whole-app font-scale acceptance claim.",
+    "source_fingerprints": "Local execution bytes, including excluded styles.xml; not portable checkout-byte hashes."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "expired-itinerary.png": "f00c31a9505a556d269fe21657da82c73d8d0e5f71ebda070c2e857b14b35330",
+    "final-build.log": "55426ac5c87140740be1430b9258c3acc2415fa51cef69c38221552299a2f818",
+    "itinerary-review-en-font130.png": "456f1aa61c066b7df97c503051dda66dd8333a8add8d27c279908e96d064d726",
+    "itinerary-review-failed.png": "87f19567699caa8505ae792417118246643c049d40b156f5988ce5f0953b3a00",
+    "itinerary-review.png": "0b92b30e5dbc449498fe64f9dc99a0e38fc462c0758aa35663d0ff11dbf6b337",
+    "local-source-freeze.json": "73484b35e6d27835376d762c27a9c4ea5b818fafd6cdc6bff05aaae0b606d528",
+    "native.log": "f86dd0a3389d39f2a42be8fecd807d6221037dc5be75a20ed740263318ed3892",
+    "restored-collection-api.png": "74dfe4518a70a90fbf569618e1f349c766f83268c7ef5a63f3a9811c2e2d54fd",
+    "TEST-com.floopel.feature.traveler.data.repository.NativeItineraryMutationRecoveryTest.xml": "143fe114820c5ae97c045211c1a78ad246cfc717319117a3504f909504612a06",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerItineraryMutationRecoveryTest.xml": "3c3e07ce15b56798d1ea8e95527cd41559ca6c1350d96c13e8ff3a36a88444f3",
+    "trip-review-regression.png": "dc65b67ef8516830276340c0e9670f3fc2cf624ac4e6f4bf696f93fe35814805"
+  }
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-07T22:44:28.762Z" hostname="DSKTP-ZYAN" time="0.029">
+  <properties/>
+  <testcase name="managerModePreservesGroupOriginDraftAndBackWithoutWrites" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest" time="0.011"/>
+  <testcase name="acknowledgedDisbandExitsBothGroupSurfacesToTheExistingOrigin" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest" time="0.007"/>
+  <testcase name="memberUnavailableOrFailedProfileCannotEnterManagement" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest" time="0.004"/>
+  <testcase name="unknownInviteKeepsItsJournalAndManagementDraftUntilAnExplicitRecovery" classname="com.floopel.feature.traveler.presentation.TravelerQuestGroupManagementStateTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

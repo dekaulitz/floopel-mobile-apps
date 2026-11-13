@@ -1,0 +1,22 @@
+{
+  "status": "BLOCKED",
+  "boundary": "No live Quest flow executed in this batch; synthetic native tests are separate",
+  "publicApi": {
+    "localHealthHttp": 200,
+    "questCatalogHttp": 500,
+    "ngrokHttp": 500,
+    "origin": "https://unawake-moonlit-reckless.ngrok-free.dev"
+  },
+  "blocker": "Existing local PostgreSQL on 127.0.0.1:5432 is unavailable; Docker Desktop engine failed to initialize its inference socket",
+  "recovery": {
+    "backend": "Started existing Go API from local source without changing source/schema",
+    "dockerDesktop": "Start attempted; supported desktop restart command did not complete and its CLI was cancelled",
+    "rejectedAction": "Forced restart of task-started Docker processes and deletion of the single stale runtime socket",
+    "rejection": "Automatic execution review: blocked by policy"
+  },
+  "databaseReset": false,
+  "databaseMigration": false,
+  "featureMutations": 0,
+  "mainActivity": "Final development APK opened at login on emulator-5580; no fixture login attempted while API returned 500",
+  "previousLiveSmoke": "Earlier successful live checkpoints remain historical, not evidence for this Quest design batch"
+}

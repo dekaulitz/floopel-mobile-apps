@@ -1,0 +1,915 @@
+{
+  "date": "2026-11-07",
+  "baseline_commit": "488ec54315c43fdc7af6353bd6f61703eef83422",
+  "branch": "feature/mobile-openapi-contracts",
+  "application_id": "com.floopel.traveler.dev",
+  "build": "PASS",
+  "host": {
+    "status": "PASS",
+    "tests": 477,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "traveler": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 45
+    },
+    "partner": {
+      "Fatal": 0,
+      "Error": 0,
+      "Warning": 2
+    }
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 94,
+    "failures": 0,
+    "skipped": 0,
+    "duration_seconds": 189.913,
+    "classes": {
+      "com.floopel.traveler.TravelerPassportDesignTest": 12,
+      "com.floopel.traveler.TravelerPublicProfileTabTest": 3,
+      "com.floopel.traveler.TravelerFigmaDesignTest": 14,
+      "com.floopel.traveler.TravelerJourneyTest": 13,
+      "com.floopel.traveler.TravelerLocationDesignTest": 14,
+      "com.floopel.traveler.TravelerPublicationStateTest": 2,
+      "com.floopel.traveler.TravelerCatalogFontScaleTest": 1,
+      "com.floopel.traveler.TravelerAuthenticationJourneyTest": 1,
+      "com.floopel.traveler.TravelerQuestStateTest": 4,
+      "com.floopel.traveler.TravelerQuestDesignTest": 11,
+      "com.floopel.traveler.TravelerAccountDesignTest": 16,
+      "com.floopel.traveler.TravelerLegalDesignTest": 3
+    },
+    "source_apk_unchanged": true,
+    "viewport_dp": [
+      400,
+      900
+    ],
+    "density": 432,
+    "font_scale_cases": [
+      1,
+      1.3,
+      2
+    ],
+    "emulator": "emulator-5580",
+    "api_level": 35,
+    "device_defaults_restored": true
+  },
+  "ios": {
+    "status": "NOT_RUN",
+    "reason": "Windows; requires macOS/Xcode framework, host and shared tests"
+  },
+  "resources": {
+    "status": "PASS",
+    "strings_per_language": 735,
+    "languages": [
+      "id",
+      "en"
+    ],
+    "keys_and_format_placeholders_match": true,
+    "replacement_characters": 0
+  },
+  "qr": {
+    "decoder": "ZXing 3.5.4, Android instrumentation only",
+    "encoder": "QRCode-Kotlin 4.5.0 raw matrix",
+    "public_payload_keys": [
+      "username",
+      "level",
+      "total_xp"
+    ],
+    "cases": [
+      "preview 120 dp and expanded 240 dp independent decode",
+      "level 1 and XP 0",
+      "profile failure hides QR until retry succeeds",
+      "progress rotation replaces encoded payload",
+      "Unicode payload",
+      "Long.MAX_VALUE XP",
+      "four white quiet modules on each edge",
+      "long profile name and font 130/200%"
+    ],
+    "static_figma_sample_qr_used": false
+  },
+  "foreign_inputs": {
+    "excluded_from_commit": [
+      ".gitignore",
+      "apps/android/traveler/src/main/res/values/styles.xml"
+    ],
+    "styles_in_tested_apk_sha256": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "assets": [
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_watermark.svg",
+      "bytes": 6806,
+      "sha256": "b72d78382c60dfabc63521697f7709fa189dc182243b7d02592a6e2651093b41",
+      "figma_asset": "fcd77.svg",
+      "figma_frames": [
+        "274:4284",
+        "274:4414",
+        "274:4546",
+        "274:4711",
+        "274:5175"
+      ],
+      "root_width": "210",
+      "root_height": "210",
+      "view_box": "0 0 210 210",
+      "callsite": "PassportScreen.kt",
+      "effective_geometry": "210 x 210 dp, rotation 12 degrees, offset top-end (28.376,29.536) dp, clipped by card",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_watermark_large.svg",
+      "bytes": 6807,
+      "sha256": "bf56b15ad74e0361448d57e300a025206aa866189beb0547cb565c0ee20661c4",
+      "figma_asset": "5ec24.svg",
+      "figma_frames": [
+        "274:5304",
+        "275:4314"
+      ],
+      "root_width": "250",
+      "root_height": "250",
+      "view_box": "0 0 250 250",
+      "callsite": "PassportScreen.kt",
+      "effective_geometry": "250 x 250 dp, rotation 12 degrees, offset top-end (33.777,33.257) dp, clipped by card",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_empty.svg",
+      "bytes": 2464,
+      "sha256": "dde3c13ba75ade5b27d7f35d11f45ee3b6b0444a9cc74c488ee8ef8835811e26",
+      "figma_asset": "87f20.svg",
+      "figma_frames": [
+        "274:4840"
+      ],
+      "root_width": "160",
+      "root_height": "106.667",
+      "view_box": "0 0 160 106.667",
+      "callsite": "PassportScreen.kt",
+      "effective_geometry": "160 x 106.667 dp, centered",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_loading.svg",
+      "bytes": 1690,
+      "sha256": "641f6907f9ebd2d6326af33bcfd70cb867cfbf295438fc170d1ea529f991a5a8",
+      "figma_asset": "3c400.svg",
+      "figma_frames": [
+        "274:4973"
+      ],
+      "root_width": "192",
+      "root_height": "128",
+      "view_box": "0 0 192 128",
+      "callsite": "PassportScreen.kt",
+      "effective_geometry": "192 x 128 dp, centered",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/passport_failed.svg",
+      "bytes": 1476,
+      "sha256": "66c0c6bafea499b5184df9441f6075ae713edfc805930343b9ef7e6093a11d97",
+      "figma_asset": "4cb4e.svg",
+      "figma_frames": [
+        "274:5072"
+      ],
+      "root_width": "192",
+      "root_height": "128",
+      "view_box": "0 0 192 128",
+      "callsite": "PassportScreen.kt",
+      "effective_geometry": "192 x 128 dp, centered",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_save_toolbar.svg",
+      "bytes": 377,
+      "sha256": "2e54eb2fe78efd52f3a200464800d174d8805c04d6799fceda4364cf675db898",
+      "figma_asset": "860ff.svg",
+      "figma_frames": [
+        "36:696"
+      ],
+      "root_width": "24",
+      "root_height": "24",
+      "view_box": "0 0 24 24",
+      "callsite": "SpotDetailScreen.kt",
+      "effective_geometry": "24 x 24 dp in 48 dp toolbar target",
+      "modified": false
+    },
+    {
+      "file": "shared/features/traveler/src/commonMain/composeResources/files/spot_saved_toolbar.svg",
+      "bytes": 304,
+      "sha256": "08eded91536c8bb6827b6b053af4fb9701b22e2b342ecb97a6c0e3ae8eebf51c",
+      "figma_asset": "f1bee.svg",
+      "figma_frames": [
+        "36:696"
+      ],
+      "root_width": "24",
+      "root_height": "24",
+      "view_box": "0 0 24 24",
+      "callsite": "SpotDetailScreen.kt",
+      "effective_geometry": "24 x 24 dp in 48 dp toolbar target",
+      "modified": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "account-audit/spot-gallery-absent.png",
+      "bytes": 123917,
+      "sha256": "dd4ae50e28d5cb106dc0557872dcbc346bcf2b2b4e43bd2cfaade9a0f044b316",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "account-audit/spot-gallery-error.png",
+      "bytes": 127450,
+      "sha256": "8d949cd94e08c722fe2ed086f45c76694bd5956f99d2321c23924b6723ca7816",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "account-audit/spot-gallery-loaded.png",
+      "bytes": 117937,
+      "sha256": "b6871a90adc282581e7ae72e57f4999c959c0a08bd11bfc62ab1baabd20e4d89",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "account-audit/spot-new-gallery-actions.png",
+      "bytes": 126830,
+      "sha256": "19d05357b5eb90eeca83c800293e820f71a6446ae21a2249f0e7725cc6f86e10",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "account-audit/spot-saved-actions.png",
+      "bytes": 126417,
+      "sha256": "f7845550b01c85c93bc8f104e641c728ecd316db1039ff059294806876cee0a9",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/all-spots-global-from-location.png",
+      "bytes": 114649,
+      "sha256": "7914988351f3254922a1a1d481d98398f3c547263f11da2acc88ba706cec7227",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/all-spots-global.png",
+      "bytes": 109290,
+      "sha256": "069673edc9d55af9920232af44042d3188563310a33ac9a7e7c488e97acfaf57",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/all-spots-scoped.png",
+      "bytes": 113237,
+      "sha256": "4698ce661ea153f8f5bb9814cc8cd32b8eca23a2ae42abc42c068a681915787e",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/spot-detail-articles.png",
+      "bytes": 165635,
+      "sha256": "0fb39148284f9d314633d40ae330b72438ab3ac6b98996acc840f7cb008746fa",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/spot-detail-collections.png",
+      "bytes": 195278,
+      "sha256": "44b58dab770e43aab19e42b58cca490ae8e83498466f0b83883c46e58fc7d807",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/spot-detail-quest-trips.png",
+      "bytes": 195278,
+      "sha256": "44b58dab770e43aab19e42b58cca490ae8e83498466f0b83883c46e58fc7d807",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "figma-audit/spot-detail-summary.png",
+      "bytes": 120416,
+      "sha256": "83cdad6accd4deb649da03adb02c2e226d03323a8878ffaee79ab7e301aeecb3",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-badge-focus.png",
+      "bytes": 68455,
+      "sha256": "172313571437f7bdacc6497c1aa7d7eaad860fd7b20e315cf1dddd80f14ecb53",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-badges.png",
+      "bytes": 134300,
+      "sha256": "ddaa0a7b505d846f695c87ada7f9f636f031e0877e2223bd54567f52050578ba",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-completed.png",
+      "bytes": 161816,
+      "sha256": "e346784a3836b632895b93740e3df36fcffb27e18017cd80686415d453eeba9d",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-empty.png",
+      "bytes": 137081,
+      "sha256": "6c593b08b7418f5d9ec9e21e88f3a3d1e65e1475c73e572ea2fa140f0c98facc",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-failed.png",
+      "bytes": 60231,
+      "sha256": "f6e0aa461e78ff7c65d74f5df4365376c62cfb40f66da76b89ea44f8c5249328",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-font-130.png",
+      "bytes": 150038,
+      "sha256": "59d06f82795d4c32af7f2f200f8492e56eb0e9bc3caad873101492375df72aab",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-identity-error.png",
+      "bytes": 151109,
+      "sha256": "4528c7fba3fbf213332197f1d777372fbf32b2e5707b037a3e03ba18e792f87d",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-loading.png",
+      "bytes": 53474,
+      "sha256": "1d23f9b6c34c41fbda162bc836cd17d2ba0ae77d5779e43f04c1ccd9502dc434",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-overview.png",
+      "bytes": 138320,
+      "sha256": "fcc0f2a063128425e7a174384f254340825a9477f7c581d861ff06ae90b9d4d1",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-qr-expanded.png",
+      "bytes": 89092,
+      "sha256": "67087a6b0d39c34997967059369d98a83970309314019504dc3bf70f41e73fcb",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-qr-font-200.png",
+      "bytes": 127069,
+      "sha256": "269f55111e168423b7b95c275b20aff8adae731fac4a84e6c81d048e5674a521",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/passport-stats.png",
+      "bytes": 120780,
+      "sha256": "3743395eebf8dc0cf2a4981fc0fc2a7fff4648318ce65fae1eeb277b653d98e5",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/profile-tab-loading-stable.png",
+      "bytes": 81545,
+      "sha256": "3fbb9303b0026c34e273ef8be90e8bc854fbbd4fe6f81aedd7638f55815d43ce",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/profile-tab-private-stable.png",
+      "bytes": 120200,
+      "sha256": "ba2f3566721fe7acb32375e3ed7c9951b6a6d12b5d89d320e79f48cafc9f8e1a",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    },
+    {
+      "file": "passport-audit/profile-tab-scroll-anchor.png",
+      "bytes": 93076,
+      "sha256": "b6ac07df20a4dbac2a1aa7da1577b69b349daa2fbaec3d8c92b780fb9f2cb418",
+      "source": "Synthetic domain fixture on production Compose/ViewModel, not real account capture"
+    }
+  ],
+  "live_smoke": {
+    "status": "PASS",
+    "date": "2026-11-07",
+    "environment": "existing local database/backend through development ngrok tunnel",
+    "healthz_local": 200,
+    "healthz_tunnel": 200,
+    "main_activity_session_restored": true,
+    "passport_profile_and_progress_get": 200,
+    "passport_level": 1,
+    "passport_xp": 0,
+    "passport_qr_preview_and_expanded_displayed": true,
+    "all_spots_and_real_api_gallery_displayed": true,
+    "public_profile_tabs": {
+      "steps": [
+        {
+          "tab": "Saved Spot",
+          "header_and_tabs_same_coordinates": true
+        },
+        {
+          "tab": "Badge",
+          "header_and_tabs_same_coordinates": true
+        },
+        {
+          "tab": "Itinerary",
+          "header_and_tabs_same_coordinates": true
+        }
+      ],
+      "delay_seconds_per_flow": 5,
+      "writes": 0
+    },
+    "header_gets_after_tab_switch_start": 0,
+    "tab_switch_start": "2026-11-07T23:11:00+07:00",
+    "redacted_http_reads": [
+      {
+        "path": "/api/apps/v1/profiles/:username/itineraries",
+        "status": 200,
+        "start": "2026-11-07T23:11:51+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:11:51+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/itinerary",
+        "status": 200,
+        "start": "2026-11-07T23:11:51+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profiles/:username/badges",
+        "status": 200,
+        "start": "2026-11-07T23:11:41+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:11:32+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:11:32+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:11:32+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:11:32+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me/saved-spots",
+        "status": 200,
+        "start": "2026-11-07T23:11:31+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/itinerary",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profiles/:username/itineraries",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profiles/:username",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profiles/:username/progress",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:10:44+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:10:34+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/location",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/notifications/unread-count",
+        "status": 200,
+        "start": "2026-11-07T23:10:21+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me/trips",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/quests",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/content",
+        "status": 200,
+        "start": "2026-11-07T23:10:20+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:10:11+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/location",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/kota-bandung-jalan-braga-museum-geologi",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/kota-bandung-jalan-braga-museum-gedung-sate",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/open-trips",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/kota-bandung",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/quests",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/jawa-barat-jalan-braga-stasiun-cimahi",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/indonesia-jalan-braga-rumah-si-pitung",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/kota-bandung-jalan-braga-saung-angklung-udjo",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections/kota-bandung-jalan-braga-museum-konperensi-asia-afrika",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots/:id/content",
+        "status": 200,
+        "start": "2026-11-07T23:09:47+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots/jalan-braga",
+        "status": 200,
+        "start": "2026-11-07T23:09:46+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me/saved-spots",
+        "status": 200,
+        "start": "2026-11-07T23:09:46+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots",
+        "status": 200,
+        "start": "2026-11-07T23:09:18+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:09:18+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:18+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:09:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me/trips",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/content",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/notifications/unread-count",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/location",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/quests",
+        "status": 200,
+        "start": "2026-11-07T23:09:08+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/me/progress",
+        "status": 200,
+        "start": "2026-11-07T23:08:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:08:09+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:57+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:57+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/spot",
+        "status": 200,
+        "start": "2026-11-07T23:07:57+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:57+07:00"
+      },
+      {
+        "path": "/api/apps/v1/collections",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/me/progress",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/me/trips",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/content",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/spots",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/gamification/quests",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/comment-totals/targets/location",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations/:id",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/notifications/unread-count",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/locations",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      },
+      {
+        "path": "/api/apps/v1/profile-identities",
+        "status": 200,
+        "start": "2026-11-07T23:07:56+07:00"
+      }
+    ],
+    "final_screen": "Public profile / Itinerary",
+    "data_mutations_sent": [],
+    "private_screenshots_published": false
+  },
+  "limits": [
+    "map/provider deferred by owner",
+    "native iOS not run",
+    "production signing/provider and FCM delivery not verified",
+    "no real account deletion, consent, save, comment or Quest admission writes"
+  ],
+  "logs": {
+    "gradle-verification.log": "449b828a59274eff9c6619e6dd7ab827981ea0937c00792d8f78cdbaed6a1061",
+    "host-verification.log": "7e90edb0a5eb42b09a6b823dfb3b8c10909b76003f6b260282b4ed248a3e00d3",
+    "host-test-summary.json": "32e9846a926eaa20b394e483b5684fd780eca5df2c499d3c312395ff068eed80",
+    "native-instrumentation.log": "06f621df117caf82c2ee73ce6e2e67dfd2ce2bb7db11f94c60ed1e4a202af319",
+    "qr-dependency.log": "d93f4c11f5b9c40f561a3a9fe0bee1d99bdb55f706c0dd9e4c8d756b86666937",
+    "source-apk-sha256.json": "4b2ff0305635049e58846bd8e2d850c7f9d1c908f612f1900918cb7a4cb2fcc3"
+  }
+}

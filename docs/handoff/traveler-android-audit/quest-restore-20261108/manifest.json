@@ -1,0 +1,16 @@
+{
+  "algorithm": "SHA-256",
+  "files": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "build-lint.log": "2432bb91f08a6e07129e24fc23aba1a836540938975de1e75dbaf3afbd8a2459",
+    "execution.json": "d20522cd9918c46fd97a5ba47cd768bdf87405e39342aebb0ebae2d181e66770",
+    "fresh-passport.png": "8e13414ef32a436ccd13980ffe7c284a43d2d2ba05615121925855d7b154ec81",
+    "host-summary.json": "b184746f0432f816a5b0e3837cc30695a26e6977aea90fba53389b1e8b3ee262",
+    "native.log": "bea239dfde31adc312ae8def044144a17c5de2729b8fcb8fd90a61f7d5ebd622",
+    "restoration-host.xml": "50779521b330f0b401f4f5a86f15ad80af4296a39d5158409b7ce3bd69de329f",
+    "restored-completed.png": "4a183553612f6a3c0a71e699c5560127424d8ddd593370b65e627fbf45490ec0",
+    "restored-owner-denied.png": "c00bac83ee2513878de8b75b3eea552db1093c96a377946d2fd7b4e4d0af310f",
+    "source-apk-freeze.json": "dafc14f6117639ba5c89840abd5a9b806609f80d392343706d85afb8f6af5473",
+    "taken-list-host.xml": "6c10a08b705d2ffd7ced9f4138986b97c42fd816e445ab501f443e03013e3259"
+  }
+}

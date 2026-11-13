@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-11-07T19:41:28.886963+07:00",
+  "baseline": "19c4b2f97aa01259bcc1bac2e82c42fd692f7b5b",
+  "branch": "feature/mobile-openapi-contracts",
+  "scope": "Correct Quest Share/catalog/location-picker separators from U+00C2 U+00B7 to U+00B7",
+  "hostTests": {
+    "status": "PASS",
+    "tests": 459,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "nativeTests": {
+    "status": "PASS",
+    "tests": 58,
+    "failures": 0,
+    "questDesignTests": 11,
+    "log": "native-verified.log",
+    "addedRegression": "Exact Share callback payload for zero/one/two locations, catalog multiple-location label and picker ancestor label",
+    "exactSyntheticPayloads": [
+      "Jejak budaya simulasi\n",
+      "Jejak budaya simulasi\nBandung",
+      "Jejak budaya simulasi\nBandung \u00b7 Jakarta"
+    ],
+    "otherClasses": "13 Figma/navbar, 13 journey, 13 location, 2 publication, 1 font, 1 authentication, 4 Quest state",
+    "boundary": "Production Compose/ViewModel/domain fixtures; share callback verified, OS chooser/live backend not exercised"
+  },
+  "builds": {
+    "travelerDevelopmentDebug": "PASS",
+    "travelerAndroidTest": "PASS",
+    "partner": "Unchanged; prior PASS at baseline19c4b2f"
+  },
+  "lint": {
+    "traveler": {
+      "errors": 0,
+      "warnings": 42
+    },
+    "partner": "Unchanged; prior PASS at baseline19c4b2f"
+  },
+  "package": "com.floopel.traveler.dev",
+  "installedApkMatches": true,
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "nativeViewportDp": "400x900",
+    "finalSize": "Physical size: 1080x2400",
+    "finalDensity": "Physical density: 420",
+    "finalFont": "1.0"
+  },
+  "sourceApkManifest": "source-apk-manifest.json",
+  "foreignEdits": "Pre-existing .gitignore/styles.xml excluded from commit; compiled styles hash retained in manifest",
+  "limitations": {
+    "ios": "NOT_RUN: Windows; requires Mac/Xcode",
+    "osShareChooser": "NOT_RUN; native host callback boundary verified",
+    "liveBackend": "NOT_RUN; Docker/database blocker documented in prior Quest layout batch remains unresolved",
+    "maps": "DEFERRED by owner",
+    "fcm": "NOT_CONFIGURED",
+    "productionRelease": "NOT_RUN"
+  }
+}

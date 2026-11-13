@@ -1,0 +1,22 @@
+[
+  {
+    "Variant": "development",
+    "Fields": [
+      "public static final String APPLICATION_ID = \"com.floopel.traveler.dev\";",
+      "public static final String API_ORIGIN = \"https://unawake-moonlit-reckless.ngrok-free.dev\";",
+      "public static final String BUILD_ENVIRONMENT = \"development\";",
+      "public static final String GOOGLE_SERVER_CLIENT_ID = \"\";",
+      "public static final long PLAY_CLOUD_PROJECT_NUMBER = 0L;"
+    ]
+  },
+  {
+    "Variant": "production",
+    "Fields": [
+      "public static final String APPLICATION_ID = \"com.floopel.traveler\";",
+      "public static final String API_ORIGIN = \"https://production-build-check.invalid\";",
+      "public static final String BUILD_ENVIRONMENT = \"production\";",
+      "public static final String GOOGLE_SERVER_CLIENT_ID = \"production-build-check.apps.googleusercontent.com\";",
+      "public static final long PLAY_CLOUD_PROJECT_NUMBER = 123456789L;"
+    ]
+  }
+]

@@ -1,0 +1,158 @@
+{
+  "date": "2026-11-07",
+  "branch": "feature/mobile-openapi-contracts",
+  "parent_commit": "34dbaeee8ec76f81a3a19659cfe877db6ba68f86",
+  "source_manifest_sha256": "80b0f18dd0015f40e7a18d8f68e38921f7e8d5408b3ad503a24583ab6755f5d1",
+  "apk_sha256": {
+    "application": "48105c21ba269902f9a14218dfb2a72a1832e761fed0425ec224f26438c28615",
+    "androidTest": "c39f1f1a8c46e95dc4bc8e950a23310e3281240d4a6686a1d0a1237baade9a88"
+  },
+  "device": {
+    "serial": "emulator-5580",
+    "api": 35,
+    "viewport_dp": "400x900",
+    "resolution": "1080x2430",
+    "density": 432,
+    "locale": "en-US",
+    "resource_locale": "default Indonesian",
+    "system_font_scale": 1.0,
+    "night": false,
+    "after_audit_restored": {
+      "resolution": "1080x2400",
+      "density": 420
+    }
+  },
+  "host": {
+    "status": "PASS",
+    "counts": {
+      "tests": 377,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "c0abb768e6370cb0e339c84b14e77e78a15314b7fa2372d15b0c494db309102a"
+  },
+  "host_live_private": {
+    "status": "PASS",
+    "counts": {
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "008c084039355de878f771c93fcaf33517cd90980b4bbfff40b99764f44cbae6"
+  },
+  "host_live_media_publication": {
+    "status": "PASS",
+    "counts": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "fbe17a539f07684df1a63c2ce463f67c85765e9ef93a8df90f1d55de8faa95a3"
+  },
+  "host_live_public_reads": {
+    "status": "PASS",
+    "counts": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "xml_manifest_sha256": "5ef1a2e75a452df5978819f0de8eb948e63ac0ce9ffe62a83a7ff2e1685c857e"
+  },
+  "native_domain_fixture": {
+    "status": "PASS",
+    "tests": 15,
+    "raw_log_sha256": "4f7f25ef98f855075a6cfe93d029b129341dbc9d84f0d5333a6fe1589c6a03cf"
+  },
+  "native_live_journey": {
+    "status": "PASS",
+    "tests": 1,
+    "raw_log_sha256": "2a26d5c039edbb3b84500662661e4f18762ca44bfe0bb57e9011b5aef7754d15"
+  },
+  "native_live_restore_after_force_stop": {
+    "status": "PASS",
+    "tests": 1,
+    "raw_log_sha256": "4d620da781322a290ee6411208dbf2403cfc9845ea7c30a452005a09b725eea0"
+  },
+  "native_live_login_after_system_back": {
+    "status": "PASS",
+    "tests": 1,
+    "raw_log_sha256": "142a98028079bdfc240aa654f9fbebcbabd23055aa76dc07bfd8ffaf10b37799"
+  },
+  "native_live_process_evidence": {
+    "processes": {
+      "journey": {
+        "phase": "journey",
+        "pid": 11923,
+        "started_elapsed": 7441881
+      },
+      "restore": {
+        "phase": "restore",
+        "pid": 12019,
+        "started_elapsed": 7453463
+      },
+      "login-back": {
+        "phase": "login-back",
+        "pid": 12099,
+        "started_elapsed": 7462784
+      }
+    },
+    "different_journey_restore_processes": true,
+    "system_back": {
+      "key": "KEYCODE_BACK",
+      "activity_stopped": true,
+      "navigation_absent": true,
+      "pid": 12019
+    }
+  },
+  "build_lint": {
+    "status": "PASS",
+    "lint": {
+      "traveler": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 38
+      },
+      "partner": {
+        "Error": 0,
+        "Fatal": 0,
+        "Warning": 2
+      }
+    },
+    "traveler_log_sha256": "4d730dbdf164285487f68b8c52502df6949d05332cc7acc7c2e9b55c181b8831",
+    "partner_and_core_log_sha256": "3b6b5574fb2d7ce80fa58795622307630c9cec50054d51932e19c60ba2fd61c7",
+    "android_test_log_sha256": "44b84c263b9dab1ceaa853f78f527319446fe7425c3327425ba3f241bc790e38"
+  },
+  "fixture": {
+    "accounts": 8,
+    "database_scope": "loopback local existing",
+    "schema": 163,
+    "migration_reset": false,
+    "credentials_in_git": false,
+    "device_manifest_removed": true
+  },
+  "media_processing": {
+    "image": "sha256:f00c411429baad760dc4e4025e7f3c175f2fd5a9345b627254e242c2fcfaf25d",
+    "libvips": "8.14.1",
+    "scope": "one fixture-owned cover",
+    "global_queue_recovery": false,
+    "scheduler_deployment_verified": false
+  },
+  "not_run": [
+    "Photo Picker real selection",
+    "private notice/inbox materialization/ack",
+    "Google/Integrity/GPS provider",
+    "FCM",
+    "iOS",
+    "Android process loss during banner upload",
+    "full Figma layout parity",
+    "full accessibility audit"
+  ],
+  "screenshots": {
+    "live-private-itinerary.png": "caf3ff6669fb99cbcbaaca5749aa8057bba51776557f32136de1d6737b4b663c",
+    "public-trip-recovery.png": "0220facd576822a52a779ac010953a259df6ead7796d37518a53856b8cc9028c"
+  }
+}

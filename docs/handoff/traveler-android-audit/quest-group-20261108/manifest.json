@@ -1,0 +1,122 @@
+{
+  "findings": {
+    "QUEST-GROUP-RECOVERY-01": "quest-group-create-read-reconcile-recovery-20261108-0327",
+    "QUEST-GROUP-INVITATIONS-PAGE-01": "quest-group-invitations-next-page-20261108-0327"
+  },
+  "client_date": "2026-11-08",
+  "base_commit": "7faa8ed68bebb958671b935a7037e15fb582a1c6",
+  "host": {
+    "tests": 509,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_host_cases": {
+    "actual_adapter_mock_http": 5,
+    "actual_adapter_with_state_owner": 10
+  },
+  "native": {
+    "status": "PASS",
+    "tests": 27,
+    "quest_group_recovery": 3,
+    "invitations_pagination": 4,
+    "itinerary_recovery_regression": 4,
+    "trip_recovery_regression": 3,
+    "journey_regression": 13,
+    "runner_seconds": 50.914,
+    "source_apk_freeze": "PASS",
+    "source_apk_entries": 407,
+    "emulator": "5580",
+    "package": "com.floopel.traveler.dev",
+    "viewport_dp": "400x900",
+    "locales_font_scale": [
+      {
+        "locale": "id",
+        "scale": 1
+      },
+      {
+        "locale": "en",
+        "scale": 1.3
+      }
+    ],
+    "fixture_pngs_inspected": 9
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "partner": "NOT_APPLICABLE: no core/Partner changes",
+  "figma": {
+    "feedback_frames": [
+      "397:10728",
+      "397:10829"
+    ],
+    "context_frames": [
+      "397:8840",
+      "397:8429"
+    ],
+    "feedback_content": [
+      "397:10813",
+      "397:10914"
+    ],
+    "asset": {
+      "path": "shared/features/traveler/src/commonMain/composeResources/files/quest_group_progress.svg",
+      "sha256": "4b760cca38fbedcd5846ce4a2c269ce99eb96463c6f3cb5fb823a933c139180f",
+      "bytes": 1980,
+      "root_width": 184,
+      "root_height": 122.667,
+      "rendered_dp": "184x122.667",
+      "readiness_and_dimensions": "PASS"
+    }
+  },
+  "safety": {
+    "live_quest_group_mutations": 0,
+    "live_trip_itinerary_mutations": 0,
+    "pagination_writes": 0,
+    "device_clock_change": false,
+    "database_or_app_data_reset": false,
+    "api_policy_provider_credential_merge_deploy_change": false,
+    "recovery_transport": "actual adapter with MockEngine / native domain fixtures"
+  },
+  "restored_ui": "Actual Collection reader, read-only ngrok navigation, existing session, five seconds per manual flow",
+  "limits": {
+    "ios": "NOT_RUN: Mac/Xcode required",
+    "talkback_voiceover": "NOT_RUN",
+    "real_response_loss_mutation": "NOT_RUN: fixture-only proof",
+    "visual_scope": "Recovery feedback/decision and invitation pagination only; not full Quest Group/manager/invitation-reader/empty-list parity.",
+    "source_fingerprints": "Local execution bytes including excluded styles.xml; not portable checkout line endings."
+  },
+  "foreign_dirty_excluded": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "append-error.png": "3055bcdc188b93b30a82f8cd6e2557c56bf9c6cd30777ea74a040c549cb0f7a8",
+    "checking.png": "4ab69c1f8a02bfb325236f0031113d677054fc6f246649af68966c3be77636d8",
+    "empty.png": "533d6dda5e0b982a9b190b5628f12ad796f7ef213aa81fcb4452a4ca8d9a57f1",
+    "final-build.log": "36eced1d273b35a5d80cb12c56bd9770b37dde534399e484909951f6ae0ccafc",
+    "local-source-freeze.json": "2fce6ad994ba2514ef76c4e200a120b707a5481f65a7414b5ccf15854aa60e02",
+    "manager-page-two.png": "7e9333d4003ebeb9e4d308f092efe283d0de5cc9d8efec7860ef0a915c72c303",
+    "native.log": "cd5a0ba1b6ff9b7188cea5e88d6129797be54e587aa3fde52a30f53c2d78f700",
+    "recipient-page-two.png": "5d41b95bb1a57b39bef77150237bfd6fbe86d8a9e7cf288fae21c8e72bad21af",
+    "restored-collection-api.png": "e6bc6757bf4603097a8266d73464a783bdc25f4e7601049e3fb8b283775dc41d",
+    "review-en-font130.png": "54f57749f9c5ce7256abe6318535b5d76e575704eec9674153cb5cc444328fd0",
+    "review-failed.png": "3e8fb70ae0610780b398e6d40b0e8cad409104c27680baa6a28f590b3fad0ca1",
+    "review.png": "27a99b0366b0861238552829f8dee0ab486896abed5c13e8acac714d937b238d",
+    "TEST-com.floopel.feature.traveler.data.repository.NativeQuestGroupRecoveryTest.xml": "8ae2ef6ab22ef8a387207478f5c30134b5bb96f4ed138f55996cf366b97fa913",
+    "TEST-com.floopel.feature.traveler.presentation.TravelerQuestGroupStateTest.xml": "82062a09ca61328673d62629f96d281485f30acb86ba851a550da9f24e7b6d43",
+    "unknown.png": "f75dacb413c4bf43ac222c45b406995cf7ad9893221b8f4677a1583c296f8ca3",
+    "title-figma-read.json": "08cfd6ae130c2487114b22f74557f07ab05c361a8bf6690d3fba5ed36812a177"
+  },
+  "title_followup": {
+    "finding": "QUEST-GROUP-RECOVERY-TITLE-01",
+    "status": "NOT_REPRODUCED_AGAINST_VISIBLE_FIGMA_TEXT",
+    "visible_characters": "Trip",
+    "layer_name": "Hasil belum dapat dipastikan",
+    "application_figma_mutation": false,
+    "new_runtime_run": false,
+    "proof": "title-figma-read.json"
+  }
+}

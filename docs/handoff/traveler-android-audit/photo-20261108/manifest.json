@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-08",
+  "scope": "Android Traveler photo/banner picker, own-publication clone and Location padding",
+  "sourceBase": "2bde9aed31ff113977ccf84a241de78712ebf551",
+  "device": "emulator-5580",
+  "api": 35,
+  "android": "15",
+  "viewportDp": [
+    400,
+    900
+  ],
+  "native": {
+    "status": "PASS",
+    "tests": 84,
+    "newCases": 25,
+    "regressions": 59,
+    "seconds": 203.596,
+    "classes": {
+      "TravelerPhotoDesignTest": 14,
+      "AndroidProfilePhotoCodecTest": 5,
+      "TravelerMediaPickerScopeTest": 5,
+      "TravelerLocationDesignTest": 2,
+      "TravelerPendingInputDesignTest": 11,
+      "TravelerCommunitySearchBackTest": 8,
+      "TravelerNavigationRegressionTest": 12,
+      "TravelerCollectionDesignTest": 10,
+      "TravelerItineraryRecoveryDesignTest": 4,
+      "TravelerJourneyTest": 13
+    }
+  },
+  "host": {
+    "tests": 564,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "Fatal": 0,
+    "Error": 0,
+    "Warning": 45
+  },
+  "sourceAndApkFrozen": true,
+  "frozenEntries": 441,
+  "limitations": [
+    "No live photo/banner POST or real account mutation",
+    "No provider processing claim",
+    "No API24-27 device run",
+    "No iOS Mac/Xcode run",
+    "No TalkBack/VoiceOver or physical/release run"
+  ],
+  "excludedWorkingChanges": {
+    ".gitignore": "2dc158a928ce40cfacadbc9c62cbef830aadea1f67e2eae4109f23d512a5e8b3",
+    "apps/android/traveler/src/main/res/values/styles.xml": "cae96f2fedc7d5b2ec1e31b2d32bfa2d01f4a63c53d4dd13896894a4a5be90f0"
+  },
+  "artifacts": {
+    ".gitattributes": "24972be4879314a923edb47a83545de700e36b9b231670a072b6a0c792790763",
+    "assets.json": "bac9c0da07b2e3b507dedadaa5cf82ecda0daf682ef4fbc23a25466a9691c835",
+    "dependency.log": "10be5a9b40861f5b04e57c1b4e2ad18ba74e5f69de9c7c35e707d3ff0f8b7c68",
+    "final-build.log": "7c0ff1d2b3fc86f05c9112ef7a7f7122def48156c158b804e63f229c8d866548",
+    "host-build.log": "7326ba25f4561f73cb87c1330f0c54a222d1052857a9915d591ae640b1359889",
+    "host-summary.json": "667b05a4e0d31c6844b8ce57d4512ef4bd668c59edac6a32393754acd99805bc",
+    "lint.xml": "76c9fff9b6f7ddfb129534a5795dd0362f24a44b498e5cb0085fdb292e5dc39b",
+    "native.log": "e42bc634ddce58dca6dc0f4703b248adaff28897cfc4e7866301b453b3464a2b",
+    "photo-api-host.xml": "e1263110f1dcd2c24a194d6f7b03c019f45318983fdafc8510b8a2def3d83edd",
+    "photo-change-limited.png": "42da3b4945f473e3c1ce6561adc086f560f2cb85e3567f152628614008ef95a1",
+    "photo-checking.png": "4aed18d4adcdb82b97ac888d64755e5f30141928f758150f9ae88a48bf29adf1",
+    "photo-crop-en-font200.png": "3b1277769f70741d6de8f61c12483b69157ea91909f34f230d09b1e41729af35",
+    "photo-crop.png": "68bae524d536b3cd6fc380ae6a4454cbe3e64bdb8aba68189419e4d0807d72a8",
+    "photo-current.png": "0440d7e6777cfba71eb5f594778c11ac6a661a8b0b2997f0ad614b9f8a2f6cf1",
+    "photo-host.xml": "7337657b085ac57c2742b3089728437580f7ac9768daa1d35a92c22a6dd862c7",
+    "photo-processing.png": "212cb42ac06cd489ab245759a548386fab5f40c40c47b0ac3c81cb663edcafaf",
+    "photo-ready.png": "2582a589a67f6af9e70de0e2d53b0979fcb49aefd063515756db92687da0419c",
+    "photo-review.png": "43d375d38d2c484e7b7623219fa070643f0e64735832e37c5cc409a96a2006f7",
+    "publication-host.xml": "70b02d77b1cecc5d8a901ec0f40d68b6eb3f5d8a70727520a91193fb6c0caf7d",
+    "resources.json": "6e4e6f54a0b29cad763e6b269f00a273d28b5342f7bbc1cd11c0bb7b5c25a7d3",
+    "source-freeze.json": "f86839bc44c27151311bce862473fa249b146c41d6dc95cd42dc24b3c33171cd",
+    "three-trips-font130-padding.png": "43af5c53ccee20f7bc62c90f42ce6c1a01f14791e2753b495e9c5507d395199c",
+    "trip-long-title-padding.png": "ac6b11d4ea4381e32ab071732381e4685c271512df5792714c70af0da7bf136d"
+  }
+}
