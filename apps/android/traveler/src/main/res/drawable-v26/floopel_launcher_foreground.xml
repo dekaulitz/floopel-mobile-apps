@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Preserve the complete square brand inside circular launcher masks (48 of 108dp). -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:inset="27.777778%"
+    android:drawable="@drawable/floopel_launcher_mark" />

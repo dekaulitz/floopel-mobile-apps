@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,8 @@ import com.floopel.feature.traveler.presentation.*
 import com.floopel.feature.traveler.presentation.trip.tripCatalogDate
 import com.floopel.feature.traveler.resources.*
 import org.jetbrains.compose.resources.stringArrayResource
+
+private val locationTripLineHeight = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.None)
 
 @Composable
 internal fun LocationBrowser(state: TravelerState, model: TravelerViewModel) {
@@ -186,11 +189,16 @@ internal fun LocationDetail(state: TravelerState, model: TravelerViewModel) {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             Media(trip.banner?.url ?: trip.previewSpot?.spot?.coverUrl, Modifier.size(76.dp, 80.dp).clip(RoundedCornerShape(8.dp)).testTag("location-trip-image-${trip.id}"))
                             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                Text(trip.name, Modifier.testTag("location-trip-title-${trip.id}"), style = MaterialTheme.typography.titleMedium,
+                                Text(trip.name, Modifier.testTag("location-trip-title-${trip.id}"),
+                                    style = MaterialTheme.typography.titleMedium.copy(lineHeightStyle = locationTripLineHeight),
                                     maxLines = 2, overflow = TextOverflow.Ellipsis)
-                                Body(tripCatalogDate(trip.startsOn, trip.endsOn, months, includeYear = false) + " · " +
-                                    s(Res.string.location_seats, trip.remainingParticipants))
-                                Text(s(Res.string.location_view_open_trip), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                                Text(tripCatalogDate(trip.startsOn, trip.endsOn, months, includeYear = false) + " · " +
+                                    s(Res.string.location_seats, trip.remainingParticipants),
+                                    style = MaterialTheme.typography.bodySmall.copy(lineHeightStyle = locationTripLineHeight),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(s(Res.string.location_view_open_trip),
+                                    style = MaterialTheme.typography.labelLarge.copy(lineHeightStyle = locationTripLineHeight),
+                                    color = MaterialTheme.colorScheme.primary)
                             }
                         }
                     }

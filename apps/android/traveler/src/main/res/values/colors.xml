@@ -2,4 +2,5 @@
 <resources>
     <!-- Figma primary for the platform window, matching FloopelBrand.travelerStartup. -->
     <color name="floopel_startup_background">#3730A3</color>
+    <color name="floopel_launcher_background">#FFFFFF</color>
 </resources>

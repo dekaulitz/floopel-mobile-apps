@@ -20,6 +20,39 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TravelerLocationDesignTest {
     @get:Rule val ui = createAndroidComposeRule<ComponentActivity>()
+    @Test fun openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation() {
+        val f = TravelerLocationFixture()
+        f.visibleTrips = (1..3).map { index -> f.base.openTrip.copy(id = "spacing-trip-$index", name =
+            "Open Trip Tangerang Selatan 0$index: Situ Gintung dan Situ Pondok Jagung") }
+        launch(f); visible("home-location-${f.magelang.id}")
+        ui.onNodeWithTag("home-location-${f.magelang.id}").performClick()
+        ui.onNodeWithTag("location-trip-spacing-trip-1").performScrollTo()
+        val title = ui.onNodeWithTag("location-trip-title-spacing-trip-1", true)
+        val metadata = ui.onNode(hasText("kursi tersedia", substring = true) and
+            hasAnyAncestor(hasTestTag("location-trip-spacing-trip-1")), true)
+        val action = ui.onNode(hasText("Lihat Open Trip") and hasAnyAncestor(hasTestTag("location-trip-spacing-trip-1")), true)
+        val titleBounds = title.getUnclippedBoundsInRoot()
+        val metadataBounds = metadata.getUnclippedBoundsInRoot()
+        val actionBounds = action.getUnclippedBoundsInRoot()
+        val titleHeight = titleBounds.bottom.value - titleBounds.top.value
+        val metadataHeight = metadataBounds.bottom.value - metadataBounds.top.value
+        val actionHeight = actionBounds.bottom.value - actionBounds.top.value
+        android.util.Log.i("FloopelSpacing", "line boxes dp: $titleHeight, $metadataHeight, $actionHeight")
+        // Figma 839:11679/80/81: two title lines at 23, metadata 18, action 19; gaps 4.
+        assertEquals(46f, titleHeight, 1f)
+        assertEquals(18f, metadataHeight, 1f)
+        assertEquals(19f, actionHeight, 1f)
+        assertEquals(4f, metadataBounds.top.value - titleBounds.bottom.value, 1f)
+        assertEquals(4f, actionBounds.top.value - metadataBounds.bottom.value, 1f)
+        for (index in 1..2) {
+            val row = ui.onNodeWithTag("location-trip-spacing-trip-$index").getUnclippedBoundsInRoot()
+            val next = ui.onNodeWithTag("location-trip-spacing-trip-${index + 1}").getUnclippedBoundsInRoot()
+            assertEquals(8f, next.top.value - row.bottom.value, 1f)
+        }
+        ui.onNodeWithTag("location-trip-spacing-trip-3").performScrollTo()
+        capture("location-three-trips-line-spacing")
+        assertEquals(0, f.base.tripCreateCalls.get())
+    }
     @Test fun threeLongOpenTripRowsKeepTheirGuttersAtLargerFontSize() {
         val f = TravelerLocationFixture()
         f.visibleTrips = (1..3).map { index -> f.base.openTrip.copy(id = "padding-trip-$index", name =
@@ -36,7 +69,7 @@ class TravelerLocationDesignTest {
             assertEquals(76f * density, photo.width, 1f); assertEquals(80f * density, photo.height, 1f)
             assertEquals(12f * density, title.left - photo.right, 1f); assertTrue(title.right <= row.right)
         }
-        ui.onNodeWithTag("location-trip-padding-trip-1").performScrollTo()
+        ui.onNodeWithTag("location-trip-padding-trip-3").performScrollTo()
         capture("location-three-trips-font130-padding")
         assertEquals(0, f.base.tripCreateCalls.get())
     }

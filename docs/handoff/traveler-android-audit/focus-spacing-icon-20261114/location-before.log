@@ -1,0 +1,47 @@
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerLocationDesignTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stream=
+com.floopel.traveler.TravelerLocationDesignTest:
+INSTRUMENTATION_STATUS: test=openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.floopel.traveler.TravelerLocationDesignTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=1
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: expected:<46.0> but was:<43.333313>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:577)
+	at org.junit.Assert.assertEquals(Assert.java:701)
+	at com.floopel.traveler.TravelerLocationDesignTest.openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation(TravelerLocationDesignTest.kt:43)
+
+INSTRUMENTATION_STATUS: stream=
+Error in openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation(com.floopel.traveler.TravelerLocationDesignTest):
+java.lang.AssertionError: expected:<46.0> but was:<43.333313>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:577)
+	at org.junit.Assert.assertEquals(Assert.java:701)
+	at com.floopel.traveler.TravelerLocationDesignTest.openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation(TravelerLocationDesignTest.kt:43)
+
+INSTRUMENTATION_STATUS: test=openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 3.651
+There was 1 failure:
+1) openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation(com.floopel.traveler.TravelerLocationDesignTest)
+java.lang.AssertionError: expected:<46.0> but was:<43.333313>
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.failNotEquals(Assert.java:835)
+	at org.junit.Assert.assertEquals(Assert.java:577)
+	at org.junit.Assert.assertEquals(Assert.java:701)
+	at com.floopel.traveler.TravelerLocationDesignTest.openTripRowsPreserveFigmaLineBoxesAndEightDpVerticalSeparation(TravelerLocationDesignTest.kt:43)
+
+FAILURES!!!
+Tests run: 1,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

@@ -27,14 +27,16 @@ import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.TextUnitType
 import com.floopel.core.designsystem.theme.FloopelControlSize
 import com.floopel.core.designsystem.theme.FloopelShape
 import com.floopel.core.designsystem.theme.FloopelSpace
+import kotlin.math.ceil
 
 /**
  * Controlled Material input with compact visuals, a reserved touch target and adaptive text height.
  * Material owns decoration/interaction; callers retain values, validation, keyboard and submission.
- * Floating labels reserve half their measured height so wrapped labels cannot overlap preceding content.
+ * Labels reserve stable space across their expanded/floating animation, including wrapped labels.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,12 +64,23 @@ fun FloopelFormTextField(
         focused -> colors.focusedTextColor
         else -> colors.unfocusedTextColor
     }
-    var labelHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val labelSpace = with(density) {
-        val minimum = MaterialTheme.typography.bodySmall.lineHeight.toDp() / 2
-        if (focused || value.isNotEmpty()) maxOf(minimum, labelHeight.toDp() / 2) else minimum
+    val minimumLabelHeight = with(density) {
+        ceil(maxOf(MaterialTheme.typography.bodyLarge.lineHeight.toPx(), MaterialTheme.typography.bodySmall.lineHeight.toPx())).toInt()
     }
+    var labelHeight by remember(density, minimumLabelHeight) { mutableIntStateOf(minimumLabelHeight) }
+    // The animated label is measured at several sizes. Shrinking this allocation during focus
+    // feeds the animation back into field height and moves subsequent inputs up and down.
+    val labelSpace = with(density) { labelHeight.toDp() / 2 }
+    val editableLineHeight = with(density) {
+        val line = textStyle.lineHeight.takeIf { it.type == TextUnitType.Sp } ?: MaterialTheme.typography.bodyLarge.lineHeight
+        line.toDp()
+    }
+    // At large font sizes the decoration can also grow while its label floats. Reserve
+    // the expanded label's overlap plus the editable line, without constraining multiline input.
+    val minimumInputHeight = if (label != null && singleLine) maxOf(FloopelControlSize.compactInput,
+        editableLineHeight + maxOf(contentPadding.calculateTopPadding(), labelSpace) + contentPadding.calculateBottomPadding())
+        else FloopelControlSize.compactInput
     // Material top-aligns multiline content. Reserve the editable line's share of the existing
     // container so one line is centered beside icons, while wrapped text can grow naturally.
     val centerExpandableLine = label == null && !singleLine && minLines == 1
@@ -79,7 +92,7 @@ fun FloopelFormTextField(
         modifier = modifier.minimumInteractiveComponentSize().then(if (label == null) Modifier else Modifier
             .semantics(mergeDescendants = true) {}.padding(top = labelSpace, bottom = FloopelSpace.tiny))
             .semantics { if (isError) error(errorMessage) }
-            .defaultMinSize(minWidth = OutlinedTextFieldDefaults.MinWidth, minHeight = FloopelControlSize.compactInput),
+            .defaultMinSize(minWidth = OutlinedTextFieldDefaults.MinWidth, minHeight = minimumInputHeight),
         textStyle = textStyle.merge(TextStyle(color = textStyle.color.takeOrElse { textColor })),
         cursorBrush = SolidColor(if (isError) colors.errorCursorColor else colors.cursorColor),
         visualTransformation = visualTransformation, keyboardOptions = keyboardOptions, keyboardActions = keyboardActions,
@@ -92,7 +105,7 @@ fun FloopelFormTextField(
                     else inner()
                 }, enabled, singleLine, visualTransformation, interaction,
                     isError = isError, label = label?.let { content -> {
-                        Box(Modifier.onSizeChanged { labelHeight = it.height }) { content() }
+                        Box(Modifier.onSizeChanged { if (it.height > labelHeight) labelHeight = it.height }) { content() }
                     } }, placeholder = placeholder?.let { content -> {
                         if (centerExpandableLine) Box(Modifier.heightIn(min = minimumLineHeight),
                             contentAlignment = Alignment.CenterStart) { content() }

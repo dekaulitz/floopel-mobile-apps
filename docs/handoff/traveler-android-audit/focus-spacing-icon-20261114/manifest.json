@@ -1,0 +1,17 @@
+{
+  "algorithm": "SHA-256",
+  "files": {
+    ".gitattributes": "e13600160c6767d3d5408e170c5d4fe7f512514c01f611470f9990d5d23a2a89",
+    "build-lint.log": "5468aacc5784f291f2096f42dc1195ebb51edb87b59fd0c4e040f3ee9890256b",
+    "execution.json": "1b9d143fcaf6b446c29af22030d2a0762ddc0068325245651ad563958c85a17f",
+    "launcher.png": "942cdf02ef64481629071a36250481e8d10759e7aa24500a49a78b67b623c7bb",
+    "location-before.log": "f481fee4d7ec427120e09c447722b063dfeb60668400138bf1b479a2b849738d",
+    "location-font130.png": "fa34f3d1e3e3533e969bdca0d4191f7366dec35c2b44d2af910a0aea044358b2",
+    "location-normal.png": "3f8740d5120d8c429e39fe0d2c8da6a9599746041dafabb05b53bd777d224025",
+    "login-before.log": "3e782b470723ebf0c499e596f4bb6ca1b48ee208a13e136cd571e6bc10f9fc66",
+    "login-email-focused.png": "cb7d13aa98622bb91c6f212a7a2fe5f36a110c906e3eac1121f3f2513c0b0639",
+    "login-password-focused.png": "a0d57ec0611adc0abce3f0ed9c1829431e80e6af48ce57f64f964feedf092916",
+    "native.log": "f98d652d6625a9126da753ffff86fbe29993a705ebbafad97df96dfddb165caf",
+    "source-apk-freeze.json": "737c3b671d4af888216f07d564ce41e11d651eb80a47b2bed0ed082f36cf9751"
+  }
+}
